@@ -181,7 +181,7 @@ static NSFont *default_font;
 - (NSRect)rectInImageForTileAtX:(int)x Y:(int)y;
 
 /* Draw the given wide character into the given tile rect. */
-- (void)drawWChar:(wchar_t)wchar inRect:(NSRect)tile;
+- (void)drawWChar:(wchar_t)wchar inRect:(NSRect)tile context:(CGContextRef)ctx;
 
 /* Locks focus on the Angband image, and scales the CTM appropriately. */
 - (CGContextRef)lockFocus;
@@ -747,9 +747,8 @@ static int compare_advances(const void *ap, const void *bp)
     lastRefreshTime = CFAbsoluteTimeGetCurrent();
 }
 
-- (void)drawWChar:(wchar_t)wchar inRect:(NSRect)tile
+- (void)drawWChar:(wchar_t)wchar inRect:(NSRect)tile context:(CGContextRef)ctx
 {
-    CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
     CGFloat tileOffsetY = fontAscender;
     CGFloat tileOffsetX = 0.0;
     NSFont *screenFont = [angbandViewFont screenFont];
@@ -2355,7 +2354,7 @@ static errr Term_text_cocoa(int x, int y, int n, TERM_COLOR a, concptr cp)
     AngbandContext* angbandContext = Term->data;
     
     /* Focus on our layer */
-    [angbandContext lockFocus];
+    CGContextRef ctx = [angbandContext lockFocus];
 
     /* Starting pixel */
     NSRect charRect = [angbandContext rectInImageForTileAtX:x Y:y];
@@ -2402,17 +2401,17 @@ static errr Term_text_cocoa(int x, int y, int n, TERM_COLOR a, concptr cp)
 	    wchar_t uv = convert_two_byte_eucjp_to_utf16_native(cp + i);
 
 	    rectToDraw.size.width *= 2.0;
-	    [angbandContext drawWChar:uv inRect:rectToDraw];
+	    [angbandContext drawWChar:uv inRect:rectToDraw context:ctx];
 	    rectToDraw.origin.x += tileWidth + tileWidth;
 	    rectToDraw.size.width = w;
 	    i += 2;
 	} else {
-	    [angbandContext drawWChar:cp[i] inRect:rectToDraw];
+	    [angbandContext drawWChar:cp[i] inRect:rectToDraw context:ctx];
 	    rectToDraw.origin.x += tileWidth;
 	    ++i;
 	}
 #else
-        [angbandContext drawWChar:cp[i] inRect:rectToDraw];
+        [angbandContext drawWChar:cp[i] inRect:rectToDraw context:ctx];
 	++i;
         rectToDraw.origin.x += tileWidth;
 #endif
