@@ -2239,14 +2239,8 @@ static errr Term_pict_cocoa(int x, int y, int n, const TERM_COLOR *ap,
     /* Lock focus */
     [angbandContext lockFocus];
     
-    NSRect destinationRect = [angbandContext rectInImageForTileAtX:x Y:y];
-
-    /* Expand the rect to every touching pixel to figure out what to redisplay
-	 */
-    NSRect redisplayRect = crack_rect(destinationRect, AngbandScaleIdentity, PUSH_RIGHT | PUSH_TOP | PUSH_BOTTOM | PUSH_LEFT);
-    
-    /* Expand our destinationRect */
-    destinationRect = crack_rect(destinationRect, AngbandScaleIdentity, push_options(x, y));
+    NSRect redisplayRect = [angbandContext rectInImageForTileAtX:x Y:y];
+    redisplayRect.size.width = angbandContext->tileSize.width * n;
     
     /* Scan the input */
     int i;
@@ -2255,7 +2249,8 @@ static errr Term_pict_cocoa(int x, int y, int n, const TERM_COLOR *ap,
 
     for (i = 0; i < n; i++)
     {
-        
+	NSRect destinationRect =
+	    [angbandContext rectInImageForTileAtX:x+i Y:y];
         TERM_COLOR a = *ap++;
         char c = *cp++;
         
