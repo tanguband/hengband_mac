@@ -1364,6 +1364,9 @@ static size_t Term_mbcs_cocoa(wchar_t *dest, const char *src, int n)
     /* Initialize file paths */
     [self prepareFilePathsAndDirectories];
 
+    /* Note the "system" */
+    ANGBAND_SYS = "mac";
+
     /* Load preferences */
     load_prefs();
     
@@ -1382,9 +1385,6 @@ static size_t Term_mbcs_cocoa(wchar_t *dest, const char *src, int n)
     /* This is not incorporated into Hengband's init_angband() yet. */
     init_graphics_modes();
 
-    /* Note the "system" */
-    ANGBAND_SYS = "mac";
-    
     /* Initialize some save file stuff */
     p_ptr->player_egid = getegid();
     
