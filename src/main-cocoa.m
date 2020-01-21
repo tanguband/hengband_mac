@@ -2546,7 +2546,7 @@ static void Term_xtra_cocoa_fresh(AngbandContext* angbandContext)
 	graf_height = 0;
 	alphablend = 0;
     }
- 
+
     CGContextRef ctx = [angbandContext lockFocus];
 
     if (angbandContext->changes->has_text ||
@@ -3569,8 +3569,7 @@ static void quit_calmly(void)
         /* Save the game */
 	do_cmd_save_game(p_ptr, FALSE);
         record_current_savefile();
-        
-        
+
         /* Quit */
         quit(NULL);
     }
