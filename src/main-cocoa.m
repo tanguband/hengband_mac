@@ -2031,6 +2031,7 @@ static void Term_init_cocoa(term *t)
 
     /* Get the window */
     NSWindow *window = [context makePrimaryWindow];
+
     /* Set its title and, for auxiliary terms, tentative size */
     NSString *title = [NSString stringWithCString:angband_term_name[termIdx]
 #ifdef JP
@@ -2554,7 +2555,7 @@ static void Term_xtra_cocoa_fresh(AngbandContext* angbandContext)
 	/*
 	 * Transparency effect. We really want to check
 	 * current_graphics_mode->alphablend, but as of this writing
-	 * that's  never set, so we do something lame.
+	 * that's never set, so we do something lame.
 	 */
 	/* alphablend = current_graphics_mode->alphablend */
 	alphablend = (graf_width > 8 || graf_height > 8);
