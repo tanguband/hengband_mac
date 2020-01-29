@@ -4132,7 +4132,8 @@ static void hook_quit(const char * str)
 	[menuItem setState: ((is_on) ? NSOnState : NSOffState)];
 	return YES;
     }
-    else if( sel == @selector(sendAngbandCommand:) )
+    else if( sel == @selector(sendAngbandCommand:) ||
+	     sel == @selector(saveGame:) )
     {
         /* we only want to be able to send commands during an active game */
         return !!game_in_progress;
