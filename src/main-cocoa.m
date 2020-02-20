@@ -682,7 +682,7 @@ static bool initialized = FALSE;
 /* The NSView subclass that draws our Angband image */
 @interface AngbandView : NSView
 {
-    IBOutlet AngbandContext *angbandContext;
+    AngbandContext *angbandContext;
 }
 
 - (void)setAngbandContext:(AngbandContext *)context;
@@ -4132,7 +4132,7 @@ static void hook_quit(const char * str)
     [[NSUserDefaults angbandDefaults] setInteger:frames_per_second forKey:AngbandFrameRateDefaultsKey];
 }
 
-- (IBAction)selectWindow: (id)sender
+- (void)selectWindow: (id)sender
 {
     NSInteger subwindowNumber = [(NSMenuItem *)sender tag] - AngbandWindowMenuItemTagBase;
     AngbandContext *context = angband_term[subwindowNumber]->data;
@@ -4179,7 +4179,7 @@ static void hook_quit(const char * str)
     }
 }
 
-- (IBAction)setGraphicsMode:(NSMenuItem *)sender
+- (void)setGraphicsMode:(NSMenuItem *)sender
 {
     /* We stashed the graphics mode ID in the menu item's tag */
     graf_mode_req = [sender tag];
