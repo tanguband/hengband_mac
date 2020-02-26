@@ -2787,7 +2787,7 @@ static errr Term_xtra_cocoa_react(void)
 
 		    alert.messageText = msg;
 		    alert.informativeText = info;
-		    NSModalResponse result = [alert runModal];
+		    [alert runModal];
 		}
 	    }
 
@@ -3898,7 +3898,7 @@ static void hook_plog(const char * str)
 
 	alert.messageText = msg;
 	alert.informativeText = info;
-	NSModalResponse result = [alert runModal];
+	[alert runModal];
     }
 }
 
@@ -3952,7 +3952,7 @@ static NSString* get_lib_directory(void)
 	alert.messageText = msg;
 	alert.informativeText = info;
 	[alert addButtonWithTitle:quit_label];
-	NSModalResponse result = [alert runModal];
+	[alert runModal];
 	exit( 0 );
     }
 
