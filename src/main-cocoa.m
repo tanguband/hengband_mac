@@ -2137,7 +2137,6 @@ static __strong NSFont* gDefaultFont = nil;
 
             [[NSUserDefaults standardUserDefaults] setValue: mutableTerminals forKey: AngbandTerminalsDefaultsKey];
         }
-        [[NSUserDefaults standardUserDefaults] synchronize];
     }
 
     term *old = Term;
@@ -2389,7 +2388,6 @@ static void record_current_savefile(void)
     {
         NSUserDefaults *angbandDefs = [NSUserDefaults angbandDefaults];
         [angbandDefs setObject:savefileString forKey:@"SaveFile"];
-        [angbandDefs synchronize];
     }
 }
 
@@ -2772,7 +2770,6 @@ static errr Term_xtra_cocoa_react(void)
 		    [[NSUserDefaults angbandDefaults]
 			setInteger:GRAPHICS_NONE
 			forKey:AngbandGraphicsDefaultsKey];
-		    [[NSUserDefaults angbandDefaults] synchronize];
 
 		    NSString *msg = NSLocalizedStringWithDefaultValue(
 			@"Error.TileSetLoadFailed",
@@ -4100,7 +4097,6 @@ static void play_sound(int event)
         forKey:[NSString stringWithFormat:@"FontName-%d", mainTerm]];
     [defs setFloat:[newFont pointSize]
         forKey:[NSString stringWithFormat:@"FontSize-%d", mainTerm]];
-    [defs synchronize];
 
     NSDisableScreenUpdates();
 
@@ -4534,7 +4530,6 @@ static void play_sound(int event)
 
     /* Stash it in UserDefaults */
     [[NSUserDefaults angbandDefaults] setInteger:graf_mode_req forKey:AngbandGraphicsDefaultsKey];
-    [[NSUserDefaults angbandDefaults] synchronize];
 
     if (graf_mode_req == GRAPHICS_NONE ||
 	get_graphics_mode(graf_mode_req) == GRAPHICS_NONE) {
@@ -4597,7 +4592,6 @@ static void play_sound(int event)
     sender.state = (is_on) ? NSOffState : NSOnState;
     [[NSUserDefaults angbandDefaults] setBool:(! is_on)
 				      forKey:AngbandBigTileDefaultsKey];
-    [[NSUserDefaults angbandDefaults] synchronize];
     if (graphics_are_enabled()) {
 	arg_bigtile = (is_on) ? FALSE : TRUE;
 	/* Mimics the logic in setGraphicsMode(). */
