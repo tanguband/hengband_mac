@@ -2308,7 +2308,13 @@ static __strong NSFont* gDefaultFont = nil;
 
 - (void)windowWillClose: (NSNotification *)notification
 {
+    /*
+     * If closing only because the application is terminating, don't update
+     * the visible state for when the application is relaunched.
+     */
+    if (! quit_when_ready) {
 	[self saveWindowVisibleToDefaults: NO];
+    }
 }
 
 @end
@@ -4790,6 +4796,7 @@ static void play_sound(int event)
 {
     if (p_ptr->playing == FALSE || game_is_finished == TRUE)
     {
+        quit_when_ready = true;
         return NSTerminateNow;
     }
     else if (! inkey_flag)
