@@ -67,29 +67,26 @@ static void put_title(void);
 
 /*!
  * @brief 各データファイルを読み取るためのパスを取得する
- * Find the default paths to all of our important sub-directories.
- * @param path パス保管先の文字列
+ * Set the default paths to all of our important sub-directories.
+ * @param libpath パス保管先の文字列
+ * @param varpath Is the base path for directories that have files which
+ * are not read-only: ANGBAND_DIR_APEX, ANGBAND_DIR_BONE, ANGBAND_DIR_DATA,
+ * and ANGBAND_DIR_SAVE.  If the PRIVATE_USER_PATH preprocessor macro has not
+ * been set, it is also used as the base path for ANGBAND_DIR_USER.
  * @return なし
  * @details
  * <pre>
- * The purpose of each sub-directory is described in "variable.c".
- * All of the sub-directories should, by default, be located inside
- * the main "lib" directory, whose location is very system dependant.
- * This function takes a writable buffer, initially containing the
- * "path" to the "lib" directory, for example, "/pkg/lib/angband/",
- * or a system dependant string, for example, ":lib:".  The buffer
- * must be large enough to contain at least 32 more characters.
- * Various command line options may allow some of the important
- * directories to be changed to user-specified directories, most
- * importantly, the "info" and "user" and "save" directories,
- * but this is done after this function, see "main.c".
- * In general, the initial path should end in the appropriate "PATH_SEP"
- * string.  All of the "sub-directory" paths (created below or supplied
- * by the user) will NOT end in the "PATH_SEP" string, see the special
- * "path_build()" function in "util.c" for more information.
- * Mega-Hack -- support fat raw files under NEXTSTEP, using special
- * "suffixed" directories for the "ANGBAND_DIR_DATA" directory, but
- * requiring the directories to be created by hand by the user.
+ * The purpose of each sub-directory is described in "files.c".
+ * The traditional behavior was to put all of the sub-directories within
+ * one directory, "lib".  To get that behavior, pass the same string for
+ * libpath and varpath.  Further customization may be done later in response
+ * to command line options (most importantly for the "info", "user", and
+ * "save" directories), but that is done after this function:  see
+ * "change_path()" in "main.c".  libpath and varpath should end in the
+ * appropriate "PATH_SEP" string.  All of the "sub-directory" paths
+ * (created below or supplied by the user) will NOT end in the "PATH_SEP"
+ * string, see the special "path_build()" function in "util.c" for more
+ * information.
  * Hack -- first we free all the strings, since this is known
  * to succeed even if the strings have not been allocated yet,
  * as long as the variables start out as "NULL".  This allows
@@ -97,11 +94,10 @@ static void put_title(void);
  * try several base "path" values until a good one is found.
  * </pre>
  */
-void init_file_paths(char *libpath, char *varpath)
+void init_file_paths(concptr libpath, concptr varpath)
 {
-	char *libtail, *vartail;
-
 #ifdef PRIVATE_USER_PATH
+	char base[1024];
 	char buf[1024];
 #endif /* PRIVATE_USER_PATH */
 
@@ -128,71 +124,30 @@ void init_file_paths(char *libpath, char *varpath)
 	/* Hack -- save the main directory */
 	ANGBAND_DIR = string_make(libpath);
 
-	/* Prepare to append to the Base Paths */
-	libtail = libpath + strlen(libpath);
-	vartail = varpath + strlen(varpath);
-
 	/*** Build the sub-directory names ***/
 
-	/* Build a path name */
-	strcpy(vartail, "apex");
-	ANGBAND_DIR_APEX = string_make(varpath);
-
-	/* Build a path name */
-	strcpy(vartail, "bone");
-	ANGBAND_DIR_BONE = string_make(varpath);
-
-	/* Build a path name */
-	strcpy(vartail, "data");
-	ANGBAND_DIR_DATA = string_make(varpath);
-
-	/* Build a path name */
-	strcpy(libtail, "edit");
-	ANGBAND_DIR_EDIT = string_make(libpath);
-
-	/* Build a path name */
-	strcpy(libtail, "script");
-	ANGBAND_DIR_SCRIPT = string_make(libpath);
-
-	/* Build a path name */
-	strcpy(libtail, "file");
-	ANGBAND_DIR_FILE = string_make(libpath);
-
-	/* Build a path name */
-	strcpy(libtail, "help");
-	ANGBAND_DIR_HELP = string_make(libpath);
-
-	/* Build a path name */
-	strcpy(libtail, "info");
-	ANGBAND_DIR_INFO = string_make(libpath);
-
-	/* Build a path name */
-	strcpy(libtail, "pref");
-	ANGBAND_DIR_PREF = string_make(libpath);
-
-	/* Build a path name */
-	strcpy(vartail, "save");
-	ANGBAND_DIR_SAVE = string_make(varpath);
+	ANGBAND_DIR_APEX = string_make(format("%sapex", varpath));
+	ANGBAND_DIR_BONE = string_make(format("%sbone", varpath));
+	ANGBAND_DIR_DATA = string_make(format("%sdata", varpath));
+	ANGBAND_DIR_EDIT = string_make(format("%sedit", libpath));
+	ANGBAND_DIR_SCRIPT = string_make(format("%sscript", libpath));
+	ANGBAND_DIR_FILE = string_make(format("%sfile", libpath));
+	ANGBAND_DIR_HELP = string_make(format("%shelp", libpath));
+	ANGBAND_DIR_INFO = string_make(format("%sinfo", libpath));
+	ANGBAND_DIR_PREF = string_make(format("%spref", libpath));
+	ANGBAND_DIR_SAVE = string_make(format("%ssave", varpath));
 
 #ifdef PRIVATE_USER_PATH
-
 	/* Build the path to the user specific directory */
-	path_build(buf, sizeof(buf), PRIVATE_USER_PATH, VERSION_NAME);
+	path_parse(base, sizeof(base), PRIVATE_USER_PATH);
+	path_build(buf, sizeof(buf), base, VERSION_NAME);
 
-	/* Build a relative path name */
 	ANGBAND_DIR_USER = string_make(buf);
-
 #else /* PRIVATE_USER_PATH */
-
-	/* Build a path name */
-	strcpy(vartail, "user");
-	ANGBAND_DIR_USER = string_make(varpath);
-
+	ANGBAND_DIR_USER = string_make(format("%suser", varpath));
 #endif /* PRIVATE_USER_PATH */
 
-	/* Build a path name */
-	strcpy(libtail, "xtra");
-	ANGBAND_DIR_XTRA = string_make(libpath);
+	ANGBAND_DIR_XTRA = string_make(format("%sxtra", libpath));
 }
 
 
