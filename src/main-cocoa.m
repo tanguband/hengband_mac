@@ -2832,15 +2832,19 @@ static errr Term_xtra_cocoa_react(void)
 	    }
 
 	    /* Reset visuals */
-	    if (arg_bigtile == use_bigtile)
+	    if (arg_bigtile == use_bigtile &&
+		current_world_ptr->character_generated)
 	    {
 		reset_visuals(p_ptr);
 	    }
 	}
 
 	if (arg_bigtile != use_bigtile) {
-	    /* Reset visuals */
-	    reset_visuals(p_ptr);
+	    if (current_world_ptr->character_generated)
+	    {
+		/* Reset visuals */
+		reset_visuals(p_ptr);
+	    }
 
 	    Term_activate(angband_term[0]);
 	    Term_resize(angband_term[0]->wid, angband_term[0]->hgt);
@@ -4126,7 +4130,8 @@ static void play_sound(int event)
 
     NSEnableScreenUpdates();
 
-    if (mainTerm == 0 && game_in_progress) {
+    if (mainTerm == 0 && game_in_progress &&
+	current_world_ptr->character_generated) {
 	/* Mimics the logic in setGraphicsMode(). */
 	do_cmd_redraw(p_ptr);
 	wakeup_event_loop();
@@ -4564,7 +4569,7 @@ static void play_sound(int event)
 	arg_bigtile = TRUE;
     }
 
-    if (game_in_progress)
+    if (game_in_progress && current_world_ptr->character_generated)
     {
 	if (arg_bigtile != use_bigtile) {
 	    Term_activate(angband_term[0]);
@@ -4618,7 +4623,8 @@ static void play_sound(int event)
     if (graphics_are_enabled()) {
 	arg_bigtile = (is_on) ? FALSE : TRUE;
 	/* Mimics the logic in setGraphicsMode(). */
-	if (game_in_progress && arg_bigtile != use_bigtile) {
+	if (game_in_progress && current_world_ptr->character_generated &&
+	    arg_bigtile != use_bigtile) {
 	    Term_activate(angband_term[0]);
 	    Term_resize(angband_term[0]->wid, angband_term[0]->hgt);
 	    do_cmd_redraw(p_ptr);
