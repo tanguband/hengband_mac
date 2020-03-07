@@ -2959,7 +2959,7 @@ static errr Term_xtra_cocoa(int n, int v)
     return result;
 }
 
-static errr Term_curs_cocoa(int x, int y)
+static errr Term_curs_cocoa(TERM_LEN x, TERM_LEN y)
 {
     AngbandContext *angbandContext = Term->data;
 
@@ -2980,7 +2980,7 @@ static errr Term_curs_cocoa(int x, int y)
  * the cursor points at a kanji character, irregardless of whether operating
  * in big tile mode.
  */
-static errr Term_bigcurs_cocoa(int x, int y)
+static errr Term_bigcurs_cocoa(TERM_LEN x, TERM_LEN y)
 {
     AngbandContext *angbandContext = Term->data;
 
@@ -3001,7 +3001,7 @@ static errr Term_bigcurs_cocoa(int x, int y)
  *
  * Erase "n" characters starting at (x,y)
  */
-static errr Term_wipe_cocoa(int x, int y, int n)
+static errr Term_wipe_cocoa(TERM_LEN x, TERM_LEN y, int n)
 {
     AngbandContext *angbandContext = Term->data;
     struct PendingCellChange *pc;
@@ -3042,9 +3042,9 @@ static errr Term_wipe_cocoa(int x, int y, int n)
     return (0);
 }
 
-static errr Term_pict_cocoa(int x, int y, int n, const TERM_COLOR *ap,
-                            concptr cp, const TERM_COLOR *tap,
-                            concptr tcp)
+static errr Term_pict_cocoa(TERM_LEN x, TERM_LEN y, int n,
+                            const TERM_COLOR *ap, concptr cp,
+                            const TERM_COLOR *tap, concptr tcp)
 {
     
     /* Paranoia: Bail if we don't have a current graphics mode */
@@ -3115,7 +3115,8 @@ static errr Term_pict_cocoa(int x, int y, int n, const TERM_COLOR *ap,
  *
  * Draw several ("n") chars, with an attr, at a given location.
  */
-static errr Term_text_cocoa(int x, int y, int n, TERM_COLOR a, concptr cp)
+static errr Term_text_cocoa(
+    TERM_LEN x, TERM_LEN y, int n, TERM_COLOR a, concptr cp)
 {
     AngbandContext* angbandContext = Term->data;
     struct PendingCellChange *pc;
