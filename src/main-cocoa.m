@@ -1667,11 +1667,19 @@ static void Term_init_cocoa(term *t)
 
     /* Get the window */
     NSWindow *window = [context makePrimaryWindow];
-    
+    NSString *title;
+
     /* Set its title and, for auxiliary terms, tentative size */
     if (termIdx == 0)
     {
-        [window setTitle:@"Hengband"];
+	title = [NSString stringWithCString:angband_term_name[0]
+#ifdef JP
+			      encoding:NSJapaneseEUCStringEncoding
+#else
+			      encoding:NSMacOSRomanString
+#endif
+	];
+        [window setTitle:title];
 
         /* Set minimum size (80x24) */
         NSSize minsize;
@@ -1681,7 +1689,14 @@ static void Term_init_cocoa(term *t)
     }
     else
     {
-        [window setTitle:[NSString stringWithFormat:@"Term %d", termIdx]];
+	title = [NSString stringWithCString:angband_term_name[termIdx]
+#ifdef JP
+			      encoding:NSJapaneseEUCStringEncoding
+#else
+			      encoding:NSMacOSRomanString
+#endif
+	];
+        [window setTitle:title];
         /* Set minimum size (1x1) */
         NSSize minsize;
         minsize.width = context->tileSize.width + context->borderSize.width * 2.0;
