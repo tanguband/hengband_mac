@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to process Makefile.in
 
-AUTOMAKE_OPTIONS = foreign subdir-objects
+AUTOMAKE_OPTIONS = foreign subdir-objects nostdinc
 
 bin_PROGRAMS = hengband
 
@@ -146,15 +146,25 @@ hengband_SOURCES = \
 
 EXTRA_hengband_SOURCES = \
 	angband.ico angband.rc ang_eng.rc maid-x11.c main-win.c \
-	makefile.bcc makefile.std readdib.c readdib.h wall.bmp
+	makefile.bcc makefile.std \
+	readdib.c readdib.h wall.bmp
 
 EXTRA_DIST = \
 	gcc-wrap
 
+DEFAULT_INCLUDES = -I$(srcdir) \
+	-I$(srcdir)/cmd \
+	-I$(srcdir)/combat \
+	-I$(srcdir)/core \
+	-I$(srcdir)/io \
+	-I$(srcdir)/monster \
+	-I$(srcdir)/player \
+	-I$(srcdir)/view \
+	-I$(top_builddir)/src
 CFLAGS += $(XFT_CFLAGS)
 LIBS += $(XFT_LIBS)
 COMPILE = $(srcdir)/gcc-wrap $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -Icmd -Icombat -Icore -Iio -Imonster -Iplayer -Iview
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 
 install-exec-hook:
 if SET_GID
