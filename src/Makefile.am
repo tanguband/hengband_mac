@@ -149,8 +149,73 @@ EXTRA_hengband_SOURCES = \
 	makefile.bcc makefile.std \
 	readdib.c readdib.h wall.bmp
 
+cocoa_icon_files = \
+	cocoa/hengband_Icons.icns \
+	cocoa/Save.icns \
+	cocoa/Edit.icns \
+	cocoa/Data.icns
+cocoa_plist_template = cocoa/Angband-Cocoa.xml
+cocoa_plist_files = \
+	cocoa/CommandMenu.plist
+cocoa_en_nib_files = \
+	cocoa/en.lproj/MainMenu.nib/designable.nib \
+	cocoa/en.lproj/MainMenu.nib/keyedobjects.nib
+cocoa_en_strings_files = \
+	cocoa/en.lproj/CommandMenu.strings \
+	cocoa/en.lproj/GraphicsMenu.strings
+cocoa_ja_nib_files = \
+	cocoa/ja.lproj/MainMenu.nib/designable.nib \
+	cocoa/ja.lproj/MainMenu.nib/keyedobjects.nib
+cocoa_ja_strings_files = \
+	cocoa/ja.lproj/CommandMenu.strings \
+	cocoa/ja.lproj/GraphicsMenu.strings
+
 EXTRA_DIST = \
-	gcc-wrap
+	gcc-wrap \
+	$(cocoa_icon_files) \
+	$(cocoa_plist_template) \
+	$(cocoa_plist_files) \
+	$(cocoa_en_nib_files) \
+	$(cocoa_en_strings_files) \
+	$(cocoa_ja_nib_files) \
+	$(cocoa_ja_strings_files)
+
+if COCOA
+hengband_SOURCES += main-cocoa.m grafmode.h grafmode.c
+AM_CFLAGS = -mmacosx-version-min=10.7
+AM_OBJCFLAGS = -mmacosx-version-min=10.7
+hengband_LDFLAGS = -framework cocoa $(AM_LDFLAGS)
+hengband_LINK = MACOSX_DEPLOYMENT_TARGET=10.7 $(OBJCLINK) $(hengband_LDFLAGS) $(LDFLAGS) -o $@
+APPNAME = $(PACKAGE_NAME)
+APPEXE = hengband
+APPDIR = $(APPNAME).app
+BUNDLE_IDENTIFIER = jp.osdn.hengband
+BUNDLE_VERSION = $(PACKAGE_VERSION)
+# Be careful with characters (like '&') in the copyright that have special
+# meanings to sed.
+COPYRIGHT = (c) Mr. Hoge and many others
+APPBNDL = $(bindir)/$(APPDIR)
+APPCONT = $(APPBNDL)/Contents
+APPBIN = $(APPCONT)/MacOS
+APPRES = $(APPCONT)/Resources
+appbin_PROGRAMS = $(APPEXE)
+appbindir = $(APPBIN)
+dist_appicon_DATA = $(cocoa_icon_files)
+appicondir = $(APPRES)
+appplist_DATA = $(cocoa_plist_files)
+appplistdir = $(APPRES)
+appennib_DATA = $(cocoa_en_nib_files)
+appennibdir = $(APPRES)/en.lproj/MainMenu.nib
+appen_DATA = $(cocoa_en_strings_files)
+appendir = $(APPRES)/en.lproj
+appjanib_DATA = $(cocoa_ja_nib_files)
+appjanibdir = $(APPRES)/ja.lproj/MainMenu.nib
+appja_DATA = $(cocoa_ja_strings_files)
+appjadir = $(APPRES)/ja.lproj
+else
+EXTRA_hengband_SOURCES += main-cocoa.m grafmode.h grafmode.c
+hengband_LINK = $(LINK)
+endif
 
 DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/cmd \
@@ -165,9 +230,32 @@ CFLAGS += $(XFT_CFLAGS)
 LIBS += $(XFT_LIBS)
 COMPILE = $(srcdir)/gcc-wrap $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+OBJCCOMPILE = $(srcdir)/gcc-wrap $(OBJC) $(DEFS) $(DEFAULT_INCLUDES) \
+	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCFLAGS) $(OBJCFLAGS)
 
 install-exec-hook:
 if SET_GID
 	chgrp "@GAMEGROUP@" "$(DESTDIR)$(bindir)/hengband"
 	chmod g+s "$(DESTDIR)$(bindir)/hengband"
+endif
+
+if COCOA
+# Create lib/info and lib/xtra within the application bundle since not
+# currently installing anything to them.  Other relevant lib directories
+# should be created from the Makefiles in the lib directory.
+install-data-local:
+	@mkdir -p $(APPCONT)
+	@mkdir -p $(APPRES)/lib/info
+	@mkdir -p $(APPRES)/lib/xtra
+	sed -e 's/\$$VERSION\$$/$(PACKAGE_VERSION)/' \
+		-e 's/\$$COPYRIGHT\$$/$(COPYRIGHT)/' \
+		-e 's/\$$NAME\$$/$(APPNAME)/' \
+		-e 's/\$$EXECUTABLE\$$/$(APPEXE)/' \
+		-e 's/\$$BUNDLE_VERSION\$$/$(BUNDLE_VERSION)/' \
+		-e 's/\$$BUNDLE_IDENTIFIER\$$/$(BUNDLE_IDENTIFIER)/' \
+		$(srcdir)/$(cocoa_plist_template) > $(APPCONT)/Info.plist
+
+distclean-local:
+	-rm $(APPCONT)/Info.plist
+
 endif
