@@ -4135,8 +4135,11 @@ static void hook_quit(const char * str)
     else if( sel == @selector(sendAngbandCommand:) ||
 	     sel == @selector(saveGame:) )
     {
-        /* we only want to be able to send commands during an active game */
-        return !!game_in_progress;
+        /*
+         * we only want to be able to send commands during an active game
+         * after the birth screens
+         */
+        return !!game_in_progress && current_world_ptr->character_generated;
     }
     else return YES;
 }
