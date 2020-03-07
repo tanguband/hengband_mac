@@ -58,7 +58,6 @@ or makefile.dos before MAKE with these.
 Download the binary archive for Macintosh.
 Unpack it, and click hengband to play.
 
-
 For Mac OS X with XCode installed, the Unix instructions can work to build a
 version usable from a terminal.  If XQuartz, https://www.xquartz.org ,  is
 installed, X11 will be used for display.
