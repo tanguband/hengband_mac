@@ -150,6 +150,10 @@ EXTRA_hengband_SOURCES = \
 	makefile.bcc makefile.std \
 	readdib.c readdib.h wall.bmp
 
+cocoa_xcode_files = \
+	cocoa/AppDelegate.h \
+	cocoa/AppDelegate.m \
+	cocoa/Base.lproj/MainMenu.xib
 cocoa_icon_files = \
 	cocoa/hengband_Icons.icns \
 	cocoa/Save.icns \
@@ -160,37 +164,34 @@ cocoa_plist_strings_template = cocoa/Angband-Cocoa.strings
 cocoa_plist_files = \
 	cocoa/CommandMenu.plist
 cocoa_en_nib_files = \
-	cocoa/en.lproj/MainMenu.nib/designable.nib \
-	cocoa/en.lproj/MainMenu.nib/keyedobjects.nib
+	cocoa/Base.lproj/MainMenu.nib
 cocoa_en_strings_files = \
 	cocoa/en.lproj/Localizable.strings \
 	cocoa/en.lproj/CommandMenu.strings \
 	cocoa/en.lproj/GraphicsMenu.strings
-cocoa_ja_nib_files = \
-	cocoa/ja.lproj/MainMenu.nib/designable.nib \
-	cocoa/ja.lproj/MainMenu.nib/keyedobjects.nib
 cocoa_ja_strings_files = \
+	cocoa/ja.lproj/MainMenu.strings \
 	cocoa/ja.lproj/Localizable.strings \
 	cocoa/ja.lproj/CommandMenu.strings \
 	cocoa/ja.lproj/GraphicsMenu.strings
 
 EXTRA_DIST = \
 	gcc-wrap \
+	$(cocoa_xcode_files) \
 	$(cocoa_icon_files) \
 	$(cocoa_plist_template) \
 	$(cocoa_plist_strings_template) \
 	$(cocoa_plist_files) \
 	$(cocoa_en_nib_files) \
 	$(cocoa_en_strings_files) \
-	$(cocoa_ja_nib_files) \
 	$(cocoa_ja_strings_files)
 
 if COCOA
 hengband_SOURCES += main-cocoa.m grafmode.h grafmode.c
-AM_CFLAGS = -mmacosx-version-min=10.7 -Wunguarded-availability
-AM_OBJCFLAGS = -mmacosx-version-min=10.7 -Wunguarded-availability
+AM_CFLAGS = -mmacosx-version-min=10.8 -Wunguarded-availability
+AM_OBJCFLAGS = -mmacosx-version-min=10.8 -Wunguarded-availability
 hengband_LDFLAGS = -framework cocoa $(AM_LDFLAGS)
-hengband_LINK = MACOSX_DEPLOYMENT_TARGET=10.7 $(OBJCLINK) $(hengband_LDFLAGS) $(LDFLAGS) -o $@
+hengband_LINK = MACOSX_DEPLOYMENT_TARGET=10.8 $(OBJCLINK) $(hengband_LDFLAGS) $(LDFLAGS) -o $@
 APPNAME = $(PACKAGE_NAME)
 APPEXE = hengband
 APPDIR = $(APPNAME).app
@@ -216,11 +217,9 @@ appicondir = $(APPRES)
 appplist_DATA = $(cocoa_plist_files)
 appplistdir = $(APPRES)
 appennib_DATA = $(cocoa_en_nib_files)
-appennibdir = $(APPRES)/en.lproj/MainMenu.nib
+appennibdir = $(APPRES)/Base.lproj
 appen_DATA = $(cocoa_en_strings_files)
 appendir = $(APPRES)/en.lproj
-appjanib_DATA = $(cocoa_ja_nib_files)
-appjanibdir = $(APPRES)/ja.lproj/MainMenu.nib
 appja_DATA = $(cocoa_ja_strings_files)
 appjadir = $(APPRES)/ja.lproj
 else
