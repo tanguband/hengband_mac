@@ -431,7 +431,7 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 #endif
 		for (s = tmp; *s; s++)
 		{
-#if defined(MACH_O_CARBON)
+#if defined(MACH_O_CARBON) || defined(MACH_O_COCOA)
 
 			/*
 			 * Be nice to the Macintosh, where a file can have Mac or Unix
@@ -440,7 +440,7 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 			 */
 			if (*s == '\r') *s = '\n';
 
-#endif /* MACH_O_CARBON */
+#endif /* MACH_O_CARBON || MACH_O_COCOA */
 			if (*s == '\n')
 			{
 				buf[i] = '\0';

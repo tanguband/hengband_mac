@@ -33,7 +33,7 @@
  */
 
 
-#if !defined(WINDOWS)
+#if !defined(WINDOWS) && !defined(MACH_O_COCOA)
 
 /*
  * A hook for "quit()".
