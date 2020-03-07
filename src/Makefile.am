@@ -140,6 +140,7 @@ EXTRA_DIST = \
 	gcc-wrap \
 	$(cocoa_icon_files) \
 	$(cocoa_plist_template) \
+	$(cocoa_plist_strings_template) \
 	$(cocoa_plist_files) \
 	$(cocoa_en_nib_files) \
 	$(cocoa_en_strings_files) \
@@ -234,5 +235,7 @@ install-data-local:
 
 distclean-local:
 	-rm $(APPCONT)/Info.plist
+	-rm $(appendir)/InfoPlist.strings
+	-rm $(appjadir)/InfoPlist.strings
 
 endif
