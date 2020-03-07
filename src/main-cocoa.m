@@ -1704,7 +1704,7 @@ static void Term_init_cocoa(term *t)
 #ifdef JP
 			      encoding:NSJapaneseEUCStringEncoding
 #else
-			      encoding:NSMacOSRomanString
+			      encoding:NSMacOSRomanStringEncoding
 #endif
 	];
         [window setTitle:title];
@@ -1721,7 +1721,7 @@ static void Term_init_cocoa(term *t)
 #ifdef JP
 			      encoding:NSJapaneseEUCStringEncoding
 #else
-			      encoding:NSMacOSRomanString
+			      encoding:NSMacOSRomanStringEncoding
 #endif
 	];
         [window setTitle:title];
