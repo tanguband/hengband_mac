@@ -22,7 +22,7 @@
  */
 #include "angband.h"
 #include "grafmode.h"
-
+#include "files.h"
 
 #define GFPARSE_HAVE_NOTHING (0)
 #define GFPARSE_HAVE_NAME (1)
