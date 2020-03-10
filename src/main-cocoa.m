@@ -3604,6 +3604,27 @@ static errr Term_text_cocoa(
 }
 
 /**
+ * Handle redrawing for a change to the tile set, tile scaling, or main window
+ * font.  Returns YES if the redrawing was initiated.  Otherwise returns NO.
+ */
+static BOOL redraw_for_tiles_or_term0_font(void)
+{
+    /*
+     * In Angband 4.2, do_cmd_redraw() will always clear, but only provides
+     * something to replace the erased content if a character has been
+     * generated.  In Hengband, do_cmd_redraw() isn't safe to call unless a
+     * character has been generated.  Therefore, only call it if a character
+     * has been generated.
+     */
+    if (current_world_ptr->character_generated) {
+	do_cmd_redraw(p_ptr);
+	wakeup_event_loop();
+	return YES;
+    }
+    return NO;
+}
+
+/**
  * Post a nonsense event so that our event loop wakes up
  */
 static void wakeup_event_loop(void)
@@ -4149,12 +4170,7 @@ static void play_sound(int event)
 
     NSEnableScreenUpdates();
 
-    if (mainTerm == 0 && game_in_progress &&
-	current_world_ptr->character_generated) {
-	/* Mimics the logic in setGraphicsMode(). */
-	do_cmd_redraw(p_ptr);
-	wakeup_event_loop();
-    } else {
+    if (mainTerm != 0 || ! redraw_for_tiles_or_term0_font()) {
 	[(id)angbandContext requestRedraw];
     }
 }
@@ -4586,19 +4602,11 @@ static void play_sound(int event)
 	arg_bigtile = TRUE;
     }
 
-    if (game_in_progress && current_world_ptr->character_generated)
-    {
-	if (arg_bigtile != use_bigtile) {
-	    Term_activate(angband_term[0]);
-	    Term_resize(angband_term[0]->wid, angband_term[0]->hgt);
-	}
-
-        /* Hack -- Force redraw */
-        do_cmd_redraw(p_ptr);
-
-        /* Wake up the event loop so it notices the change */
-        wakeup_event_loop();
+    if (arg_bigtile != use_bigtile) {
+	Term_activate(angband_term[0]);
+	Term_resize(angband_term[0]->wid, angband_term[0]->hgt);
     }
+    redraw_for_tiles_or_term0_font();
 }
 
 - (void)selectWindow: (id)sender
@@ -4639,13 +4647,10 @@ static void play_sound(int event)
 				      forKey:AngbandBigTileDefaultsKey];
     if (graphics_are_enabled()) {
 	arg_bigtile = (is_on) ? FALSE : TRUE;
-	/* Mimics the logic in setGraphicsMode(). */
-	if (game_in_progress && current_world_ptr->character_generated &&
-	    arg_bigtile != use_bigtile) {
+	if (arg_bigtile != use_bigtile) {
 	    Term_activate(angband_term[0]);
 	    Term_resize(angband_term[0]->wid, angband_term[0]->hgt);
-	    do_cmd_redraw(p_ptr);
-	    wakeup_event_loop();
+	    redraw_for_tiles_or_term0_font();
 	}
     }
 }
