@@ -2034,11 +2034,14 @@ static __strong NSFont* gDefaultFont = nil;
 	 */
         if ((__bridge AngbandContext*) (angband_term[0]->data) != self)
         {
-	    self.primaryWindow =
+	    NSPanel *panel =
 		[[NSPanel alloc] initWithContentRect:contentRect
 				 styleMask:(styleMask | NSClosableWindowMask |
 					    NSUtilityWindowMask)
 				 backing:NSBackingStoreBuffered defer:YES];
+
+	    panel.floatingPanel = NO;
+	    self.primaryWindow = panel;
         } else {
 	    self.primaryWindow =
 		[[NSWindow alloc] initWithContentRect:contentRect
