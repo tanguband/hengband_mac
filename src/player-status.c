@@ -29,13 +29,14 @@
 #include "patron.h"
 #include "realm-hex.h"
 #include "realm-song.h"
-#include "cmd-pet.h"
-#include "cmd-spell.h"
+#include "cmd/cmd-pet.h"
+#include "cmd/cmd-spell.h"
 #include "dungeon.h"
 #include "objectkind.h"
 #include "monsterrace.h"
 #include "autopick.h"
-#include "cmd-dump.h"
+#include "io/write-diary.h"
+#include "cmd/cmd-dump.h"
 #include "melee.h"
 #include "world.h"
 #include "view-mainwindow.h"
@@ -4644,7 +4645,7 @@ void sanity_blast(player_type *creature_ptr, monster_type *m_ptr, bool necro)
 		GAME_TEXT m_name[MAX_NLEN];
 		concptr desc;
 		get_mon_num_prep(creature_ptr, get_nightmare, NULL);
-		r_ptr = &r_info[get_mon_num(creature_ptr, MAX_DEPTH)];
+		r_ptr = &r_info[get_mon_num(creature_ptr, MAX_DEPTH, 0)];
 		power = r_ptr->level + 10;
 		desc = r_name + r_ptr->name;
 		get_mon_num_prep(creature_ptr, NULL, NULL);

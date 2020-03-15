@@ -282,6 +282,7 @@ typedef struct
 #define PM_HASTE          0x00000100    /*!< モンスター生成フラグ: 加速状態で生成する */
 #define PM_KAGE           0x00000200    /*!< モンスター生成フラグ: 必ずあやしい影として生成する */
 #define PM_MULTIPLY       0x00000400    /*!< モンスター生成フラグ: 増殖処理時として生成する */
+#define PM_JURAL          0x00000800    /*!< モンスター生成フラグ: ジュラル星人として誤認生成する */
 
 extern bool place_monster_aux(player_type *player_ptr, MONSTER_IDX who, POSITION y, POSITION x, MONRACE_IDX r_idx, BIT_FLAGS mode);
 extern bool place_monster(player_type *player_ptr, POSITION y, POSITION x, BIT_FLAGS mode);
@@ -344,7 +345,10 @@ extern void compact_monsters(player_type *player_ptr, int size);
 extern void wipe_monsters_list(player_type *player_ptr);
 extern MONSTER_IDX m_pop(player_type *player_ptr);
 extern errr get_mon_num_prep(player_type *player_ptr, monsterrace_hook_type monster_hook, monsterrace_hook_type monster_hook2);
-extern MONRACE_IDX get_mon_num(player_type *player_ptr, DEPTH level);
+
+#define GMN_ARENA 0x00000001 //!< 賭け闘技場向け生成 
+extern MONRACE_IDX get_mon_num(player_type *player_ptr, DEPTH level, BIT_FLAGS option);
+
 extern int lore_do_probe(player_type *player_ptr, MONRACE_IDX r_idx);
 extern void lore_treasure(player_type *player_ptr, MONSTER_IDX m_idx, ITEM_NUMBER num_item, ITEM_NUMBER num_gold);
 extern void update_monster(player_type *subject_ptr, MONSTER_IDX m_idx, bool full);

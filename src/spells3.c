@@ -42,6 +42,7 @@
 #include "monster-process.h"
 #include "monster-status.h"
 #include "monster-spell.h"
+#include "io/write-diary.h"
 #include "cmd/cmd-save.h"
 #include "cmd/cmd-spell.h"
 #include "cmd/cmd-dump.h"
@@ -2394,7 +2395,7 @@ static MONRACE_IDX poly_r_idx(player_type *caster_ptr, MONRACE_IDX r_idx)
 	MONRACE_IDX r;
 	for (int i = 0; i < 1000; i++)
 	{
-		r = get_mon_num(caster_ptr, (caster_ptr->current_floor_ptr->dun_level + r_ptr->level) / 2 + 5);
+		r = get_mon_num(caster_ptr, (caster_ptr->current_floor_ptr->dun_level + r_ptr->level) / 2 + 5, 0);
 		if (!r) break;
 
 		r_ptr = &r_info[r];

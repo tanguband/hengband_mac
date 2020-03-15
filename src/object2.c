@@ -18,8 +18,9 @@
 
 #include "object.h"
 
-#include "cmd-dump.h"
-#include "cmd-spell.h"
+#include "io/write-diary.h"
+#include "cmd/cmd-dump.h"
+#include "cmd/cmd-spell.h"
 #include "spells.h"
 #include "dungeon.h"
 #include "floor.h"
@@ -2898,7 +2899,7 @@ static void a_m_aux_4(player_type *owner_ptr, object_type *o_ptr, int power)
 		get_mon_num_prep(owner_ptr, item_monster_okay, NULL);
 		while (TRUE)
 		{
-			i = get_mon_num(owner_ptr, floor_ptr->dun_level);
+			i = get_mon_num(owner_ptr, floor_ptr->dun_level, 0);
 			r_ptr = &r_info[i];
 			check = (floor_ptr->dun_level < r_ptr->level) ? (r_ptr->level - floor_ptr->dun_level) : 0;
 			if (!r_ptr->rarity) continue;
