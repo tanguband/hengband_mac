@@ -26,6 +26,7 @@
 #include "core.h"
 #include "world.h"
 #include "term.h"
+#include "view-mainwindow.h"
 
 #if defined(MACH_O_COCOA)
 
