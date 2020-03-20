@@ -21,6 +21,7 @@
 #include "grafmode.h"
 
 #include "cmd-dump.h"
+#include "cmd-save.h"
 #include "init.h"
 #include "files.h"
 #include "core.h"
