@@ -20,6 +20,7 @@
 /* This is not included in angband.h in Hengband. */
 #include "grafmode.h"
 
+#include "cmd-draw.h"
 #include "cmd-dump.h"
 #include "cmd-save.h"
 #include "init.h"
