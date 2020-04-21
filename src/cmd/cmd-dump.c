@@ -33,9 +33,10 @@
 #include "angband.h"
 #include "cmd/cmd-draw.h"
 #include "cmd/cmd-dump.h"
+#include "cmd/cmd-inventory.h"
 #include "cmd/lighting-level-table.h"
 #include "cmd/cmd-visuals.h"
-#include "term.h"
+#include "gameterm.h"
 #include "core.h" // 暫定。後で消す.
 #include "core/show-file.h"
 #include "io/read-pref-file.h"
@@ -206,102 +207,6 @@ concptr get_ordinal_number_suffix(int num)
 }
 #endif
 
-
-/*!
- * @brief 日記のタイトル表記と内容出力
- * @param creature_ptr プレーヤーへの参照ポインタ
- * @return なし
- */
-static void display_diary(player_type *creature_ptr)
-{
-	char diary_title[256];
-	GAME_TEXT file_name[MAX_NLEN];
-	char buf[1024];
-	char tmp[80];
-	sprintf(file_name, _("playrecord-%s.txt", "playrec-%s.txt"), savefile_base);
-	path_build(buf, sizeof(buf), ANGBAND_DIR_USER, file_name);
-
-	if (creature_ptr->pclass == CLASS_WARRIOR || creature_ptr->pclass == CLASS_MONK || creature_ptr->pclass == CLASS_SAMURAI || creature_ptr->pclass == CLASS_BERSERKER)
-		strcpy(tmp, subtitle[randint0(MAX_SUBTITLE - 1)]);
-	else if (IS_WIZARD_CLASS(creature_ptr))
-		strcpy(tmp, subtitle[randint0(MAX_SUBTITLE - 1) + 1]);
-	else strcpy(tmp, subtitle[randint0(MAX_SUBTITLE - 2) + 1]);
-
-#ifdef JP
-	sprintf(diary_title, "「%s%s%sの伝説 -%s-」", ap_ptr->title, ap_ptr->no ? "の" : "", creature_ptr->name, tmp);
-#else
-	sprintf(diary_title, "Legend of %s %s '%s'", ap_ptr->title, creature_ptr->name, tmp);
-#endif
-
-	(void)show_file(creature_ptr, FALSE, buf, diary_title, -1, 0);
-}
-
-
-/*!
- * @brief 日記に任意の内容を表記するコマンドのメインルーチン /
- * @return なし
- */
-static void add_diary_note(player_type *creature_ptr)
-{
-	char tmp[80] = "\0";
-	char bunshou[80] = "\0";
-	if (get_string(_("内容: ", "diary note: "), tmp, 79))
-	{
-		strcpy(bunshou, tmp);
-		exe_write_diary(creature_ptr, DIARY_DESCRIPTION, 0, bunshou);
-	}
-}
-
-/*!
- * @brief 最後に取得したアイテムの情報を日記に追加するメインルーチン /
- * @return なし
- */
-static void do_cmd_last_get(player_type *creaute_ptr)
-{
-	if (record_o_name[0] == '\0') return;
-
-	char buf[256];
-	sprintf(buf, _("%sの入手を記録します。", "Do you really want to record getting %s? "), record_o_name);
-	if (!get_check(buf)) return;
-
-	GAME_TURN turn_tmp = current_world_ptr->game_turn;
-	current_world_ptr->game_turn = record_turn;
-	sprintf(buf, _("%sを手に入れた。", "discovered %s."), record_o_name);
-	exe_write_diary(creaute_ptr, DIARY_DESCRIPTION, 0, buf);
-	current_world_ptr->game_turn = turn_tmp;
-}
-
-
-/*!
- * @brief ファイル中の全日記記録を消去する /
- * @return なし
- */
-static void do_cmd_erase_diary(void)
-{
-	GAME_TEXT file_name[MAX_NLEN];
-	char buf[256];
-	FILE *fff = NULL;
-
-	if (!get_check(_("本当に記録を消去しますか？", "Do you really want to delete all your record? "))) return;
-	sprintf(file_name, _("playrecord-%s.txt", "playrec-%s.txt"), savefile_base);
-	path_build(buf, sizeof(buf), ANGBAND_DIR_USER, file_name);
-	fd_kill(buf);
-
-	fff = my_fopen(buf, "w");
-	if (fff)
-	{
-		my_fclose(fff);
-		msg_format(_("記録を消去しました。", "deleted record."));
-	}
-	else
-	{
-		msg_format(_("%s の消去に失敗しました。", "failed to delete %s."), buf);
-	}
-
-	msg_print(NULL);
-}
-
-
 /*!
  * @brief 画面を再描画するコマンドのメインルーチン
  * Hack -- redraw the screen
@@ -376,7 +281,7 @@ void do_cmd_colors(player_type *creature_ptr)
 			if (!askfor(tmp, 70)) continue;
 
 			path_build(buf, sizeof(buf), ANGBAND_DIR_USER, tmp);
-			if (!open_auto_dump(auto_dump_stream, buf, mark)) continue;
+			if (!open_auto_dump(&auto_dump_stream, buf, mark)) continue;
 
 			auto_dump_printf(auto_dump_stream, _("\n# カラーの設定\n\n", "\n# Color redefinitions\n\n"));
 			for (i = 0; i < 256; i++)
@@ -396,7 +301,7 @@ void do_cmd_colors(player_type *creature_ptr)
 					i, kv, rv, gv, bv);
 			}
 
-			close_auto_dump(auto_dump_stream, mark);
+			close_auto_dump(&auto_dump_stream, mark);
 			msg_print(_("カラーの設定をファイルに書き出しました。", "Dumped color redefinitions."));
 		}
 		else if (i == '3')
@@ -747,171 +652,6 @@ void do_cmd_load_screen(void)
 	flush();
 	inkey();
 	screen_load();
-}
-
-// todo なぜこんな中途半端なところに？ defineも…
-concptr inven_res_label = _("                               酸電火冷毒光闇破轟獄因沌劣 盲怖乱痺透命感消復浮",
-	"                               AcElFiCoPoLiDkShSoNtNxCaDi BlFeCfFaSeHlEpSdRgLv");
-
-#define IM_FLAG_STR  _("＊", "* ")
-#define HAS_FLAG_STR _("＋", "+ ")
-#define NO_FLAG_STR  _("・", ". ")
-
-#define print_im_or_res_flag(IM, RES) \
-{ \
-	fputs(have_flag(flgs, (IM)) ? IM_FLAG_STR : \
-	      (have_flag(flgs, (RES)) ? HAS_FLAG_STR : NO_FLAG_STR), fff); \
-}
-
-#define print_flag(TR) \
-{ \
-	fputs(have_flag(flgs, (TR)) ? HAS_FLAG_STR : NO_FLAG_STR, fff); \
-}
-
-
-static void do_cmd_knowledge_inven_aux(player_type *creature_ptr, FILE *fff, object_type *o_ptr, int *j, OBJECT_TYPE_VALUE tval, char *where)
-{
-	GAME_TEXT o_name[MAX_NLEN];
-	BIT_FLAGS flgs[TR_FLAG_SIZE];
-	if (!o_ptr->k_idx) return;
-	if (o_ptr->tval != tval) return;
-	if (!object_is_known(o_ptr)) return;
-
-	bool is_special_item_type = (object_is_wearable(o_ptr) && object_is_ego(o_ptr))
-		|| ((tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_RESISTANCE))
-		|| ((tval == TV_RING) && (o_ptr->sval == SV_RING_LORDLY))
-		|| ((tval == TV_SHIELD) && (o_ptr->sval == SV_DRAGON_SHIELD))
-		|| ((tval == TV_HELM) && (o_ptr->sval == SV_DRAGON_HELM))
-		|| ((tval == TV_GLOVES) && (o_ptr->sval == SV_SET_OF_DRAGON_GLOVES))
-		|| ((tval == TV_BOOTS) && (o_ptr->sval == SV_PAIR_OF_DRAGON_GREAVE))
-		|| object_is_artifact(o_ptr);
-	if (!is_special_item_type)
-	{
-		return;
-	}
-
-	int i = 0;
-	object_desc(creature_ptr, o_name, o_ptr, OD_NAME_ONLY);
-	while (o_name[i] && (i < 26))
-	{
-#ifdef JP
-		if (iskanji(o_name[i])) i++;
-#endif
-		i++;
-	}
-
-	if (i < 28)
-	{
-		while (i < 28)
-		{
-			o_name[i] = ' '; i++;
-		}
-	}
-
-	o_name[i] = '\0';
-
-	fprintf(fff, "%s %s", where, o_name);
-
-	if (!OBJECT_IS_FULL_KNOWN(o_ptr))
-	{
-		fputs(_("-------不明--------------- -------不明---------\n",
-			"-------unknown------------ -------unknown------\n"), fff);
-	}
-	else
-	{
-		object_flags_known(o_ptr, flgs);
-
-		print_im_or_res_flag(TR_IM_ACID, TR_RES_ACID);
-		print_im_or_res_flag(TR_IM_ELEC, TR_RES_ELEC);
-		print_im_or_res_flag(TR_IM_FIRE, TR_RES_FIRE);
-		print_im_or_res_flag(TR_IM_COLD, TR_RES_COLD);
-		print_flag(TR_RES_POIS);
-		print_flag(TR_RES_LITE);
-		print_flag(TR_RES_DARK);
-		print_flag(TR_RES_SHARDS);
-		print_flag(TR_RES_SOUND);
-		print_flag(TR_RES_NETHER);
-		print_flag(TR_RES_NEXUS);
-		print_flag(TR_RES_CHAOS);
-		print_flag(TR_RES_DISEN);
-
-		fputs(" ", fff);
-
-		print_flag(TR_RES_BLIND);
-		print_flag(TR_RES_FEAR);
-		print_flag(TR_RES_CONF);
-		print_flag(TR_FREE_ACT);
-		print_flag(TR_SEE_INVIS);
-		print_flag(TR_HOLD_EXP);
-		print_flag(TR_TELEPATHY);
-		print_flag(TR_SLOW_DIGEST);
-		print_flag(TR_REGEN);
-		print_flag(TR_LEVITATION);
-
-		fputc('\n', fff);
-	}
-
-	(*j)++;
-	if (*j == 9)
-	{
-		*j = 0;
-		fprintf(fff, "%s\n", inven_res_label);
-	}
-}
-
-/*
- * Display *ID* ed weapons/armors's resistances
- */
-static void do_cmd_knowledge_inven(player_type *creature_ptr)
-{
-	FILE *fff;
-	GAME_TEXT file_name[1024];
-	store_type *store_ptr;
-	OBJECT_TYPE_VALUE tval;
-	int j = 0;
-
-	char where[32];
-	fff = my_fopen_temp(file_name, 1024);
-	if (!fff)
-	{
-		msg_format(_("一時ファイル %s を作成できませんでした。", "Failed to create temporary file %s."), file_name);
-		msg_print(NULL);
-		return;
-	}
-
-	fprintf(fff, "%s\n", inven_res_label);
-	for (tval = TV_WEARABLE_BEGIN; tval <= TV_WEARABLE_END; tval++)
-	{
-		if (j != 0)
-		{
-			for (; j < 9; j++) fputc('\n', fff);
-			j = 0;
-			fprintf(fff, "%s\n", inven_res_label);
-		}
-
-		strcpy(where, _("装", "E "));
-		for (int i = INVEN_RARM; i < INVEN_TOTAL; i++)
-		{
-			do_cmd_knowledge_inven_aux(creature_ptr, fff, &creature_ptr->inventory_list[i], &j, tval, where);
-		}
-
-		strcpy(where, _("持", "I "));
-		for (int i = 0; i < INVEN_PACK; i++)
-		{
-			do_cmd_knowledge_inven_aux(creature_ptr, fff, &creature_ptr->inventory_list[i], &j, tval, where);
-		}
-
-		store_ptr = &town_info[1].store[STORE_HOME];
-		strcpy(where, _("家", "H "));
-		for (int i = 0; i < store_ptr->stock_num; i++)
-		{
-			do_cmd_knowledge_inven_aux(creature_ptr, fff, &store_ptr->stock[i], &j, tval, where);
-		}
-	}
-
-	my_fclose(fff);
-	(void)show_file(creature_ptr, TRUE, file_name, _("*鑑定*済み武器/防具の耐性リスト", "Resistances of *identified* equipment"), 0, 0);
-	fd_kill(file_name);
 }
 
 
@@ -1849,14 +1589,14 @@ static void display_visual_list(int col, int row, int height, int width, TERM_CO
 			TERM_LEN y = row + i;
 			if (use_bigtile) x += j;
 
-			TERM_COLOR ia = attr_top + i;
-			SYMBOL_CODE ic = char_left + j;
+			int ia = attr_top + i;
+			int ic = char_left + j;
 			if (ia > 0x7f || ic > 0xff || ic < ' ' ||
 				(!use_graphics && ic > 0x7f))
 				continue;
 
-			TERM_COLOR a = ia;
-			SYMBOL_CODE c = ic;
+			TERM_COLOR a = (TERM_COLOR)ia;
+			SYMBOL_CODE c = (SYMBOL_CODE)ic;
 			if (c & 0x80) a |= 0x80;
 
 			Term_queue_bigchar(x, y, a, c, 0, 0);
@@ -1982,7 +1722,7 @@ static bool visual_mode_command(char ch, bool *visual_list_ptr,
 			if ((a == 0) && (ddy[d] < 0)) d = 0;
 			if ((c == 0) && (ddx[d] < 0)) d = 0;
 			if ((a == 0x7f) && (ddy[d] > 0)) d = 0;
-			if ((c == 0xff) && (ddx[d] > 0)) d = 0;
+			if (((byte)c == 0xff) && (ddx[d] > 0)) d = 0;
 
 			a += (TERM_COLOR)ddy[d];
 			c += (SYMBOL_CODE)ddx[d];
@@ -3505,60 +3245,32 @@ void do_cmd_knowledge(player_type *creature_ptr)
 		Term_clear();
 		prt(format(_("%d/2 ページ", "page %d/2"), (p + 1)), 2, 65);
 		prt(_("現在の知識を確認する", "Display current knowledge"), 3, 0);
+		if (p == 0)
+		{
+			prt(_("(1) 既知の伝説のアイテム                 の一覧", "(1) Display known artifacts"), 6, 5);
+			prt(_("(2) 既知のアイテム                       の一覧", "(2) Display known objects"), 7, 5);
+			prt(_("(3) 既知の生きているユニーク・モンスター の一覧", "(3) Display remaining uniques"), 8, 5);
+			prt(_("(4) 既知のモンスター                     の一覧", "(4) Display known monster"), 9, 5);
+			prt(_("(5) 倒した敵の数                         の一覧", "(5) Display kill count"), 10, 5);
+			if (!vanilla_town) prt(_("(6) 賞金首                               の一覧", "(6) Display wanted monsters"), 11, 5);
+			prt(_("(7) 現在のペット                         の一覧", "(7) Display current pets"), 12, 5);
+			prt(_("(8) 我が家のアイテム                     の一覧", "(8) Display home inventory"), 13, 5);
+			prt(_("(9) *鑑定*済み装備の耐性                 の一覧", "(9) Display *identified* equip."), 14, 5);
+			prt(_("(0) 地形の表示文字/タイル                の一覧", "(0) Display terrain symbols."), 15, 5);
+		}
+		else
+		{
+			prt(_("(a) 自分に関する情報                     の一覧", "(a) Display about yourself"), 6, 5);
+			prt(_("(b) 突然変異                             の一覧", "(b) Display mutations"), 7, 5);
+			prt(_("(c) 武器の経験値                         の一覧", "(c) Display weapon proficiency"), 8, 5);
+			prt(_("(d) 魔法の経験値                         の一覧", "(d) Display spell proficiency"), 9, 5);
+			prt(_("(e) 技能の経験値                         の一覧", "(e) Display misc. proficiency"), 10, 5);
+			prt(_("(f) プレイヤーの徳                       の一覧", "(f) Display virtues"), 11, 5);
+			prt(_("(g) 入ったダンジョン                     の一覧", "(g) Display dungeons"), 12, 5);
+			prt(_("(h) 実行中のクエスト                     の一覧", "(h) Display current quests"), 13, 5);
+			prt(_("(i) 現在の自動拾い/破壊設定              の一覧", "(i) Display auto pick/destroy"), 14, 5);
+		}
 
-#ifdef JP
-		if (p == 0)
-		{
-			prt("(1) 既知の伝説のアイテム                 の一覧", 6, 5);
-			prt("(2) 既知のアイテム                       の一覧", 7, 5);
-			prt("(3) 既知の生きているユニーク・モンスター の一覧", 8, 5);
-			prt("(4) 既知のモンスター                     の一覧", 9, 5);
-			prt("(5) 倒した敵の数                         の一覧", 10, 5);
-			if (!vanilla_town) prt("(6) 賞金首                               の一覧", 11, 5);
-			prt("(7) 現在のペット                         の一覧", 12, 5);
-			prt("(8) 我が家のアイテム                     の一覧", 13, 5);
-			prt("(9) *鑑定*済み装備の耐性                 の一覧", 14, 5);
-			prt("(0) 地形の表示文字/タイル                の一覧", 15, 5);
-		}
-		else
-		{
-			prt("(a) 自分に関する情報                     の一覧", 6, 5);
-			prt("(b) 突然変異                             の一覧", 7, 5);
-			prt("(c) 武器の経験値                         の一覧", 8, 5);
-			prt("(d) 魔法の経験値                         の一覧", 9, 5);
-			prt("(e) 技能の経験値                         の一覧", 10, 5);
-			prt("(f) プレイヤーの徳                       の一覧", 11, 5);
-			prt("(g) 入ったダンジョン                     の一覧", 12, 5);
-			prt("(h) 実行中のクエスト                     の一覧", 13, 5);
-			prt("(i) 現在の自動拾い/破壊設定              の一覧", 14, 5);
-		}
-#else
-		if (p == 0)
-		{
-			prt("(1) Display known artifacts", 6, 5);
-			prt("(2) Display known objects", 7, 5);
-			prt("(3) Display remaining uniques", 8, 5);
-			prt("(4) Display known monster", 9, 5);
-			prt("(5) Display kill count", 10, 5);
-			if (!vanilla_town) prt("(6) Display wanted monsters", 11, 5);
-			prt("(7) Display current pets", 12, 5);
-			prt("(8) Display home inventory", 13, 5);
-			prt("(9) Display *identified* equip.", 14, 5);
-			prt("(0) Display terrain symbols.", 15, 5);
-		}
-		else
-		{
-			prt("(a) Display about yourself", 6, 5);
-			prt("(b) Display mutations", 7, 5);
-			prt("(c) Display weapon proficiency", 8, 5);
-			prt("(d) Display spell proficiency", 9, 5);
-			prt("(e) Display misc. proficiency", 10, 5);
-			prt("(f) Display virtues", 11, 5);
-			prt("(g) Display dungeons", 12, 5);
-			prt("(h) Display current quests", 13, 5);
-			prt("(i) Display auto pick/destroy", 14, 5);
-		}
-#endif
 		prt(_("-続く-", "-more-"), 17, 8);
 		prt(_("ESC) 抜ける", "ESC) Exit menu"), 21, 1);
 		prt(_("SPACE) 次ページ", "SPACE) Next page"), 21, 30);
@@ -3597,7 +3309,7 @@ void do_cmd_knowledge(player_type *creature_ptr)
 			do_cmd_knowledge_home(creature_ptr);
 			break;
 		case '9': /* Resist list */
-			do_cmd_knowledge_inven(creature_ptr);
+			do_cmd_knowledge_inventory(creature_ptr);
 			break;
 		case '0': /* Feature list */
 		{
