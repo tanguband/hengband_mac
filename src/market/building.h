@@ -2,10 +2,10 @@
 
 #include "realm.h"
 #include "player-race.h"
+#include "player/race-info-table.h"
 #include "player-class.h"
 
 #define MAX_BLDG 32 /*!< 施設の種類最大数 / Number of buildings */
-#define MAX_ARENA_MONS 41 /*<! 闘技場のイベント件数 -KMW- */
 
 #define BUILDING_NON_MEMBER 0 /*!< 不明(現在未使用) */
 #define BUILDING_MEMBER     1 /*!< 不明(現在未使用) */
@@ -114,10 +114,8 @@ typedef struct
 	OBJECT_SUBTYPE_VALUE sval;  /*!< モンスター打倒後に得られるアイテムの小カテゴリID / sval of prize */
 } arena_type;
 
-extern const arena_type arena_info[MAX_ARENA_MONS + 2];
 extern void update_gambling_monsters(player_type *player_ptr);
 extern void do_cmd_bldg(player_type *player_ptr);
 
-extern void clear_bldg(int min_row, int max_row);
 extern void determine_daily_bounty(player_type *player_ptr, bool conv_old);
 extern void determine_bounty_uniques(player_type *player_ptr);

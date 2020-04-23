@@ -84,9 +84,6 @@
     <ClCompile Include="..\..\src\object-hook.c">
       <Filter>object</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\objectkind-hook.c">
-      <Filter>object</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\mutation.c">
       <Filter>player</Filter>
     </ClCompile>
@@ -208,12 +205,6 @@
     <ClCompile Include="..\..\src\grid.c">
       <Filter>floor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\store.c">
-      <Filter>market</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\bldg.c">
-      <Filter>market</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\rumor.c">
       <Filter>market</Filter>
     </ClCompile>
@@ -237,9 +228,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\player-class.c">
       <Filter>player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\objectkind.c">
-      <Filter>object</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\monsterrace.c">
       <Filter>monster</Filter>
@@ -565,6 +553,63 @@
     <ClCompile Include="..\..\src\cmd\cmd-inventory.c">
       <Filter>cmd</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\market\building-util.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\view\display-fruit.c">
+      <Filter>view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\play-gamble.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\arena-info-table.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\player\race-info-table.c">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\player\mimic-info-table.c">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd\cmd-inn.c">
+      <Filter>cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\building.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\store.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\sound-definitions-table.c">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\music-definitions-table.c">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd\cmd-process-screen.c">
+      <Filter>cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd\dump-util.c">
+      <Filter>cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-artifacts.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-uniques.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-experiences.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\object\object-kind.c">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\object\object-kind-hook.c">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-quests.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\gamevalue.h" />
@@ -639,9 +684,6 @@
       <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\object-hook.h">
-      <Filter>object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\objectkind-hook.h">
       <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\mutation.h">
@@ -752,12 +794,6 @@
     <ClInclude Include="..\..\src\grid.h">
       <Filter>floor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\store.h">
-      <Filter>market</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\bldg.h">
-      <Filter>market</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\rumor.h">
       <Filter>market</Filter>
     </ClInclude>
@@ -778,9 +814,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\player-class.h">
       <Filter>player</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\objectkind.h">
-      <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\monsterrace.h">
       <Filter>monster</Filter>
@@ -1112,6 +1145,63 @@
     <ClInclude Include="..\..\src\cmd\cmd-inventory.h">
       <Filter>cmd</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\market\building-util.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\view\display-fruit.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\play-gamble.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\arena-info-table.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\player\race-info-table.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\player\mimic-info-table.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd\cmd-inn.h">
+      <Filter>cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\building.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\store.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\sound-definitions-table.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\music-definitions-table.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd\cmd-process-screen.h">
+      <Filter>cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd\dump-util.h">
+      <Filter>cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-artifacts.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-uniques.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-experiences.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\object-kind.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\object-kind-hook.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-quests.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\wall.bmp" />
@@ -1156,6 +1246,12 @@
     </Filter>
     <Filter Include="view">
       <UniqueIdentifier>{95a48e4b-b55a-4e99-a3c6-e8badbd1b2cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{e8e836da-e12b-42cc-9c09-17432cb83432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="knowledge">
+      <UniqueIdentifier>{0e8eb37a-0944-4897-a2fd-e6097df5e5f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

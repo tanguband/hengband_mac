@@ -7,6 +7,7 @@
 */
 
 #include "angband.h"
+#include "main/sound-definitions-table.h"
 
 #include "cmd/cmd-activate.h"
 #include "cmd/cmd-basic.h"
@@ -25,7 +26,7 @@
 #include "player-inventory.h"
 #include "monster-status.h"
 #include "files.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "object-ego.h"
 #include "targeting.h"
 #include "world.h"

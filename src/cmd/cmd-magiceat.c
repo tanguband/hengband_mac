@@ -54,6 +54,7 @@
 
 #include "angband.h"
 #include "util.h"
+#include "main/sound-definitions-table.h"
 #include "gameterm.h"
 
 #include "cmd-basic.h"
@@ -65,7 +66,7 @@
 #include "player-status.h"
 #include "spells.h"
 #include "player-class.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "targeting.h"
 
 /*!

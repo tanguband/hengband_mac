@@ -1,12 +1,15 @@
 ﻿#include "angband.h"
 #include "core.h"
 #include "util.h"
+#include "main/music-definitions-table.h"
+#include "main/sound-definitions-table.h"
 #include "gameterm.h"
 
 #include "avatar.h"
-#include "bldg.h"
+#include "market/building.h"
 #include "io/write-diary.h"
-#include "cmd/cmd-dump.h"
+#include "cmd/cmd-process-screen.h"
+#include "market/arena-info-table.h"
 #include "realm-song.h"
 #include "floor.h"
 #include "artifact.h"
@@ -29,27 +32,18 @@
 #include "save.h"
 #include "files.h"
 
-
 /*!
-* todo 元々「破損したアイテムの数」をreturnしていました
-* しかし調査の結果、どの関数も戻り値を使用していませんでした
-* よって戻りをvoidとし、破損したアイテム数を計上しているローカル変数を削除しました
-* 確認後、問題がなければ本コメントを削除の上コミット願います
-* そして英語のコメントにある「stealing」とは一体…詳細不明につき残しました
-* なお「toryを省略する必要はないじゃろ」との独断により関数名を変更しました
-* 気に入らなければ元に戻して下さい。。。 by Hourier
-* ***
-* @brief アイテムを指定確率で破損させる /
-* Destroys a type of item on a given percent chance
-* @param player_ptr プレーヤーへの参照ポインタ
-* @param typ 破損判定関数ポインタ
-* @param perc 基本確率
-* @return なし
-* @details
-* Note that missiles are no longer necessarily all destroyed
-* Destruction taken from "melee.c" code for "stealing".
-* New-style wands and rods handled correctly. -LM-
-*/
+ * @brief アイテムを指定確率で破損させる /
+ * Destroys a type of item on a given percent chance
+ * @param player_ptr プレーヤーへの参照ポインタ
+ * @param typ 破損判定関数ポインタ
+ * @param perc 基本確率
+ * @return なし
+ * @details
+ * Note that missiles are no longer necessarily all destroyed
+ * Destruction taken from "melee.c" code for "stealing".
+ * New-style wands and rods handled correctly. -LM-
+ */
 void inventory_damage(player_type *player_ptr, inven_func typ, int perc)
 {
 	INVENTORY_IDX i;
@@ -384,7 +378,6 @@ HIT_POINT cold_dam(player_type *creature_ptr, HIT_POINT dam, concptr kb_str, int
  * the game when he dies, since the "You die." message is shown before
  * setting the player to "dead".
  */
-
 int take_hit(player_type *creature_ptr, int damage_type, HIT_POINT damage, concptr hit_from, int monspell)
 {
 	int old_chp = creature_ptr->chp;
@@ -574,7 +567,7 @@ int take_hit(player_type *creature_ptr, int damage_type, HIT_POINT damage, concp
 
 			if (get_check_strict(_("画面を保存しますか？", "Dump the screen? "), CHECK_NO_HISTORY))
 			{
-				do_cmd_save_screen(creature_ptr);
+				do_cmd_save_screen(creature_ptr, handle_stuff);
 			}
 
 			flush();

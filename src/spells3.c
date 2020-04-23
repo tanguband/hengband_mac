@@ -12,10 +12,11 @@
  */
 
 #include "angband.h"
-#include "bldg.h"
+#include "market/building.h"
 #include "core.h"
 #include "gameterm.h"
 #include "util.h"
+#include "main/sound-definitions-table.h"
 #include "object-ego.h"
 
 #include "creature.h"
@@ -39,6 +40,7 @@
 #include "spells.h"
 #include "spells-floor.h"
 #include "grid.h"
+#include "market/building-util.h"
 #include "monster-process.h"
 #include "monster-status.h"
 #include "monster-spell.h"
@@ -56,7 +58,7 @@
 #include "mind.h"
 #include "wild.h"
 #include "world.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "autopick.h"
 #include "targeting.h"
 

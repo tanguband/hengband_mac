@@ -8,6 +8,7 @@
 
 #include "angband.h"
 #include "util.h"
+#include "main/sound-definitions-table.h"
 
 #include "object-flavor.h"
 #include "object-hook.h"
@@ -31,7 +32,7 @@
 #include "core/show-file.h"
 #include "files.h"
 #include "floor.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "view-mainwindow.h"
 
 /*!

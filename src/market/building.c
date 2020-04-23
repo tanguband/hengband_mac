@@ -1,31 +1,31 @@
 ﻿/*!
-	@file bldg.c
-	@brief 町の施設処理 / Building commands
-	@date 2013/12/23
-	@author
-	Created by Ken Wigle for Kangband - a variant of Angband 2.8.3\n
-	-KMW-\n
-	\n
-	Rewritten for Kangband 2.8.3i using Kamband's version of\n
-	bldg.c as written by Ivan Tkatchev\n
-	\n
-	Changed for ZAngband by Robert Ruehlmann\n
+ * @file building.c
+ * @brief 町の施設処理 / Building commands
+ * @date 2013/12/23
+ * @author
+ * Created by Ken Wigle for Kangband - a variant of Angband 2.8.3
+ * -KMW-
+ * 
+ * Rewritten for Kangband 2.8.3i using Kamband's version of
+ * building.c as written by Ivan Tkatchev
+ * 
+ * Changed for ZAngband by Robert Ruehlmann
 */
 
 #include "angband.h"
 #include "util.h"
+#include "main/music-definitions-table.h"
 #include "gameterm.h"
 
 #include "core.h"
 #include "core/show-file.h"
-#include "io/write-diary.h"
 #include "cmd/cmd-dump.h"
-#include "cmd/cmd-magiceat.h"
+#include "cmd/cmd-inn.h"
 #include "floor.h"
 #include "floor-events.h"
 #include "floor-save.h"
 #include "autopick.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "object-boost.h"
 #include "object-flavor.h"
 #include "object-hook.h"
@@ -37,13 +37,12 @@
 #include "sort.h"
 
 #include "avatar.h"
-#include "bldg.h"
+#include "market/building.h"
 #include "dungeon.h"
 #include "mutation.h"
 #include "quest.h"
 #include "artifact.h"
 #include "cmd-spell.h"
-#include "rumor.h"
 #include "spells.h"
 #include "spells-object.h"
 #include "spells-status.h"
@@ -63,11 +62,11 @@
 #include "autopick.h"
 
 #include "market/poker.h"
+#include "market/building-util.h"
+#include "market/arena-info-table.h"
+#include "market/play-gamble.h"
+#include "view/display-fruit.h"
 
-/*
- * todo MAX_BLDGが定義されていない旨のエラーが出る……がコンパイルには成功する
- * Buildings
- */
 building_type building[MAX_BLDG];
 
 MONRACE_IDX battle_mon[4];
@@ -78,57 +77,6 @@ int sel_monster;
 
 bool reinit_wilderness = FALSE;
 MONSTER_IDX today_mon;
-
-/*!
- * todo MAX_ARENA_MONSが定義されていない旨のエラーが出る……がコンパイルには成功する
- * @brief 闘技場のモンスターID及び報酬アイテムテーブル
- */
-const arena_type arena_info[MAX_ARENA_MONS + 2] =
-{
-	{ MON_NOBORTA,       TV_AMULET, SV_AMULET_ADORNMENT           },
-	{ MON_MORI_TROLL,    TV_FOOD,   SV_FOOD_PINT_OF_WINE          },
-	{ MON_IMP,           TV_POTION, SV_POTION_SPEED               },
-	{ MON_LION_HEART,    0,         0                             },
-	{ MON_MASTER_YEEK,   TV_POTION, SV_POTION_CURING              },
-	{ MON_SABRE_TIGER,   TV_WAND,   SV_WAND_STONE_TO_MUD          },
-	{ MON_LIZARD_KING,   TV_WAND,   SV_WAND_TELEPORT_AWAY         },
-	{ MON_WYVERN,        TV_POTION, SV_POTION_HEALING             },
-	{ MON_ARCH_VILE,     TV_POTION, SV_POTION_RESISTANCE          },
-	{ MON_ELF_LORD   ,   TV_POTION, SV_POTION_ENLIGHTENMENT       },
-	{ MON_GHOUL_KING,    TV_FOOD,   SV_FOOD_RESTORING             },
-	{ MON_COLBRAN,       TV_RING,   SV_RING_ELEC                  },
-	{ MON_BICLOPS,       TV_WAND,   SV_WAND_ACID_BALL             },
-	{ MON_M_MINDCRAFTER, TV_POTION, SV_POTION_SELF_KNOWLEDGE      },
-	{ MON_GROO,          TV_SCROLL, SV_SCROLL_ACQUIREMENT         },
-	{ MON_RAAL,          TV_SCROLL, SV_SCROLL_STAR_DESTRUCTION    },
-	{ MON_DREADMASTER,   TV_WAND,   SV_WAND_HYPODYNAMIA            },
-	{ MON_ULTRA_PALADIN, TV_STAFF,  SV_STAFF_DISPEL_EVIL          },
-	{ MON_BARNEY,        TV_RING,   SV_RING_RES_CHAOS             },
-	{ MON_TROLL_KING,    TV_SCROLL, SV_SCROLL_MASS_GENOCIDE       },
-	{ MON_BARON_HELL,    TV_POTION, SV_POTION_AUGMENTATION        },
-	{ MON_F_ANGEL,       TV_SCROLL, SV_SCROLL_RUNE_OF_PROTECTION  },
-	{ MON_G_C_DRAKE,     TV_WAND,   SV_WAND_DRAGON_FIRE           },
-	{ MON_IRON_LICH,     TV_STAFF,  SV_STAFF_DESTRUCTION          },
-	{ MON_DROLEM,        TV_POTION, SV_POTION_STAR_HEALING        },
-	{ MON_G_TITAN,       TV_WAND,   SV_WAND_GENOCIDE              },
-	{ MON_G_BALROG,      TV_POTION, SV_POTION_EXPERIENCE          },
-	{ MON_ELDER_VAMPIRE, TV_RING,   SV_RING_SUSTAIN               },
-	{ MON_NIGHTWALKER,   TV_WAND,   SV_WAND_STRIKING              },
-	{ MON_S_TYRANNO,     TV_SCROLL, SV_SCROLL_STAR_ACQUIREMENT    },
-	{ MON_G_MASTER_MYS,  TV_ROD,    SV_ROD_IDENTIFY               },
-	{ MON_LORD_CHAOS,    TV_POTION, SV_POTION_LIFE                },
-	{ MON_SHADOWLORD,    TV_POTION, SV_POTION_STAR_ENLIGHTENMENT  },
-	{ MON_ULT_BEHOLDER,  TV_AMULET, SV_AMULET_REFLECTION          },
-	{ MON_JABBERWOCK,    TV_ROD,    SV_ROD_HEALING                },
-	{ MON_LOCKE_CLONE,   TV_WAND,   SV_WAND_DISINTEGRATE          },
-	{ MON_WYRM_SPACE,    TV_ROD,    SV_ROD_RESTORATION            },
-	{ MON_SHAMBLER,      TV_SCROLL, SV_SCROLL_STAR_ACQUIREMENT    },
-	{ MON_BLACK_REAVER,  TV_RING,   SV_RING_LORDLY                },
-	{ MON_FENGHUANG,     TV_STAFF,  SV_STAFF_THE_MAGI             },
-	{ MON_WYRM_POWER,    TV_SCROLL, SV_SCROLL_ARTIFACT            },
-	{ 0,                 0,         0                             }, /* Victory prizing */
-	{ MON_HAGURE,        TV_SCROLL, SV_SCROLL_ARTIFACT            },
-};
 
 /*!
  * @brief 施設毎に設定された種族、職業、魔法領域フラグがプレイヤーと一致するかを判定する。
@@ -200,22 +148,6 @@ static bool is_member(player_type *player_ptr, building_type *bldg)
 	}
 
 	return FALSE;
-}
-
-
-/*!
- * @brief コンソールに表示された施設に関する情報を消去する / Clear the building information
- * @details 消去は行毎にヌル文字列で行われる。
- * @param min_row 開始行番号
- * @param max_row 末尾行番号
- * @return なし
- */
-void clear_bldg(int min_row, int max_row)
-{
-	for (int i = min_row; i <= max_row; i++)
-	{
-		prt("", i, 0);
-	}
 }
 
 
@@ -338,9 +270,6 @@ static void show_building(player_type *player_ptr, building_type* bldg)
  */
 static void arena_comm(player_type *player_ptr, int cmd)
 {
-	monster_race    *r_ptr;
-	concptr            name;
-
 	switch (cmd)
 	{
 	case BACT_ARENA:
@@ -413,6 +342,7 @@ static void arena_comm(player_type *player_ptr, int cmd)
 		player_ptr->leave_bldg = TRUE;
 		break;
 	case BACT_POSTER:
+	{
 		if (player_ptr->arena_number == MAX_ARENA_MONS)
 		{
 			msg_print(_("あなたは勝利者だ。 アリーナでのセレモニーに参加しなさい。",
@@ -426,14 +356,16 @@ static void arena_comm(player_type *player_ptr, int cmd)
 			break;
 		}
 
+		monster_race *r_ptr;
 		r_ptr = &r_info[arena_info[player_ptr->arena_number].r_idx];
-		name = (r_name + r_ptr->name);
+		concptr name = (r_name + r_ptr->name);
 		msg_format(_("%s に挑戦するものはいないか？", "Do I hear any challenges against: %s"), name);
 
 		player_ptr->monster_race_idx = arena_info[player_ptr->arena_number].r_idx;
 		player_ptr->window |= (PW_MONSTER);
 		handle_stuff(player_ptr);
 		break;
+	}
 	case BACT_ARENA_RULES:
 		screen_save();
 
@@ -442,404 +374,6 @@ static void arena_comm(player_type *player_ptr, int cmd)
 		screen_load();
 		break;
 	}
-}
-
-
-/*!
- * @brief カジノのスロットシンボルを表示する / display fruit for dice slots
- * @param row シンボルを表示する行の上端
- * @param col シンボルを表示する行の左端
- * @param fruit 表示するシンボルID
- * @return なし
- */
-static void display_fruit(int row, int col, int fruit)
-{
-	switch (fruit)
-	{
-	case 0: /* lemon */
-		c_put_str(TERM_YELLOW, "   ####.", row, col);
-		c_put_str(TERM_YELLOW, "  #    #", row + 1, col);
-		c_put_str(TERM_YELLOW, " #     #", row + 2, col);
-		c_put_str(TERM_YELLOW, "#      #", row + 3, col);
-		c_put_str(TERM_YELLOW, "#      #", row + 4, col);
-		c_put_str(TERM_YELLOW, "#     # ", row + 5, col);
-		c_put_str(TERM_YELLOW, "#    #  ", row + 6, col);
-		c_put_str(TERM_YELLOW, ".####   ", row + 7, col);
-		prt(_(" レモン ",
-			" Lemon  "), row + 8, col);
-		break;
-	case 1: /* orange */
-		c_put_str(TERM_ORANGE, "   ##   ", row, col);
-		c_put_str(TERM_ORANGE, "  #..#  ", row + 1, col);
-		c_put_str(TERM_ORANGE, " #....# ", row + 2, col);
-		c_put_str(TERM_ORANGE, "#......#", row + 3, col);
-		c_put_str(TERM_ORANGE, "#......#", row + 4, col);
-		c_put_str(TERM_ORANGE, " #....# ", row + 5, col);
-		c_put_str(TERM_ORANGE, "  #..#  ", row + 6, col);
-		c_put_str(TERM_ORANGE, "   ##   ", row + 7, col);
-		prt(_("オレンジ",
-			" Orange "), row + 8, col);
-		break;
-	case 2: /* sword */
-		c_put_str(TERM_SLATE, _("   Λ   ", "   /\\   "), row, col);
-		c_put_str(TERM_SLATE, _("   ||   ", "   ##   "), row + 1, col);
-		c_put_str(TERM_SLATE, _("   ||   ", "   ##   "), row + 2, col);
-		c_put_str(TERM_SLATE, _("   ||   ", "   ##   "), row + 3, col);
-		c_put_str(TERM_SLATE, _("   ||   ", "   ##   "), row + 4, col);
-		c_put_str(TERM_SLATE, _("   ||   ", "   ##   "), row + 5, col);
-		c_put_str(TERM_UMBER, _(" |=亜=| ", " ###### "), row + 6, col);
-		c_put_str(TERM_UMBER, _("   目   ", "   ##   "), row + 7, col);
-		prt(_("   剣   ", " Sword  "), row + 8, col);
-		break;
-	case 3: /* shield */
-		c_put_str(TERM_SLATE, " ###### ", row, col);
-		c_put_str(TERM_SLATE, "#      #", row + 1, col);
-		c_put_str(TERM_SLATE, "# ++++ #", row + 2, col);
-		c_put_str(TERM_SLATE, "# +==+ #", row + 3, col);
-		c_put_str(TERM_SLATE, "#  ++  #", row + 4, col);
-		c_put_str(TERM_SLATE, " #    # ", row + 5, col);
-		c_put_str(TERM_SLATE, "  #  #  ", row + 6, col);
-		c_put_str(TERM_SLATE, "   ##   ", row + 7, col);
-		prt(_("   盾   ",
-			" Shield "), row + 8, col);
-		break;
-	case 4: /* plum */
-		c_put_str(TERM_VIOLET, "   ##   ", row, col);
-		c_put_str(TERM_VIOLET, " ###### ", row + 1, col);
-		c_put_str(TERM_VIOLET, "########", row + 2, col);
-		c_put_str(TERM_VIOLET, "########", row + 3, col);
-		c_put_str(TERM_VIOLET, "########", row + 4, col);
-		c_put_str(TERM_VIOLET, " ###### ", row + 5, col);
-		c_put_str(TERM_VIOLET, "  ####  ", row + 6, col);
-		c_put_str(TERM_VIOLET, "   ##   ", row + 7, col);
-		prt(_(" プラム ",
-			"  Plum  "), row + 8, col);
-		break;
-	case 5: /* cherry */
-		c_put_str(TERM_RED, "      ##", row, col);
-		c_put_str(TERM_RED, "   ###  ", row + 1, col);
-		c_put_str(TERM_RED, "  #..#  ", row + 2, col);
-		c_put_str(TERM_RED, "  #..#  ", row + 3, col);
-		c_put_str(TERM_RED, " ###### ", row + 4, col);
-		c_put_str(TERM_RED, "#..##..#", row + 5, col);
-		c_put_str(TERM_RED, "#..##..#", row + 6, col);
-		c_put_str(TERM_RED, " ##  ## ", row + 7, col);
-		prt(_("チェリー",
-			" Cherry "), row + 8, col);
-		break;
-	}
-}
-
-
-/*!
- * @brief カジノ1プレイごとのメインルーチン / gamble_comm
- * @param player_ptr プレーヤーへの参照ポインタ
- * @param cmd プレイするゲームID
- * @return なし
- */
-static bool gamble_comm(player_type *player_ptr, int cmd)
-{
-	int i;
-	int roll1, roll2, roll3, choice, odds, win;
-	s32b wager;
-	s32b maxbet;
-	s32b oldgold;
-
-	char out_val[160], tmp_str[80], again;
-	concptr p;
-
-	screen_save();
-
-	if (cmd == BACT_GAMBLE_RULES)
-	{
-		(void)show_file(player_ptr, TRUE, _("jgambling.txt", "gambling.txt"), NULL, 0, 0);
-		screen_load();
-		return TRUE;
-	}
-
-	if (player_ptr->au < 1)
-	{
-		msg_print(_("おい！おまえ一文なしじゃないか！こっから出ていけ！",
-			"Hey! You don't have gold - get out of here!"));
-		msg_print(NULL);
-		screen_load();
-		return FALSE;
-	}
-
-	clear_bldg(5, 23);
-	maxbet = player_ptr->lev * 200;
-	maxbet = MIN(maxbet, player_ptr->au);
-
-	strcpy(out_val, "");
-	sprintf(tmp_str, _("賭け金 (1-%ld)？", "Your wager (1-%ld) ? "), (long int)maxbet);
-
-
-	/*
-	 * Use get_string() because we may need more than
-	 * the s16b value returned by get_quantity().
-	 */
-	if (!get_string(tmp_str, out_val, 32))
-	{
-		msg_print(NULL);
-		screen_load();
-		return TRUE;
-	}
-
-	for (p = out_val; *p == ' '; p++);
-
-	wager = atol(p);
-	if (wager > player_ptr->au)
-	{
-		msg_print(_("おい！金が足りないじゃないか！出ていけ！", "Hey! You don't have the gold - get out of here!"));
-		msg_print(NULL);
-		screen_load();
-		return FALSE;
-	}
-	else if (wager > maxbet)
-	{
-		msg_format(_("%ldゴールドだけ受けよう。残りは取っときな。",
-			"I'll take %ld gold of that. Keep the rest."), (long int)maxbet);
-		wager = maxbet;
-	}
-	else if (wager < 1)
-	{
-		msg_print(_("ＯＫ、１ゴールドからはじめよう。", "Ok, we'll start with 1 gold."));
-		wager = 1;
-	}
-	msg_print(NULL);
-	win = FALSE;
-	odds = 0;
-	oldgold = player_ptr->au;
-
-	sprintf(tmp_str, _("ゲーム前の所持金: %9ld", "Gold before game: %9ld"), (long int)oldgold);
-	prt(tmp_str, 20, 2);
-	sprintf(tmp_str, _("現在の掛け金:     %9ld", "Current Wager:    %9ld"), (long int)wager);
-	prt(tmp_str, 21, 2);
-
-	do
-	{
-		player_ptr->au -= wager;
-		switch (cmd)
-		{
-		case BACT_IN_BETWEEN: /* Game of In-Between */
-			c_put_str(TERM_GREEN, _("イン・ビトイーン", "In Between"), 5, 2);
-
-			odds = 4;
-			win = FALSE;
-			roll1 = randint1(10);
-			roll2 = randint1(10);
-			choice = randint1(10);
-			sprintf(tmp_str, _("黒ダイス: %d        黒ダイス: %d", "Black die: %d       Black Die: %d"), roll1, roll2);
-
-			prt(tmp_str, 8, 3);
-			sprintf(tmp_str, _("赤ダイス: %d", "Red die: %d"), choice);
-
-			prt(tmp_str, 11, 14);
-			if (((choice > roll1) && (choice < roll2)) ||
-				((choice < roll1) && (choice > roll2)))
-				win = TRUE;
-			break;
-		case BACT_CRAPS:  /* Game of Craps */
-			c_put_str(TERM_GREEN, _("クラップス", "Craps"), 5, 2);
-
-			win = 3;
-			odds = 2;
-			roll1 = randint1(6);
-			roll2 = randint1(6);
-			roll3 = roll1 + roll2;
-			choice = roll3;
-			sprintf(tmp_str, _("１振りめ: %d %d      Total: %d",
-				"First roll: %d %d    Total: %d"), roll1, roll2, roll3);
-			prt(tmp_str, 7, 5);
-			if ((roll3 == 7) || (roll3 == 11))
-				win = TRUE;
-			else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12))
-				win = FALSE;
-			else
-			{
-				do
-				{
-					msg_print(_("なにかキーを押すともう一回振ります。", "Hit any key to roll again"));
-
-					msg_print(NULL);
-					roll1 = randint1(6);
-					roll2 = randint1(6);
-					roll3 = roll1 + roll2;
-					sprintf(tmp_str, _("出目: %d %d          合計:      %d",
-						"Roll result: %d %d   Total:     %d"), roll1, roll2, roll3);
-					prt(tmp_str, 8, 5);
-					if (roll3 == choice)
-						win = TRUE;
-					else if (roll3 == 7)
-						win = FALSE;
-				} while ((win != TRUE) && (win != FALSE));
-			}
-			
-			break;
-
-		case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
-			win = FALSE;
-			odds = 9;
-			c_put_str(TERM_GREEN, _("ルーレット", "Wheel"), 5, 2);
-
-			prt("0  1  2  3  4  5  6  7  8  9", 7, 5);
-			prt("--------------------------------", 8, 3);
-			strcpy(out_val, "");
-			get_string(_("何番？ (0-9): ", "Pick a number (0-9): "), out_val, 32);
-
-			for (p = out_val; iswspace(*p); p++);
-			choice = atol(p);
-			if (choice < 0)
-			{
-				msg_print(_("0番にしとくぜ。", "I'll put you down for 0."));
-				choice = 0;
-			}
-			else if (choice > 9)
-			{
-				msg_print(_("ＯＫ、9番にしとくぜ。", "Ok, I'll put you down for 9."));
-				choice = 9;
-			}
-			msg_print(NULL);
-			roll1 = randint0(10);
-			sprintf(tmp_str, _("ルーレットは回り、止まった。勝者は %d番だ。",
-				"The wheel spins to a stop and the winner is %d"), roll1);
-			prt(tmp_str, 13, 3);
-			prt("", 9, 0);
-			prt("*", 9, (3 * roll1 + 5));
-			if (roll1 == choice)
-				win = TRUE;
-			break;
-
-		case BACT_DICE_SLOTS: /* The Dice Slots */
-			c_put_str(TERM_GREEN, _("ダイス・スロット", "Dice Slots"), 5, 2);
-			c_put_str(TERM_YELLOW, _("レモン   レモン            2", ""), 6, 37);
-			c_put_str(TERM_YELLOW, _("レモン   レモン   レモン   5", ""), 7, 37);
-			c_put_str(TERM_ORANGE, _("オレンジ オレンジ オレンジ 10", ""), 8, 37);
-			c_put_str(TERM_UMBER, _("剣       剣       剣       20", ""), 9, 37);
-			c_put_str(TERM_SLATE, _("盾       盾       盾       50", ""), 10, 37);
-			c_put_str(TERM_VIOLET, _("プラム   プラム   プラム   200", ""), 11, 37);
-			c_put_str(TERM_RED, _("チェリー チェリー チェリー 1000", ""), 12, 37);
-
-			win = FALSE;
-			roll1 = randint1(21);
-			for (i = 6; i > 0; i--)
-			{
-				if ((roll1 - i) < 1)
-				{
-					roll1 = 7 - i;
-					break;
-				}
-				roll1 -= i;
-			}
-			roll2 = randint1(21);
-			for (i = 6; i > 0; i--)
-			{
-				if ((roll2 - i) < 1)
-				{
-					roll2 = 7 - i;
-					break;
-				}
-				roll2 -= i;
-			}
-			choice = randint1(21);
-			for (i = 6; i > 0; i--)
-			{
-				if ((choice - i) < 1)
-				{
-					choice = 7 - i;
-					break;
-				}
-				choice -= i;
-			}
-			put_str("/--------------------------\\", 7, 2);
-			prt("\\--------------------------/", 17, 2);
-			display_fruit(8, 3, roll1 - 1);
-			display_fruit(8, 12, roll2 - 1);
-			display_fruit(8, 21, choice - 1);
-			if ((roll1 == roll2) && (roll2 == choice))
-			{
-				win = TRUE;
-				switch (roll1)
-				{
-				case 1:
-					odds = 5; break;
-				case 2:
-					odds = 10; break;
-				case 3:
-					odds = 20; break;
-				case 4:
-					odds = 50; break;
-				case 5:
-					odds = 200; break;
-				case 6:
-					odds = 1000; break;
-				}
-			}
-			else if ((roll1 == 1) && (roll2 == 1))
-			{
-				win = TRUE;
-				odds = 2;
-			}
-			break;
-		case BACT_POKER:
-			win = FALSE;
-			odds = do_poker();
-			if (odds) win = TRUE;
-			break;
-		}
-
-		if (win)
-		{
-			prt(_("あなたの勝ち", "YOU WON"), 16, 37);
-
-			player_ptr->au += odds * wager;
-			sprintf(tmp_str, _("倍率: %d", "Payoff: %d"), odds);
-
-			prt(tmp_str, 17, 37);
-		}
-		else
-		{
-			prt(_("あなたの負け", "You Lost"), 16, 37);
-			prt("", 17, 37);
-		}
-
-		sprintf(tmp_str, _("現在の所持金:     %9ld", "Current Gold:     %9ld"), (long int)player_ptr->au);
-
-		prt(tmp_str, 22, 2);
-		prt(_("もう一度(Y/N)？", "Again(Y/N)?"), 18, 37);
-
-		move_cursor(18, 52);
-		again = inkey();
-		prt("", 16, 37);
-		prt("", 17, 37);
-		prt("", 18, 37);
-		if (wager > player_ptr->au)
-		{
-			msg_print(_("おい！金が足りないじゃないか！ここから出て行け！",
-				"Hey! You don't have the gold - get out of here!"));
-			msg_print(NULL);
-
-			/* Get out here */
-			break;
-		}
-	} while ((again == 'y') || (again == 'Y'));
-
-	prt("", 18, 37);
-	if (player_ptr->au >= oldgold)
-	{
-		msg_print(_("「今回は儲けたな！でも次はこっちが勝ってやるからな、絶対に！」",
-			"You came out a winner! We'll win next time, I'm sure."));
-		chg_virtue(player_ptr, V_CHANCE, 3);
-	}
-	else
-	{
-		msg_print(_("「金をスッてしまったな、わはは！うちに帰った方がいいぜ。」", "You lost gold! Haha, better head home."));
-		chg_virtue(player_ptr, V_CHANCE, -3);
-	}
-
-	msg_print(NULL);
-	screen_load();
-	return TRUE;
 }
 
 
@@ -1355,120 +889,6 @@ static bool kankin(player_type *player_ptr)
 	msg_print(_("賞金を得られそうなものは持っていなかった。", "You have nothing."));
 	msg_print(NULL);
 	return FALSE;
-}
-
-
-/*!
- * @brief 宿屋の利用サブルーチン
- * @details inn commands\n
- * Note that resting for the night was a perfect way to avoid player\n
- * ghosts in the town *if* you could only make it to the inn in time (-:\n
- * Now that the ghosts are temporarily disabled in 2.8.X, this function\n
- * will not be that useful.  I will keep it in the hopes the player\n
- * ghost code does become a reality again. Does help to avoid filthy urchins.\n
- * Resting at night is also a quick way to restock stores -KMW-\n
- * @param cmd 宿屋の利用施設ID
- * @return 施設の利用が実際に行われたか否か。
- */
-static bool inn_comm(player_type *customer_ptr, int cmd)
-{
-	switch (cmd)
-	{
-	case BACT_FOOD: /* Buy food & drink */
-		if (customer_ptr->food >= PY_FOOD_FULL)
-		{
-			msg_print(_("今は満腹だ。", "You are full now."));
-			return FALSE;
-		}
-
-		msg_print(_("バーテンはいくらかの食べ物とビールをくれた。", "The barkeep gives you some gruel and a beer."));
-		(void)set_food(customer_ptr, PY_FOOD_MAX - 1);
-		break;
-
-	case BACT_REST: /* Rest for the night */
-	{
-		if ((customer_ptr->poisoned) || (customer_ptr->cut))
-		{
-			msg_print(_("あなたに必要なのは部屋ではなく、治療者です。", "You need a healer, not a room."));
-			msg_print(NULL);
-			msg_print(_("すみません、でもうちで誰かに死なれちゃ困りますんで。", "Sorry, but don't want anyone dying in here."));
-			break;
-		}
-
-		s32b oldturn = current_world_ptr->game_turn;
-		int prev_day, prev_hour, prev_min;
-
-		extract_day_hour_min(customer_ptr, &prev_day, &prev_hour, &prev_min);
-		if ((prev_hour >= 6) && (prev_hour <= 17))
-			exe_write_diary(customer_ptr, DIARY_DESCRIPTION, 0, _("宿屋に泊まった。", "stayed during the day at the inn."));
-		else
-			exe_write_diary(customer_ptr, DIARY_DESCRIPTION, 0, _("宿屋に泊まった。", "stayed overnight at the inn."));
-
-		current_world_ptr->game_turn = (current_world_ptr->game_turn / (TURNS_PER_TICK * TOWN_DAWN / 2) + 1) * (TURNS_PER_TICK * TOWN_DAWN / 2);
-		if (current_world_ptr->dungeon_turn < current_world_ptr->dungeon_turn_limit)
-		{
-			current_world_ptr->dungeon_turn += MIN((current_world_ptr->game_turn - oldturn), TURNS_PER_TICK * 250) * INN_DUNGEON_TURN_ADJ;
-			if (current_world_ptr->dungeon_turn > current_world_ptr->dungeon_turn_limit) current_world_ptr->dungeon_turn = current_world_ptr->dungeon_turn_limit;
-		}
-
-		prevent_turn_overflow(customer_ptr);
-
-		if ((prev_hour >= 18) && (prev_hour <= 23)) exe_write_diary(customer_ptr, DIARY_DIALY, 0, NULL);
-		customer_ptr->chp = customer_ptr->mhp;
-
-		if (ironman_nightmare)
-		{
-			msg_print(_("眠りに就くと恐ろしい光景が心をよぎった。", "Horrible visions flit through your mind as you sleep."));
-
-			while (TRUE)
-			{
-				sanity_blast(customer_ptr, NULL, FALSE);
-				if (!one_in_(3)) break;
-			}
-
-			msg_print(_("あなたは絶叫して目を覚ました。", "You awake screaming."));
-			exe_write_diary(customer_ptr, DIARY_DESCRIPTION, 0, _("悪夢にうなされてよく眠れなかった。", "had a nightmare."));
-			break;
-		}
-
-		set_blind(customer_ptr, 0);
-		set_confused(customer_ptr, 0);
-		customer_ptr->stun = 0;
-		customer_ptr->chp = customer_ptr->mhp;
-		customer_ptr->csp = customer_ptr->msp;
-		if (customer_ptr->pclass == CLASS_MAGIC_EATER)
-		{
-			int i;
-			for (i = 0; i < 72; i++)
-			{
-				customer_ptr->magic_num1[i] = customer_ptr->magic_num2[i] * EATER_CHARGE;
-			}
-
-			for (; i < 108; i++)
-			{
-				customer_ptr->magic_num1[i] = 0;
-			}
-		}
-
-		if ((prev_hour >= 6) && (prev_hour <= 17))
-		{
-			msg_print(_("あなたはリフレッシュして目覚め、夕方を迎えた。", "You awake refreshed for the evening."));
-			exe_write_diary(customer_ptr, DIARY_DESCRIPTION, 0, _("夕方を迎えた。", "awoke refreshed."));
-			break;
-		}
-
-		msg_print(_("あなたはリフレッシュして目覚め、新たな日を迎えた。", "You awake refreshed for the new day."));
-		exe_write_diary(customer_ptr, DIARY_DESCRIPTION, 0, _("すがすがしい朝を迎えた。", "awoke refreshed."));
-		break;
-	}
-	case BACT_RUMORS: /* Listen for rumors */
-	{
-		display_rumor(customer_ptr, TRUE);
-		break;
-	}
-	}
-
-	return TRUE;
 }
 
 

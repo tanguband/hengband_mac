@@ -14,6 +14,7 @@
 #include "angband.h"
 #include "core.h"
 #include "util.h"
+#include "main/sound-definitions-table.h"
 
 #include "io/write-diary.h"
 #include "cmd/cmd-pet.h"
@@ -24,7 +25,7 @@
 #include "object-curse.h"
 #include "player-damage.h"
 #include "player-effects.h"
-#include "player-race.h"
+#include "player/mimic-info-table.h"
 #include "player-class.h"
 
 #include "monster.h"

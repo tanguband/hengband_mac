@@ -15,7 +15,7 @@
 #include "autopick.h"
 #include "gameterm.h"
 
-#include "bldg.h"
+#include "market/building.h"
 #include "core.h"
 #include "files.h"
 #include "world.h"
@@ -26,6 +26,7 @@
 #include "player-status.h"
 #include "player-class.h"
 #include "player-race.h"
+#include "player/mimic-info-table.h"
 #include "player-effects.h"
 #include "player-inventory.h"
 #include "monster.h"
@@ -42,8 +43,10 @@
 #include "floor.h"
 #include "floor-town.h"
 #include "feature.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "targeting.h"
+
+#include "market/arena-info-table.h"
 
  /*
   * Not using graphical tiles for this feature?

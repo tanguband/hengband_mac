@@ -1,5 +1,6 @@
 ﻿#include "angband.h"
 #include "util.h"
+#include "main/sound-definitions-table.h"
 
 #include "avatar.h"
 #include "spells.h"
@@ -8,7 +9,7 @@
 #include "player-effects.h"
 #include "player-class.h"
 #include "player-inventory.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "object-hook.h"
 #include "cmd-basic.h"
 #include "floor.h"

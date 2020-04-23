@@ -8,6 +8,7 @@
 
 #include "angband.h"
 #include "util.h"
+#include "main/sound-definitions-table.h"
 
 #include "birth.h"
 #include "selfinfo.h"
@@ -19,14 +20,14 @@
 #include "player-effects.h"
 #include "player-status.h"
 #include "player-damage.h"
-#include "player-race.h"
+#include "player/mimic-info-table.h"
 #include "player-inventory.h"
 #include "realm-hex.h"
 #include "spells-floor.h"
 #include "object-broken.h"
 #include "cmd-basic.h"
 #include "floor.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "view-mainwindow.h"
 #include "player-class.h"
 

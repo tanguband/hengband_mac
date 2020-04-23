@@ -14,6 +14,7 @@
 #include "angband.h"
 #include "core.h"
 #include "util.h"
+#include "main/sound-definitions-table.h"
 
 #include "artifact.h"
 #include "cmd-pet.h"
@@ -38,7 +39,7 @@
 #include "player-skill.h"
 #include "player-damage.h"
 #include "player-status.h"
-#include "player-race.h"
+#include "player/mimic-info-table.h"
 #include "player-class.h"
 #include "player-personality.h"
 #include "view-mainwindow.h"

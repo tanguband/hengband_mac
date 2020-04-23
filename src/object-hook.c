@@ -7,10 +7,10 @@
 #include "artifact.h"
 #include "player-class.h"
 #include "player-skill.h"
-#include "player-race.h"
+#include "player/mimic-info-table.h"
 #include "quest.h"
 #include "world.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "view-mainwindow.h"
 
 /*!

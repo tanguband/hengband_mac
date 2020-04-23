@@ -1,14 +1,16 @@
 ﻿#include "angband.h"
 #include "core.h"
 #include "util.h"
+#include "main/sound-definitions-table.h"
 
-#include "bldg.h"
+#include "market/building.h"
 #include "quest.h"
 #include "player-move.h"
 #include "player-status.h"
 #include "player-effects.h"
 #include "player-skill.h"
-#include "player-race.h"
+#include "player/race-info-table.h"
+#include "player/mimic-info-table.h"
 #include "player-class.h"
 #include "player-personality.h"
 #include "player-damage.h"
@@ -32,7 +34,7 @@
 #include "cmd/cmd-pet.h"
 #include "cmd/cmd-spell.h"
 #include "dungeon.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "monsterrace.h"
 #include "autopick.h"
 #include "io/write-diary.h"
@@ -44,6 +46,7 @@
 #include "cmd-magiceat.h"
 
 #include "horror-descriptions.h"
+#include "market/arena-info-table.h"
 
 /*!
  * @brief 能力値テーブル / Abbreviations of healthy stats

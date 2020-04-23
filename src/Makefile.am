@@ -11,6 +11,12 @@ hengband_SOURCES = \
 	\
 	avatar.h avatar.c birth.c birth.h \
 	\
+	main/music-definitions-table.c main/music-definitions-table.h \
+	main/sound-definitions-table.c main/sound-definitions-table.h \
+	market/arena-info-table.c market/arena-info-table.h \
+	market/building.c market/building.h \
+	market/building-util.c market/building-util.h \
+	market/play-gamble.c market/play-gamble.h \
 	market/poker.c market/poker.h market/store-owners.c market/store-owners.h \
 	market/store-owner-comments.c market/store-owner-comments.h \
 	market/articles-on-sale.c market/articles-on-sale.h \
@@ -18,9 +24,11 @@ hengband_SOURCES = \
 	market/say-comments.c market/say-comments.h \
 	market/store-util.c market/store-util.h \
 	market/gold-magnification-table.c market/gold-magnification-table.h \
-	store.c store.h bldg.c bldg.h chest.c chest.h chuukei.c chuukei.h \
+	market/store.c market/store.h \
+	chest.c chest.h chuukei.c chuukei.h \
 	\
 	view/display-characteristic.c view/display-characteristic.h \
+	view/display-fruit.c view/display-fruit.h \
 	view/display-player-stat-info.c view/display-player-stat-info.h \
 	view/display-player-misc-info.c view/display-player-misc-info.h \
 	view/display-player-middle.c view/display-player-middle.h \
@@ -28,11 +36,13 @@ hengband_SOURCES = \
 	view/status-first-page.c view/status-first-page.h \
 	view/display-util.c view/display-util.h \
 	\
+	player/mimic-info-table.c player/mimic-info-table.h \
 	player/process-death.c player/process-death.h \
+	player/process-name.c player/process-name.h \
+	player/race-info-table.c player/race-info-table.h\
 	player/race-resistances.c player/race-resistances.h \
 	player/permanent-resistances.c player/permanent-resistances.h \
 	player/temporary-resistances.c player/temporary-resistances.h \
-	player/process-name.c player/process-name.h \
 	\
 	io/gf-descriptions.c io/gf-descriptions.h \
 	io/tokenizer.c io/tokenizer.h \
@@ -87,7 +97,8 @@ hengband_SOURCES = \
 	object-boost.c object-boost.h \
 	object-curse.c object-curse.h object-broken.c object-broken.h \
 	object-hook.c object-hook.h object1.c object2.c object.h \
-	objectkind.c objectkind.h objectkind-hook.c objectkind-hook.h \
+	object/object-kind.c object/object-kind.h \
+	object/object-kind-hook.c object/object-kind-hook.h \
 	object-flavor.c object-flavor.h object-ego.c object-ego.h \
 	\
 	patron.h patron.c \
@@ -138,7 +149,12 @@ hengband_SOURCES = \
 	z-form.c z-form.h z-rand.c z-rand.h z-term.c z-term.h z-util.c z-util.h \
 	z-virt.c z-virt.h \
 	\
-	cmd/feeling-table.c cmd/feeling-table.h \
+	knowledge/knowledge-artifacts.c knowledge/knowledge-artifacts.h \
+	knowledge/knowledge-experiences.c knowledge/knowledge-experiences.h \
+	knowledge/knowledge-uniques.c knowledge/knowledge-uniques.h \
+	knowledge/knowledge-quests.c knowledge/knowledge-quests.h \
+	\
+	cmd/dump-util.c cmd/dump-util.h cmd/feeling-table.c cmd/feeling-table.h \
 	cmd/monster-group-table.c cmd/monster-group-table.h \
 	cmd/diary-subtitle-table.c cmd/diary-subtitle-table.h \
 	cmd/object-group-table.c cmd/object-group-table.h \
@@ -146,12 +162,13 @@ hengband_SOURCES = \
 	cmd/cmd-diary.c cmd/cmd-diary.h cmd/cmd-dump.c cmd/cmd-dump.h \
 	cmd/cmd-draw.c cmd/cmd-draw.h cmd/cmd-eat.c cmd/cmd-eat.h \
 	cmd/cmd-gameoption.c cmd/cmd-gameoption.h cmd/cmd-help.c cmd/cmd-help.h \
-	cmd/cmd-hissatsu.c cmd/cmd-hissatsu.h \
+	cmd/cmd-hissatsu.c cmd/cmd-hissatsu.h cmd/cmd-inn.c cmd/cmd-inn.h \
 	cmd/cmd-inventory.c cmd/cmd-inventory.h cmd/cmd-item.c cmd/cmd-item.h \
 	cmd/lighting-level-table.c cmd/lighting-level-table.h \
 	cmd/cmd-magiceat.c cmd/cmd-magiceat.h cmd/cmd-mane.c cmd/cmd-mane.h \
 	cmd/cmd-macro.c cmd/cmd-macro.h cmd/cmd-pet.c cmd/cmd-pet.h \
 	cmd/cmd-quaff.c cmd/cmd-quaff.h cmd/cmd-read.c cmd/cmd-read.h \
+	cmd/cmd-process-screen.c cmd/cmd-process-screen.h \
 	cmd/cmd-save.c cmd/cmd-save.h cmd/cmd-smith.c cmd/cmd-smith.h \
 	cmd/cmd-spell.c cmd/cmd-spell.h cmd/cmd-visuals.c cmd/cmd-visuals.h \
 	cmd/cmd-usestaff.c cmd/cmd-usestaff.h \
@@ -162,8 +179,7 @@ hengband_SOURCES = \
 EXTRA_hengband_SOURCES = \
 	angband.ico angband.rc ang_eng.rc maid-x11.c main-win.c \
 	main-cap.c main-xaw.c \
-	makefile.bcc makefile.std \
-	readdib.c readdib.h wall.bmp
+	makefile.bcc makefile.std readdib.c readdib.h wall.bmp \
 
 cocoa_xcode_files = \
 	cocoa/AppDelegate.m \
@@ -257,9 +273,14 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 CFLAGS += $(XFT_CFLAGS)
 LIBS += $(XFT_LIBS)
 COMPILE = $(srcdir)/gcc-wrap $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+<<<<<<< HEAD
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 OBJCCOMPILE = $(srcdir)/gcc-wrap $(OBJC) $(DEFS) $(DEFAULT_INCLUDES) \
 	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCFLAGS) $(OBJCFLAGS)
+=======
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) \
+	-Icmd -Icombat -Icore -Iio -Iknowledge -Imarket -Imonster -Iobject -Iplayer -Iview
+>>>>>>> d8b137908fe6d0404156a8234b211be4f7b7f079
 
 install-exec-hook:
 if SET_GID

@@ -8,6 +8,7 @@
 
 
 #include "angband.h"
+#include "main/sound-definitions-table.h"
 #include "util.h"
 
 #include "object-flavor.h"
@@ -18,11 +19,11 @@
 #include "player-status.h"
 #include "player-effects.h"
 #include "player-damage.h"
-#include "player-race.h"
+#include "player/mimic-info-table.h"
 #include "player-class.h"
 #include "player-inventory.h"
 #include "floor.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "view-mainwindow.h"
 
  /*!

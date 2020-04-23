@@ -13,6 +13,8 @@
 #include "angband.h"
 #include "signal-handlers.h"
 #include "util.h"
+#include "main/music-definitions-table.h"
+#include "main/sound-definitions-table.h"
 #include "core.h"
 #include "inet.h"
 #include "gameterm.h"
@@ -21,12 +23,13 @@
 #include "creature.h"
 
 #include "birth.h"
-#include "bldg.h"
+#include "market/building.h"
 #include "io/write-diary.h"
 #include "cmd/cmd-activate.h"
 #include "cmd/cmd-diary.h"
 #include "cmd/cmd-draw.h"
 #include "cmd/cmd-dump.h"
+#include "cmd/cmd-process-screen.h"
 #include "cmd/cmd-eat.h"
 #include "cmd/cmd-help.h"
 #include "cmd/cmd-hissatsu.h"
@@ -55,7 +58,7 @@
 #include "object-ego.h"
 #include "object-curse.h"
 #include "object-flavor.h"
-#include "store.h"
+#include "market/store.h"
 #include "spells.h"
 #include "spells-summon.h"
 #include "spells-object.h"
@@ -65,6 +68,7 @@
 #include "mind.h"
 #include "world.h"
 #include "mutation.h"
+#include "market/arena-info-table.h"
 #include "market/store-util.h"
 #include "quest.h"
 #include "artifact.h"
@@ -80,7 +84,7 @@
 #include "player-effects.h"
 #include "cmd-spell.h"
 #include "realm-hex.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "object-hook.h"
 #include "wild.h"
 #include "monster-process.h"
@@ -3512,7 +3516,7 @@ static void process_command(player_type *creature_ptr)
 	}
 	case ')':
 	{
-		do_cmd_save_screen(creature_ptr);
+		do_cmd_save_screen(creature_ptr, handle_stuff);
 		break;
 	}
 	case ']':

@@ -12,14 +12,15 @@
 
 #include "angband.h"
 #include "util.h"
+#include "main/music-definitions-table.h"
 #include "gameterm.h"
 
 #include "io/write-diary.h"
 #include "cmd/cmd-dump.h"
-#include "bldg.h"
+#include "market/building.h"
 #include "cmd-pet.h"
 #include "floor.h"
-#include "objectkind-hook.h"
+#include "object/object-kind-hook.h"
 #include "player-personality.h"
 #include "monster.h"
 #include "monster-spell.h"
@@ -38,6 +39,7 @@
 #include "view-mainwindow.h"
 #include "player-class.h"
 #include "english.h"
+#include "market/arena-info-table.h"
 
  /*
   * Pronoun arrays, by gender.

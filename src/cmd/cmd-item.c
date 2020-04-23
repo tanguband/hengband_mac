@@ -14,6 +14,7 @@
 #include "angband.h"
 #include "core.h"
 #include "util.h"
+#include "main/sound-definitions-table.h"
 #include "autopick.h"
 #include "gameterm.h"
 
@@ -42,7 +43,7 @@
 #include "monster.h"
 #include "view-mainwindow.h"
 #include "spells.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "autopick.h"
 #include "targeting.h"
 #include "snipe.h"

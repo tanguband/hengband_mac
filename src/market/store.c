@@ -19,6 +19,8 @@
 #include "market/black-market.h"
 #include "core.h"
 #include "util.h"
+#include "main/music-definitions-table.h"
+#include "main/sound-definitions-table.h"
 #include "gameterm.h"
 
 #include "floor.h"
@@ -30,12 +32,13 @@
 #include "cmd/cmd-help.h"
 #include "cmd/cmd-item.h"
 #include "cmd/cmd-macro.h"
+#include "cmd/cmd-process-screen.h"
 #include "cmd/cmd-smith.h"
 #include "cmd/cmd-visuals.h"
 #include "cmd/cmd-zapwand.h"
 #include "cmd/cmd-magiceat.h"
 #include "spells.h"
-#include "store.h"
+#include "market/store.h"
 #include "avatar.h"
 #include "cmd-spell.h"
 #include "rumor.h"
@@ -48,10 +51,10 @@
 #include "snipe.h"
 #include "files.h"
 #include "player-effects.h"
-#include "player-race.h"
+#include "player/race-info-table.h"
 #include "mind.h"
 #include "world.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "autopick.h"
 #include "floor-town.h"
 #include "japanese.h"
@@ -2014,7 +2017,7 @@ static void store_process_command(player_type *client_ptr)
 	}
 	case ')':
 	{
-		do_cmd_save_screen(client_ptr);
+		do_cmd_save_screen(client_ptr, handle_stuff);
 		break;
 	}
 	default:

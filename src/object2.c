@@ -13,6 +13,7 @@
 
 #include "angband.h"
 #include "util.h"
+#include "main/sound-definitions-table.h"
 #include "world.h"
 #include "gameterm.h"
 
@@ -25,13 +26,13 @@
 #include "dungeon.h"
 #include "floor.h"
 #include "grid.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "object-boost.h"
 #include "object-ego.h"
 #include "object-flavor.h"
 #include "object-hook.h"
 #include "object-curse.h"
-#include "objectkind-hook.h"
+#include "object/object-kind-hook.h"
 #include "artifact.h"
 #include "feature.h"
 #include "player-status.h"

@@ -91,12 +91,14 @@
 
 #include "angband.h"
 #include "signal-handlers.h"
+#include "main/sound-definitions-table.h"
+#include "main/music-definitions-table.h"
 #include "util.h"
 #include "inet.h"
 #include "chuukei.h"
 
 #include "io/write-diary.h"
-#include "cmd/cmd-dump.h"
+#include "cmd/cmd-process-screen.h"
 #include "cmd/cmd-save.h"
 #include "view-mainwindow.h"
 #include "floor.h"
@@ -225,42 +227,11 @@
 #define IDM_HELP_CONTENTS       901
 
 /*
- * Exclude parts of WINDOWS.H that are not needed
- */
-#define NOCOMM            /* Comm driver APIs and definitions */
-#define NOLOGERROR        /* LogError() and related definitions */
-#define NOPROFILER        /* Profiler APIs */
-#define NOLFILEIO         /* _l* file I/O routines */
-#define NOOPENFILE        /* OpenFile and related definitions */
-#define NORESOURCE        /* Resource management */
-#define NOATOM            /* Atom management */
-#define NOLANGUAGE        /* Character test routines */
-#define NOLSTRING         /* lstr* string management routines */
-#define NODBCS            /* Double-byte character set routines */
-#define NOKEYBOARDINFO    /* Keyboard driver routines */
-#define NOCOLOR           /* COLOR_* color values */
-#define NODRAWTEXT        /* DrawText() and related definitions */
-#define NOSCALABLEFONT    /* Truetype scalable font support */
-#define NOMETAFILE        /* Metafile support */
-#define NOSYSTEMPARAMSINFO /* SystemParametersInfo() and SPI_* definitions */
-#define NODEFERWINDOWPOS  /* DeferWindowPos and related definitions */
-#define NOKEYSTATES       /* MK_* message key state flags */
-#define NOWH              /* SetWindowsHook and related WH_* definitions */
-#define NOCLIPBOARD       /* Clipboard APIs and definitions */
-#define NOICONS           /* IDI_* icon IDs */
-#define NOMDI             /* MDI support */
-#define NOHELP            /* Help support */
-
-/* Not defined since it breaks Borland C++ 5.5 */
-/* #define NOCTLMGR */    /* Control management and controls */
-
-/*
  * Exclude parts of WINDOWS.H that are not needed (Win32)
  */
 #define WIN32_LEAN_AND_MEAN
 #define NONLS             /* All NLS defines and routines */
 #define NOSERVICE         /* All Service Controller routines, SERVICE_ equates, etc. */
-#define NOKANJI           /* Kanji support stuff. */
 #define NOMCX             /* Modem Configuration Extensions */
 
 /*
@@ -279,112 +250,9 @@
 #define MMNOJOY          /* Joystick support */
 #define MMNOMCI          /* MCI support */
 #define MMNOMMIO         /* Multimedia file I/O support */
-#define MMNOMMSYSTEM     /* General MMSYSTEM functions */
 
 #define INVALID_FILE_NAME (DWORD)0xFFFFFFFF
 #define MOUSE_SENS 40
-
-/*
- * Standard sound names
- */
-const concptr angband_sound_name[SOUND_MAX] =
-{
-	"dummy",
-	"hit",
-	"miss",
-	"flee",
-	"drop",
-	"kill",
-	"level",
-	"death",
-	"study",
-	"teleport",
-	"shoot",
-	"quaff",
-	"zap",
-	"walk",
-	"tpother",
-	"hitwall",
-	"eat",
-	"store1",
-	"store2",
-	"store3",
-	"store4",
-	"dig",
-	"opendoor",
-	"shutdoor",
-	"tplevel",
-	"scroll",
-	"buy",
-	"sell",
-	"warn",
-	"rocket",
-	"n_kill",
-	"u_kill",
-	"quest",
-	"heal",
-	"x_heal",
-	"bite",
-	"claw",
-	"m_spell",
-	"summon",
-	"breath",
-	"ball",
-	"m_heal",
-	"atkspell",
-	"evil",
-	"touch",
-	"sting",
-	"crush",
-	"slime",
-	"wail",
-	"winner",
-	"fire",
-	"acid",
-	"elec",
-	"cold",
-	"illegal",
-	"fail",
-	"wakeup",
-	"invuln",
-	"fall",
-	"pain",
-	"destitem",
-	"moan",
-	"show",
-	"unused",
-	"explode",
-	"glass",
-	"reflect",
-};
-
-/*
- * Standard music names
- */
-const concptr angband_music_basic_name[MUSIC_BASIC_MAX] =
-{
-	"default",
-	"gameover",
-	"exit",
-	"town",
-	"field1",
-	"field2",
-	"field3",
-	"dun_low",
-	"dun_med",
-	"dun_high",
-	"feel1",
-	"feel2",
-	"winner",
-	"build",
-	"wild",
-	"quest",
-	"arena",
-	"battle",
-	"quest_clear",
-	"final_quest_clear",
-	"ambush",
-};
 
 /*
  * Include some more files. Note: the Cygnus Cygwin compiler

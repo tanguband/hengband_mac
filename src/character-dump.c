@@ -3,7 +3,7 @@
 #include "world.h"
 #include "floor-town.h"
 #include "dungeon.h"
-#include "store.h"
+#include "market/store.h"
 #include "cmd/cmd-pet.h"
 #include "monster-status.h"
 #include "sort.h"
@@ -17,6 +17,8 @@
 #include "io/write-diary.h"
 #include "avatar.h"
 #include "market/store-util.h"
+#include "market/arena-info-table.h"
+#include "player/race-info-table.h"
 
 /*!
  * @brief プレイヤーのペット情報をファイルにダンプする

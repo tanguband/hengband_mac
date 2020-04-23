@@ -1,9 +1,15 @@
-﻿#include "cmd/cmd-inventory.h"
+﻿/*
+ * @brief 装備の耐性を表示する
+ * @date 2020/04/20
+ * @author Hourier
+ */
+
+#include "cmd/cmd-inventory.h"
 #include "object-flavor.h"
 #include "market/store-util.h"
 #include "floor-town.h"
 #include "object-hook.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "core/show-file.h"
 
 static concptr inven_res_label = _(
@@ -44,21 +50,13 @@ static void print_flag(int tr, BIT_FLAGS *flags, FILE *fff)
 
 
 /*!
- * @brief アイテム1つ当たりの耐性を表示する
- * @param creature_ptr プレーヤーへの参照ポインタ
- * @param fff 一時ファイルへの参照ポインタ
+ * @brief 特殊なアイテムかどうかを調べる
  * @param o_ptr アイテムへの参照ポインタ
- * @param j アイテム番号(？)への参照ポインタ
  * @param tval アイテム主分類番号
- * @param where アイテムの場所 (手持ち、家等) を示す文字列への参照ポインタ
- * @return なし
+ * @return 特殊なアイテムならTRUE
  */
-static void do_cmd_knowledge_inventory_aux(player_type *creature_ptr, FILE *fff, object_type *o_ptr, int *j, OBJECT_TYPE_VALUE tval, char *where)
+static bool determine_spcial_item_type(object_type *o_ptr, OBJECT_TYPE_VALUE tval)
 {
-	if (o_ptr->k_idx == 0) return;
-	if (o_ptr->tval != tval) return;
-	if (!object_is_known(o_ptr)) return;
-
 	bool is_special_item_type = (object_is_wearable(o_ptr) && object_is_ego(o_ptr))
 		|| ((tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_RESISTANCE))
 		|| ((tval == TV_RING) && (o_ptr->sval == SV_RING_LORDLY))
@@ -67,11 +65,81 @@ static void do_cmd_knowledge_inventory_aux(player_type *creature_ptr, FILE *fff,
 		|| ((tval == TV_GLOVES) && (o_ptr->sval == SV_SET_OF_DRAGON_GLOVES))
 		|| ((tval == TV_BOOTS) && (o_ptr->sval == SV_PAIR_OF_DRAGON_GREAVE))
 		|| object_is_artifact(o_ptr);
-	if (!is_special_item_type)
-	{
-		return;
-	}
 
+	return is_special_item_type;
+}
+
+
+/*!
+ * @brief アイテムに耐性の表示をする必要があるかを判定する
+ * @param o_ptr アイテムへの参照ポインタ
+ * @param tval アイテム主分類番号
+ * @return 必要があるならTRUE
+ */
+static bool check_item_knowledge(object_type *o_ptr, OBJECT_TYPE_VALUE tval)
+{
+	if (o_ptr->k_idx == 0) return FALSE;
+	if (o_ptr->tval != tval) return FALSE;
+	if (!object_is_known(o_ptr)) return FALSE;
+	if (!determine_spcial_item_type(o_ptr, tval)) return FALSE;
+
+	return TRUE;
+}
+
+
+/*!
+ * todo ここの関数から表示用の関数に移したい
+ * @brief 鑑定済アイテムの耐性を表示する
+ * @param o_ptr アイテムへの参照ポインタ
+ * @param fff 一時ファイルへの参照ポインタ
+ * @return なし
+ */
+static void display_identified_resistances_flag(object_type *o_ptr, FILE *fff)
+{
+	BIT_FLAGS flags[TR_FLAG_SIZE];
+	object_flags_known(o_ptr, flags);
+
+	print_im_or_res_flag(TR_IM_ACID, TR_RES_ACID, flags, fff);
+	print_im_or_res_flag(TR_IM_ELEC, TR_RES_ELEC, flags, fff);
+	print_im_or_res_flag(TR_IM_FIRE, TR_RES_FIRE, flags, fff);
+	print_im_or_res_flag(TR_IM_COLD, TR_RES_COLD, flags, fff);
+	print_flag(TR_RES_POIS, flags, fff);
+	print_flag(TR_RES_LITE, flags, fff);
+	print_flag(TR_RES_DARK, flags, fff);
+	print_flag(TR_RES_SHARDS, flags, fff);
+	print_flag(TR_RES_SOUND, flags, fff);
+	print_flag(TR_RES_NETHER, flags, fff);
+	print_flag(TR_RES_NEXUS, flags, fff);
+	print_flag(TR_RES_CHAOS, flags, fff);
+	print_flag(TR_RES_DISEN, flags, fff);
+
+	fputs(" ", fff);
+
+	print_flag(TR_RES_BLIND, flags, fff);
+	print_flag(TR_RES_FEAR, flags, fff);
+	print_flag(TR_RES_CONF, flags, fff);
+	print_flag(TR_FREE_ACT, flags, fff);
+	print_flag(TR_SEE_INVIS, flags, fff);
+	print_flag(TR_HOLD_EXP, flags, fff);
+	print_flag(TR_TELEPATHY, flags, fff);
+	print_flag(TR_SLOW_DIGEST, flags, fff);
+	print_flag(TR_REGEN, flags, fff);
+	print_flag(TR_LEVITATION, flags, fff);
+
+	fputc('\n', fff);
+}
+
+
+/*!
+ * @brief アイテム1つ当たりの耐性を表示する
+ * @param creature_ptr プレーヤーへの参照ポインタ
+ * @param fff 一時ファイルへの参照ポインタ
+ * @param o_ptr アイテムへの参照ポインタ
+ * @param where アイテムの場所 (手持ち、家等) を示す文字列への参照ポインタ
+ * @return なし
+ */
+static void do_cmd_knowledge_inventory_aux(player_type *creature_ptr, FILE *fff, object_type *o_ptr, char *where)
+{
 	int i = 0;
 	GAME_TEXT o_name[MAX_NLEN];
 	object_desc(creature_ptr, o_name, o_ptr, OD_NAME_ONLY);
@@ -99,47 +167,120 @@ static void do_cmd_knowledge_inventory_aux(player_type *creature_ptr, FILE *fff,
 	{
 		fputs(_("-------不明--------------- -------不明---------\n",
 			"-------unknown------------ -------unknown------\n"), fff);
+		return;
 	}
-	else
+
+	display_identified_resistances_flag(o_ptr, fff);
+}
+
+
+/*!
+ * @brief 9行おきにラベルを追加する
+ * @param label_number 現在の行数
+ * @param fff 一時ファイルへの参照ポインタ
+ * @return なし
+ */
+static void add_res_label(int *label_number, FILE *fff)
+{
+	(*label_number)++;
+	if (*label_number == 9)
 	{
-		BIT_FLAGS flgs[TR_FLAG_SIZE];
-		object_flags_known(o_ptr, flgs);
+		*label_number = 0;
+		fprintf(fff, "%s\n", inven_res_label);
+	}
+}
 
-		print_im_or_res_flag(TR_IM_ACID, TR_RES_ACID, flgs, fff);
-		print_im_or_res_flag(TR_IM_ELEC, TR_RES_ELEC, flgs, fff);
-		print_im_or_res_flag(TR_IM_FIRE, TR_RES_FIRE, flgs, fff);
-		print_im_or_res_flag(TR_IM_COLD, TR_RES_COLD, flgs, fff);
-		print_flag(TR_RES_POIS, flgs, fff);
-		print_flag(TR_RES_LITE, flgs, fff);
-		print_flag(TR_RES_DARK, flgs, fff);
-		print_flag(TR_RES_SHARDS, flgs, fff);
-		print_flag(TR_RES_SOUND, flgs, fff);
-		print_flag(TR_RES_NETHER, flgs, fff);
-		print_flag(TR_RES_NEXUS, flgs, fff);
-		print_flag(TR_RES_CHAOS, flgs, fff);
-		print_flag(TR_RES_DISEN, flgs, fff);
 
-		fputs(" ", fff);
+/*!
+ * @brief 9行ごとに行数をリセットする
+ * @param label_number 現在の行数
+ * @param fff 一時ファイルへの参照ポインタ
+ * @return なし
+ */
+static void reset_label_number(int *label_number, FILE *fff)
+{
+	if (*label_number == 0) return;
 
-		print_flag(TR_RES_BLIND, flgs, fff);
-		print_flag(TR_RES_FEAR, flgs, fff);
-		print_flag(TR_RES_CONF, flgs, fff);
-		print_flag(TR_FREE_ACT, flgs, fff);
-		print_flag(TR_SEE_INVIS, flgs, fff);
-		print_flag(TR_HOLD_EXP, flgs, fff);
-		print_flag(TR_TELEPATHY, flgs, fff);
-		print_flag(TR_SLOW_DIGEST, flgs, fff);
-		print_flag(TR_REGEN, flgs, fff);
-		print_flag(TR_LEVITATION, flgs, fff);
-
+	for (; *label_number < 9; (*label_number)++)
+	{
 		fputc('\n', fff);
 	}
 
-	(*j)++;
-	if (*j == 9)
+	*label_number = 0;
+	fprintf(fff, "%s\n", inven_res_label);
+}
+
+
+/*!
+ * 装備中のアイテムについて、耐性を表示する
+ * @param creature_ptr プレーヤーへの参照ポインタ
+ * @param tval アイテム主分類番号
+ * @param label_number 現在の行数
+ * @param fff ファイルへの参照ポインタ
+ * @return なし
+ */
+static void show_wearing_equipment_resistances(player_type *creature_ptr, OBJECT_TYPE_VALUE tval, int *label_number, FILE *fff)
+{
+	char where[32];
+	strcpy(where, _("装", "E "));
+	for (int i = INVEN_RARM; i < INVEN_TOTAL; i++)
 	{
-		*j = 0;
-		fprintf(fff, "%s\n", inven_res_label);
+		object_type *o_ptr = &creature_ptr->inventory_list[i];
+		if (!check_item_knowledge(o_ptr, tval))
+			continue;
+
+		do_cmd_knowledge_inventory_aux(creature_ptr, fff, o_ptr, where);
+		add_res_label(label_number, fff);
+	}
+}
+
+
+/*!
+ * 手持ち中のアイテムについて、耐性を表示する
+ * @param creature_ptr プレーヤーへの参照ポインタ
+ * @param tval アイテム主分類番号
+ * @param label_number 現在の行数
+ * @param fff ファイルへの参照ポインタ
+ * @return なし
+ */
+static void show_holding_equipment_resistances(player_type *creature_ptr, OBJECT_TYPE_VALUE tval, int *label_number, FILE *fff)
+{
+	char where[32];
+	strcpy(where, _("持", "I "));
+	for (int i = 0; i < INVEN_PACK; i++)
+	{
+		object_type *o_ptr = &creature_ptr->inventory_list[i];
+		if (!check_item_knowledge(o_ptr, tval))
+			continue;
+
+		do_cmd_knowledge_inventory_aux(creature_ptr, fff, o_ptr, where);
+		add_res_label(label_number, fff);
+	}
+}
+
+
+/*!
+ * 我が家のアイテムについて、耐性を表示する
+ * @param creature_ptr プレーヤーへの参照ポインタ
+ * @param tval アイテム主分類番号
+ * @param label_number 現在の行数
+ * @param fff ファイルへの参照ポインタ
+ * @return なし
+ */
+static void show_home_equipment_resistances(player_type *creature_ptr, OBJECT_TYPE_VALUE tval, int *label_number, FILE *fff)
+{
+	store_type *store_ptr;
+	store_ptr = &town_info[1].store[STORE_HOME];
+	char where[32];
+	strcpy(where, _("家", "H "));
+	for (int i = 0; i < store_ptr->stock_num; i++)
+	{
+		object_type *o_ptr = &store_ptr->stock[i];
+		if (!check_item_knowledge(o_ptr, tval))
+			continue;
+
+		do_cmd_knowledge_inventory_aux(creature_ptr, fff, o_ptr, where);
+		add_res_label(label_number, fff);
 	}
 }
 
@@ -154,7 +295,6 @@ void do_cmd_knowledge_inventory(player_type *creature_ptr)
 	FILE *fff;
 	GAME_TEXT file_name[1024];
 
-	char where[32];
 	fff = my_fopen_temp(file_name, 1024);
 	if (!fff)
 	{
@@ -164,39 +304,13 @@ void do_cmd_knowledge_inventory(player_type *creature_ptr)
 	}
 
 	fprintf(fff, "%s\n", inven_res_label);
-	int j = 0;
+	int label_number = 0;
 	for (OBJECT_TYPE_VALUE tval = TV_WEARABLE_BEGIN; tval <= TV_WEARABLE_END; tval++)
 	{
-		if (j != 0)
-		{
-			for (; j < 9; j++)
-			{
-				fputc('\n', fff);
-			}
-
-			j = 0;
-			fprintf(fff, "%s\n", inven_res_label);
-		}
-
-		strcpy(where, _("装", "E "));
-		for (int i = INVEN_RARM; i < INVEN_TOTAL; i++)
-		{
-			do_cmd_knowledge_inventory_aux(creature_ptr, fff, &creature_ptr->inventory_list[i], &j, tval, where);
-		}
-
-		strcpy(where, _("持", "I "));
-		for (int i = 0; i < INVEN_PACK; i++)
-		{
-			do_cmd_knowledge_inventory_aux(creature_ptr, fff, &creature_ptr->inventory_list[i], &j, tval, where);
-		}
-
-		store_type *store_ptr;
-		store_ptr = &town_info[1].store[STORE_HOME];
-		strcpy(where, _("家", "H "));
-		for (int i = 0; i < store_ptr->stock_num; i++)
-		{
-			do_cmd_knowledge_inventory_aux(creature_ptr, fff, &store_ptr->stock[i], &j, tval, where);
-		}
+		reset_label_number(&label_number, fff);
+		show_wearing_equipment_resistances(creature_ptr, tval, &label_number, fff);
+		show_holding_equipment_resistances(creature_ptr, tval, &label_number, fff);
+		show_home_equipment_resistances(creature_ptr, tval, &label_number, fff);
 	}
 
 	my_fclose(fff);

@@ -11,6 +11,8 @@
  */
 
 #include "angband.h"
+#include "main/music-definitions-table.h"
+#include "main/sound-definitions-table.h"
 #include "core.h"
 #include "gameterm.h"
 
@@ -35,7 +37,7 @@
 #include "player-effects.h"
 #include "player-personality.h"
 #include "player-inventory.h"
-#include "objectkind.h"
+#include "object/object-kind.h"
 #include "object-broken.h"
 #include "object-flavor.h"
 #include "shoot.h"

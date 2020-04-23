@@ -99,11 +99,12 @@
 #include "angband.h"
 #include "util.h"
 #include "core.h"
-#include "bldg.h"
+#include "market/building.h"
 
 #include "io/write-diary.h"
 #include "cmd/cmd-dump.h"
 #include "grid.h"
+#include "market/arena-info-table.h"
 #include "rooms.h"
 #include "dungeon.h"
 #include "floor.h"
