@@ -179,7 +179,7 @@ hengband_SOURCES = \
 EXTRA_hengband_SOURCES = \
 	angband.ico angband.rc ang_eng.rc maid-x11.c main-win.c \
 	main-cap.c main-xaw.c \
-	makefile.bcc makefile.std readdib.c readdib.h wall.bmp \
+	makefile.bcc makefile.std readdib.c readdib.h wall.bmp 
 
 cocoa_xcode_files = \
 	cocoa/AppDelegate.m \
@@ -273,14 +273,9 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 CFLAGS += $(XFT_CFLAGS)
 LIBS += $(XFT_LIBS)
 COMPILE = $(srcdir)/gcc-wrap $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-<<<<<<< HEAD
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 OBJCCOMPILE = $(srcdir)/gcc-wrap $(OBJC) $(DEFS) $(DEFAULT_INCLUDES) \
 	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCFLAGS) $(OBJCFLAGS)
-=======
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) \
-	-Icmd -Icombat -Icore -Iio -Iknowledge -Imarket -Imonster -Iobject -Iplayer -Iview
->>>>>>> d8b137908fe6d0404156a8234b211be4f7b7f079
 
 install-exec-hook:
 if SET_GID
