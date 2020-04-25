@@ -992,46 +992,65 @@ errr get_mon_num_prep(player_type *player_ptr, monsterrace_hook_type monster_hoo
  */
 MONRACE_IDX get_mon_num(player_type *player_ptr, DEPTH level, BIT_FLAGS option)
 {
-	int delay = mysqrt(level * 10000L) + 400L;
-	int reinforcement_possibility = MAX(NASTY_MON_MAX, NASTY_MON_BASE - ((current_world_ptr->dungeon_turn / (TURNS_PER_TICK * 5000L) - delay / 10)));
-	int reinforcement_level = MIN(NASTY_MON_PLUS_MAX, 3 + current_world_ptr->dungeon_turn / (TURNS_PER_TICK * 40000L) - delay / 40 + MIN(5, level / 10));
+	int			i, j, p;
+	int			r_idx;
+	long		value, total;
+	monster_race	*r_ptr;
+	alloc_entry		*table = alloc_race_table;
+
+	int pls_kakuritu, pls_level, over_days;
+	int delay = mysqrt(level * 10000L) + (level * 5);
+
+	/* town level : same delay as 10F, no nasty mons till day18 */
+	if (!level) delay = 360;
+
+	if (level > MAX_DEPTH - 1) level = MAX_DEPTH - 1;
+
+	/* +1 per day after the base date */
+	/* base dates : day5(1F), day18(10F,0F), day34(30F), day53(60F), day69(90F) */
+	over_days = MAX(0, current_world_ptr->dungeon_turn / (TURNS_PER_TICK * 10000L) - delay / 20);
+
+	/* starts from 1/25, reaches 1/3 after 44days from a level dependent base date */
+	pls_kakuritu = MAX(NASTY_MON_MAX, NASTY_MON_BASE - over_days / 2);
+	/* starts from 0, reaches +25lv after 75days from a level dependent base date */
+	pls_level = MIN(NASTY_MON_PLUS_MAX, over_days / 3);
 
 	if (d_info[player_ptr->dungeon_idx].flags1 & DF1_MAZE)
 	{
-		reinforcement_possibility = MIN(reinforcement_possibility / 2, reinforcement_possibility - 10);
-		if (reinforcement_possibility < 2) reinforcement_possibility = 2;
-		reinforcement_level += 2;
+		pls_kakuritu = MIN(pls_kakuritu / 2, pls_kakuritu - 10);
+		if (pls_kakuritu < 2) pls_kakuritu = 2;
+		pls_level += 2;
 		level += 3;
 	}
 
-	if (!(option & GMN_ARENA) && !(d_info[player_ptr->dungeon_idx].flags1 & DF1_BEGINNER))
+	/* Boost the level */
+	if (!player_ptr->phase_out && !(d_info[player_ptr->dungeon_idx].flags1 & DF1_BEGINNER))
 	{
-		if (ironman_nightmare && !randint0(reinforcement_possibility))
+		/* Nightmare mode allows more out-of depth monsters */
+		if (ironman_nightmare && !randint0(pls_kakuritu))
 		{
+			/* What a bizarre calculation */
 			level = 1 + (level * MAX_DEPTH / randint1(MAX_DEPTH));
 		}
 		else
 		{
-			if (!randint0(reinforcement_possibility))
+			/* Occasional "nasty" monster */
+			if (!randint0(pls_kakuritu))
 			{
-				level += reinforcement_level;
+				/* Pick a level bonus */
+				level += pls_level;
 			}
 		}
 	}
 
-	if (level > MAX_DEPTH - 1) level = MAX_DEPTH - 1;
-	if (level < 0) level = 0;
-
-	long total = 0L;
+	total = 0L;
 
 	/* Process probabilities */
-	alloc_entry *table = alloc_race_table;
-	for (int i = 0; i < alloc_race_size; i++)
+	for (i = 0; i < alloc_race_size; i++)
 	{
 		if (table[i].level > level) break;
 		table[i].prob3 = 0;
-		MONRACE_IDX r_idx = table[i].index;
-		monster_race *r_ptr;
+		r_idx = table[i].index;
 		r_ptr = &r_info[r_idx];
 		if (!(option & GMN_ARENA) && !chameleon_change_m_idx)
 		{
@@ -1061,21 +1080,21 @@ MONRACE_IDX get_mon_num(player_type *player_ptr, DEPTH level, BIT_FLAGS option)
 
 	if (total <= 0) return 0;
 
-	long value = randint0(total);
+	value = randint0(total);
 	int found_count = 0;
-	for (int i = 0; i < alloc_race_size; i++)
+	for (i = 0; i < alloc_race_size; i++)
 	{
 		if (value < table[i].prob3) break;
 		value = value - table[i].prob3;
 		found_count++;
 	}
 
-	int p = randint0(100);
+	p = randint0(100);
 
 	/* Try for a "harder" monster once (50%) or twice (10%) */
 	if (p < 60)
 	{
-		int j = found_count;
+		j = found_count;
 		value = randint0(total);
 		for (found_count = 0; found_count < alloc_race_size; found_count++)
 		{
@@ -1091,7 +1110,7 @@ MONRACE_IDX get_mon_num(player_type *player_ptr, DEPTH level, BIT_FLAGS option)
 	/* Try for a "harder" monster twice (10%) */
 	if (p < 10)
 	{
-		int j = found_count;
+		j = found_count;
 		value = randint0(total);
 		for (found_count = 0; found_count < alloc_race_size; found_count++)
 		{

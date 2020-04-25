@@ -382,9 +382,6 @@
     <ClCompile Include="..\..\src\cmd\cmd-zapwand.c">
       <Filter>cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\combat\melee1.c">
-      <Filter>combat</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\combat\shoot.c">
       <Filter>combat</Filter>
     </ClCompile>
@@ -550,9 +547,6 @@
     <ClCompile Include="..\..\src\market\black-market.c">
       <Filter>market</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-inventory.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\market\building-util.c">
       <Filter>market</Filter>
     </ClCompile>
@@ -592,9 +586,6 @@
     <ClCompile Include="..\..\src\cmd\dump-util.c">
       <Filter>cmd</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\knowledge\knowledge-artifacts.c">
-      <Filter>knowledge</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\knowledge\knowledge-uniques.c">
       <Filter>knowledge</Filter>
     </ClCompile>
@@ -609,6 +600,36 @@
     </ClCompile>
     <ClCompile Include="..\..\src\knowledge\knowledge-quests.c">
       <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-self.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-monsters.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-items.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-features.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-autopick.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd\cmd-knowledge.c">
+      <Filter>cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-inventory.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io\mutations-dump.c">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\knowledge-mutations.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\melee.c">
+      <Filter>combat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1142,9 +1163,6 @@
     <ClInclude Include="..\..\src\market\black-market.h">
       <Filter>market</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-inventory.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\market\building-util.h">
       <Filter>market</Filter>
     </ClInclude>
@@ -1184,9 +1202,6 @@
     <ClInclude Include="..\..\src\cmd\dump-util.h">
       <Filter>cmd</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\knowledge\knowledge-artifacts.h">
-      <Filter>knowledge</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\knowledge\knowledge-uniques.h">
       <Filter>knowledge</Filter>
     </ClInclude>
@@ -1200,6 +1215,33 @@
       <Filter>object</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\knowledge\knowledge-quests.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-self.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-monsters.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-items.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-features.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-autopick.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd\cmd-knowledge.h">
+      <Filter>cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-inventory.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io\mutations-dump.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\knowledge-mutations.h">
       <Filter>knowledge</Filter>
     </ClInclude>
   </ItemGroup>
