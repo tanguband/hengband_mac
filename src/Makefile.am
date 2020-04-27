@@ -7,7 +7,27 @@ bin_PROGRAMS = hengband
 hengband_SOURCES = \
 	artifact.c artifact.h \
 	\
-	angband.h autopick.c autopick.h\
+	angband.h\
+	\
+	autopick/autopick.c autopick/autopick.h \
+	autopick/autopick-commands-table.h autopick/autopick-dirty-flags.h \
+	autopick/autopick-editor-table.h autopick/autopick-flags-table.h \
+	autopick/autopick-key-flag-process.h autopick/autopick-key-table.h \
+	autopick/autopick-menu-data-table.c autopick/autopick-menu-data-table.h \
+	autopick/autopick-methods-table.h \
+	autopick/autopick-util.c autopick/autopick-util.h \
+	autopick/autopick-entry.c autopick/autopick-entry.h \
+	autopick/autopick-initializer.c autopick/autopick-initializer.h \
+	autopick/autopick-matcher.c autopick/autopick-matcher.h \
+	autopick-describer.c autopick-describer.h \
+	autopick-destroyer.c autopick-destroyer.h \
+	autopick/autopick-reader-writer.c autopick/autopick-reader-writer.h \
+	autopick/autopick-finder.c autopick/autopick-finder.h \
+	autopick/autopick-adder.c autopick/autopick-adder.h \
+	autopick/autopick-pref-processor.c autopick/autopick-pref-processor.h \
+	autopick/autopick-drawer.c autopick/autopick-drawer.h \
+	autopick/autopick-searcher.c autopick/autopick-searcher.h \
+	autopick/autopick-inserter-killer.c autopick/autopick-inserter-killer.h \
 	\
 	avatar.h avatar.c birth.c birth.h \
 	\
@@ -44,6 +64,7 @@ hengband_SOURCES = \
 	player/permanent-resistances.c player/permanent-resistances.h \
 	player/temporary-resistances.c player/temporary-resistances.h \
 	\
+	io/dump-remover.c io/dump-remover.h \
 	io/gf-descriptions.c io/gf-descriptions.h \
 	io/tokenizer.c io/tokenizer.h \
 	io/interpret-pref-file.c io/interpret-pref-file.h \
@@ -53,7 +74,8 @@ hengband_SOURCES = \
 	io/exit-panic.c io/exit-panic.h \
 	io/write-diary.c io/write-diary.h \
 	io/mutations-dump.c io/mutations-dump.h \
-	signal-handlers.c signal-handlers.h uid-checker.c uid-checker.h \
+	io/signal-handlers.c io/signal-handlers.h \
+	io/uid-checker.c io/uid-checker.h \
 	character-dump.c character-dump.h core.c core.h files.c files.h \
 	core/show-file.c core/show-file.h \
 	\
@@ -122,11 +144,13 @@ hengband_SOURCES = \
 	realm-hex.c realm-hex.h realm-hissatsu.c realm-hissatsu.h \
 	realm-life.c realm-life.h realm-nature.c realm-nature.h realm-song.c \
 	realm-song.h realm-sorcery.c realm-sorcery.h realm-trump.c realm-trump.h \
-	report.c report.h rooms.c rooms-city.c rooms-city.h \
-	rooms-fractal.c rooms-fractal.h \
-	rooms.h rooms-normal.c rooms-normal.h rooms-pitnest.c rooms-pitnest.h \
+	report.c report.h \
+	rooms.c rooms-city.c rooms-city.h rooms-fractal.c rooms-fractal.h \
+	rooms.h rooms-normal.c rooms-normal.h \
 	rooms-special.c rooms-special.h rooms-trap.c rooms-trap.h \
 	rooms-vault.c rooms-vault.h \
+	room/rooms-pit-nest.c room/rooms-pit-nest.h \
+	room/pit-nest-kinds-table.c room/pit-nest-kinds-table.h \
 	save.c save.h scores.c scores.h selfinfo.c selfinfo.h \
 	snipe.c snipe.h \
 	\
@@ -268,13 +292,16 @@ hengband_LINK = $(LINK)
 endif
 
 DEFAULT_INCLUDES = -I$(srcdir) \
+	-I$(srcdir)/autopick \
 	-I$(srcdir)/cmd \
 	-I$(srcdir)/combat \
 	-I$(srcdir)/core \
 	-I$(srcdir)/io \
+	-I$(srcdir)/knowledge \
 	-I$(srcdir)/market \
 	-I$(srcdir)/monster \
 	-I$(srcdir)/player \
+	-I$(srcdir)/room \
 	-I$(srcdir)/view \
 	-I$(top_builddir)/src
 CFLAGS += $(XFT_CFLAGS)

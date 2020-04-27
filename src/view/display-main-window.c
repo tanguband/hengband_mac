@@ -12,7 +12,9 @@
 
 #include "angband.h"
 #include "util.h"
-#include "autopick.h"
+#include "autopick/autopick-finder.h"
+#include "autopick/autopick-methods-table.h"
+#include "autopick/autopick-util.h"
 #include "gameterm.h"
 
 #include "market/building.h"
@@ -30,7 +32,7 @@
 #include "player-effects.h"
 #include "player-inventory.h"
 #include "monster.h"
-#include "view-mainwindow.h"
+#include "view/display-main-window.h"
 
 #include "spells.h"
 #include "realm-hex.h"
@@ -3104,7 +3106,7 @@ void map_info(player_type *player_ptr, POSITION y, POSITION x, TERM_COLOR *ap, S
 		{
 			byte act;
 
-			match_autopick = is_autopick(player_ptr, o_ptr);
+			match_autopick = find_autopick_list(player_ptr, o_ptr);
 			if (match_autopick == -1)
 				continue;
 

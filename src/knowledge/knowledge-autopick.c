@@ -5,10 +5,12 @@
  */
 
 #include "angband.h"
-#include "knowledge-autopick.h"
+#include "knowledge/knowledge-autopick.h"
 #include "cmd/dump-util.h"
 #include "core/show-file.h"
-#include "autopick.h"
+#include "autopick/autopick-reader-writer.h"
+#include "autopick/autopick-entry.h"
+#include "autopick/autopick-methods-table.h"
 
  /*!
   * @brief 自動拾い設定ファイルをロードするコマンドのメインルーチン /

@@ -57,9 +57,6 @@
     <ClCompile Include="..\..\src\rooms-normal.c">
       <Filter>floor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\rooms-pitnest.c">
-      <Filter>floor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\rooms-special.c">
       <Filter>floor</Filter>
     </ClCompile>
@@ -106,9 +103,6 @@
       <Filter>player</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\artifact.c">
-      <Filter>object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\autopick.c">
       <Filter>object</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\chest.c">
@@ -253,9 +247,6 @@
     <ClCompile Include="..\..\src\history.c">
       <Filter>player</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\view-mainwindow.c">
-      <Filter>io</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\gameterm.c">
       <Filter>io</Filter>
     </ClCompile>
@@ -391,17 +382,11 @@
     <ClCompile Include="..\..\src\horror-descriptions.c">
       <Filter>player</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\signal-handlers.c">
-      <Filter>io</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\view\status-first-page.c">
       <Filter>view</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\view\display-util.c">
       <Filter>view</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\uid-checker.c">
-      <Filter>io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\character-dump.c">
       <Filter>io</Filter>
@@ -631,6 +616,69 @@
     <ClCompile Include="..\..\src\combat\melee.c">
       <Filter>combat</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-menu-data-table.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-entry.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-util.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io\dump-remover.c">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-initializer.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-matcher.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-describer.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\room\pit-nest-kinds-table.c">
+      <Filter>room</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\room\rooms-pit-nest.c">
+      <Filter>room</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io\signal-handlers.c">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io\uid-checker.c">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\view\display-main-window.c">
+      <Filter>view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-destroyer.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-reader-writer.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-finder.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-adder.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-pref-processor.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-drawer.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-searcher.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-inserter-killer.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\gamevalue.h" />
@@ -684,9 +732,6 @@
       <Filter>floor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\rooms-normal.h">
-      <Filter>floor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\rooms-pitnest.h">
       <Filter>floor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\rooms-special.h">
@@ -839,9 +884,6 @@
     <ClInclude Include="..\..\src\monsterrace.h">
       <Filter>monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\autopick.h">
-      <Filter>object</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\object-ego.h">
       <Filter>object</Filter>
     </ClInclude>
@@ -865,9 +907,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\history.h">
       <Filter>player</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\view-mainwindow.h">
-      <Filter>io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\gameterm.h">
       <Filter>io</Filter>
@@ -1007,17 +1046,11 @@
     <ClInclude Include="..\..\src\horror-descriptions.h">
       <Filter>player</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\signal-handlers.h">
-      <Filter>io</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\view\status-first-page.h">
       <Filter>view</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\view\display-util.h">
       <Filter>view</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\uid-checker.h">
-      <Filter>io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\character-dump.h">
       <Filter>io</Filter>
@@ -1244,6 +1277,90 @@
     <ClInclude Include="..\..\src\knowledge\knowledge-mutations.h">
       <Filter>knowledge</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-editor-table.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-keys-table.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-flags-table.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-commands-table.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-dirty-flags.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-key-flag-process.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-util.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-menu-data-table.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-methods-table.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-entry.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io\dump-remover.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-initializer.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-matcher.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-describer.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\room\pit-nest-kinds-table.h">
+      <Filter>room</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\room\rooms-pit-nest.h">
+      <Filter>room</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io\signal-handlers.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io\uid-checker.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\view\display-main-window.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-destroyer.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-reader-writer.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-finder.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-adder.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-pref-processor.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-drawer.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-searcher.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-inserter-killer.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\wall.bmp" />
@@ -1294,6 +1411,12 @@
     </Filter>
     <Filter Include="knowledge">
       <UniqueIdentifier>{0e8eb37a-0944-4897-a2fd-e6097df5e5f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="autopick">
+      <UniqueIdentifier>{7f5cb078-a335-428e-a2db-27ee6263155b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="room">
+      <UniqueIdentifier>{318835ed-a803-4459-921e-f6afc5411baa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

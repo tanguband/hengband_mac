@@ -11,7 +11,7 @@
  */
 
 #include "angband.h"
-#include "signal-handlers.h"
+#include "io/signal-handlers.h"
 #include "util.h"
 #include "main/music-definitions-table.h"
 #include "main/sound-definitions-table.h"
@@ -98,14 +98,15 @@
 #include "player-skill.h"
 #include "player-inventory.h"
 
-#include "view-mainwindow.h"
+#include "view/display-main-window.h"
 #include "dungeon-file.h"
-#include "uid-checker.h"
+#include "io/uid-checker.h"
 #include "player/process-death.h"
 #include "io/read-pref-file.h"
 #include "files.h"
 #include "scores.h"
-#include "autopick.h"
+#include "autopick/autopick.h"
+#include "autopick/autopick-reader-writer.h"
 #include "save.h"
 #include "realm.h"
 #include "realm-song.h"

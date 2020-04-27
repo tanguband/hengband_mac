@@ -21,7 +21,7 @@
 #include "cmd/cmd-dump.h"
 #include "floor.h"
 #include "trap.h"
-#include "autopick.h"
+#include "autopick/autopick.h"
 #include "object-curse.h"
 #include "player-damage.h"
 #include "player-effects.h"
@@ -52,7 +52,7 @@
 #include "gameterm.h"
 #include "grid.h"
 #include "feature.h"
-#include "view-mainwindow.h"
+#include "view/display-main-window.h"
 #include "dungeon.h"
 
 #include "realm.h"

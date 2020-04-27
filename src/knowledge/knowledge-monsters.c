@@ -14,9 +14,10 @@
 #include "world.h"
 #include "core/show-file.h"
 #include "gameterm.h"
+#include "english.h"
 
 #include "core.h" // 暫定、後で消す.
-#include "view-mainwindow.h" // 暫定、後で消す.
+#include "view/display-main-window.h" // 暫定、後で消す.
 
  /*
   * todo 引数と戻り値について追記求む

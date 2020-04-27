@@ -90,7 +90,7 @@
 */
 
 #include "angband.h"
-#include "signal-handlers.h"
+#include "io/signal-handlers.h"
 #include "main/sound-definitions-table.h"
 #include "main/music-definitions-table.h"
 #include "util.h"
@@ -100,7 +100,7 @@
 #include "io/write-diary.h"
 #include "cmd/cmd-process-screen.h"
 #include "cmd/cmd-save.h"
-#include "view-mainwindow.h"
+#include "view/display-main-window.h"
 #include "floor.h"
 #include "floor-events.h"
 #include "init.h"

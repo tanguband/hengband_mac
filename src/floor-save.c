@@ -33,7 +33,7 @@
 #include "object-hook.h"
 #include "cmd-pet.h"
 #include "cmd-basic.h"
-#include "uid-checker.h"
+#include "io/uid-checker.h"
 #include "files.h"
 #include "player-effects.h"
 #include "player-class.h"
@@ -44,7 +44,7 @@
 #include "cmd/cmd-dump.h"
 #include "save.h"
 
-#include "view-mainwindow.h"
+#include "view/display-main-window.h"
 
 static FLOOR_IDX new_floor_id;  /*!<次のフロアのID / floor_id of the destination */
 static u32b latest_visit_mark;  /*!<フロアを渡った回数？(確認中) / Max number of visit_mark */

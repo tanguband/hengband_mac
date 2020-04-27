@@ -145,7 +145,7 @@
 #include "main/sound-definitions-table.h"
 
 #include "realm-song.h"
-#include "autopick.h"
+#include "autopick/autopick.h"
 #include "dungeon.h"
 #include "floor.h"
 #include "melee.h"
@@ -170,10 +170,10 @@
 #include "object-flavor.h"
 #include "spells.h"
 #include "cmd-basic.h"
-#include "view-mainwindow.h"
+#include "view/display-main-window.h"
 #include "world.h"
 #include "object/object-kind.h"
-#include "autopick.h"
+#include "autopick/autopick.h"
 #include "targeting.h"
 
 travel_type travel;

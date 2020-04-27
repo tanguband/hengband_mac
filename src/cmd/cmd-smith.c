@@ -9,8 +9,8 @@
 #include "cmd-basic.h"
 #include "cmd-smith.h"
 #include "object/object-kind.h"
-#include "autopick.h"
-#include "view-mainwindow.h"
+#include "autopick/autopick.h"
+#include "view/display-main-window.h"
 #include "player-inventory.h"
 
 

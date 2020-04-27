@@ -19,9 +19,9 @@
 #include "player-class.h"
 #include "player-inventory.h"
 #include "object/object-kind.h"
-#include "autopick.h"
+#include "autopick/autopick.h"
 #include "targeting.h"
-#include "view-mainwindow.h"
+#include "view/display-main-window.h"
 
 
 typedef struct

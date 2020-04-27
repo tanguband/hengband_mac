@@ -28,9 +28,9 @@
 #include "player-inventory.h"
 #include "object-hook.h"
 #include "cmd-basic.h"
-#include "view-mainwindow.h"
+#include "view/display-main-window.h"
 #include "floor.h"
-#include "autopick.h"
+#include "autopick/autopick-reader-writer.h"
 #include "japanese.h"
 
  /*!

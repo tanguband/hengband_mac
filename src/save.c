@@ -29,14 +29,14 @@
 #include "floor-events.h"
 #include "floor-save.h"
 #include "floor-town.h"
-#include "uid-checker.h"
+#include "io/uid-checker.h"
 #include "files.h"
 #include "world.h"
 #include "object/object-kind.h"
 #include "monsterrace.h"
 #include "birth.h"
 #include "market/building.h"
-#include "view-mainwindow.h"
+#include "view/display-main-window.h"
 
  /*
   * Some "local" parameters, used to help write savefiles
