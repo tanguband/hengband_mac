@@ -59,3 +59,38 @@ int get_com_id(char key)
 
 	return 0;
 }
+
+
+/*
+ * Auto inscription
+ */
+void auto_inscribe_item(player_type *player_ptr, object_type *o_ptr, int idx)
+{
+	if (idx < 0 || !autopick_list[idx].insc) return;
+
+	if (!o_ptr->inscription)
+		o_ptr->inscription = quark_add(autopick_list[idx].insc);
+
+	player_ptr->window |= (PW_EQUIP | PW_INVEN);
+	player_ptr->update |= (PU_BONUS);
+}
+
+
+/*
+ * Add one line to autopick_list[]
+ */
+void add_autopick_list(autopick_type *entry)
+{
+	if (max_autopick >= max_max_autopick)
+	{
+		int old_max_max_autopick = max_max_autopick;
+		autopick_type *old_autopick_list = autopick_list;
+		max_max_autopick += MAX_AUTOPICK_DEFAULT;
+		C_MAKE(autopick_list, max_max_autopick, autopick_type);
+		(void)C_COPY(autopick_list, old_autopick_list, old_max_max_autopick, autopick_type);
+		C_KILL(old_autopick_list, old_max_max_autopick, autopick_type);
+	}
+
+	autopick_list[max_autopick] = *entry;
+	max_autopick++;
+}

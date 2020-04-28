@@ -23,11 +23,13 @@ hengband_SOURCES = \
 	autopick-destroyer.c autopick-destroyer.h \
 	autopick/autopick-reader-writer.c autopick/autopick-reader-writer.h \
 	autopick/autopick-finder.c autopick/autopick-finder.h \
-	autopick/autopick-adder.c autopick/autopick-adder.h \
 	autopick/autopick-pref-processor.c autopick/autopick-pref-processor.h \
 	autopick/autopick-drawer.c autopick/autopick-drawer.h \
-	autopick/autopick-searcher.c autopick/autopick-searcher.h \
 	autopick/autopick-inserter-killer.c autopick/autopick-inserter-killer.h \
+	autopick/autopick-registry.c autopick/autopick-registry.h \
+	autopick/autopick-command-menu.c autopick/autopick-command-menu.h \
+	autopick-editor-util.c autopick-editor-util.h \
+	autopick-editor-command.c autopick-editor-command.h \
 	\
 	avatar.h avatar.c birth.c birth.h \
 	\
@@ -156,6 +158,9 @@ hengband_SOURCES = \
 	\
 	rumor.h rumor.c \
 	\
+	effect/effect-feature.c effect/effect-feature.h \
+	effect/effect-item.c effect/effect-item.h \
+	\
 	spells.h \
 	spells1.c spells2.c spells3.c \
 	spells-diceroll.c spells-diceroll.h \
@@ -185,6 +190,7 @@ hengband_SOURCES = \
 	knowledge/knowledge-self.c knowledge/knowledge-self.h \
 	knowledge/knowledge-quests.c knowledge/knowledge-quests.h \
 	\
+	cmd/cmd-autopick.c cmd/cmd-autopick.c \
 	cmd/dump-util.c cmd/dump-util.h cmd/feeling-table.c cmd/feeling-table.h \
 	cmd/monster-group-table.c cmd/monster-group-table.h \
 	cmd/diary-subtitle-table.c cmd/diary-subtitle-table.h \
@@ -300,6 +306,7 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/knowledge \
 	-I$(srcdir)/market \
 	-I$(srcdir)/monster \
+	-I$(srcdir)/object \
 	-I$(srcdir)/player \
 	-I$(srcdir)/room \
 	-I$(srcdir)/view \

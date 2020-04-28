@@ -15,11 +15,6 @@
 #define LSTAT_EXPRESSION    0x02
 #define LSTAT_AUTOREGISTER  0x04
 
-#define QUIT_WITHOUT_SAVE 1
-#define QUIT_AND_SAVE     2
-
-#define DESCRIPT_HGT 3
-
 /*!
  * @struct autopick_type
  * @brief 自動拾い/破壊設定データの構造体 / A structure type for entry of auto-picker/destroyer
@@ -72,13 +67,6 @@ typedef struct {
 	bool changed;
 } text_body_type;
 
-typedef struct {
-	concptr name;
-	int level;
-	int key;
-	int com_id;
-} command_menu_type;
-
 /*
  *  List for auto-picker/destroyer entries
  */
@@ -90,3 +78,5 @@ extern object_type autopick_last_destroyed_object;
 void autopick_free_entry(autopick_type *entry);
 void free_text_lines(concptr *lines_list);
 int get_com_id(char key);
+void auto_inscribe_item(player_type *player_ptr, object_type *o_ptr, int idx);
+void add_autopick_list(autopick_type *entry);

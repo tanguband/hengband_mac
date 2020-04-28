@@ -1,5 +1,4 @@
 ﻿/*!
- * todo 長過ぎる、要関数分割
  * @brief 自動拾いエディタを表示させる
  * @date 2020/04/26
  * @author Hourier
@@ -13,12 +12,47 @@
 #include "gameterm.h"
 #include "files.h"
 
+#define DESCRIPT_HGT 3
+
+static void process_dirty_expression(player_type *player_ptr, text_body_type *tb)
+{
+	if ((tb->dirty_flags & DIRTY_EXPRESSION) == 0) return;
+
+	byte state = 0;
+	for (int y = 0; tb->lines_list[y]; y++)
+	{
+		concptr s = tb->lines_list[y];
+		char *ss, *s_keep;
+		tb->states[y] = state;
+
+		if (*s++ != '?') continue;
+		if (*s++ != ':') continue;
+
+		if (streq(s, "$AUTOREGISTER"))
+			state |= LSTAT_AUTOREGISTER;
+
+		int s_len = strlen(s);
+		ss = (char *)string_make(s);
+		s_keep = ss;
+
+		char f;
+		concptr v = process_pref_file_expr(player_ptr, &ss, &f);
+		if (streq(v, "0")) state |= LSTAT_BYPASS;
+		else state &= ~LSTAT_BYPASS;
+
+		C_KILL(s_keep, s_len + 1, char);
+		tb->states[y] = state | LSTAT_EXPRESSION;
+	}
+
+	tb->dirty_flags |= DIRTY_ALL;
+}
+
+
 /*
  * Draw text
  */
 void draw_text_editor(player_type *player_ptr, text_body_type *tb)
 {
-	int i;
 	int by1 = 0, by2 = 0;
 
 	Term_get_size(&tb->wid, &tb->hgt);
@@ -31,7 +65,7 @@ void draw_text_editor(player_type *player_ptr, text_body_type *tb)
 
 #ifdef JP
 	/* Don't let cursor at second byte of kanji */
-	for (i = 0; tb->lines_list[tb->cy][i]; i++)
+	for (int i = 0; tb->lines_list[tb->cy][i]; i++)
 		if (iskanji(tb->lines_list[tb->cy][i]))
 		{
 			i++;
@@ -71,48 +105,14 @@ void draw_text_editor(player_type *player_ptr, text_body_type *tb)
 	{
 		char buf[MAX_LINELEN];
 		int sepa_length = tb->wid;
-		for (i = 0; i < sepa_length; i++)
-			buf[i] = '-';
-		buf[i] = '\0';
+		int j = 0;
+		for (; j < sepa_length; j++)
+			buf[j] = '-';
+		buf[j] = '\0';
 		Term_putstr(0, tb->hgt + 1, sepa_length, TERM_WHITE, buf);
 	}
 
-	if (tb->dirty_flags & DIRTY_EXPRESSION)
-	{
-		byte state = 0;
-		for (int y = 0; tb->lines_list[y]; y++)
-		{
-			char f;
-			concptr v;
-			concptr s = tb->lines_list[y];
-			char *ss, *s_keep;
-			int s_len;
-
-			tb->states[y] = state;
-
-			if (*s++ != '?') continue;
-			if (*s++ != ':') continue;
-
-			if (streq(s, "$AUTOREGISTER"))
-				state |= LSTAT_AUTOREGISTER;
-
-			s_len = strlen(s);
-			ss = (char *)string_make(s);
-			s_keep = ss;
-
-			v = process_pref_file_expr(player_ptr, &ss, &f);
-
-			if (streq(v, "0")) state |= LSTAT_BYPASS;
-			else state &= ~LSTAT_BYPASS;
-
-			C_KILL(s_keep, s_len + 1, char);
-
-			tb->states[y] = state | LSTAT_EXPRESSION;
-		}
-
-		tb->dirty_flags |= DIRTY_ALL;
-	}
-
+	process_dirty_expression(player_ptr, tb);
 	if (tb->mark)
 	{
 		tb->dirty_flags |= DIRTY_ALL;
@@ -121,6 +121,7 @@ void draw_text_editor(player_type *player_ptr, text_body_type *tb)
 		by2 = MAX(tb->my, tb->cy);
 	}
 
+	int i;
 	for (i = 0; i < tb->hgt; i++)
 	{
 		int leftcol = 0;
@@ -193,13 +194,13 @@ void draw_text_editor(player_type *player_ptr, text_body_type *tb)
 
 	bool is_dirty_diary = (tb->dirty_flags & (DIRTY_ALL | DIRTY_NOT_FOUND | DIRTY_NO_SEARCH)) != 0;
 	bool is_updated = tb->old_cy != tb->cy || is_dirty_diary || tb->dirty_line == tb->cy;
-	if (is_updated) return;
+	if (!is_updated) return;
 
 	autopick_type an_entry, *entry = &an_entry;
 	concptr str1 = NULL, str2 = NULL;
-	for (i = 0; i < DESCRIPT_HGT; i++)
+	for (int j = 0; j < DESCRIPT_HGT; j++)
 	{
-		Term_erase(0, tb->hgt + 2 + i, tb->wid);
+		Term_erase(0, tb->hgt + 2 + j, tb->wid);
 	}
 
 	if (tb->dirty_flags & DIRTY_NOT_FOUND)
@@ -288,16 +289,17 @@ void draw_text_editor(player_type *player_ptr, text_body_type *tb)
 
 		roff_to_buf(buf, 81, temp, sizeof(temp));
 		t = temp;
-		for (i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
 		{
 			if (t[0] == 0)
 				break;
 			else
 			{
-				prt(t, tb->hgt + 1 + 1 + i, 0);
+				prt(t, tb->hgt + 1 + 1 + j, 0);
 				t += strlen(t) + 1;
 			}
 		}
+
 		autopick_free_entry(entry);
 	}
 

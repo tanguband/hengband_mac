@@ -625,9 +625,6 @@
     <ClCompile Include="..\..\src\autopick\autopick-entry.c">
       <Filter>autopick</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\autopick\autopick-util.c">
-      <Filter>autopick</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\io\dump-remover.c">
       <Filter>io</Filter>
     </ClCompile>
@@ -664,20 +661,38 @@
     <ClCompile Include="..\..\src\autopick\autopick-finder.c">
       <Filter>autopick</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\autopick\autopick-adder.c">
-      <Filter>autopick</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\autopick\autopick-pref-processor.c">
       <Filter>autopick</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\autopick\autopick-drawer.c">
       <Filter>autopick</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\autopick\autopick-searcher.c">
-      <Filter>autopick</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\autopick\autopick-inserter-killer.c">
       <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-registry.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-command-menu.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-editor-util.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-editor-command.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd\cmd-autopick.c">
+      <Filter>cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\autopick\autopick-util.c">
+      <Filter>autopick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\effect\effect-feature.c">
+      <Filter>effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\effect\effect-item.c">
+      <Filter>effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1346,20 +1361,35 @@
     <ClInclude Include="..\..\src\autopick\autopick-finder.h">
       <Filter>autopick</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\autopick\autopick-adder.h">
-      <Filter>autopick</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\autopick\autopick-pref-processor.h">
       <Filter>autopick</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\autopick\autopick-drawer.h">
       <Filter>autopick</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\autopick\autopick-searcher.h">
-      <Filter>autopick</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\autopick\autopick-inserter-killer.h">
       <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-registry.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-command-menu.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-editor-util.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\autopick\autopick-editor-command.h">
+      <Filter>autopick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd\cmd-autopick.h">
+      <Filter>cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\effect\effect-feature.h">
+      <Filter>effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\effect\effect-item.h">
+      <Filter>effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1417,6 +1447,9 @@
     </Filter>
     <Filter Include="room">
       <UniqueIdentifier>{318835ed-a803-4459-921e-f6afc5411baa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="effect">
+      <UniqueIdentifier>{ed8a9f97-b54e-4204-9076-f32f646f3762}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
