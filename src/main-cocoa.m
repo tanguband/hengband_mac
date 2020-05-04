@@ -28,7 +28,7 @@
 #include "core.h"
 #include "world.h"
 #include "gameterm.h"
-#include "view-mainwindow.h"
+#include "view/display-main-window.h"
 #include "autopick/autopick-pref-processor.h"
 
 #if defined(MACH_O_COCOA)
