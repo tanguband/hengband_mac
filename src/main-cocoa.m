@@ -30,6 +30,7 @@
 #include "gameterm.h"
 #include "view/display-main-window.h"
 #include "autopick/autopick-pref-processor.h"
+#include "main/sound-definitions-table.h"
 
 #if defined(MACH_O_COCOA)
 
@@ -184,7 +185,6 @@ static wchar_t convert_two_byte_eucjp_to_utf16_native(const char *cp);
 
 	self->soundsByPath = [[NSMutableDictionary alloc] init];
 	self->soundArraysByEvent = [[NSMutableDictionary alloc] init];
-#if 0
 	@autoreleasepool {
 	    /*
 	     * This loop may take a while depending on the count and size of
@@ -306,7 +306,6 @@ static wchar_t convert_two_byte_eucjp_to_utf16_native(const char *cp);
 		}
 	    }
 	}
-#endif
 	/* Close the file */
 	my_fclose(fff);
     }
