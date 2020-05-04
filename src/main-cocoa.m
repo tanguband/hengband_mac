@@ -29,6 +29,7 @@
 #include "world.h"
 #include "gameterm.h"
 #include "view-mainwindow.h"
+#include "autopick/autopick-pref-processor.h"
 
 #if defined(MACH_O_COCOA)
 
@@ -4598,7 +4599,7 @@ static errr Term_xtra_cocoa_react(void)
 	    if (arg_bigtile == use_bigtile &&
 		current_world_ptr->character_generated)
 	    {
-		reset_visuals(p_ptr);
+		reset_visuals(p_ptr, process_autopick_file_command);
 	    }
 	}
 
@@ -4606,7 +4607,7 @@ static errr Term_xtra_cocoa_react(void)
 	    if (current_world_ptr->character_generated)
 	    {
 		/* Reset visuals */
-		reset_visuals(p_ptr);
+		reset_visuals(p_ptr, process_autopick_file_command);
 	    }
 
 	    Term_activate(angband_term[0]);
@@ -5709,7 +5710,7 @@ static void play_sound(int event)
 	p_ptr->player_egid = getegid();
 
 	/* Initialise game */
-	init_angband(p_ptr);
+	init_angband(p_ptr, process_autopick_file_command);
 
 	/* We are now initialized */
 	initialized = TRUE;
