@@ -12,15 +12,15 @@ hengband_SOURCES = \
 	autopick/autopick.c autopick/autopick.h \
 	autopick/autopick-commands-table.h autopick/autopick-dirty-flags.h \
 	autopick/autopick-editor-table.h autopick/autopick-flags-table.h \
-	autopick/autopick-key-flag-process.h autopick/autopick-key-table.h \
+	autopick/autopick-key-flag-process.h autopick/autopick-keys-table.h \
 	autopick/autopick-menu-data-table.c autopick/autopick-menu-data-table.h \
 	autopick/autopick-methods-table.h \
 	autopick/autopick-util.c autopick/autopick-util.h \
 	autopick/autopick-entry.c autopick/autopick-entry.h \
 	autopick/autopick-initializer.c autopick/autopick-initializer.h \
 	autopick/autopick-matcher.c autopick/autopick-matcher.h \
-	autopick-describer.c autopick-describer.h \
-	autopick-destroyer.c autopick-destroyer.h \
+	autopick/autopick-describer.c autopick/autopick-describer.h \
+	autopick/autopick-destroyer.c autopick/autopick-destroyer.h \
 	autopick/autopick-reader-writer.c autopick/autopick-reader-writer.h \
 	autopick/autopick-finder.c autopick/autopick-finder.h \
 	autopick/autopick-pref-processor.c autopick/autopick-pref-processor.h \
@@ -28,8 +28,8 @@ hengband_SOURCES = \
 	autopick/autopick-inserter-killer.c autopick/autopick-inserter-killer.h \
 	autopick/autopick-registry.c autopick/autopick-registry.h \
 	autopick/autopick-command-menu.c autopick/autopick-command-menu.h \
-	autopick-editor-util.c autopick-editor-util.h \
-	autopick-editor-command.c autopick-editor-command.h \
+	autopick/autopick-editor-util.c autopick/autopick-editor-util.h \
+	autopick/autopick-editor-command.c autopick/autopick-editor-command.h \
 	\
 	avatar.h avatar.c birth.c birth.h \
 	\
@@ -51,6 +51,7 @@ hengband_SOURCES = \
 	\
 	view/display-characteristic.c view/display-characteristic.h \
 	view/display-fruit.c view/display-fruit.h \
+	view/display-main-window.c view/display-main-window.h \
 	view/display-player-stat-info.c view/display-player-stat-info.h \
 	view/display-player-misc-info.c view/display-player-misc-info.h \
 	view/display-player-middle.c view/display-player-middle.h \
@@ -146,9 +147,9 @@ hengband_SOURCES = \
 	realm/realm-crusade.c realm/realm-crusade.h \
 	realm/realm-daemon.c realm/realm-daemon.h \
 	realm/realm-death.c realm/realm-death.h \
-	realm/realm-hex.c realm/realm-hex.h 
+	realm/realm-hex.c realm/realm-hex.h \
 	realm/realm-hissatsu.c realm/realm-hissatsu.h \
-	realm/realm-life.c realm/realm-life.h 
+	realm/realm-life.c realm/realm-life.h \
 	realm/realm-nature.c realm/realm-nature.h realm/realm-song.c \
 	realm/realm-song.h realm/realm-sorcery.c \
 	realm/realm-sorcery.h realm/realm-trump.c realm/realm-trump.h \
@@ -176,6 +177,7 @@ hengband_SOURCES = \
 	effect/effect-monster-domination.c effect/effect-monster-domination.h \
 	effect/effect-monster-oldies.c effect/effect-monster-oldies.h \
 	effect/effect-monster-charm.c effect/effect-monster-charm.h \
+	effect/effect-monster-curse.c effect/effect-monster-curse.h \
 	effect/effect-monster-lite-dark.c effect/effect-monster-lite-dark.h \
 	effect/effect-monster-evil.c effect/effect-monster-evil.h \
 	effect/effect-monster-spirit.c effect/effect-monster-spirit.h \
@@ -199,7 +201,7 @@ hengband_SOURCES = \
 	wild.h wild.c wizard1.c wizard2.c \
 	warning.c warning.h world.c world.h \
 	\
-	view-mainwindow.c view-mainwindow.h targeting.c targeting.h \
+	targeting.c targeting.h \
 	\
 	z-form.c z-form.h z-rand.c z-rand.h z-term.c z-term.h z-util.c z-util.h \
 	z-virt.c z-virt.h \
@@ -215,7 +217,7 @@ hengband_SOURCES = \
 	knowledge/knowledge-self.c knowledge/knowledge-self.h \
 	knowledge/knowledge-quests.c knowledge/knowledge-quests.h \
 	\
-	cmd/cmd-autopick.c cmd/cmd-autopick.c \
+	cmd/cmd-autopick.c cmd/cmd-autopick.h \
 	cmd/dump-util.c cmd/dump-util.h cmd/feeling-table.c cmd/feeling-table.h \
 	cmd/monster-group-table.c cmd/monster-group-table.h \
 	cmd/diary-subtitle-table.c cmd/diary-subtitle-table.h \
