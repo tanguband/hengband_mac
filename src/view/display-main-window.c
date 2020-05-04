@@ -34,9 +34,8 @@
 #include "monster.h"
 #include "view/display-main-window.h"
 
-#include "spells.h"
-#include "realm-hex.h"
-#include "realm-song.h"
+#include "realm/realm-hex.h"
+#include "realm/realm-song.h"
 
 #include "object-flavor.h"
 
@@ -49,6 +48,7 @@
 #include "targeting.h"
 
 #include "market/arena-info-table.h"
+#include "effect/spells-effect-util.h"
 
  /*
   * Not using graphical tiles for this feature?
@@ -1573,7 +1573,7 @@ static void print_frame_extra(player_type *player_ptr)
  * @param player_ptr プレーヤーへの参照ポインタ
  * @return なし
  */
-static void fix_inventory(player_type *player_ptr)
+static void fix_inventory(player_type *player_ptr, OBJECT_TYPE_VALUE item_tester_tval)
 {
 	/* Scan windows */
 	for (int j = 0; j < 8; j++)
@@ -1760,7 +1760,7 @@ static void fix_monster_list(player_type *player_ptr)
  * @param player_ptr プレーヤーへの参照ポインタ
  * @return なし
  */
-static void fix_equip(player_type *player_ptr)
+static void fix_equip(player_type *player_ptr, OBJECT_TYPE_VALUE item_tester_tval)
 {
 	/* Scan windows */
 	for (int j = 0; j < 8; j++)
@@ -2280,14 +2280,14 @@ void window_stuff(player_type *player_ptr)
 	if (player_ptr->window & (PW_INVEN))
 	{
 		player_ptr->window &= ~(PW_INVEN);
-		fix_inventory(player_ptr);
+		fix_inventory(player_ptr, 0); // TODO:2.2.2 まともなtval参照手段を確保
 	}
 
 	/* Display equipment */
 	if (player_ptr->window & (PW_EQUIP))
 	{
 		player_ptr->window &= ~(PW_EQUIP);
-		fix_equip(player_ptr);
+		fix_equip(player_ptr, 0);  // TODO:2.2.2 まともなtval参照手段を確保
 	}
 
 	/* Display spell list */

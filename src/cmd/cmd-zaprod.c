@@ -9,7 +9,7 @@
 #include "player-inventory.h"
 #include "object/object-kind.h"
 #include "object-hook.h"
-#include "spells.h"
+#include "spell/spells-type.h"
 #include "spells-status.h"
 #include "spells-floor.h"
 #include "cmd-basic.h"
@@ -56,10 +56,10 @@ int rod_effect(player_type *creature_ptr, OBJECT_SUBTYPE_VALUE sval, DIRECTION d
 	case SV_ROD_IDENTIFY:
 	{
 		if (powerful) {
-			if (!identify_fully(creature_ptr, FALSE)) *use_charge = FALSE;
+			if (!identify_fully(creature_ptr, FALSE, 0)) *use_charge = FALSE;
 		}
 		else {
-			if (!ident_spell(creature_ptr, FALSE)) *use_charge = FALSE;
+			if (!ident_spell(creature_ptr, FALSE, 0)) *use_charge = FALSE;
 		}
 		ident = TRUE;
 		break;

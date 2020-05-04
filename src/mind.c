@@ -23,7 +23,6 @@
 
 #include "floor.h"
 #include "melee.h"
-#include "spells.h"
 #include "spells-summon.h"
 #include "avatar.h"
 #include "player-move.h"
@@ -40,7 +39,9 @@
 #include "player-damage.h"
 #include "view/display-main-window.h"
 #include "targeting.h"
-#include "realm-song.h"
+#include "realm/realm-song.h"
+#include "effect/spells-effect-util.h"
+#include "spell/spells-type.h"
 
 /*! 特殊技能の一覧テーブル */
 mind_power const mind_powers[5] =
@@ -1076,11 +1077,11 @@ static bool cast_mindcrafter_spell(player_type *caster_ptr, int spell)
 		break;
 	case 2:
 		/* Minor displace */
-		teleport_player(caster_ptr, 10, 0L);
+		teleport_player(caster_ptr, 10, TELEPORT_SPONTANEOUS);
 		break;
 	case 3:
 		/* Major displace */
-		teleport_player(caster_ptr, plev * 5, 0L);
+		teleport_player(caster_ptr, plev * 5, TELEPORT_SPONTANEOUS);
 		break;
 	case 4:
 		/* Domination */
@@ -1116,7 +1117,7 @@ static bool cast_mindcrafter_spell(player_type *caster_ptr, int spell)
 		if (plev < 25)
 			return psychometry(caster_ptr);
 		else
-			return ident_spell(caster_ptr, FALSE);
+			return ident_spell(caster_ptr, FALSE, 0);
 	case 8:
 		/* Mindwave */
 		msg_print(_("精神を捻じ曲げる波動を発生させた！", "Mind-warping forces emanate from your brain!"));
@@ -1356,7 +1357,7 @@ static bool cast_mirror_spell(player_type *caster_ptr, int spell)
 		break;
 		/* warped mirror */
 	case 3:
-		teleport_player(caster_ptr, 10, 0L);
+		teleport_player(caster_ptr, 10, TELEPORT_SPONTANEOUS);
 		break;
 		/* mirror of light */
 	case 4:
@@ -1364,7 +1365,7 @@ static bool cast_mirror_spell(player_type *caster_ptr, int spell)
 		break;
 		/* mirror of wandering */
 	case 5:
-		teleport_player(caster_ptr, plev * 5, 0L);
+		teleport_player(caster_ptr, plev * 5, TELEPORT_SPONTANEOUS);
 		break;
 		/* robe of dust */
 	case 6:
@@ -1569,7 +1570,7 @@ static bool cast_ninja_spell(player_type *caster_ptr, int spell)
 		break;
 	case 2:
 	{
-		teleport_player(caster_ptr, 10, 0L);
+		teleport_player(caster_ptr, 10, TELEPORT_SPONTANEOUS);
 		break;
 	}
 	case 3:
@@ -1584,7 +1585,7 @@ static bool cast_ninja_spell(player_type *caster_ptr, int spell)
 	}
 	case 4:
 	{
-		teleport_player(caster_ptr, caster_ptr->lev * 5, 0L);
+		teleport_player(caster_ptr, caster_ptr->lev * 5, TELEPORT_SPONTANEOUS);
 		break;
 	}
 	case 5:
@@ -1599,13 +1600,13 @@ static bool cast_ninja_spell(player_type *caster_ptr, int spell)
 		break;
 	}
 	case 7:
-		return ident_spell(caster_ptr, FALSE);
+		return ident_spell(caster_ptr, FALSE, 0);
 	case 8:
 		set_tim_levitation(caster_ptr, randint1(20) + 20, FALSE);
 		break;
 	case 9:
 		fire_ball(caster_ptr, GF_FIRE, 0, 50+plev, plev/10+2);
-		teleport_player(caster_ptr, 30, 0L);
+		teleport_player(caster_ptr, 30, TELEPORT_SPONTANEOUS);
 		set_oppose_fire(caster_ptr, (TIME_EFFECT)plev, FALSE);
 		break;
 	case 10:
@@ -1664,7 +1665,7 @@ static bool cast_ninja_spell(player_type *caster_ptr, int spell)
 		fire_ball(caster_ptr, GF_POIS, 0, 75+plev*2/3, plev/5+2);
 		fire_ball(caster_ptr, GF_HYPODYNAMIA, 0, 75+plev*2/3, plev/5+2);
 		fire_ball(caster_ptr, GF_CONFUSION, 0, 75+plev*2/3, plev/5+2);
-		teleport_player(caster_ptr, 30, 0L);
+		teleport_player(caster_ptr, 30, TELEPORT_SPONTANEOUS);
 		break;
 	case 18:
 	{
