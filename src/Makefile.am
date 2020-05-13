@@ -278,7 +278,7 @@ hengband_SOURCES = \
 	\
 	world/world.c world/world.h \
 	world/world-movement-processor.c world/world-movement-processor.h \
-	world/world-turn-processor.c world/world-turn-processor.h \
+	world/world-turn-processor.c world/world-turn-processor.h
 
 EXTRA_hengband_SOURCES = \
 	angband.ico angband.rc ang_eng.rc maid-x11.c main-win.c \
