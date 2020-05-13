@@ -31,7 +31,10 @@ hengband_SOURCES = \
 	autopick/autopick-editor-util.c autopick/autopick-editor-util.h \
 	autopick/autopick-editor-command.c autopick/autopick-editor-command.h \
 	\
-	avatar.h avatar.c birth.c birth.h \
+	avatar.h avatar.c \
+	\
+	birth/bitrh-explanations-table.c birth/bitrh-explanations-table.h \
+	birth/birth.c birth/birth.h \
 	\
 	main/music-definitions-table.c main/music-definitions-table.h \
 	main/sound-definitions-table.c main/sound-definitions-table.h \
@@ -66,6 +69,7 @@ hengband_SOURCES = \
 	player/race-resistances.c player/race-resistances.h \
 	player/permanent-resistances.c player/permanent-resistances.h \
 	player/temporary-resistances.c player/temporary-resistances.h \
+	player/digestion-processor.c player/digestion-processor.h \
 	\
 	io/dump-remover.c io/dump-remover.h \
 	io/gf-descriptions.c io/gf-descriptions.h \
@@ -79,14 +83,31 @@ hengband_SOURCES = \
 	io/mutations-dump.c io/mutations-dump.h \
 	io/signal-handlers.c io/signal-handlers.h \
 	io/uid-checker.c io/uid-checker.h \
-	character-dump.c character-dump.h core.c core.h files.c files.h \
-	core/show-file.c core/show-file.h \
+	io/input-key-processor.c io/input-key-processor.h \
 	\
-	dungeon.c dungeon.h \
+	character-dump.c character-dump.h files.c files.h \
+	core/system-variables.c core/system-variables.h \
+	core/game-play.c core/game-play.h \
+	core/show-file.c core/show-file.h \
+	core/stuff-handler.c core/stuff-handler.h \
+	core/angband-version.h core/special-internal-keys.h \
+	core/output-updater.c core/output-updater.h \
+	core/game-closer.c core/game-closer.h \
+	core/turn-compensator.c core/turn-compensator.h \
+	core/hp-mp-generator.c core/hp-mp-generator.h \
+	core/hp-mp-processor.c core/hp-mp-processor.h \
+	core/magic-effects-timeout-reducer.c core/magic-effects-timeout-reducer.h \
+	core/player-processor.c core/player-processor.h \
+	\
+	dungeon/dungeon.c dungeon/dungeon.h \
+	dungeon/dungeon-processor.c dungeon/dungeon-processor.h \
+	dungeon/dungeon-file.c dungeon/dungeon-file.h \
+	\
 	floor.c floor.h floor-events.c floor-events.h \
 	floor-generate.c floor-generate.h \
 	floor-save.h floor-save.c floor-town.h floor-town.c \
 	floor-streams.c floor-streams.h \
+	floor/pattern-walk.c floor/pattern-walk.h \
 	\
 	feature.c feature.h \
 	geometry.c geometry.h \
@@ -97,7 +118,6 @@ hengband_SOURCES = \
 	h-system.h h-type.h inet.c inet.h init.c init.h \
 	japanese.c japanese.h english.c english.h \
 	load.c load.h \
-	dungeon-file.c dungeon-file.h \
 	main.c main-x11.c main-gcu.c \
 	mind.c mind.h \
 	\
@@ -118,14 +138,21 @@ hengband_SOURCES = \
 	monster-status.c monster-status.h monster1.c monster2.c \
 	mspells1.c mspells2.c mspells3.c mspells4.c monster-spell.h \
 	\
-	mutation.h mutation.c \
+	mutation/mutation.c mutation/mutation.h \
+	mutation/mutation-processor.c mutation/mutation-processor.h \
 	\
 	object-boost.c object-boost.h \
 	object-curse.c object-curse.h object-broken.c object-broken.h \
 	object-hook.c object-hook.h object1.c object2.c object.h \
 	object/object-kind.c object/object-kind.h \
 	object/object-kind-hook.c object/object-kind-hook.h \
+	object/lite-processor.c object/lite-processor.h \
 	object-flavor.c object-flavor.h object-ego.c object-ego.h \
+	\
+	inventory/simple-appraiser.c inventory/simple-appraiser.h \
+	inventory/inventory-curse.c inventory/inventory-curse.h \
+	inventory/recharge-processor.c inventory/recharge-processor.h \
+	inventory/pack-overflow.c inventory/pack-overflow.h \
 	\
 	patron.h patron.c \
 	\
@@ -183,13 +210,20 @@ hengband_SOURCES = \
 	effect/effect-monster-spirit.c effect/effect-monster-spirit.h \
 	effect/effect-monster-switcher.c effect/effect-monster-switcher.h \
 	effect/effect-player-util.h \
+	effect/effect-player-resist-hurt.c effect/effect-player-resist-hurt.h \
+	effect/effect-player-oldies.c effect/effect-player-oldies.h \
+	effect/effect-player-curse.c effect/effect-player-curse.h \
+	effect/effect-player-spirit.c effect/effect-player-spirit.h \
 	effect/effect-player-switcher.c effect/effect-player-switcher.h \
+	effect/effect-characteristics.h \
 	\
 	spell/technic-info-table.c spell/technic-info-table.h \
 	spell/spells-execution.c spell/spells-execution.h \
 	spell/spells-util.h spell/spells-type.h \
-	spells.h \
-	spells1.c spells2.c spells3.c \
+	spell/process-effect.h spell/process-effect.h \
+	spell/spells1.c spell/spells1.h spell/spells2.c spell/spells2.h \
+	spell/spells3.c spell/spells3.h \
+	spell/music-checker.c spell/music-checker.h \
 	spells-diceroll.c spells-diceroll.h \
 	spells-floor.c spells-floor.h \
 	spells-object.c spells-object.h \
@@ -198,8 +232,7 @@ hengband_SOURCES = \
 	spells-world.c spells-world.h \
 	\
 	sort.c sort.h gameterm.c gameterm.h trap.c trap.h util.c util.h \
-	wild.h wild.c wizard1.c wizard2.c \
-	warning.c warning.h world.c world.h \
+	wild.h wild.c warning.c warning.h \
 	\
 	targeting.c targeting.h \
 	\
@@ -238,7 +271,14 @@ hengband_SOURCES = \
 	cmd/cmd-usestaff.c cmd/cmd-usestaff.h \
 	cmd/cmd-zaprod.c cmd/cmd-zaprod.h cmd/cmd-zapwand.c cmd/cmd-zapwand.h \
 	\
-	combat/melee.h combat/melee.c combat/shoot.c combat/shoot.h
+	combat/melee.h combat/melee.c combat/shoot.c combat/shoot.h \
+	\
+	wizard/wizard-spoiler.c wizard/wizard-spoiler.h\
+	wizard/wizard-special-process.c wizard/wizard-special-process.h \
+	\
+	world/world.c world/world.h \
+	world/world-movement-processor.c world/world-movement-processor.h \
+	world/world-turn-processor.c world/world-turn-processor.h \
 
 EXTRA_hengband_SOURCES = \
 	angband.ico angband.rc ang_eng.rc maid-x11.c main-win.c \
@@ -326,10 +366,14 @@ endif
 
 DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/autopick \
+	-I$(srcdir)/birth \
 	-I$(srcdir)/cmd \
 	-I$(srcdir)/combat \
 	-I$(srcdir)/core \
+	-I$(srcdir)/dungeon \
 	-I$(srcdir)/effect \
+	-I$(srcdir)/floor \
+	-I$(srcdir)/inventory \
 	-I$(srcdir)/io \
 	-I$(srcdir)/knowledge \
 	-I$(srcdir)/market \
@@ -340,6 +384,8 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/room \
 	-I$(srcdir)/spell \
 	-I$(srcdir)/view \
+	-I$(srcdir)/wizard \
+	-I$(srcdir)/world \
 	-I$(top_builddir)/src
 CFLAGS += $(XFT_CFLAGS)
 LIBS += $(XFT_LIBS)

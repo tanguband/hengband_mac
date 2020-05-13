@@ -2,6 +2,8 @@
 #include "object/object-kind.h"
 #include "snipe.h"
 #include "spell/spells-type.h"
+#include "spell/process-effect.h"
+#include "effect/effect-characteristics.h"
 
 /*!
 * @brief アイテムが酸で破損するかどうかを判定する

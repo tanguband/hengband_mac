@@ -12,12 +12,12 @@
 
 #include "angband.h"
 #include "market/building.h"
-#include "core.h"
+#include "core/system-variables.h"
 #include "load.h"
 #include "util.h"
 
 #include "artifact.h"
-#include "dungeon.h"
+#include "dungeon/dungeon.h"
 #include "floor.h"
 #include "floor-save.h"
 #include "floor-events.h"
@@ -38,11 +38,12 @@
 #include "player-effects.h"
 #include "player-class.h"
 #include "player-personality.h"
-#include "world.h"
-#include "spells.h"
+#include "world/world.h"
+#include "spell/spells2.h"
 #include "io/write-diary.h"
 #include "cmd/cmd-dump.h"
 #include "save.h"
+#include "core/player-processor.h"
 
 #include "view/display-main-window.h"
 
@@ -923,7 +924,7 @@ void leave_floor(player_type *creature_ptr)
 	}
 
 	/* Extract current floor info or NULL */
-	sf_ptr = get_sf_ptr(tmp_floor_idx);
+	sf_ptr = get_sf_ptr(creature_ptr->floor_id);
 
 	/* Choose random stairs */
 	if ((creature_ptr->change_floor_mode & CFM_RAND_CONNECT) && tmp_floor_idx)
@@ -1013,7 +1014,7 @@ void leave_floor(player_type *creature_ptr)
 	}
 
 	/* No current floor -- Left/Enter dungeon etc... */
-	if (!tmp_floor_idx)
+	if (!creature_ptr->floor_id)
 	{
 		/* No longer need to save current floor */
 		return;

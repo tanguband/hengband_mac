@@ -1,5 +1,5 @@
 ﻿#include "angband.h"
-#include "core.h"
+#include "core/stuff-handler.h"
 #include "util.h"
 #include "main/sound-definitions-table.h"
 #include "gameterm.h"
@@ -15,7 +15,7 @@
 #include "player-personality.h"
 #include "object-hook.h"
 #include "object-broken.h"
-#include "floor.h"
+#include "effect/effect-characteristics.h"
 #include "grid.h"
 #include "object-flavor.h"
 
@@ -25,6 +25,7 @@
 #include "object/object-kind.h"
 #include "targeting.h"
 #include "effect/spells-effect-util.h"
+#include "spell/process-effect.h"
 
 /*!
  * @brief 矢弾を射撃した際のスレイ倍率をかけた結果を返す /
