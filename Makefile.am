@@ -3,10 +3,10 @@
 AUTOMAKE_OPTIONS = foreign
 
 visual_studio_files = \
-	Hengband_vcs2017/Hengband.sln \
-	Hengband_vcs2017/Hengband/Hengband.vcxproj \
-	Hengband_vcs2017/Hengband/Hengband.vcxproj.filters \
-	Hengband_vcs2017/Hengband/packages.config
+	Hengband/Hengband.sln \
+	Hengband/Hengband/Hengband.vcxproj \
+	Hengband/Hengband/Hengband.vcxproj.filters \
+	Hengband/Hengband/packages.config
 
 EXTRA_DIST = \
 	autopick.txt \
