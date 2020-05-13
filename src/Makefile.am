@@ -33,7 +33,7 @@ hengband_SOURCES = \
 	\
 	avatar.h avatar.c \
 	\
-	birth/bitrh-explanations-table.c birth/bitrh-explanations-table.h \
+	birth/birth-explanations-table.c birth/birth-explanations-table.h \
 	birth/birth.c birth/birth.h \
 	\
 	main/music-definitions-table.c main/music-definitions-table.h \
@@ -94,7 +94,7 @@ hengband_SOURCES = \
 	core/output-updater.c core/output-updater.h \
 	core/game-closer.c core/game-closer.h \
 	core/turn-compensator.c core/turn-compensator.h \
-	core/hp-mp-generator.c core/hp-mp-generator.h \
+	core/hp-mp-regenerator.c core/hp-mp-regenerator.h \
 	core/hp-mp-processor.c core/hp-mp-processor.h \
 	core/magic-effects-timeout-reducer.c core/magic-effects-timeout-reducer.h \
 	core/player-processor.c core/player-processor.h \
@@ -220,7 +220,7 @@ hengband_SOURCES = \
 	spell/technic-info-table.c spell/technic-info-table.h \
 	spell/spells-execution.c spell/spells-execution.h \
 	spell/spells-util.h spell/spells-type.h \
-	spell/process-effect.h spell/process-effect.h \
+	spell/process-effect.c spell/process-effect.h \
 	spell/spells1.c spell/spells1.h spell/spells2.c spell/spells2.h \
 	spell/spells3.c spell/spells3.h \
 	spell/music-checker.c spell/music-checker.h \
