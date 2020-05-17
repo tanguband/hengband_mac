@@ -177,8 +177,6 @@ hengband_SOURCES = \
 	inventory/pack-overflow.c inventory/pack-overflow.h \
 	inventory/player-inventory.c inventory/player-inventory.h \
 	\
-	patron.h patron.c \
-	\
 	player/player-move.c player/player-move.h \
 	player/player-damage.c player/player-damage.h \
 	player/player-status.c player/player-status.h \
@@ -186,6 +184,7 @@ hengband_SOURCES = \
 	player/player-skill.c player/player-skill.h \
 	player/player-class.c player/player-class.h \
 	player/player-race.c player/player-race.h \
+	player/patron.h player/patron.c \
 	player/player-personality.c player/player-personality.h \
 	player/player-sex.c player/player-sex.h player/selfinfo.c player/selfinfo.h \
 	\
