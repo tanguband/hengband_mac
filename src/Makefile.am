@@ -242,7 +242,7 @@ hengband_SOURCES = \
 	spell/spells1.c spell/spells1.h spell/spells2.c spell/spells2.h \
 	spell/spells3.c spell/spells3.h \
 	spell/music-checker.c spell/music-checker.h \
-	spells-diceroll.c spell/spells-diceroll.h \
+	spell/spells-diceroll.c spell/spells-diceroll.h \
 	spell/spells-floor.c spell/spells-floor.h \
 	spell/spells-object.c spell/spells-object.h \
 	spell/spells-status.c spell/spells-status.h \
@@ -265,7 +265,7 @@ hengband_SOURCES = \
 	mspell/mspell-floor.c mspell/mspell-floor.h \
 	mspell/mspell-status.c mspell/mspell-status.h \
 	mspell/mspell-special.c mspell/mspell-special.h \
-	mspell/mspell-particular.c mspell/mspell-particularity.h \
+	mspell/mspell-particularity.c mspell/mspell-particularity.h \
 	\
 	knowledge/knowledge-autopick.c knowledge/knowledge-autopick.h \
 	knowledge/knowledge-experiences.c knowledge/knowledge-experiences.h \
