@@ -80,6 +80,7 @@ hengband_SOURCES = \
 	io/dump-remover.c io/dump-remover.h \
 	io/files.c io/files.h \
 	io/gf-descriptions.c io/gf-descriptions.h \
+	io/targeting.c io/targeting.h \
 	io/tokenizer.c io/tokenizer.h \
 	io/interpret-pref-file.c io/interpret-pref-file.h \
 	io/player-status-dump.c io/player-status-dump.h \
@@ -267,8 +268,6 @@ hengband_SOURCES = \
 	mspell/mspell-status.c mspell/mspell-status.h \
 	mspell/mspell-special.c mspell/mspell-special.h \
 	mspell/mspell-particular.c mspell/mspell-particularity.h \
-	\
-	targeting.c targeting.h \
 	\
 	knowledge/knowledge-autopick.c knowledge/knowledge-autopick.h \
 	knowledge/knowledge-experiences.c knowledge/knowledge-experiences.h \
