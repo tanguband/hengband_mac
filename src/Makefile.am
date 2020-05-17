@@ -5,7 +5,8 @@ AUTOMAKE_OPTIONS = foreign subdir-objects nostdinc
 bin_PROGRAMS = hengband
 
 hengband_SOURCES = \
-	system/angband.h system/h-basic.h system/h-config.h \
+	system/angband.h system/angband-version.h \
+	system/h-basic.h system/h-config.h \
 	system/h-define.h system/h-system.h system/h-type.h \
 	system/system-variables.c system/system-variables.h \
 	system/gamevalue.h \
@@ -99,7 +100,7 @@ hengband_SOURCES = \
 	core/game-play.c core/game-play.h \
 	core/show-file.c core/show-file.h \
 	core/stuff-handler.c core/stuff-handler.h \
-	core/angband-version.h core/special-internal-keys.h \
+	core/special-internal-keys.h \
 	core/output-updater.c core/output-updater.h \
 	core/game-closer.c core/game-closer.h \
 	core/turn-compensator.c core/turn-compensator.h \
