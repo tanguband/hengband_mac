@@ -114,6 +114,7 @@ hengband_SOURCES = \
 	dungeon/dungeon.c dungeon/dungeon.h \
 	dungeon/dungeon-processor.c dungeon/dungeon-processor.h \
 	dungeon/dungeon-file.c dungeon/dungeon-file.h \
+	dungeon/quest.h dungeon/quest.c \
 	\
 	floor/floor.c floor/floor.h floor/floor-events.c floor/floor-events.h \
 	floor/floor-generate.c floor/floor-generate.h \
@@ -187,8 +188,6 @@ hengband_SOURCES = \
 	player/player-race.c player/player-race.h \
 	player/player-personality.c player/player-personality.h \
 	player/player-sex.c player/player-sex.h player/selfinfo.c player/selfinfo.h \
-	\
-	quest.h quest.c\
 	\
 	realm/realm.c realm/realm.h \
 	realm/realm-arcane.c realm/realm-arcane.h \
