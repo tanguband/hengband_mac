@@ -41,6 +41,7 @@ hengband_SOURCES = \
 	\
 	main/music-definitions-table.c main/music-definitions-table.h \
 	main/sound-definitions-table.c main/sound-definitions-table.h \
+	main/x11-gamma-builder.c main/x11-gamma-builder.h \
 	main/init.c main/init.h \
 	\
 	market/arena-info-table.c market/arena-info-table.h \
@@ -320,7 +321,6 @@ hengband_SOURCES = \
 EXTRA_hengband_SOURCES = \
 	angband.ico angband.rc ang_eng.rc maid-x11.c main-win.c \
 	main-cap.c main-xaw.c \
-	main/x11-gamma-builder.c main/x11-gamma-builder.h \
 	makefile.bcc makefile.std term/readdib.c term/readdib.h wall.bmp 
 
 cocoa_xcode_files = \
