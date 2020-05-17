@@ -25,7 +25,7 @@
 #include "cmd/cmd-save.h"
 #include "core/game-play.h"
 #include "system/system-variables.h"
-#include "init.h"
+#include "main/init.h"
 #include "files.h"
 #include "world.h"
 #include "gameterm.h"
