@@ -26,7 +26,7 @@
 #include "core/game-play.h"
 #include "system/system-variables.h"
 #include "main/init.h"
-#include "files.h"
+#include "io/files-util.h"
 #include "world.h"
 #include "gameterm.h"
 #include "view/display-main-window.h"
