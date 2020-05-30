@@ -1,12 +1,15 @@
 ﻿#include "system/angband.h"
+#include "floor/floor.h"
+#include "grid/grid.h"
 #include "spell/spells-detection.h"
 #include "dungeon/dungeon.h"
 #include "realm/realm-song.h"
 #include "core/player-processor.h"
 #include "grid/trap.h"
 #include "object/object-hook.h"
+#include "object/object-mark-types.h"
 #include "monster/monster-status.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 
 /*!
   * @brief プレイヤー周辺の地形を感知する
@@ -246,7 +249,7 @@ bool detect_objects_magic(player_type* caster_ptr, POSITION range)
     if (d_info[caster_ptr->dungeon_idx].flags1 & DF1_DARKNESS)
         range /= 3;
 
-    OBJECT_TYPE_VALUE tv;
+    tval_type tv;
     bool detect = FALSE;
     for (OBJECT_IDX i = 1; i < caster_ptr->current_floor_ptr->o_max; i++) {
         object_type* o_ptr = &caster_ptr->current_floor_ptr->o_list[i];

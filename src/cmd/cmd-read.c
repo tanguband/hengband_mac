@@ -10,6 +10,7 @@
 #include "util/util.h"
 #include "main/sound-definitions-table.h"
 
+#include "object/item-use-flags.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
 #include "object/artifact.h"
@@ -19,7 +20,7 @@
 #include "player/player-class.h"
 #include "player/player-effects.h"
 #include "inventory/player-inventory.h"
-#include "market/rumor.h"
+#include "store/rumor.h"
 #include "realm/realm-hex.h"
 
 #include "spell/spells-object.h"
@@ -29,9 +30,11 @@
 
 #include "cmd/cmd-basic.h"
 #include "core/show-file.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "floor/floor.h"
+#include "object/object2.h"
 #include "object/object-kind.h"
+#include "object/sv-scroll-types.h"
 #include "view/display-main-window.h"
 #include "spell/spells-type.h"
 #include "spell/spells2.h"
@@ -57,7 +60,7 @@ void exe_read(player_type *creature_ptr, INVENTORY_IDX item, bool known)
 	int k, used_up, ident, lev;
 	object_type *o_ptr;
 
-	o_ptr = REF_ITEM(creature_ptr, creature_ptr->current_floor_ptr, item);
+	o_ptr = ref_item(creature_ptr, item);
 
 	take_turn(creature_ptr, 100);
 	if (cmd_limit_time_walk(creature_ptr)) return;

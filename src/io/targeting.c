@@ -17,13 +17,15 @@
 #include "term/gameterm.h"
 #include "io/targeting.h"
 
-#include "market/building.h"
+#include "cmd/cmd-building.h"
 #include "cmd-pet.h"
 #include "dungeon/dungeon-file.h"
+#include "object/object2.h"
 #include "object/object-curse.h"
 #include "object/object-flavor.h"
+#include "object/object-mark-types.h"
 #include "monster/monster.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 #include "object/object-kind-hook.h"
 #include "core/sort.h"
 #include "spell/spells-summon.h"
@@ -41,6 +43,7 @@
 #include "dungeon/dungeon.h"
 #include "world/world.h"
 #include "effect/spells-effect-util.h"
+#include "player/player-races-table.h"
 
  /*!
   * @brief コンソール上におけるマップ表示の左上位置を返す /

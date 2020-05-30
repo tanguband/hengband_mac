@@ -17,23 +17,24 @@
 
 #include "io/write-diary.h"
 #include "cmd/cmd-dump.h"
-#include "market/building.h"
+#include "cmd/cmd-building.h"
 #include "cmd-pet.h"
 #include "effect/effect-characteristics.h"
 #include "object/object-kind-hook.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "monster/monster.h"
 #include "mspell/monster-spell.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 #include "spell/spells-summon.h"
 #include "player/patron.h"
 #include "dungeon/quest.h"
 #include "object/artifact.h"
+#include "object/item-apply-magic.h"
 #include "player/avatar.h"
 #include "floor/wild.h"
 #include "dungeon/dungeon.h"
 #include "world/world.h"
-#include "melee.h"
+#include "combat/melee-postprocess.h"
 #include "locale/japanese.h"
 #include "view/display-main-window.h"
 #include "player/player-class.h"
@@ -42,6 +43,13 @@
 #include "spell/process-effect.h"
 #include "mspell/mspell-type.h"
 #include "mspell/mspell-damage-calculator.h"
+#include "combat/monster-attack-types.h"
+#include "combat/monster-attack-effect.h"
+#include "object/sv-other-types.h"
+#include "object/sv-protector-types.h"
+#include "object/sv-scroll-types.h"
+#include "object/sv-weapon-types.h"
+#include "object/object2.h"
 
  /*
   * Pronoun arrays, by gender.
@@ -638,8 +646,8 @@ static void roff_aux(player_type *player_ptr, MONRACE_IDX r_idx, BIT_FLAGS mode)
 			for (int n = 0; n < A_MAX; n++)
 			{
 				bool is_reinforced = r_ptr->reinforce_id[n] > 0;
-				is_reinforced &= r_ptr->reinforce_dd[n];
-				is_reinforced &= r_ptr->reinforce_ds[n];
+				is_reinforced &= r_ptr->reinforce_dd[n] > 0;
+				is_reinforced &= r_ptr->reinforce_ds[n] > 0;
 				if (!is_reinforced) continue;
 
 				monster_race *rf_ptr = &r_info[r_ptr->reinforce_id[n]];
@@ -1611,7 +1619,7 @@ static void roff_aux(player_type *player_ptr, MONRACE_IDX r_idx, BIT_FLAGS mode)
 		if (r_ptr->blow[m].method == RBM_SHOOT) continue;
 		if (!r_ptr->r_blows[m] && !know_everything) continue;
 
-		int method = r_ptr->blow[m].method;
+		rbm_type method = r_ptr->blow[m].method;
 		int effect = r_ptr->blow[m].effect;
 		int d1 = r_ptr->blow[m].d_dice;
 		int d2 = r_ptr->blow[m].d_side;
@@ -2328,7 +2336,7 @@ void monster_death(player_type *player_ptr, MONSTER_IDX m_idx, bool drop_item)
 		}
 	}
 	
-	if (m_idx == player_ptr->riding && rakuba(player_ptr, -1, FALSE))
+	if (m_idx == player_ptr->riding && process_fall_off_horse(player_ptr, -1, FALSE))
 	{
 			msg_print(_("地面に落とされた。", "You have fallen from the pet you were riding."));
 	}
@@ -2461,7 +2469,7 @@ void monster_death(player_type *player_ptr, MONSTER_IDX m_idx, bool drop_item)
 	case MON_MORGOTH:
 	case MON_ONE_RING:
 	{
-		if (player_ptr->pseikaku != SEIKAKU_NAMAKE) break;
+		if (player_ptr->pseikaku != PERSONALITY_LAZY) break;
 		if (!drop_chosen_item) break;
 
 		ARTIFACT_IDX a_idx = 0;

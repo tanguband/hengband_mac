@@ -1,6 +1,13 @@
 ﻿#include "system/angband.h"
 #include "object/object-kind-hook.h"
 #include "object/object-kind.h"
+#include "object/sv-amulet-types.h"
+#include "object/sv-ring-types.h"
+
+/*
+ * Special "sval" limit -- first "good" magic/prayer book
+ */
+static const int SV_BOOK_MIN_GOOD = 2;
 
 /*!
  * @brief オブジェクトがクロークかどうかを判定する /

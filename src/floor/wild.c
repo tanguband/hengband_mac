@@ -15,7 +15,6 @@
 #include "system/system-variables.h"
 
 #include "dungeon/dungeon.h"
-#include "floor/floor.h"
 #include "floor/wild.h"
 #include "world/world.h"
 #include "monster/monster.h"
@@ -27,7 +26,7 @@
 #include "dungeon/quest.h"
 #include "dungeon/dungeon-file.h"
 #include "io/tokenizer.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "grid/feature.h"
 #include "floor/floor-town.h"
 #include "realm/realm.h"

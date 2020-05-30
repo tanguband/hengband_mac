@@ -1,5 +1,9 @@
 ﻿#pragma once 
-#include "market/building.h"
+
+#include "cmd/cmd-building.h"
+#include "object/object-util.h"
+#include "player/player-personalities-table.h"
+
 struct floor_type;
 typedef struct floor_type floor_type;
 
@@ -96,12 +100,12 @@ typedef struct player_type
 	POSITION oldpx;		/* Previous player location -KMW- */
 
 	SEX_IDX psex;		/* Sex index */
-	RACE_IDX prace;		/* Race index */
-	CLASS_IDX pclass;	/* Class index */
-	CHARACTER_IDX pseikaku;	/* Seikaku index */
+	player_race_type prace;		/* Race index */
+	player_class_type pclass;	/* Class index */
+	player_personality_type pseikaku;	/* Seikaku index */
 	REALM_IDX realm1;		/* First magic realm */
 	REALM_IDX realm2;		/* Second magic realm */
-	CHARACTER_IDX oops;		/* Unused */
+	player_personality_type oops;		/* Unused */
 
 	DICE_SID hitdie;	/* Hit dice (sides) */
 	u16b expfact;	/* Experience factor
@@ -438,7 +442,7 @@ typedef struct player_type
 	BIT_FLAGS8 knowledge;           /* Knowledge about yourself */
 	BIT_FLAGS visit;               /* Visited towns */
 
-	RACE_IDX start_race;          /* Race at birth */
+	player_race_type start_race;          /* Race at birth */
 	BIT_FLAGS old_race1;           /* Record of race changes */
 	BIT_FLAGS old_race2;           /* Record of race changes */
 	s16b old_realm;           /* Record of realm changes */
@@ -801,9 +805,7 @@ extern const s32b player_exp_a[PY_MAX_LEVEL];
 #define IS_INVULN(C) (C->invuln || music_singing(C, MUSIC_INVULN))
 #define IS_HERO(C) (C->hero || music_singing(C, MUSIC_HERO) || music_singing(C, MUSIC_SHERO))
 
-#define IS_ECHIZEN(C) (((C)->pseikaku == SEIKAKU_COMBAT) || ((C)->inventory_list[INVEN_BOW].name1 == ART_CRIMSON))
-
-#define P_PTR_KI (p_ptr->magic_num1[0])
+#define IS_ECHIZEN(C) (((C)->pseikaku == PERSONALITY_COMBAT) || ((C)->inventory_list[INVEN_BOW].name1 == ART_CRIMSON))
 
 extern bool is_blessed(player_type *creature_ptr);
 extern bool is_oppose_acid(player_type *creature_ptr);

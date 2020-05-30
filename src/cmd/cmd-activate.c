@@ -8,13 +8,14 @@
 
 #include "system/angband.h"
 #include "main/sound-definitions-table.h"
-
 #include "cmd/cmd-activate.h"
 #include "cmd/cmd-basic.h"
 #include "cmd/cmd-save.h"
 #include "object/object-hook.h"
 #include "core/sort.h"
+#include "floor/floor.h"
 #include "object/artifact.h"
+#include "object/item-use-flags.h"
 #include "player/avatar.h"
 #include "spell/spells-summon.h"
 #include "spell/spells-status.h"
@@ -25,9 +26,11 @@
 #include "player/player-damage.h"
 #include "inventory/player-inventory.h"
 #include "monster/monster-status.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "object/object-kind.h"
 #include "object/object-ego.h"
+#include "object/sv-lite-types.h"
+#include "object/sv-ring-types.h"
 #include "io/targeting.h"
 #include "world/world.h"
 #include "effect/spells-effect-util.h"
@@ -37,6 +40,7 @@
 #include "spell/spells2.h"
 #include "spell/spells3.h"
 #include "spell/spells-detection.h"
+#include "player/player-races-table.h"
 
 /*!
  * @brief 装備耐性に準じたブレス効果の選択テーブル /
@@ -355,7 +359,7 @@ void exe_activate(player_type *user_ptr, INVENTORY_IDX item)
 	object_type *o_ptr;
 	bool success;
 
-	o_ptr = REF_ITEM(user_ptr, user_ptr->current_floor_ptr, item);
+	o_ptr = ref_item(user_ptr, item);
 	take_turn(user_ptr, 100);
 	lev = k_info[o_ptr->k_idx].level;
 

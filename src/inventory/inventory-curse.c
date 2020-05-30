@@ -6,12 +6,21 @@
 #include "player/player-move.h"
 #include "spell/spells2.h"
 #include "spell/spells3.h"
-#include "io/files.h"
+#include "io/files-util.h"
+#include "object/item-feeling.h"
 #include "object/object-curse.h"
 #include "object/artifact.h"
 #include "object/object-hook.h"
+#include "object/special-object-flags.h"
 #include "player/player-effects.h"
 #include "object/object-kind.h"
+#include "player/player-races-table.h"
+#include "object/tr-types.h"
+#include "object/trc-types.h"
+
+#define TRC_P_FLAG_MASK \
+    (TRC_TELEPORT_SELF | TRC_CHAINSWORD | TRC_TY_CURSE | TRC_DRAIN_EXP | TRC_ADD_L_CURSE | TRC_ADD_H_CURSE | TRC_CALL_ANIMAL | TRC_CALL_DEMON \
+        | TRC_CALL_DRAGON | TRC_COWARDICE | TRC_TELEPORT | TRC_DRAIN_HP | TRC_DRAIN_MANA | TRC_CALL_UNDEAD)
 
 static bool is_specific_curse(BIT_FLAGS flag)
 {
@@ -36,7 +45,7 @@ static void choise_cursed_item(BIT_FLAGS flag, object_type *o_ptr, int *choices,
     if (!is_specific_curse(flag))
         return;
 
-    u32b cf = 0L;
+    tr_type cf = 0;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     object_flags(o_ptr, flgs);
     switch (flag) {
@@ -86,7 +95,7 @@ static void choise_cursed_item(BIT_FLAGS flag, object_type *o_ptr, int *choices,
         break;
     }
 
-    if (!have_flag(flgs, cf))
+    if (!have_flag(flgs, (long)cf))
         return;
 
     choices[*number] = item_num;

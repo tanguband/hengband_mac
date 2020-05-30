@@ -12,12 +12,12 @@
 #include "dungeon/dungeon.h"
 #include "combat/snipe.h"
 #include "autopick/autopick-pref-processor.h"
-#include "market/store-util.h"
+#include "store/store-util.h"
 #include "main/sound-definitions-table.h"
 #include "io/write-diary.h"
 #include "inventory/player-inventory.h"
 #include "player/player-effects.h"
-#include "market/store.h" // do_cmd_store() がある。後で移設する.
+#include "store/store.h" // do_cmd_store() がある。後で移設する.
 #include "dungeon/quest.h" // do_cmd_quest() がある。後で移設する.
 #include "floor/wild.h"
 #include "spell/spells-object.h"
@@ -29,10 +29,11 @@
 #include "knowledge/knowledge-quests.h"
 #include "io/chuukei.h"
 #include "player/player-move.h" // do_cmd_travel() がある。後で移設する.
-#include "io/files.h"
+#include "io/files-util.h"
 
 #include "cmd/cmd-activate.h"
 #include "cmd/cmd-autopick.h"
+#include "cmd/cmd-building.h"
 #include "cmd/cmd-diary.h"
 #include "cmd/cmd-draw.h"
 #include "cmd/cmd-dump.h"
@@ -255,7 +256,7 @@ void process_command(player_type* creature_ptr)
         break;
     }
     case SPECIAL_KEY_BUILDING: {
-        do_cmd_bldg(creature_ptr);
+        do_cmd_building(creature_ptr);
         break;
     }
     case SPECIAL_KEY_QUEST: {

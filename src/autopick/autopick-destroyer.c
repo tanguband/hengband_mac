@@ -7,12 +7,17 @@
 #include "autopick/autopick-util.h"
 #include "autopick-methods-table.h"
 #include "autopick/autopick-destroyer.h"
+#include "object/sv-other-types.h"
+#include "object/object2.h"
 #include "object/object-ego.h"
 #include "object/object-hook.h"
 #include "object/object-kind.h"
 #include "object/object-flavor.h"
+#include "object/object-mark-types.h"
+#include "object/special-object-flags.h"
+#include "object/sv-wand-types.h"
 #include "player/player-move.h"
-
+#include "player/player-races-table.h"
 
 /*!
  * @brief クラス依存のアイテム破壊を調べる
@@ -24,7 +29,7 @@ static bool is_leave_special_item(player_type *player_ptr, object_type *o_ptr)
 {
 	if (!leave_special) return TRUE;
 
-	if (player_ptr->prace == RACE_DEMON)
+	if (player_ptr->prace == RACE_BALROG)
 	{
 		if (o_ptr->tval == TV_CORPSE &&
 			o_ptr->sval == SV_CORPSE &&

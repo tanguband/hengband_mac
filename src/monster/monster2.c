@@ -20,8 +20,9 @@
 #include "cmd-pet.h"
 #include "dungeon/dungeon.h"
 #include "effect/effect-characteristics.h"
+#include "object/object2.h"
 #include "object/object-flavor.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 #include "monster/monster-status.h"
 #include "monster/monster.h"
 #include "spell/spells-type.h"
@@ -32,17 +33,17 @@
 #include "player/player-status.h"
 #include "player/player-race.h"
 #include "player/player-class.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "floor/wild.h"
 #include "object/warning.h"
 #include "mspell/monster-spell.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "view/display-main-window.h"
 #include "world/world.h"
 #include "monster/monster-race.h"
 #include "monster/creature.h"
 #include "io/targeting.h"
-#include "melee.h"
+#include "combat/monster-attack-types.h"
 #include "spell/process-effect.h"
 #include "core/player-processor.h"
 
@@ -2064,7 +2065,7 @@ void choose_new_monster(player_type *player_ptr, MONSTER_IDX m_idx, bool born, M
 		monster_desc(player_ptr, m_name, m_ptr, 0);
 		msg_format(_("突然%sが変身した。", "Suddenly, %s transforms!"), old_m_name);
 		if (!(r_ptr->flags7 & RF7_RIDING))
-			if (rakuba(player_ptr, 0, TRUE)) msg_format(_("地面に落とされた。", "You have fallen from %s."), m_name);
+			if (process_fall_off_horse(player_ptr, 0, TRUE)) msg_format(_("地面に落とされた。", "You have fallen from %s."), m_name);
 	}
 
 	m_ptr->mspeed = get_mspeed(player_ptr, r_ptr);
@@ -2124,7 +2125,7 @@ static bool monster_hook_tanuki(MONRACE_IDX r_idx)
 static MONRACE_IDX initial_r_appearance(player_type *player_ptr, MONRACE_IDX r_idx, BIT_FLAGS generate_mode)
 {
 	floor_type *floor_ptr = player_ptr->current_floor_ptr;
-	if (player_ptr->pseikaku == SEIKAKU_CHARGEMAN && (generate_mode & PM_JURAL) && !(generate_mode & (PM_MULTIPLY | PM_KAGE)))
+	if (player_ptr->pseikaku == PERSONALITY_CHARGEMAN && (generate_mode & PM_JURAL) && !(generate_mode & (PM_MULTIPLY | PM_KAGE)))
 	{
 		return MON_ALIEN_JURAL;
 	}

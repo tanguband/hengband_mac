@@ -7,6 +7,8 @@
 #include "system/angband.h"
 #include "special-class-dump.h"
 #include "cmd/cmd-magiceat.h"
+#include "cmd/cmd-smith.h"
+#include "object/object2.h"
 #include "object/object-kind.h"
 #include "mspell/monster-spell.h"
 
@@ -29,7 +31,7 @@ static void dump_magic_eater(player_type *creature_ptr, FILE *fff)
 
 	for (int ext = 0; ext < 3; ext++)
 	{
-		OBJECT_TYPE_VALUE tval = 0;
+		tval_type tval = 0;
 		switch (ext)
 		{
 		case 0:

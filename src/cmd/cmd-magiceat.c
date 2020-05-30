@@ -57,16 +57,19 @@
 #include "main/sound-definitions-table.h"
 #include "term/gameterm.h"
 
-#include "cmd-basic.h"
-#include "cmd-usestaff.h"
-#include "cmd-zaprod.h"
-#include "cmd-zapwand.h"
-#include "cmd-magiceat.h"
+#include "cmd/cmd-basic.h"
+#include "cmd/cmd-usestaff.h"
+#include "cmd/cmd-zaprod.h"
+#include "cmd/cmd-zapwand.h"
+#include "cmd/cmd-magiceat.h"
 #include "player/avatar.h"
 #include "player/player-status.h"
 #include "spell/spells3.h"
 #include "player/player-class.h"
+#include "object/object2.h"
 #include "object/object-kind.h"
+#include "object/sv-other-types.h"
+#include "object/sv-rod-types.h"
 #include "io/targeting.h"
 
 /*!
@@ -79,7 +82,7 @@ static OBJECT_SUBTYPE_VALUE select_magic_eater(player_type *creature_ptr, bool o
 	OBJECT_SUBTYPE_VALUE ext = 0;
 	char choice;
 	bool flag, request_list;
-	OBJECT_TYPE_VALUE tval = 0;
+	tval_type tval = 0;
 	int             ask = TRUE;
 	OBJECT_SUBTYPE_VALUE i = 0;
 	char            out_val[160];
@@ -516,7 +519,7 @@ bool do_cmd_magic_eater(player_type *creature_ptr, bool only_browse, bool powerf
 	PERCENTAGE chance;
 	DEPTH level;
 	KIND_OBJECT_IDX k_idx;
-	OBJECT_TYPE_VALUE tval;
+	tval_type tval;
 	OBJECT_SUBTYPE_VALUE sval;
 	bool use_charge = TRUE;
 

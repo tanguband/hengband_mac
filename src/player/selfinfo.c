@@ -17,14 +17,16 @@
 #include "system/angband.h"
 #include "player/selfinfo.h"
 #include "util/util.h"
-
 #include "player/player-status.h"
-#include "player/player-race.h"
+#include "player/player-races-table.h"
 #include "player/player-class.h"
 #include "player/avatar.h"
 #include "realm/realm.h"
 #include "realm/realm-hex.h"
 #include "realm/realm-song.h"
+#include "object/object1.h"
+#include "object/tr-types.h"
+#include "object/trc-types.h"
 
 /*!
  * @brief 自己分析処理(Nethackからのアイデア) / self-knowledge... idea from nethack.
@@ -335,7 +337,7 @@ void self_knowledge(player_type *creature_ptr)
 				info[i++] = _("あなたは敵を眠らせる魔法の粉を投げることができる。(12 MP)", "You can throw magical dust which induces sleep (cost 12).");
 			}
 			break;
-		case RACE_DEMON:
+		case RACE_BALROG:
 			sprintf(Dummy, _("あなたは %d ダメージの地獄か火炎のブレスを吐くことができる。(%d MP)",
 				"You can breathe nether, dam. %d (cost %d)."), 3 * plev, 10 + plev / 3);
 

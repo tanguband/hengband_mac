@@ -15,8 +15,9 @@
 #include "combat/snipe.h"
 #include "realm/realm-hex.h"
 #include "spell/music-checker.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 #include "floor/wild.h"
+#include "mind/racial-force-trainer.h"
 
 bool load = TRUE;
 bool can_save = FALSE;
@@ -165,11 +166,11 @@ void process_player(player_type *creature_ptr)
         (void)set_lightspeed(creature_ptr, creature_ptr->lightspeed - 1, TRUE);
     }
 
-    if ((creature_ptr->pclass == CLASS_FORCETRAINER) && P_PTR_KI) {
-        if (P_PTR_KI < 40)
-            P_PTR_KI = 0;
+    if ((creature_ptr->pclass == CLASS_FORCETRAINER) && get_current_ki(creature_ptr)) {
+        if (get_current_ki(creature_ptr) < 40)
+            set_current_ki(creature_ptr, TRUE, 0);
         else
-            P_PTR_KI -= 40;
+            set_current_ki(creature_ptr, FALSE, -40);
         creature_ptr->update |= (PU_BONUS);
     }
 

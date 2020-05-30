@@ -1,17 +1,25 @@
-﻿
-#include "system/angband.h"
+﻿#include "system/angband.h"
+#include "floor/floor.h"
 #include "util/util.h"
-
-#include "object/object-hook.h"
-#include "monster/monster.h"
 #include "object/artifact.h"
+#include "object/item-feeling.h"
+#include "object/object-hook.h"
+#include "object/object-kind.h"
+#include "object/special-object-flags.h"
+#include "object/sv-armor-types.h"
+#include "object/sv-lite-types.h"
+#include "object/sv-other-types.h"
+#include "object/sv-protector-types.h"
+#include "object/sv-weapon-types.h"
+#include "object/tr-types.h"
+#include "monster/monster.h"
 #include "player/player-class.h"
 #include "player/player-skill.h"
 #include "player/mimic-info-table.h"
 #include "dungeon/quest.h"
 #include "world/world.h"
-#include "object/object-kind.h"
 #include "view/display-main-window.h"
+#include "player/player-races-table.h"
 
 /*!
 * @brief 対象のアイテムが矢やクロスボウの矢の材料になるかを返す。/
@@ -132,7 +140,7 @@ bool item_tester_hook_eatable(object_type *o_ptr)
 		if (o_ptr->tval == TV_STAFF || o_ptr->tval == TV_WAND)
 			return TRUE;
 	}
-	else if (PRACE_IS_(p_ptr, RACE_DEMON) || (mimic_info[p_ptr->mimic_form].MIMIC_FLAGS & MIMIC_IS_DEMON))
+	else if (PRACE_IS_(p_ptr, RACE_BALROG) || (mimic_info[p_ptr->mimic_form].MIMIC_FLAGS & MIMIC_IS_DEMON))
 	{
 		if (o_ptr->tval == TV_CORPSE &&
 			o_ptr->sval == SV_CORPSE &&
@@ -970,7 +978,7 @@ bool(*item_tester_hook)(object_type*);
  * @param o_ptr 判定を行いたいオブジェクト構造体参照ポインタ
  * @return item_tester_hookの参照先、その他いくつかの例外に応じてTRUE/FALSEを返す。
  */
-bool item_tester_okay(player_type *player_ptr, object_type *o_ptr, OBJECT_TYPE_VALUE tval)
+bool item_tester_okay(player_type *player_ptr, object_type *o_ptr, tval_type tval)
 {
 	/* Hack -- allow listing empty slots */
 	// if (item_tester_full) return TRUE; // TODO:DELETE

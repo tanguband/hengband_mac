@@ -26,7 +26,7 @@
 #include "cmd/cmd-dump.h"
 #include "cmd/cmd-pet.h"
 #include "monster/creature.h"
-#include "melee.h"
+#include "combat/melee-postprocess.h"
 #include "spell/spells-summon.h"
 #include "player/avatar.h"
 #include "realm/realm-hex.h"
@@ -36,6 +36,7 @@
 #include "monster/monster-status.h"
 #include "mspell/monster-spell.h"
 #include "monster/monster-process.h"
+#include "object/trc-types.h"
 
 void decide_drop_from_monster(player_type *target_ptr, MONSTER_IDX m_idx, bool is_riding_mon);
 bool process_stealth(player_type *target_ptr, MONSTER_IDX m_idx);
@@ -190,7 +191,7 @@ void decide_drop_from_monster(player_type *target_ptr, MONSTER_IDX m_idx, bool i
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	if (!is_riding_mon || ((r_ptr->flags7 & RF7_RIDING) != 0)) return;
 
-	if (rakuba(target_ptr, 0, TRUE))
+	if (process_fall_off_horse(target_ptr, 0, TRUE))
 	{
 #ifdef JP
 		msg_print("地面に落とされた。");

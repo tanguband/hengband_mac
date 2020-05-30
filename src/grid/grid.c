@@ -22,6 +22,7 @@
 #include "world/world.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
+#include "object/object-mark-types.h"
 #include "dungeon/dungeon.h"
 #include "floor/floor-generate.h"
 #include "grid/grid.h"
@@ -1360,8 +1361,8 @@ void place_bold(player_type *player_ptr, POSITION y, POSITION x, grid_bold_type 
 	}
 	case GB_OUTER_NOPERM:
 	{
-		feature_type *_f_ptr = &f_info[feat_wall_outer];
-		if (permanent_wall(_f_ptr)) set_cave_feat(floor_ptr, y, x, (s16b)feat_state(player_ptr, feat_wall_outer, FF_UNPERM));
+		feature_type *f_ptr = &f_info[feat_wall_outer];
+		if (permanent_wall(f_ptr)) set_cave_feat(floor_ptr, y, x, (s16b)feat_state(player_ptr, feat_wall_outer, FF_UNPERM));
 		else set_cave_feat(floor_ptr, y, x, feat_wall_outer);
 		floor_ptr->grid_array[y][x].info &= ~(CAVE_MASK);
 		add_cave_info(floor_ptr, y, x, (CAVE_OUTER | CAVE_VAULT));
@@ -1369,7 +1370,7 @@ void place_bold(player_type *player_ptr, POSITION y, POSITION x, grid_bold_type 
 	}
 	case GB_SOLID:
 	{
-		set_cave_feat(floor_ptr, y, x, feat_wall_inner);
+		set_cave_feat(floor_ptr, y, x, feat_wall_solid);
 		floor_ptr->grid_array[y][x].info &= ~(CAVE_MASK);
 		add_cave_info(floor_ptr, y, x, CAVE_SOLID);
 		break;
@@ -1384,9 +1385,33 @@ void place_bold(player_type *player_ptr, POSITION y, POSITION x, grid_bold_type 
 		add_cave_info(floor_ptr, y, x, CAVE_SOLID);
 		break;
 	}
+	case GB_SOLID_NOPERM:
+	{
+        feature_type *f_ptr = &f_info[feat_wall_solid];
+        if ((floor_ptr->grid_array[y][x].info & CAVE_VAULT) && permanent_wall(f_ptr))
+            set_cave_feat(floor_ptr, y, x, feat_state(player_ptr, feat_wall_solid, FF_UNPERM));
+        else
+            set_cave_feat(floor_ptr, y, x, feat_wall_solid);
+        floor_ptr->grid_array[y][x].info &= ~(CAVE_MASK);
+        add_cave_info(floor_ptr, y, x, CAVE_SOLID);
+        delete_monster(player_ptr, y, x);
+    }
 	default:
 		return;
 	}
 
 	delete_monster(player_ptr, y, x);
+}
+
+void set_cave_feat(floor_type *floor_ptr, POSITION y, POSITION x, FEAT_IDX feature_idx)
+{
+    floor_ptr->grid_array[y][x].feat = feature_idx;
+}
+
+/*!
+ * todo intをenumに変更する
+ */
+void add_cave_info(floor_type *floor_ptr, POSITION y, POSITION x, int cave_mask)
+{
+    floor_ptr->grid_array[y][x].info |= cave_mask;
 }

@@ -2,7 +2,6 @@
 #include "util/util.h"
 #include "main/sound-definitions-table.h"
 
-#include "player/player-race.h"
 #include "spell/spells-summon.h"
 #include "player/avatar.h"
 #include "player/player-status.h"
@@ -13,12 +12,17 @@
 #include "spell/spells3.h"
 #include "spell/spells-status.h"
 #include "spell/spells-floor.h"
+#include "object/object2.h"
 #include "object/object-hook.h"
 #include "cmd-basic.h"
 #include "floor/floor.h"
+#include "object/item-use-flags.h"
 #include "object/object-kind.h"
+#include "object/special-object-flags.h"
+#include "object/sv-staff-types.h"
 #include "view/display-main-window.h"
 #include "spell/spells-detection.h"
+#include "player/player-races-table.h"
 
 /*!
 * @brief 杖の効果を発動する
@@ -292,7 +296,7 @@ void exe_use_staff(player_type *creature_ptr, INVENTORY_IDX item)
 		/* Hack -- let staffs of identify get aborted */
 	bool use_charge = TRUE;
 
-	o_ptr = REF_ITEM(creature_ptr, creature_ptr->current_floor_ptr, item);
+	o_ptr = ref_item(creature_ptr, item);
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1))

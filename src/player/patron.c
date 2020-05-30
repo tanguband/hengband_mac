@@ -7,13 +7,13 @@
 #include "cmd-pet.h"
 #include "object/object-curse.h"
 #include "object/object-flavor.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 #include "object/object-kind-hook.h"
 #include "mutation/mutation.h"
 #include "object/artifact.h"
 #include "player/player-status.h"
 #include "player/player-effects.h"
-#include "player/player-race.h"
+#include "player/player-races-table.h"
 #include "player/player-class.h"
 #include "player/player-damage.h"
 
@@ -243,7 +243,7 @@ void gain_level_reward(player_type *creature_ptr, int chosen_reward)
 {
 	char        wrath_reason[32] = "";
 	int         nasty_chance = 6;
-	OBJECT_TYPE_VALUE dummy = 0;
+	tval_type dummy = 0;
 	int         type, effect;
 	concptr        reward = NULL;
 	GAME_TEXT o_name[MAX_NLEN];

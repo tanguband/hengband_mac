@@ -22,8 +22,8 @@
 #include "object/artifact.h"
 #include "cmd-dump.h"
 #include "floor/floor.h"
-#include "market/building.h"
-#include "birth/birth.h"
+#include "cmd/cmd-building.h"
+#include "birth/character-builder.h"
 #include "grid/grid.h"
 #include "mutation/mutation.h"
 #include "dungeon/quest.h"
@@ -31,8 +31,14 @@
 #include "spell/spells-status.h"
 #include "realm/realm-song.h"
 #include "realm/realm-hex.h"
+#include "object/item-feeling.h"
+#include "object/object2.h"
 #include "object/object-ego.h"
 #include "object/object-hook.h"
+#include "object/special-object-flags.h"
+#include "object/sv-armor-types.h"
+#include "object/sv-protector-types.h"
+#include "object/sv-weapon-types.h"
 #include "floor/wild.h"
 #include "spell/spells-floor.h"
 #include "player/player-status.h"
@@ -42,17 +48,21 @@
 #include "player/race-info-table.h"
 #include "player/player-class.h"
 #include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "player/player-sex.h"
 #include "player/player-damage.h"
 #include "monster/monster-status.h"
 #include "combat/snipe.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "mspell/monster-spell.h"
 #include "world/world.h"
 #include "object/object-kind.h"
 #include "autopick/autopick-reader-writer.h"
 #include "io/save.h"
 #include "io/report.h"
+#include "birth/birth-stat.h"
+#include "birth/birth-body-spec.h"
+#include "player/player-races-table.h"
 
 #include "view/display-main-window.h"
 
@@ -266,7 +276,7 @@ void reset_tim_flags(player_type *creature_ptr)
 	while(creature_ptr->energy_need < 0) creature_ptr->energy_need += ENERGY_NEED();
 	creature_ptr->timewalk = FALSE;
 
-	if (PRACE_IS_(creature_ptr, RACE_DEMON) && (creature_ptr->lev > 44)) creature_ptr->oppose_fire = 1;
+	if (PRACE_IS_(creature_ptr, RACE_BALROG) && (creature_ptr->lev > 44)) creature_ptr->oppose_fire = 1;
 	if ((creature_ptr->pclass == CLASS_NINJA) && (creature_ptr->lev > 44)) creature_ptr->oppose_pois = 1;
 	if (creature_ptr->pclass == CLASS_BERSERKER) creature_ptr->shero = 1;
 
@@ -695,7 +705,7 @@ bool set_image(player_type *creature_ptr, TIME_EFFECT v)
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 
 	if (creature_ptr->is_dead) return FALSE;
-	if (creature_ptr->pseikaku == SEIKAKU_CHARGEMAN) v = 0;
+	if (creature_ptr->pseikaku == PERSONALITY_CHARGEMAN) v = 0;
 
 	if (v)
 	{
@@ -2344,7 +2354,7 @@ bool set_oppose_fire(player_type *creature_ptr, TIME_EFFECT v, bool do_dec)
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 	if (creature_ptr->is_dead) return FALSE;
 
-	if ((PRACE_IS_(creature_ptr, RACE_DEMON) && (creature_ptr->lev > 44)) || (creature_ptr->mimic_form == MIMIC_DEMON)) v = 1;
+	if ((PRACE_IS_(creature_ptr, RACE_BALROG) && (creature_ptr->lev > 44)) || (creature_ptr->mimic_form == MIMIC_DEMON)) v = 1;
 	if (v)
 	{
 		if (creature_ptr->oppose_fire && !do_dec)
@@ -3248,7 +3258,7 @@ void do_poly_wounds(player_type *creature_ptr)
 /*
  * Change player race
  */
-void change_race(player_type *creature_ptr, CHARACTER_IDX new_race, concptr effect_msg)
+void change_race(player_type *creature_ptr, player_race_type new_race, concptr effect_msg)
 {
 	concptr title = race_info[new_race].title;
 	int  old_race = creature_ptr->prace;
@@ -3309,7 +3319,7 @@ void do_poly_self(player_type *creature_ptr)
 	if ((power > randint0(20)) && one_in_(3) && (creature_ptr->prace != RACE_ANDROID))
 	{
 		char effect_msg[80] = "";
-		CHARACTER_IDX new_race;
+        player_race_type new_race;
 
 		power -= 10;
 		if ((power > randint0(5)) && one_in_(4))
@@ -3367,7 +3377,7 @@ void do_poly_self(player_type *creature_ptr)
 
 		do
 		{
-			new_race = (CHARACTER_IDX)randint0(MAX_RACES);
+			new_race = (player_race_type)randint0(MAX_RACES);
 		}
 		while ((new_race == creature_ptr->prace) || (new_race == RACE_ANDROID));
 
@@ -3504,7 +3514,7 @@ void calc_android_exp(player_type *creature_ptr)
 
 		value = object_value_real(q_ptr);
 		if (value <= 0) continue;
-		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_ABUNAI_MIZUGI) && (creature_ptr->pseikaku != SEIKAKU_SEXY)) value /= 32;
+		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_ABUNAI_MIZUGI) && (creature_ptr->pseikaku != PERSONALITY_SEXY)) value /= 32;
 		if (value > 5000000L) value = 5000000L;
 		if ((o_ptr->tval == TV_DRAG_ARMOR) || (o_ptr->tval == TV_CARD)) level /= 2;
 
@@ -3810,7 +3820,7 @@ bool choose_ele_immune(player_type *creature_ptr, TIME_EFFECT immune_turn)
 	return TRUE;
 }
 
-bool_hack drop_weapons(player_type *creature_ptr)
+bool drop_weapons(player_type *creature_ptr)
 {
 	INVENTORY_IDX slot = 0;
 	object_type *o_ptr = NULL;

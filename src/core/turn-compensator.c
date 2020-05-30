@@ -1,10 +1,12 @@
 ﻿#include "system/angband.h"
 #include "core/turn-compensator.h"
 #include "world/world.h"
+#include "floor/floor.h"
 #include "floor/floor-town.h"
-#include "market/store-owners.h"
-#include "market/store-util.h"
-#include "market/store.h"
+#include "store/store-owners.h"
+#include "store/store-util.h"
+#include "store/store.h"
+#include "player/player-races-table.h"
 
 /*!
  * @brief ゲームターンからの実時間換算を行うための補正をかける

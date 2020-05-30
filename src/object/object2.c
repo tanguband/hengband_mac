@@ -1,24 +1,21 @@
 ﻿/*!
- * @file object2.c
  * @brief オブジェクトの実装 / Object code, part 2
  * @date 2014/01/11
  * @author
- * Copyright (c) 1997 Ben Harrison, James E. Wilson, Robert A. Koeneke\n
- *\n
- * This software may be copied and distributed for educational, research,\n
- * and not for profit purposes provided that this copyright and statement\n
- * are included in all such copies.  Other copyrights may also apply.\n
- * 2014 Deskull rearranged comment for Doxygen.\n
+ * Copyright (c) 1997 Ben Harrison, James E. Wilson, Robert A. Koeneke
+ * 
+ * This software may be copied and distributed for educational, research,
+ * and not for profit purposes provided that this copyright and statement
+ * are included in all such copies.  Other copyrights may also apply.
+ * 2014 Deskull rearranged comment for Doxygen.
  */
 
 #include "system/angband.h"
+#include "object/object2.h"
 #include "util/util.h"
 #include "main/sound-definitions-table.h"
 #include "world/world.h"
 #include "term/gameterm.h"
-
-#include "object/object.h"
-
 #include "io/write-diary.h"
 #include "cmd/cmd-dump.h"
 #include "cmd/cmd-spell.h"
@@ -26,6 +23,7 @@
 #include "dungeon/dungeon.h"
 #include "floor/floor.h"
 #include "grid/grid.h"
+#include "object/item-apply-magic.h"
 #include "object/object-kind.h"
 #include "object/object-boost.h"
 #include "object/object-ego.h"
@@ -33,19 +31,33 @@
 #include "object/object-hook.h"
 #include "object/object-curse.h"
 #include "object/object-kind-hook.h"
+#include "object/object-mark-types.h"
 #include "object/artifact.h"
+#include "object/special-object-flags.h"
+#include "object/sv-amulet-types.h"
+#include "object/sv-armor-types.h"
+#include "object/sv-bow-types.h"
+#include "object/sv-lite-types.h"
+#include "object/sv-other-types.h"
+#include "object/sv-protector-types.h"
+#include "object/sv-ring-types.h"
+#include "object/sv-weapon-types.h"
+#include "object/item-feeling.h"
 #include "grid/feature.h"
 #include "player/player-status.h"
 #include "player/player-move.h"
 #include "player/player-effects.h"
 #include "player/player-class.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "monster/monster.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 #include "object/object-ego.h"
 #include "view/display-main-window.h"
+#include "object/trc-types.h"
 
- /*
+#define MAX_GOLD 18 /* Number of "gold" entries */
+
+/*
   * todo この説明長すぎ。何とかしたい
   * Determine if an item can "absorb" a second item
   *
@@ -67,20 +79,17 @@
   * Chests, and activatable items, never stack (for various reasons).
   */
 
-  /*
-   * A "stack" of items is limited to less than or equal to 99 items (hard-coded).
-   */
+ /*
+  * A "stack" of items is limited to less than or equal to 99 items (hard-coded).
+  */
 #define MAX_STACK_SIZE 99
 
-   /*!
-	* todo この関数ポインタは何とかならんのか？
-	* Hack -- function hook to restrict "get_obj_num_prep()" function
-	*/
+/*!
+ * todo この関数ポインタは何とかならんのか？
+ * Hack -- function hook to restrict "get_obj_num_prep()" function
+ */
 bool(*get_obj_num_hook)(KIND_OBJECT_IDX k_idx);
 
-/*!
-* todo これを消すとコンパイルは通るがリンカがエラーを吐く、何とか既存の構造に押し込みたい
-*/
 OBJECT_SUBTYPE_VALUE coin_type;	/* Hack -- force coin type */
 
 void floor_item_describe(player_type *player_ptr, INVENTORY_IDX item);
@@ -1223,7 +1232,7 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
  * @param sval 検索したいベースアイテムのsval
  * @return なし
  */
-KIND_OBJECT_IDX lookup_kind(OBJECT_TYPE_VALUE tval, OBJECT_SUBTYPE_VALUE sval)
+KIND_OBJECT_IDX lookup_kind(tval_type tval, OBJECT_SUBTYPE_VALUE sval)
 {
 	int num = 0;
 	KIND_OBJECT_IDX bk = 0;
@@ -2995,14 +3004,14 @@ static void a_m_aux_4(player_type *owner_ptr, object_type *o_ptr, int power)
  */
 void apply_magic(player_type *owner_ptr, object_type *o_ptr, DEPTH lev, BIT_FLAGS mode)
 {
-	if (owner_ptr->pseikaku == SEIKAKU_MUNCHKIN) lev += randint0(owner_ptr->lev / 2 + 10);
+	if (owner_ptr->pseikaku == PERSONALITY_MUNCHKIN) lev += randint0(owner_ptr->lev / 2 + 10);
 	if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;
 
 	int f1 = lev + 10;
 	if (f1 > d_info[owner_ptr->dungeon_idx].obj_good) f1 = d_info[owner_ptr->dungeon_idx].obj_good;
 
 	int f2 = f1 * 2 / 3;
-	if ((owner_ptr->pseikaku != SEIKAKU_MUNCHKIN) && (f2 > d_info[owner_ptr->dungeon_idx].obj_great))
+	if ((owner_ptr->pseikaku != PERSONALITY_MUNCHKIN) && (f2 > d_info[owner_ptr->dungeon_idx].obj_great))
 		f2 = d_info[owner_ptr->dungeon_idx].obj_great;
 
 	if (owner_ptr->muta3 & MUT3_GOOD_LUCK)
@@ -3077,7 +3086,7 @@ void apply_magic(player_type *owner_ptr, object_type *o_ptr, DEPTH lev, BIT_FLAG
 
 		if (o_ptr->name1 == ART_MILIM)
 		{
-			if (owner_ptr->pseikaku == SEIKAKU_SEXY)
+			if (owner_ptr->pseikaku == PERSONALITY_SEXY)
 			{
 				o_ptr->pval = 3;
 			}
@@ -3155,7 +3164,7 @@ void apply_magic(player_type *owner_ptr, object_type *o_ptr, DEPTH lev, BIT_FLAG
 
 	if ((o_ptr->tval == TV_SOFT_ARMOR) &&
 		(o_ptr->sval == SV_ABUNAI_MIZUGI) &&
-		(owner_ptr->pseikaku == SEIKAKU_SEXY))
+		(owner_ptr->pseikaku == PERSONALITY_SEXY))
 	{
 		o_ptr->pval = 3;
 		add_flag(o_ptr->art_flags, TR_STR);
@@ -4362,54 +4371,6 @@ void display_koff(player_type *owner_ptr, KIND_OBJECT_IDX k_idx)
 	}
 
 	print_spells(owner_ptr, 0, spells, num, 2, 0, use_realm);
-}
-
-
-/*!
- * @brief 投擲時たいまつに投げやすい/焼棄/アンデッドスレイの特別効果を返す。
- * Torches have special abilities when they are flaming.
- * @param o_ptr 投擲するオブジェクトの構造体参照ポインタ
- * @param flgs 特別に追加するフラグを返す参照ポインタ
- * @return なし
- */
-void torch_flags(object_type *o_ptr, BIT_FLAGS *flgs)
-{
-	if ((o_ptr->tval != TV_LITE) || (o_ptr->sval != SV_LITE_TORCH)) return;
-	if (o_ptr->xtra4 <= 0) return;
-	add_flag(flgs, TR_BRAND_FIRE);
-	add_flag(flgs, TR_KILL_UNDEAD);
-	add_flag(flgs, TR_THROW);
-}
-
-
-/*!
- * @brief 投擲時たいまつにダイスを与える。
- * Torches have special abilities when they are flaming.
- * @param o_ptr 投擲するオブジェクトの構造体参照ポインタ
- * @param dd 特別なダイス数を返す参照ポインタ
- * @param ds 特別なダイス面数を返す参照ポインタ
- * @return なし
- */
-void torch_dice(object_type *o_ptr, DICE_NUMBER *dd, DICE_SID *ds)
-{
-	if ((o_ptr->tval != TV_LITE) || (o_ptr->sval != SV_LITE_TORCH)) return;
-	if (o_ptr->xtra4 <= 0) return;
-	(*dd) = 1;
-	(*ds) = 6;
-}
-
-
-/*!
- * @brief 投擲時命中したたいまつの寿命を縮める。
- * Torches have special abilities when they are flaming.
- * @param o_ptr 投擲するオブジェクトの構造体参照ポインタ
- * @return なし
- */
-void torch_lost_fuel(object_type *o_ptr)
-{
-	if ((o_ptr->tval != TV_LITE) || (o_ptr->sval != SV_LITE_TORCH)) return;
-	o_ptr->xtra4 -= (FUEL_TORCH / 25);
-	if (o_ptr->xtra4 < 0) o_ptr->xtra4 = 0;
 }
 
 

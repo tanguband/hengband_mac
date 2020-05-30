@@ -1,4 +1,5 @@
-﻿#include "view/display-player-middle.h"
+﻿#include "floor/floor.h"
+#include "view/display-player-middle.h"
 #include "view/status-first-page.h"
 #include "view/display-util.h"
 #include "player/player-effects.h"
@@ -7,8 +8,11 @@
 #include "world/world.h"
 #include "object/object-kind.h"
 #include "object/object-hook.h"
+#include "object/special-object-flags.h"
+#include "object/sv-bow-types.h"
 #include "shoot.h"
 #include "term/gameterm.h"
+#include "player/player-races-table.h"
 
 /*!
  * @brief プレイヤーの打撃能力修正を表示する

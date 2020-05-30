@@ -182,25 +182,10 @@
     <ClCompile Include="..\..\src\market\poker.c">
       <Filter>market</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\market\store-owners.c">
-      <Filter>market</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\market\store-owner-comments.c">
-      <Filter>market</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\market\articles-on-sale.c">
       <Filter>market</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\market\say-comments.c">
-      <Filter>market</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\market\store-util.c">
-      <Filter>market</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\market\gold-magnification-table.c">
-      <Filter>market</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\market\black-market.c">
       <Filter>market</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\market\building-util.c">
@@ -223,12 +208,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\cmd\cmd-inn.c">
       <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\market\building.c">
-      <Filter>market</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\market\store.c">
-      <Filter>market</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\main\sound-definitions-table.c">
       <Filter>main</Filter>
@@ -283,9 +262,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\knowledge\knowledge-mutations.c">
       <Filter>knowledge</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\combat\melee.c">
-      <Filter>combat</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\autopick\autopick.c">
       <Filter>autopick</Filter>
@@ -485,9 +461,6 @@
     <ClCompile Include="..\..\src\birth\birth-explanations-table.c">
       <Filter>birth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\birth\birth.c">
-      <Filter>birth</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\core\output-updater.c">
       <Filter>core</Filter>
     </ClCompile>
@@ -674,9 +647,6 @@
     <ClCompile Include="..\..\src\monster\monster-process.c">
       <Filter>monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\monster\monsterrace-hook.c">
-      <Filter>monster</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\monster\monster-status.c">
       <Filter>monster</Filter>
     </ClCompile>
@@ -740,9 +710,6 @@
     <ClCompile Include="..\..\src\inventory\player-inventory.c">
       <Filter>inventory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\io\files.c">
-      <Filter>io</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\term\gameterm.c">
       <Filter>term</Filter>
     </ClCompile>
@@ -769,9 +736,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\monster\monster-race.c">
       <Filter>monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\market\rumor.c">
-      <Filter>market</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\io\report.c">
       <Filter>io</Filter>
@@ -822,9 +786,6 @@
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\core\sort.c">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\util\util.c">
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\spell\spells-detection.c">
@@ -890,6 +851,198 @@
     <ClCompile Include="..\..\src\birth\birth-select-realm.c">
       <Filter>birth</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\birth\quick-start.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\birth-stat.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\history-generator.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\birth-body-spec.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\initial-equipments-table.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\view\display-birth.c">
+      <Filter>view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\inventory-initializer.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\game-play-initializer.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\history-editor.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\birth-select-race.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\birth-select-class.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\birth-select-personality.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\auto-roller.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\birth-wizard.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\birth\character-builder.c">
+      <Filter>birth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io\files-util.c">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io\pref-file-expressor.c">
+      <Filter>io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\arena.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\bounty.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\bounty-prize-table.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\building-recharger.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\building-quest.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\building-service.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\building-craft-weapon.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\building-craft-armor.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\building-craft-fix.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\building-monster.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\market\building-enchanter.c">
+      <Filter>market</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd\cmd-building.c">
+      <Filter>cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\store\rumor.c">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\store\say-comments.c">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\store\store.c">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\store\store-owner-comments.c">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\store\store-owners.c">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\store\store-util.c">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\store\black-market.c">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\attack-power-table.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\hallucination-attacks-table.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\monster-attack-types.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\martial-arts-table.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\insults-moans.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\attack-accuracy.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\slaying.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mind\samurai-slaying.c">
+      <Filter>mind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\attack-criticality.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\inventory\inventory-damage.c">
+      <Filter>inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mind\racial-mirror-master.c">
+      <Filter>mind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\player-attack.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\object\death-scythe.c">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mind\racial-force-trainer.c">
+      <Filter>mind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mind\surprise-attack.c">
+      <Filter>mind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mind\monk-attack.c">
+      <Filter>mind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\blood-sucking-processor.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\vorpal-weapon.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\attack-chaos-effect.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd\cmd-attack.c">
+      <Filter>cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\monster-attack-player.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\monster-attack-monster.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\melee-postprocess.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\monster\monster-race-hook.c">
+      <Filter>monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\util.c">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\object\torch.c">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\melee-switcher.c">
+      <Filter>combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\combat\melee-util.c">
+      <Filter>combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\cmd\cmd-activate.h">
@@ -942,9 +1095,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\cmd\cmd-zapwand.h">
       <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\combat\melee.h">
-      <Filter>combat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\combat\shoot.h">
       <Filter>combat</Filter>
@@ -1075,25 +1225,10 @@
     <ClInclude Include="..\..\src\market\poker.h">
       <Filter>market</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\market\store-owners.h">
-      <Filter>market</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\market\store-owner-comments.h">
-      <Filter>market</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\market\articles-on-sale.h">
       <Filter>market</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\market\say-comments.h">
-      <Filter>market</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\market\store-util.h">
-      <Filter>market</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\market\gold-magnification-table.h">
-      <Filter>market</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\market\black-market.h">
       <Filter>market</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\market\building-util.h">
@@ -1116,12 +1251,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\cmd\cmd-inn.h">
       <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\market\building.h">
-      <Filter>market</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\market\store.h">
-      <Filter>market</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\main\sound-definitions-table.h">
       <Filter>main</Filter>
@@ -1411,9 +1540,6 @@
     <ClInclude Include="..\..\src\birth\birth-explanations-table.h">
       <Filter>birth</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\birth\birth.h">
-      <Filter>birth</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\core\output-updater.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -1513,9 +1639,6 @@
     <ClInclude Include="..\..\src\floor\floor-town.h">
       <Filter>floor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\object\object.h">
-      <Filter>object</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\object\object-boost.h">
       <Filter>object</Filter>
     </ClInclude>
@@ -1592,9 +1715,6 @@
       <Filter>monster</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\monster\monster-process.h">
-      <Filter>monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\monster\monsterrace-hook.h">
       <Filter>monster</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\monster\monster-status.h">
@@ -1678,9 +1798,6 @@
     <ClInclude Include="..\..\src\inventory\player-inventory.h">
       <Filter>inventory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\io\files.h">
-      <Filter>io</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\term\gameterm.h">
       <Filter>term</Filter>
     </ClInclude>
@@ -1708,9 +1825,6 @@
     <ClInclude Include="..\..\src\monster\monster-race.h">
       <Filter>monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\market\umor.h">
-      <Filter>market</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\io\report.h">
       <Filter>io</Filter>
     </ClInclude>
@@ -1731,9 +1845,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\mind\mind.h">
       <Filter>mind</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\birtth\history.h">
-      <Filter>birth</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\player\selfinfo.h">
       <Filter>player</Filter>
@@ -1766,9 +1877,6 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\core\sort.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\util\util.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\spell\spells-detection.h">
@@ -1830,6 +1938,303 @@
     </ClInclude>
     <ClInclude Include="..\..\src\birth\birth-select-realm.h">
       <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\quick-start.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\birth-stat.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\history-generator.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\birth-body-spec.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\initial-equipments-table.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\view\display-birth.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\inventory-initializer.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\game-play-initializer.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\history-editor.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\birth-select-race.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\birth-select-class.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\birth-select-personality.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\auto-roller.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\birth-wizard.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\character-builder.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\birth\history.h">
+      <Filter>birth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\player\player-races-table.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\player\player-classes-table.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\player\player-personalities-table.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io\files-util.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io\pref-file-expressor.h">
+      <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\arena.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\bounty.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\bounty-prize-table.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\building-recharger.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\building-quest.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\building-service.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\building-craft-weapon.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\building-craft-armor.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\building-craft-fix.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\building-monster.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\building-enchanter.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd\cmd-building.h">
+      <Filter>cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\market\building-actions-table.h">
+      <Filter>market</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\store\say-comments.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\store\store.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\store\store-owner-comments.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\store\store-owners.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\store\rumor.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\store\store-util.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\store\black-market.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\attack-power-table.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\hallucination-attacks-table.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\monster-attack-types.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\martial-arts-table.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\insults-moans.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\combat-options-type.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\monster-attack-effect.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\attack-accuracy.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\slaying.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mind\samurai-slaying.h">
+      <Filter>mind</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\attack-criticality.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\inventory\inventory-damage.h">
+      <Filter>inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mind\racial-mirror-master.h">
+      <Filter>mind</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\player-attack.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\player-attack-util.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\death-scythe.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mind\racial-force-trainer.h">
+      <Filter>mind</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mind\surprise-attack.h">
+      <Filter>mind</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mind\monk-attack.h">
+      <Filter>mind</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\blood-sucking-processor.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\vorpal-weapon.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\attack-chaos-effect.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd\cmd-attack.h">
+      <Filter>cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\monster-attack-player.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\monster-attack-monster.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\melee-postprocess.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\monster\monster-race-hook.h">
+      <Filter>monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\util\util.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\tr-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\tval-types.h">
+      <Filter>monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\old-ego-extra-values.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\special-object-flags.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\object-mark-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\trc-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\object-util.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\object1.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\item-use-flags.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\item-feeling.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\item-apply-magic.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-other-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-bow-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-digging-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-weapon-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-protector-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-armor-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-ring-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-potion-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-lite-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-amulet-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-staff-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-wand-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-rod-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-scroll-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\sv-food-types.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\object2.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\torch.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\melee-switcher.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\combat\melee-util.h">
+      <Filter>combat</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1923,6 +2328,12 @@
     </Filter>
     <Filter Include="mspell">
       <UniqueIdentifier>{738b47ea-2ba6-49a3-9bf8-a833ef46e218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="store">
+      <UniqueIdentifier>{be097f30-d18c-4e9a-a13f-eac4ee7a9d9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{d9907626-9c01-48b8-89da-065f7b8540b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -46,7 +46,7 @@
 #include "system/angband-version.h"
 
 #include "io/load.h"
-#include "market/building.h"
+#include "market/arena.h"
 #include "io/report.h"
 
 #include "dungeon/dungeon.h"
@@ -55,9 +55,9 @@
 #include "grid/trap.h"
 #include "mutation/mutation.h"
 #include "monster/monster.h"
-#include "market/store-util.h"
+#include "store/store-util.h"
 #include "dungeon/quest.h"
-#include "market/store.h"
+#include "store/store.h"
 #include "object/artifact.h"
 #include "player/avatar.h"
 #include "spell/spells-status.h"
@@ -73,19 +73,28 @@
 #include "cmd-pet.h"
 #include "dungeon/dungeon-file.h"
 #include "io/uid-checker.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "player/player-skill.h"
 #include "player/player-class.h"
 #include "player/race-info-table.h"
 #include "player/player-personality.h"
 #include "player/player-sex.h"
-#include "birth/birth.h"
 #include "world/world.h"
+#include "object/object2.h"
 #include "object/object-kind.h"
 #include "object/object-ego.h"
 #include "io/save.h"
 #include "locale/japanese.h"
 #include "cmd-smith.h"
+#include "birth/quick-start.h"
+#include "player/player-races-table.h"
+#include "market/bounty.h"
+#include "object/tr-types.h"
+#include "object/object-mark-types.h"
+#include "object/sv-armor-types.h"
+#include "object/sv-lite-types.h"
+#include "object/trc-types.h"
+#include "object/old-ego-extra-values.h" // TODO v1.5.0以前のセーブファイルをロードする処理を分離する.
 
  /*
   * Maximum number of tries for selection of a proper quest monster
@@ -1565,11 +1574,11 @@ static void load_quick_start(void)
 	rd_byte(&previous_char.psex);
 	byte tmp8u;
 	rd_byte(&tmp8u);
-	previous_char.prace = (RACE_IDX)tmp8u;
+	previous_char.prace = (player_race_type)tmp8u;
 	rd_byte(&tmp8u);
-	previous_char.pclass = (CLASS_IDX)tmp8u;
+	previous_char.pclass = (player_class_type)tmp8u;
 	rd_byte(&tmp8u);
-	previous_char.pseikaku = (CHARACTER_IDX)tmp8u;
+	previous_char.pseikaku = (player_personality_type)tmp8u;
 	rd_byte(&tmp8u);
 	previous_char.realm1 = (REALM_IDX)tmp8u;
 	rd_byte(&tmp8u);
@@ -1626,13 +1635,13 @@ static void rd_extra(player_type *creature_ptr)
 
 	byte tmp8u;
 	rd_byte(&tmp8u);
-	creature_ptr->prace = (RACE_IDX)tmp8u;
+	creature_ptr->prace = (player_race_type)tmp8u;
 
 	rd_byte(&tmp8u);
-	creature_ptr->pclass = (CLASS_IDX)tmp8u;
+	creature_ptr->pclass = (player_class_type)tmp8u;
 
 	rd_byte(&tmp8u);
-	creature_ptr->pseikaku = (CHARACTER_IDX)tmp8u;
+	creature_ptr->pseikaku = (player_personality_type)tmp8u;
 
 	rd_byte(&creature_ptr->psex);
 	rd_byte(&tmp8u);
@@ -1733,7 +1742,7 @@ static void rd_extra(player_type *creature_ptr)
 	else
 	{
 		rd_byte(&tmp8u);
-		creature_ptr->start_race = (RACE_IDX)tmp8u;
+		creature_ptr->start_race = (player_race_type)tmp8u;
 		s32b tmp32s;
 		rd_s32b(&tmp32s);
 		creature_ptr->old_race1 = (BIT_FLAGS)tmp32s;

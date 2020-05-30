@@ -17,27 +17,33 @@
 #include "term/gameterm.h"
 
 #include "player/selfinfo.h"
-#include "cmd-activate.h"
-#include "cmd-eat.h"
-#include "cmd-quaff.h"
-#include "cmd-read.h"
-#include "cmd-usestaff.h"
-#include "cmd-zaprod.h"
-#include "cmd-zapwand.h"
-#include "cmd-pet.h"
-#include "cmd-basic.h"
-
+#include "cmd/cmd-activate.h"
+#include "cmd/cmd-eat.h"
+#include "cmd/cmd-quaff.h"
+#include "cmd/cmd-read.h"
+#include "cmd/cmd-usestaff.h"
+#include "cmd/cmd-zaprod.h"
+#include "cmd/cmd-zapwand.h"
+#include "cmd/cmd-pet.h"
+#include "cmd/cmd-basic.h"
+#include "object/object2.h"
+#include "object/item-feeling.h"
+#include "object/item-use-flags.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
 #include "object/object-ego.h"
+#include "object/object-mark-types.h"
 #include "core/sort.h"
 #include "dungeon/quest.h"
 #include "object/artifact.h"
+#include "object/special-object-flags.h"
+#include "object/sv-lite-types.h"
+#include "object/trc-types.h"
 #include "player/avatar.h"
 #include "player/player-status.h"
 #include "player/player-effects.h"
 #include "player/player-class.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "monster/monster.h"
 #include "view/display-main-window.h"
 #include "spell/spells3.h"
@@ -46,7 +52,7 @@
 #include "autopick/autopick-registry.h"
 #include "io/targeting.h"
 #include "combat/snipe.h"
-#include "player/player-race.h"
+#include "player/player-races-table.h"
 #include "view/display-main-window.h"
 #include "inventory/player-inventory.h"
 
@@ -320,7 +326,7 @@ void do_cmd_wield(player_type *creature_ptr)
 
 	check_find_art_quest_completion(creature_ptr, o_ptr);
 
-	if (creature_ptr->pseikaku == SEIKAKU_MUNCHKIN)
+	if (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)
 	{
 		identify_item(creature_ptr, o_ptr);
 

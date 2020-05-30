@@ -5,8 +5,11 @@
  */
 
 #include "monster/monster-object.h"
+#include "object/object2.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
+#include "object/object-mark-types.h"
+#include "object/tr-types.h"
 
  /*!
   * @brief オブジェクトのフラグを更新する

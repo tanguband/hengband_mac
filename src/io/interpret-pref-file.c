@@ -8,12 +8,14 @@
 #include "io/gf-descriptions.h"
 #include "io/tokenizer.h"
 #include "object/object-kind.h"
-#include "birth/birth.h"
+#include "birth/character-builder.h"
 #include "world/world.h"
 #include "term/gameterm.h"
 #include "view/display-main-window.h" // 暫定。apply_default_feat_lighting()。後で消す.
 
-#define MAX_MACRO_CHARS 65536 // 1つのマクロキー押下で実行可能なコマンド最大数 (エスケープシーケンス含む).
+#define MAX_MACRO_CHARS 16128 // 1つのマクロキー押下で実行可能なコマンド最大数 (エスケープシーケンス含む).
+
+char *histpref_buf = NULL;
 
 /*!
  * @brief Rトークンの解釈 / Process "R:<num>:<a>/<c>" -- attr/char for monster races
@@ -506,4 +508,16 @@ errr interpret_pref_file(player_type *creature_ptr, char *buf)
 	default:
 		return 1;
 	}
+}
+
+/*!
+ * @brief 生い立ちメッセージの内容をバッファに加える。 / Hook function for reading the histpref.prf file.
+ * @return なし
+ */
+void add_history_from_pref_line(concptr t)
+{
+    if (!histpref_buf)
+        return;
+
+    my_strcat(histpref_buf, t, HISTPREF_LIMIT);
 }

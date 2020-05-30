@@ -15,9 +15,12 @@
 #include "dungeon/dungeon.h"
 #include "player/mimic-info-table.h"
 #include "player/player-class.h"
-#include "melee.h"
+#include "combat/monster-attack-effect.h"
 #include "mspell/mspell-type.h"
 #include "mspell/mspell-damage-calculator.h"
+#include "player/player-races-table.h"
+#include "combat/monster-attack-types.h"
+#include "object/tr-types.h"
 
 /*!
  * @brief 警告を放つアイテムを選択する /
@@ -233,7 +236,7 @@ static void spell_damcalc(player_type *target_ptr, monster_type *m_ptr, EFFECT_I
 		case RACE_SKELETON:
 		case RACE_ZOMBIE:
 		case RACE_VAMPIRE:
-		case RACE_DEMON:
+		case RACE_BALROG:
 		case RACE_SPECTRE:
 			dam = 0;
 			ignore_wraith_form = TRUE;

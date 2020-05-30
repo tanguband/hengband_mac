@@ -22,7 +22,6 @@
 #include "mind/mind.h"
 
 #include "effect/effect-characteristics.h"
-#include "melee.h"
 #include "spell/spells-summon.h"
 #include "player/avatar.h"
 #include "player/player-move.h"
@@ -46,6 +45,8 @@
 #include "spell/spells2.h"
 #include "spell/spells3.h"
 #include "spell/spells-detection.h"
+#include "mind/racial-force-trainer.h"
+#include "cmd/cmd-attack.h"
 
 /*! 特殊技能の一覧テーブル */
 mind_power const mind_powers[5] =
@@ -596,7 +597,7 @@ void mindcraft_info(player_type *caster_ptr, char *p, int use_mind, int power)
 		break;
 	case MIND_KI:
 	{
-		int boost = P_PTR_KI;
+		int boost = get_current_ki(caster_ptr);
 
 		if (heavy_armor(caster_ptr)) boost /= 2;
 
@@ -695,7 +696,7 @@ void mindcraft_info(player_type *caster_ptr, char *p, int use_mind, int power)
  * when you run it. It's probably easy to fix but I haven't tried,\n
  * sorry.\n
  */
-static bool_hack get_mind_power(player_type *caster_ptr, SPELL_IDX *sn, bool only_browse)
+static bool get_mind_power(player_type *caster_ptr, SPELL_IDX *sn, bool only_browse)
 {
 	SPELL_IDX i;
 	int             num = 0;
@@ -902,7 +903,7 @@ static bool_hack get_mind_power(player_type *caster_ptr, SPELL_IDX *sn, bool onl
 							if (i == 5)
 							{
 								int j;
-								for (j = 0; j < P_PTR_KI / 50; j++)
+								for (j = 0; j < get_current_ki(caster_ptr) / 50; j++)
 									mana_cost += (j+1) * 3 / 2;
 							}
 						}
@@ -1196,7 +1197,7 @@ static bool cast_force_spell(player_type *caster_ptr, int spell)
 {
 	DIRECTION dir;
 	PLAYER_LEVEL plev = caster_ptr->lev;
-	int boost = P_PTR_KI;
+	int boost = get_current_ki(caster_ptr);
 
 	if (heavy_armor(caster_ptr)) boost /= 2;
 
@@ -1224,12 +1225,12 @@ static bool cast_force_spell(player_type *caster_ptr, int spell)
 		break;
 	case 5:
 		msg_print(_("気を練った。", "You improved the Force."));
-		P_PTR_KI += (70 + plev);
+		set_current_ki(caster_ptr, FALSE, 70 + plev);
 		caster_ptr->update |= (PU_BONUS);
-		if (randint1(P_PTR_KI) > (plev * 4 + 120))
+		if (randint1(get_current_ki(caster_ptr)) > (plev * 4 + 120))
 		{
 			msg_print(_("気が暴走した！", "The Force exploded!"));
-			fire_ball(caster_ptr, GF_MANA, 0, P_PTR_KI / 2, 10);
+			fire_ball(caster_ptr, GF_MANA, 0, get_current_ki(caster_ptr) / 2, 10);
 			take_hit(caster_ptr, DAMAGE_LOSELIFE, caster_ptr->magic_num1[0] / 2, _("気の暴走", "Explosion of the Force"), -1);
 		}
 		else return TRUE;
@@ -1289,7 +1290,7 @@ static bool cast_force_spell(player_type *caster_ptr, int spell)
 		msg_print(_("なに？", "Zap?"));
 	}
 
-	P_PTR_KI = 0;
+	set_current_ki(caster_ptr, TRUE, 0);
 	caster_ptr->update |= (PU_BONUS);
 
 	return TRUE;
@@ -1501,7 +1502,7 @@ static bool cast_berserk_spell(player_type *caster_ptr, int spell)
 			return FALSE;
 		}
 
-		py_attack(caster_ptr, y, x, 0);
+		do_cmd_attack(caster_ptr, y, x, 0);
 
 		if (!player_can_enter(caster_ptr, caster_ptr->current_floor_ptr->grid_array[y][x].feat, 0) || is_trap(caster_ptr, caster_ptr->current_floor_ptr->grid_array[y][x].feat))
 			break;
@@ -1761,7 +1762,7 @@ void do_cmd_mind(player_type *caster_ptr)
 		if (n == 5)
 		{
 			int j;
-			for (j = 0; j < P_PTR_KI / 50; j++)
+			for (j = 0; j < get_current_ki(caster_ptr) / 50; j++)
 				mana_cost += (j+1) * 3 / 2;
 		}
 	}
@@ -1834,10 +1835,10 @@ void do_cmd_mind(player_type *caster_ptr)
 
 		if ((use_mind != MIND_BERSERKER) && (use_mind != MIND_NINJUTSU))
 		{
-			if ((use_mind == MIND_KI) && (n != 5) && P_PTR_KI)
+			if ((use_mind == MIND_KI) && (n != 5) && get_current_ki(caster_ptr))
 			{
 				msg_print(_("気が散ってしまった．．．", "Your improved Force has gone away..."));
-				P_PTR_KI = 0;
+				set_current_ki(caster_ptr, TRUE, 0);
 			}
 
 			if (randint1(100) < (chance / 2))

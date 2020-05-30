@@ -2,8 +2,8 @@
 #include "world/world-turn-processor.h"
 #include "world/world.h"
 #include "dungeon/dungeon.h"
-#include "market/store.h"
-#include "market/store-util.h"
+#include "store/store.h"
+#include "store/store-util.h"
 #include "io/write-diary.h"
 #include "floor/floor-events.h"
 #include "core/hp-mp-regenerator.h"
@@ -20,6 +20,8 @@
 #include "inventory/recharge-processor.h"
 #include "inventory/simple-appraiser.h"
 #include "world/world-movement-processor.h"
+#include "market/arena.h"
+#include "market/bounty.h"
 
 /*!
  * @brief 10ゲームターンが進行する毎にゲーム世界全体の処理を行う。

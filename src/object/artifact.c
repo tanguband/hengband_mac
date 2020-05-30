@@ -19,21 +19,27 @@
 #include "player/avatar.h"
 #include "floor/floor.h"
 #include "cmd-activate.h"
-#include "object/object.h"
+#include "object/object1.h"
 #include "object/object-kind.h"
 #include "object/object-boost.h"
 #include "object/object-curse.h"
 #include "object/object-ego.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
+#include "object/special-object-flags.h"
+#include "object/sv-armor-types.h"
+#include "object/sv-weapon-types.h"
 #include "spell/spells-object.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "grid/grid.h"
 #include "monster/monster.h"
 #include "view/display-main-window.h"
 #include "player/player-class.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "world/world.h"
+#include "object/tr-types.h"
+#include "object/trc-types.h"
+#include "object/object2.h"
 
  /*
   * The artifact arrays
@@ -2093,7 +2099,7 @@ void random_artifact_resistance(player_type *player_ptr, object_type *o_ptr, art
 
 	if (o_ptr->name1 == ART_MILIM)
 	{
-		if (player_ptr->pseikaku == SEIKAKU_SEXY)
+		if (player_ptr->pseikaku == PERSONALITY_SEXY)
 		{
 			o_ptr->pval = 3;
 			add_flag(o_ptr->art_flags, TR_STR);

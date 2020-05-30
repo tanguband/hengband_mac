@@ -31,6 +31,7 @@
 #include "player/player-skill.h"
 #include "inventory/player-inventory.h"
 #include "realm/realm-hex.h"
+#include "floor/floor.h"
 #include "grid/grid.h"
 #include "monster/monster-race.h"
 #include "io/targeting.h"
@@ -43,6 +44,9 @@
 #include "spell/process-effect.h"
 #include "spell/spells2.h"
 #include "spell/spells3.h"
+#include "object/tr-types.h"
+#include "object/trc-types.h"
+#include "object/item-use-flags.h"
 
 #define MAX_KEEP 4 /*!<呪術の最大詠唱数 */
 

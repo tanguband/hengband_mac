@@ -17,18 +17,18 @@
 #include "monster/monster-process.h"
 #include "spell/spells2.h"
 #include "spell/spells-summon.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 #include "object/object-curse.h"
 #include "object/artifact.h"
 #include "player/avatar.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "player/player-effects.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "view/display-main-window.h"
 #include "world/world.h"
 #include "io/report.h"
-#include "melee.h"
-
+#include "combat/monster-attack-effect.h"
+#include "combat/monster-attack-types.h"
 
 /*!
 * @brief モンスターIDからPOWERFULフラグの有無を取得する /

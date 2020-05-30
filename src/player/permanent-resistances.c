@@ -1,6 +1,7 @@
 ﻿#include "permanent-resistances.h"
-#include "player/player-personality.h"
-
+#include "player/player-personalities-table.h"
+#include "player/player-races-table.h"
+#include "object/tr-types.h"
 
 /*!
  * @brief プレーヤーの職業による耐性フラグを返す
@@ -409,13 +410,13 @@ static void add_race_flags(player_type *creature_ptr, BIT_FLAGS *flags)
 		add_flag(flags, TR_RES_CONF);
 		break;
 	}
-	case RACE_ANGEL:
+	case RACE_ARCHON:
 	{
 		add_flag(flags, TR_LEVITATION);
 		add_flag(flags, TR_SEE_INVIS);
 		break;
 	}
-	case RACE_DEMON:
+	case RACE_BALROG:
 	{
 		add_flag(flags, TR_RES_FIRE);
 		add_flag(flags, TR_RES_NETHER);
@@ -499,12 +500,12 @@ static void add_mutation_flags(player_type *creature_ptr, BIT_FLAGS *flags)
  */
 static void add_personality_flags(player_type *creature_ptr, BIT_FLAGS *flags)
 {
-	if (creature_ptr->pseikaku == SEIKAKU_SEXY)
+	if (creature_ptr->pseikaku == PERSONALITY_SEXY)
 		add_flag(flags, TR_AGGRAVATE);
-	if (creature_ptr->pseikaku == SEIKAKU_CHARGEMAN)
+	if (creature_ptr->pseikaku == PERSONALITY_CHARGEMAN)
 		add_flag(flags, TR_RES_CONF);
 
-	if (creature_ptr->pseikaku != SEIKAKU_MUNCHKIN) return;
+	if (creature_ptr->pseikaku != PERSONALITY_MUNCHKIN) return;
 
 	add_flag(flags, TR_RES_BLIND);
 	add_flag(flags, TR_RES_CONF);

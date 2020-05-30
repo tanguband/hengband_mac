@@ -5,8 +5,6 @@
 #include "io/write-diary.h"
 #include "cmd/cmd-dump.h"
 #include "floor/floor.h"
-#include "grid/grid.h"
-#include "melee.h"
 #include "core/sort.h"
 #include "player/player-move.h"
 #include "player/player-status.h"
@@ -23,6 +21,7 @@
 #include "io/targeting.h"
 #include "world/world.h"
 #include "effect/spells-effect-util.h"
+#include "cmd/cmd-attack.h"
 
 int total_friends = 0;
 
@@ -86,7 +85,7 @@ void do_cmd_pet_dismiss(player_type *creature_ptr)
 	MONSTER_IDX *who;
 	u16b dummy_why;
 	int max_pet = 0;
-	bool_hack cu, cv;
+	bool cu, cv;
 
 	cu = Term->scr->cu;
 	cv = Term->scr->cv;
@@ -247,7 +246,7 @@ bool do_cmd_riding(player_type *creature_ptr, bool force)
 
 			msg_print(_("モンスターが立ちふさがっている！", "There is a monster in the way!"));
 
-			py_attack(creature_ptr, y, x, 0);
+			do_cmd_attack(creature_ptr, y, x, 0);
 			return FALSE;
 		}
 
@@ -911,7 +910,7 @@ void do_cmd_pet(player_type *creature_ptr)
 * @param force TRUEならば強制的に落馬する
 * @return 実際に落馬したらTRUEを返す
 */
-bool rakuba(player_type *creature_ptr, HIT_POINT dam, bool force)
+bool process_fall_off_horse(player_type *creature_ptr, HIT_POINT dam, bool force)
 {
 	DIRECTION i;
 	POSITION y, x, oy, ox, sy = 0, sx = 0;

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "system/h-type.h"
-#include "object/object.h"
+#include "object/object1.h"
 
 /* flavor.c */
 extern void get_table_name_aux(char *out_string);
@@ -27,4 +27,5 @@ extern const concptr game_inscriptions[];
 #define OD_NO_FLAVOR        0x00000040  /* Allow to hidden flavor */
 #define OD_FORCE_FLAVOR     0x00000080  /* Get un-shuffled flavor name */
 
-
+bool has_lite_flag(BIT_FLAGS *flags);
+bool has_dark_flag(BIT_FLAGS *flags);

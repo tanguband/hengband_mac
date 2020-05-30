@@ -11,14 +11,16 @@
 #include "spell/spells-status.h"
 #include "spell/spells-type.h"
 #include "monster/monster.h"
-#include "cmd-spell.h"
+#include "cmd/cmd-spell.h"
 #include "player/player-effects.h"
+#include "object/object2.h"
 #include "object/object-kind.h"
 #include "io/targeting.h"
 #include "realm/realm-song.h"
 #include "view/display-main-window.h"
 #include "spell/spells2.h"
 #include "spell/spells3.h"
+#include "mind/racial-force-trainer.h"
 
 /*!
  * @brief モンスター回復処理
@@ -464,7 +466,7 @@ bool cosmic_cast_off(player_type *creature_ptr, object_type *o_ptr)
 	(void)set_shero(creature_ptr, creature_ptr->shero + t, FALSE);
 	if (creature_ptr->pclass == CLASS_FORCETRAINER)
 	{
-		P_PTR_KI = creature_ptr->lev * 5 + 190;
+		set_current_ki(creature_ptr, TRUE, creature_ptr->lev * 5 + 190);
 		msg_print(_("気が爆発寸前になった。", "Your force absorbs the explosion."));
 	}
 

@@ -3,7 +3,7 @@
 #include "util/util.h"
 #include "main/sound-definitions-table.h"
 
-#include "market/building.h"
+#include "cmd/cmd-building.h"
 #include "dungeon/quest.h"
 #include "player/player-move.h"
 #include "player/player-status.h"
@@ -13,6 +13,7 @@
 #include "player/mimic-info-table.h"
 #include "player/player-class.h"
 #include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "player/player-damage.h"
 #include "floor/floor.h"
 #include "floor/floor-events.h"
@@ -21,12 +22,16 @@
 #include "player/avatar.h"
 #include "spell/technic-info-table.h"
 #include "spell/spells-status.h"
-#include "object/object.h"
+#include "object/object1.h"
+#include "object/object2.h"
 #include "object/object-hook.h"
 #include "object/object-ego.h"
+#include "object/special-object-flags.h"
+#include "object/sv-lite-types.h"
+#include "object/sv-weapon-types.h"
 #include "monster/monster.h"
 #include "monster/monster-status.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 #include "mutation/mutation.h"
 #include "player/patron.h"
 #include "realm/realm-hex.h"
@@ -40,16 +45,21 @@
 #include "autopick/autopick-reader-writer.h"
 #include "io/write-diary.h"
 #include "cmd/cmd-dump.h"
-#include "melee.h"
 #include "world/world.h"
 #include "view/display-main-window.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "cmd-magiceat.h"
 
 #include "monster/horror-descriptions.h"
 #include "market/arena-info-table.h"
 #include "spell/spells-util.h"
 #include "spell/spells-execution.h"
+#include "player/player-races-table.h"
+#include "combat/attack-power-table.h"
+#include "mind/racial-force-trainer.h"
+#include "object/tr-types.h"
+#include "object/object-mark-types.h"
+#include "object/trc-types.h"
 
 /*!
  * @brief 能力値テーブル / Abbreviations of healthy stats
@@ -1432,7 +1442,7 @@ void calc_bonuses(player_type *creature_ptr)
 		{
 			if (!(PRACE_IS_(creature_ptr, RACE_KLACKON) ||
 				PRACE_IS_(creature_ptr, RACE_SPRITE) ||
-				(creature_ptr->pseikaku == SEIKAKU_MUNCHKIN)))
+				(creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)))
 				new_speed += (creature_ptr->lev) / 10;
 
 			if (creature_ptr->lev > 24)
@@ -1483,7 +1493,7 @@ void calc_bonuses(player_type *creature_ptr)
 			new_speed += 3;
 			if (!(PRACE_IS_(creature_ptr, RACE_KLACKON) ||
 				PRACE_IS_(creature_ptr, RACE_SPRITE) ||
-				(creature_ptr->pseikaku == SEIKAKU_MUNCHKIN)))
+				(creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)))
 				new_speed += (creature_ptr->lev) / 10;
 			creature_ptr->skill_stl += (creature_ptr->lev) / 10;
 			if (creature_ptr->lev > 24)
@@ -1732,11 +1742,11 @@ void calc_bonuses(player_type *creature_ptr)
 			if (creature_ptr->lev > 40) creature_ptr->stat_add[A_CON]++;
 			if (creature_ptr->lev > 45) creature_ptr->stat_add[A_CON]++;
 			break;
-		case RACE_ANGEL:
+		case RACE_ARCHON:
 			creature_ptr->levitation = TRUE;
 			creature_ptr->see_inv = TRUE;
 			break;
-		case RACE_DEMON:
+		case RACE_BALROG:
 			creature_ptr->resist_fire = TRUE;
 			creature_ptr->resist_neth = TRUE;
 			creature_ptr->hold_exp = TRUE;
@@ -1831,18 +1841,18 @@ void calc_bonuses(player_type *creature_ptr)
 		creature_ptr->resist_time = TRUE;
 	}
 
-	if (creature_ptr->pseikaku == SEIKAKU_SEXY) creature_ptr->cursed |= (TRC_AGGRAVATE);
-	if (creature_ptr->pseikaku == SEIKAKU_NAMAKE) creature_ptr->to_m_chance += 10;
-	if (creature_ptr->pseikaku == SEIKAKU_KIREMONO) creature_ptr->to_m_chance -= 3;
-	if ((creature_ptr->pseikaku == SEIKAKU_GAMAN) || (creature_ptr->pseikaku == SEIKAKU_CHIKARA)) creature_ptr->to_m_chance++;
-	if (creature_ptr->pseikaku == SEIKAKU_CHARGEMAN)
+	if (creature_ptr->pseikaku == PERSONALITY_SEXY) creature_ptr->cursed |= (TRC_AGGRAVATE);
+	if (creature_ptr->pseikaku == PERSONALITY_LAZY) creature_ptr->to_m_chance += 10;
+	if (creature_ptr->pseikaku == PERSONALITY_SHREWD) creature_ptr->to_m_chance -= 3;
+	if ((creature_ptr->pseikaku == PERSONALITY_PATIENT) || (creature_ptr->pseikaku == PERSONALITY_MIGHTY)) creature_ptr->to_m_chance++;
+	if (creature_ptr->pseikaku == PERSONALITY_CHARGEMAN)
 	{
 		creature_ptr->to_m_chance += 5;
 		creature_ptr->resist_conf = TRUE;
 	}
 
-	if (creature_ptr->pseikaku == SEIKAKU_LUCKY) creature_ptr->muta3 |= MUT3_GOOD_LUCK;
-	if (creature_ptr->pseikaku == SEIKAKU_MUNCHKIN)
+	if (creature_ptr->pseikaku == PERSONALITY_LUCKY) creature_ptr->muta3 |= MUT3_GOOD_LUCK;
+	if (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)
 	{
 		creature_ptr->resist_blind = TRUE;
 		creature_ptr->resist_conf = TRUE;
@@ -3104,10 +3114,12 @@ void calc_bonuses(player_type *creature_ptr)
 			if (blow_base > 31) creature_ptr->num_blow[0]++;
 			if (blow_base > 44) creature_ptr->num_blow[0]++;
 			if (blow_base > 58) creature_ptr->num_blow[0]++;
-			if (P_PTR_KI)
+
+			MAGIC_NUM1 current_ki = get_current_ki(creature_ptr);
+			if (current_ki != 0)
 			{
-				creature_ptr->to_d[0] += P_PTR_KI / 5;
-				creature_ptr->dis_to_d[0] += P_PTR_KI / 5;
+				creature_ptr->to_d[0] += current_ki / 5;
+				creature_ptr->dis_to_d[0] += current_ki / 5;
 			}
 		}
 		else
@@ -3188,7 +3200,7 @@ void calc_bonuses(player_type *creature_ptr)
 	{
 		if (!has_melee_weapon(creature_ptr, INVEN_RARM + i)) continue;
 
-		OBJECT_TYPE_VALUE tval = creature_ptr->inventory_list[INVEN_RARM + i].tval - TV_WEAPON_BEGIN;
+		tval_type tval = creature_ptr->inventory_list[INVEN_RARM + i].tval - TV_WEAPON_BEGIN;
 		OBJECT_SUBTYPE_VALUE sval = creature_ptr->inventory_list[INVEN_RARM + i].sval;
 
 		creature_ptr->to_h[i] += (creature_ptr->weapon_exp[tval][sval] - WEAPON_EXP_BEGINNER) / 200;
@@ -3285,7 +3297,7 @@ void calc_bonuses(player_type *creature_ptr)
 	creature_ptr->skill_thb += ((cp_ptr->x_thb * creature_ptr->lev / 10) + (ap_ptr->a_thb * creature_ptr->lev / 50));
 	creature_ptr->skill_tht += ((cp_ptr->x_thb * creature_ptr->lev / 10) + (ap_ptr->a_thb * creature_ptr->lev / 50));
 
-	if ((PRACE_IS_(creature_ptr, RACE_S_FAIRY)) && (creature_ptr->pseikaku != SEIKAKU_SEXY) && (creature_ptr->cursed & TRC_AGGRAVATE))
+	if ((PRACE_IS_(creature_ptr, RACE_S_FAIRY)) && (creature_ptr->pseikaku != PERSONALITY_SEXY) && (creature_ptr->cursed & TRC_AGGRAVATE))
 	{
 		creature_ptr->cursed &= ~(TRC_AGGRAVATE);
 		creature_ptr->skill_stl = MIN(creature_ptr->skill_stl - 3, (creature_ptr->skill_stl + 2) / 2);
@@ -3497,10 +3509,10 @@ static void calc_alignment(player_type *creature_ptr)
 	{
 		switch (creature_ptr->prace)
 		{
-		case RACE_ANGEL:
+		case RACE_ARCHON:
 			creature_ptr->align += 200;
 			break;
-		case RACE_DEMON:
+		case RACE_BALROG:
 			creature_ptr->align -= 200;
 			break;
 		}
@@ -3997,7 +4009,7 @@ static void calc_mana(player_type *creature_ptr)
 		msp = adj_mag_mana[creature_ptr->stat_ind[mp_ptr->spell_stat]] * (levels + 3) / 4;
 		if (msp) msp++;
 		if (msp) msp += (msp * rp_ptr->r_adj[mp_ptr->spell_stat] / 20);
-		if (msp && (creature_ptr->pseikaku == SEIKAKU_MUNCHKIN)) msp += msp / 2;
+		if (msp && (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)) msp += msp / 2;
 		if (msp && (creature_ptr->pclass == CLASS_HIGH_MAGE)) msp += msp / 4;
 		if (msp && (creature_ptr->pclass == CLASS_SORCERER)) msp += msp * (25 + creature_ptr->lev) / 100;
 	}
@@ -4216,7 +4228,7 @@ s16b calc_num_fire(player_type *creature_ptr, object_type *o_ptr)
 	num = 100;
 	num += (extra_shots * 100);
 
-	OBJECT_TYPE_VALUE tval_ammo = bow_tval_ammo(o_ptr);
+	tval_type tval_ammo = bow_tval_ammo(o_ptr);
 	if ((creature_ptr->pclass == CLASS_RANGER) &&
 		(tval_ammo == TV_ARROW))
 	{
@@ -4633,7 +4645,7 @@ void sanity_blast(player_type *creature_ptr, monster_type *m_ptr, bool necro)
 
 		see_eldritch_horror(m_name, r_ptr);
 		if (PRACE_IS_(creature_ptr, RACE_IMP) ||
-			PRACE_IS_(creature_ptr, RACE_DEMON) ||
+			PRACE_IS_(creature_ptr, RACE_BALROG) ||
 			(mimic_info[creature_ptr->mimic_form].MIMIC_FLAGS & MIMIC_IS_DEMON) ||
 			current_world_ptr->wizard)
 			return;
@@ -4696,7 +4708,7 @@ void sanity_blast(player_type *creature_ptr, monster_type *m_ptr, bool necro)
 			switch (creature_ptr->prace)
 			{
 			case RACE_IMP:
-			case RACE_DEMON:
+			case RACE_BALROG:
 				if (saving_throw(20 + creature_ptr->lev)) return;
 				break;
 			case RACE_SKELETON:
@@ -5133,7 +5145,7 @@ long calc_score(player_type *creature_ptr)
 			point = point / 5;
 	}
 
-	if ((creature_ptr->pseikaku == SEIKAKU_MUNCHKIN) && point)
+	if ((creature_ptr->pseikaku == PERSONALITY_MUNCHKIN) && point)
 	{
 		point = 1;
 		if (current_world_ptr->total_winner) point = 2;

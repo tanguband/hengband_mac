@@ -11,7 +11,7 @@
  */
 
 #include "system/angband.h"
-#include "market/building.h"
+#include "cmd/cmd-building.h"
 #include "system/system-variables.h"
 #include "io/load.h"
 #include "util/util.h"
@@ -30,14 +30,15 @@
 #include "floor/wild.h"
 #include "spell/spells-floor.h"
 #include "monster/monster-status.h"
+#include "object/object2.h"
 #include "object/object-hook.h"
 #include "cmd-pet.h"
 #include "cmd-basic.h"
 #include "io/uid-checker.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "player/player-effects.h"
 #include "player/player-class.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "world/world.h"
 #include "spell/spells2.h"
 #include "io/write-diary.h"
@@ -1376,7 +1377,7 @@ void change_floor(player_type *creature_ptr)
 	current_world_ptr->character_dungeon = TRUE;
 
 	/* Hack -- Munchkin characters always get whole map */
-	if (creature_ptr->pseikaku == SEIKAKU_MUNCHKIN)
+	if (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)
 		wiz_lite(creature_ptr, (bool)(creature_ptr->pclass == CLASS_NINJA));
 
 	/* Remember when this level was "created" */

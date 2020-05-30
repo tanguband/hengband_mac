@@ -11,11 +11,13 @@
 #include "autopick/autopick-reader-writer.h"
 #include "autopick/autopick-entry.h"
 #include "autopick/autopick-finder.h"
+#include "object/item-feeling.h"
 #include "object/object-hook.h"
 #include "object/object-kind.h"
 #include "object/object-flavor.h"
+#include "object/special-object-flags.h"
 #include "util/util.h"
-#include "io/files.h"
+#include "io/files-util.h"
 
 static const char autoregister_header[] = "?:$AUTOREGISTER";
 

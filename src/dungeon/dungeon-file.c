@@ -36,21 +36,22 @@
 #include "system/system-variables.h"
 
 #include "io/tokenizer.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "dungeon/dungeon-file.h"
 #include "room/rooms-vault.h"
 #include "grid/feature.h"
 #include "grid/grid.h"
 #include "dungeon/quest.h"
 #include "monster/monster.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "player/player-skill.h"
 #include "player/player-race.h"
 #include "dungeon/dungeon.h"
 #include "floor/floor.h"
-#include "market/building.h"
+#include "cmd/cmd-building.h"
 #include "world/world.h"
 #include "room/rooms-vault.h"
+#include "object/item-apply-magic.h"
 #include "object/object-kind.h"
 #include "object/object-ego.h"
 #include "monster/monster-race.h"
@@ -59,13 +60,17 @@
 
 #include "grid/trap.h"
 #include "object/artifact.h"
+#include "object/sv-scroll-types.h"
 #include "cmd-activate.h"
 #include "term/gameterm.h"
 #include "floor/wild.h"
 #include "view/display-main-window.h"
 #include "player/player-class.h"
+#include "combat/monster-attack-types.h"
 
 #include "main/init.h"
+#include "object/tr-types.h"
+#include "object/object2.h"
 
 dungeon_grid letter[255];
 
@@ -1781,7 +1786,7 @@ errr parse_k_info(char *buf, header *head)
 		if (3 != sscanf(buf + 2, "%d:%d:%d",
 			&tval, &sval, &pval)) return 1;
 
-		k_ptr->tval = (OBJECT_TYPE_VALUE)tval;
+		k_ptr->tval = (tval_type)tval;
 		k_ptr->sval = (OBJECT_SUBTYPE_VALUE)sval;
 		k_ptr->pval = (PARAMETER_VALUE)pval;
 	}
@@ -1962,7 +1967,7 @@ errr parse_a_info(char *buf, header *head)
 		if (3 != sscanf(buf + 2, "%d:%d:%d",
 			&tval, &sval, &pval)) return 1;
 
-		a_ptr->tval = (OBJECT_TYPE_VALUE)tval;
+		a_ptr->tval = (tval_type)tval;
 		a_ptr->sval = (OBJECT_SUBTYPE_VALUE)sval;
 		a_ptr->pval = (PARAMETER_VALUE)pval;
 	}
@@ -2395,7 +2400,7 @@ errr parse_r_info(char *buf, header *head)
 
 		if (*t == 'd') *t++ = '\0';
 
-		r_ptr->blow[i].method = (BLOW_METHOD)n1;
+		r_ptr->blow[i].method = (rbm_type)n1;
 		r_ptr->blow[i].effect = (BLOW_EFFECT)n2;
 		r_ptr->blow[i].d_dice = atoi(s);
 		r_ptr->blow[i].d_side = atoi(t);
@@ -2979,7 +2984,7 @@ static errr parse_line_building(char *buf)
 		n = tokenize(s + 2, MAX_CLASS, zz, 0);
 		for (int i = 0; i < MAX_CLASS; i++)
 		{
-			building[index].member_class[i] = ((i < n) ? (CLASS_IDX)atoi(zz[i]) : 1);
+			building[index].member_class[i] = ((i < n) ? (player_class_type)atoi(zz[i]) : 1);
 		}
 
 		break;
@@ -2990,7 +2995,7 @@ static errr parse_line_building(char *buf)
 		n = tokenize(s + 2, MAX_RACES, zz, 0);
 		for (int i = 0; i < MAX_RACES; i++)
 		{
-			building[index].member_race[i] = ((i < n) ? (RACE_IDX)atoi(zz[i]) : 1);
+			building[index].member_race[i] = ((i < n) ? (player_race_type)atoi(zz[i]) : 1);
 		}
 
 		break;
@@ -3378,7 +3383,7 @@ static errr process_dungeon_file_aux(player_type *player_ptr, char *buf, int ymi
 			}
 			else if (zz[0][0] == 'R')
 			{
-				max_r_idx = (RACE_IDX)atoi(zz[1]);
+				max_r_idx = (player_race_type)atoi(zz[1]);
 			}
 			else if (zz[0][0] == 'K')
 			{

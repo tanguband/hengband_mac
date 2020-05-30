@@ -7,8 +7,13 @@
 #include "player/player-effects.h"
 #include "player/player-class.h"
 #include "inventory/player-inventory.h"
+#include "object/item-use-flags.h"
+#include "object/object2.h"
 #include "object/object-kind.h"
 #include "object/object-hook.h"
+#include "object/special-object-flags.h"
+#include "object/sv-other-types.h"
+#include "object/sv-rod-types.h"
 #include "spell/spells-type.h"
 #include "spell/spells-status.h"
 #include "spell/spells-floor.h"
@@ -288,7 +293,7 @@ void exe_zap_rod(player_type *creature_ptr, INVENTORY_IDX item)
 
 	object_kind *k_ptr;
 
-	o_ptr = REF_ITEM(creature_ptr, creature_ptr->current_floor_ptr, item);
+	o_ptr = ref_item(creature_ptr, item);
 
 	/* Mega-Hack -- refuse to zap a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1))

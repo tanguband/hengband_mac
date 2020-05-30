@@ -17,18 +17,20 @@
 #include "autopick/autopick-util.h"
 #include "term/gameterm.h"
 
-#include "market/building.h"
+#include "cmd/cmd-building.h"
 #include "system/system-variables.h"
 #include "core/stuff-handler.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "world/world.h"
 #include "dungeon/quest.h"
 #include "object/artifact.h"
+#include "object/object2.h"
+#include "object/object-mark-types.h"
 #include "player/avatar.h"
 #include "view/display-player.h"
 #include "player/player-status.h"
 #include "player/player-class.h"
-#include "player/player-race.h"
+#include "player/player-races-table.h"
 #include "player/mimic-info-table.h"
 #include "player/player-effects.h"
 #include "inventory/player-inventory.h"
@@ -1577,7 +1579,7 @@ static void print_frame_extra(player_type *player_ptr)
  * @param player_ptr プレーヤーへの参照ポインタ
  * @return なし
  */
-static void fix_inventory(player_type *player_ptr, OBJECT_TYPE_VALUE item_tester_tval)
+static void fix_inventory(player_type *player_ptr, tval_type item_tester_tval)
 {
 	/* Scan windows */
 	for (int j = 0; j < 8; j++)
@@ -1764,7 +1766,7 @@ static void fix_monster_list(player_type *player_ptr)
  * @param player_ptr プレーヤーへの参照ポインタ
  * @return なし
  */
-static void fix_equip(player_type *player_ptr, OBJECT_TYPE_VALUE item_tester_tval)
+static void fix_equip(player_type *player_ptr, tval_type item_tester_tval)
 {
 	/* Scan windows */
 	for (int j = 0; j < 8; j++)

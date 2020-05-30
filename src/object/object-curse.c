@@ -1,8 +1,15 @@
 ﻿#include "system/angband.h"
 #include "util/util.h"
-
+#include "object/item-feeling.h"
+#include "object/object-curse.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
+#include "object/tr-types.h"
+#include "object/trc-types.h"
+
+#define MAX_CURSE 18
+#define TRC_SPECIAL_MASK (TRC_TY_CURSE | TRC_AGGRAVATE)
+#define TRC_HEAVY_MASK (TRC_TY_CURSE | TRC_AGGRAVATE | TRC_DRAIN_EXP | TRC_ADD_H_CURSE | TRC_CALL_DEMON | TRC_CALL_DRAGON | TRC_CALL_UNDEAD | TRC_TELEPORT)
 
 /*!
  * @brief アイテムに付加される可能性のある呪いを指定する。

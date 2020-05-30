@@ -1,5 +1,4 @@
-﻿
-#include "system/angband.h"
+﻿#include "system/angband.h"
 #include "util/util.h"
 
 #include "cmd-basic.h"
@@ -8,10 +7,19 @@
 #include "grid/grid.h"
 #include "spell/spells3.h"
 #include "spell/spells-object.h"
+#include "object/item-apply-magic.h"
+#include "object/item-feeling.h"
+#include "object/item-use-flags.h"
+#include "object/object2.h"
 #include "object/object-boost.h"
 #include "object/object-hook.h"
 #include "object/object-flavor.h"
 #include "object/object-ego.h"
+#include "object/special-object-flags.h"
+#include "object/sv-lite-types.h"
+#include "object/sv-protector-types.h"
+#include "object/sv-scroll-types.h"
+#include "object/sv-weapon-types.h"
 #include "player/player-damage.h"
 #include "player/player-status.h"
 #include "player/avatar.h"
@@ -22,11 +30,14 @@
 #include "autopick/autopick.h"
 #include "io/targeting.h"
 #include "view/display-main-window.h"
-
+#include "object/sv-other-types.h"
+#include "object/sv-staff-types.h"
+#include "object/tr-types.h"
+#include "object/trc-types.h"
 
 typedef struct
 {
-	OBJECT_TYPE_VALUE tval;
+	tval_type tval;
 	OBJECT_SUBTYPE_VALUE sval;
 	PERCENTAGE prob;
 	byte flag;
@@ -464,7 +475,7 @@ void acquire_chaos_weapon(player_type *creature_ptr)
 {
 	object_type forge;
 	object_type *q_ptr = &forge;
-	OBJECT_TYPE_VALUE dummy = TV_SWORD;
+	tval_type dummy = TV_SWORD;
 	OBJECT_SUBTYPE_VALUE dummy2;
 	switch (randint1(creature_ptr->lev))
 	{

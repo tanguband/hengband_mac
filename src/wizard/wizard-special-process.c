@@ -24,7 +24,7 @@
 #include "cmd/cmd-help.h"
 #include "cmd/cmd-save.h"
 #include "util/util.h"
-#include "birth/birth.h"
+#include "birth/inventory-initializer.h"
 #include "player/selfinfo.h"
 #include "player/patron.h"
 #include "mutation/mutation.h"
@@ -43,6 +43,8 @@
 #include "spell/spells-world.h"
 #include "spell/spells-floor.h"
 
+#include "object/item-apply-magic.h"
+#include "object/object2.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
 #include "monster/monster-status.h"
@@ -51,9 +53,9 @@
 #include "floor/floor-save.h"
 #include "grid/grid.h"
 #include "dungeon/dungeon-file.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "mspell/monster-spell.h"
-#include "market/building.h"
+#include "market/arena.h"
 #include "object/object-kind.h"
 #include "io/targeting.h"
 #include "view/display-main-window.h"
@@ -61,6 +63,9 @@
 #include "spell/spells2.h"
 #include "spell/spells3.h"
 #include "spell/spells-detection.h"
+#include "player/player-races-table.h"
+#include "object/item-use-flags.h"
+#include "object/trc-types.h"
 
 #define NUM_O_SET 8
 #define NUM_O_BIT 32
@@ -218,7 +223,7 @@ static void prt_binary(BIT_FLAGS flags, int row, int col)
  * @param col 表示行
  * @return なし
  */
-static void prt_alloc(OBJECT_TYPE_VALUE tval, OBJECT_SUBTYPE_VALUE sval, TERM_LEN row, TERM_LEN col)
+static void prt_alloc(tval_type tval, OBJECT_SUBTYPE_VALUE sval, TERM_LEN row, TERM_LEN col)
 {
 	u32b rarity[K_MAX_DEPTH];
 	(void)C_WIPE(rarity, K_MAX_DEPTH, u32b);
@@ -703,7 +708,7 @@ static KIND_OBJECT_IDX wiz_create_itemtype(void)
 	KIND_OBJECT_IDX i;
 	int num, max_num;
 	TERM_LEN col, row;
-	OBJECT_TYPE_VALUE tval;
+	tval_type tval;
 
 	concptr tval_desc;
 	char ch;

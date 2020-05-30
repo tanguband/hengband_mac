@@ -17,8 +17,8 @@
 #include "core/stuff-handler.h"
 #include "term/gameterm.h"
 #include "util/util.h"
-#include "io/files.h"
-#include "monster/monsterrace-hook.h"
+#include "io/files-util.h"
+#include "monster/monster-race-hook.h"
 #include "view/display-main-window.h"
 #include "dungeon/quest.h"
 #include "floor/floor.h"
@@ -1367,7 +1367,8 @@ void bell(void)
 
 
 /*
- * Hack -- Make a (relevant?) sound
+ * todo intをsound_typeに差し替える
+ * @brief 音を鳴らす
  */
 void sound(int val)
 {

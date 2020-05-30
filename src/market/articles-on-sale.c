@@ -1,6 +1,20 @@
 ﻿#include "system/angband.h"
-#include "store-owners.h"
+#include "store/store-owners.h"
 #include "articles-on-sale.h"
+#include "object/sv-amulet-types.h"
+#include "object/sv-armor-types.h"
+#include "object/sv-bow-types.h"
+#include "object/sv-digging-types.h"
+#include "object/sv-food-types.h"
+#include "object/sv-other-types.h"
+#include "object/sv-lite-types.h"
+#include "object/sv-potion-types.h"
+#include "object/sv-protector-types.h"
+#include "object/sv-scroll-types.h"
+#include "object/sv-ring-types.h"
+#include "object/sv-staff-types.h"
+#include "object/sv-wand-types.h"
+#include "object/sv-weapon-types.h"
 
 /*!
  * 店舗で販売するオブジェクトを定義する / Hack -- Objects sold in the stores -- by tval/sval pair.

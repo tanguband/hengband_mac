@@ -9,8 +9,12 @@
 #include "player/player-effects.h"
 #include "player/player-class.h"
 #include "inventory/player-inventory.h"
+#include "object/item-use-flags.h"
+#include "object/object2.h"
 #include "object/object-kind.h"
 #include "object/object-hook.h"
+#include "object/special-object-flags.h"
+#include "object/sv-wand-types.h"
 #include "cmd-basic.h"
 #include "floor/floor.h"
 #include "io/targeting.h"
@@ -339,7 +343,7 @@ void exe_aim_wand(player_type *creature_ptr, INVENTORY_IDX item)
 	object_type *o_ptr;
 	bool old_target_pet = target_pet;
 
-	o_ptr = REF_ITEM(creature_ptr, creature_ptr->current_floor_ptr, item);
+	o_ptr = ref_item(creature_ptr, item);
 
 	/* Mega-Hack -- refuse to aim a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1))

@@ -12,22 +12,25 @@
  */
 
 #include "system/angband.h"
-#include "market/building.h"
+#include "cmd/cmd-building.h"
 #include "core/stuff-handler.h"
 #include "term/gameterm.h"
 #include "util/util.h"
 #include "main/sound-definitions-table.h"
+#include "object/item-feeling.h"
 #include "object/object-ego.h"
+#include "object/object-mark-types.h"
 
 #include "monster/creature.h"
 
 #include "dungeon/dungeon.h"
 #include "effect/effect-characteristics.h"
 #include "floor/floor-town.h"
+#include "object/item-use-flags.h"
+#include "object/object2.h"
 #include "object/object-boost.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
-#include "melee.h"
 #include "player/player-move.h"
 #include "player/player-status.h"
 #include "player/player-class.h"
@@ -52,10 +55,10 @@
 #include "cmd/cmd-dump.h"
 #include "combat/snipe.h"
 #include "floor/floor-save.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "player/player-effects.h"
 #include "player/player-skill.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "view/display-main-window.h"
 #include "mind/mind.h"
 #include "floor/wild.h"
@@ -64,9 +67,13 @@
 #include "autopick/autopick.h"
 #include "io/targeting.h"
 #include "effect/spells-effect-util.h"
-#include "spell/spells-util.h"
 #include "spell/spells-execution.h"
 #include "spell/process-effect.h"
+#include "mind/racial-force-trainer.h"
+#include "cmd/cmd-attack.h"
+#include "object/tr-types.h"
+#include "object/trc-types.h"
+#include "object/special-object-flags.h"
 
 /*! テレポート先探索の試行数 / Maximum number of tries for teleporting */
 #define MAX_TRIES 100
@@ -1538,7 +1545,7 @@ bool identify_item(player_type *owner_ptr, object_type *o_ptr)
  * This routine does *not* automatically combine objects.
  * Returns TRUE if something was identified, else FALSE.
  */
-bool ident_spell(player_type *caster_ptr, bool only_equip, OBJECT_TYPE_VALUE item_tester_tval)
+bool ident_spell(player_type *caster_ptr, bool only_equip, tval_type item_tester_tval)
 {
 	if (only_equip)
 		item_tester_hook = item_tester_hook_identify_weapon_armour;
@@ -1645,7 +1652,7 @@ bool mundane_spell(player_type *owner_ptr, bool only_equip)
  * Fully "identify" an object in the inventory -BEN-
  * This routine returns TRUE if an item was identified.
  */
-bool identify_fully(player_type *caster_ptr, bool only_equip, OBJECT_TYPE_VALUE item_tester_tval)
+bool identify_fully(player_type *caster_ptr, bool only_equip, tval_type item_tester_tval)
 {
 	if (only_equip)
 		item_tester_hook = item_tester_hook_identify_fully_weapon_armour;
@@ -2771,7 +2778,7 @@ void massacre(player_type *caster_ptr)
 		g_ptr = &caster_ptr->current_floor_ptr->grid_array[y][x];
 		m_ptr = &caster_ptr->current_floor_ptr->m_list[g_ptr->m_idx];
 		if (g_ptr->m_idx && (m_ptr->ml || cave_have_flag_bold(caster_ptr->current_floor_ptr, y, x, FF_PROJECT)))
-			py_attack(caster_ptr, y, x, 0);
+			do_cmd_attack(caster_ptr, y, x, 0);
 	}
 }
 
@@ -2807,7 +2814,7 @@ bool eat_rock(player_type *caster_ptr)
 		monster_type *m_ptr = &caster_ptr->current_floor_ptr->m_list[g_ptr->m_idx];
 		msg_print(_("何かが邪魔しています！", "There's something in the way!"));
 
-		if (!m_ptr->ml || !is_pet(m_ptr)) py_attack(caster_ptr, y, x, 0);
+		if (!m_ptr->ml || !is_pet(m_ptr)) do_cmd_attack(caster_ptr, y, x, 0);
 	}
 	else if (have_flag(f_ptr->flags, FF_TREE))
 	{
@@ -2839,7 +2846,7 @@ bool eat_rock(player_type *caster_ptr)
 
 bool shock_power(player_type *caster_ptr)
 {
-	int boost = P_PTR_KI;
+    int boost = get_current_ki(caster_ptr);
 	if (heavy_armor(caster_ptr)) boost /= 2;
 
 	project_length = 1;

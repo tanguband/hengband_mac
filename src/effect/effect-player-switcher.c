@@ -9,10 +9,14 @@
 #include "object/object-broken.h"
 #include "object/object-curse.h"
 #include "player/player-damage.h"
+#include "mind/racial-mirror-master.h"
+#include "inventory/inventory-damage.h"
 #include "player/player-effects.h"
 #include "player/mimic-info-table.h"
 #include "spell/spells-type.h"
 #include "world/world.h"
+#include "player/player-races-table.h"
+#include "cmd/cmd-attack.h"
 
 void effect_player_mana(player_type *target_ptr, effect_player_type *ep_ptr) {
   if (target_ptr->blind)
@@ -53,7 +57,7 @@ void effect_player_icee(player_type *target_ptr, effect_player_type *ep_ptr) {
 
   ep_ptr->get_damage = cold_dam(target_ptr, ep_ptr->dam, ep_ptr->killer,
                                 ep_ptr->monspell, FALSE);
-  if (CHECK_MULTISHADOW(target_ptr))
+  if (check_multishadow(target_ptr))
     return;
 
   if (!target_ptr->resist_shard) {
@@ -90,7 +94,7 @@ void effect_player_death_ray(player_type *target_ptr,
   case RACE_SKELETON:
   case RACE_ZOMBIE:
   case RACE_VAMPIRE:
-  case RACE_DEMON:
+  case RACE_BALROG:
   case RACE_SPECTRE: {
     ep_ptr->dam = 0;
     break;
@@ -106,11 +110,11 @@ void effect_player_death_ray(player_type *target_ptr,
 void effect_player_hand_doom(player_type *target_ptr,
                              effect_player_type *ep_ptr) {
   if ((randint0(100 + ep_ptr->rlev / 2) < target_ptr->skill_sav) &&
-      !CHECK_MULTISHADOW(target_ptr)) {
+      !check_multishadow(target_ptr)) {
     msg_print(_("‚µ‚©‚µŒø—Í‚ğ’µ‚Ë•Ô‚µ‚½I", "You resist the effects!"));
     learn_spell(target_ptr, ep_ptr->monspell);
   } else {
-    if (!CHECK_MULTISHADOW(target_ptr)) {
+    if (!check_multishadow(target_ptr)) {
       msg_print(_("‚ ‚È‚½‚Í–½‚ª”–‚Ü‚Á‚Ä‚¢‚­‚æ‚¤‚ÉŠ´‚¶‚½I",
                   "You feel your life fade away!"));
       curse_equipment(target_ptr, 40, 20);

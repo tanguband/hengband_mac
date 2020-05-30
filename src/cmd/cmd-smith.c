@@ -1,10 +1,12 @@
 ﻿#include "system/angband.h"
 #include "util/util.h"
 #include "term/gameterm.h"
-
+#include "object/item-use-flags.h"
+#include "object/object2.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
 #include "object/object-ego.h"
+#include "object/special-object-flags.h"
 #include "player/player-status.h"
 #include "cmd-basic.h"
 #include "cmd-smith.h"
@@ -12,8 +14,8 @@
 #include "autopick/autopick.h"
 #include "view/display-main-window.h"
 #include "inventory/player-inventory.h"
-
-
+#include "object/tr-types.h"
+#include "object/trc-types.h"
 
 /*!
  * エッセンス情報の構造体 / A structure for smithing
@@ -867,7 +869,7 @@ static void add_essence(player_type *creature_ptr, ESSENCE_IDX mode)
 	int use_essence;
 	essence_type *es_ptr;
 	bool able[22] = { 0 };
-	OBJECT_TYPE_VALUE tval = 0;
+	tval_type tval = 0;
 	int menu_line = (use_menu ? 1 : 0);
 
 	for (i = 0; essence_info[i].add_name; i++)

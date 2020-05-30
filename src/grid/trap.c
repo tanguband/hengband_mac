@@ -10,7 +10,7 @@
 #include "player/player-move.h"
 #include "player/player-effects.h"
 #include "player/player-class.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "spell/spells-summon.h"
 #include "dungeon/quest.h"
 #include "object/artifact.h"
@@ -21,12 +21,13 @@
 #include "effect/effect-characteristics.h"
 #include "floor/floor-save.h"
 #include "main/init.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "dungeon/dungeon.h"
 #include "world/world.h"
 #include "spell/process-effect.h"
 #include "spell/spells2.h"
 #include "spell/spells3.h"
+#include "mind/racial-mirror-master.h"
 
 static s16b normal_traps[MAX_NORMAL_TRAPS];
 
@@ -241,7 +242,7 @@ void place_trap(player_type *trapped_ptr, POSITION y, POSITION x)
 * Always miss 5% of the time, Always hit 5% of the time.
 * Otherwise, match trap power against player armor.
 */
-static int check_hit(player_type *target_ptr, int power)
+static int check_hit_from_monster_to_player(player_type *target_ptr, int power)
 {
 	int k;
 	ARMOUR_CLASS ac;
@@ -252,7 +253,7 @@ static int check_hit(player_type *target_ptr, int power)
 	/* Hack -- 5% hit, 5% miss */
 	if (k < 10) return (k < 5);
 
-	if (target_ptr->pseikaku == SEIKAKU_NAMAKE)
+	if (target_ptr->pseikaku == PERSONALITY_LAZY)
 		if (one_in_(20)) return TRUE;
 
 	/* Paranoia -- No power */
@@ -342,11 +343,11 @@ static bool hit_trap_dart(player_type *target_ptr)
 {
 	bool hit = FALSE;
 
-	if (check_hit(target_ptr, 125))
+	if (check_hit_from_monster_to_player(target_ptr, 125))
 	{
 		msg_print(_("小さなダーツが飛んできて刺さった！", "A small dart hits you!"));
 		take_hit(target_ptr, DAMAGE_ATTACK, damroll(1, 4), _("ダーツの罠", "a dart trap"), -1);
-		if (!CHECK_MULTISHADOW(target_ptr)) hit = TRUE;
+		if (!check_multishadow(target_ptr)) hit = TRUE;
 	}
 	else
 	{
@@ -434,7 +435,7 @@ void hit_trap(player_type *trapped_ptr, bool break_trap)
 			msg_print(_("落とし戸に落ちた！", "You have fallen through a trap door!"));
 			if (IS_ECHIZEN(trapped_ptr))
 				msg_print(_("くっそ～！", ""));
-			else if((trapped_ptr->pseikaku == SEIKAKU_CHARGEMAN))
+			else if((trapped_ptr->pseikaku == PERSONALITY_CHARGEMAN))
 				msg_print(_("ジュラル星人の仕業に違いない！", ""));
 
 

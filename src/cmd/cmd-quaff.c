@@ -10,7 +10,6 @@
 #include "util/util.h"
 #include "main/sound-definitions-table.h"
 
-#include "birth/birth.h"
 #include "player/selfinfo.h"
 #include "object/object-hook.h"
 #include "mutation/mutation.h"
@@ -24,13 +23,18 @@
 #include "inventory/player-inventory.h"
 #include "realm/realm-hex.h"
 #include "spell/spells-floor.h"
+#include "object/item-use-flags.h"
+#include "object/object2.h"
 #include "object/object-broken.h"
+#include "object/sv-potion-types.h"
 #include "cmd-basic.h"
 #include "floor/floor.h"
 #include "object/object-kind.h"
 #include "view/display-main-window.h"
 #include "player/player-class.h"
 #include "spell/spells-detection.h"
+#include "birth/birth-stat.h"
+#include "player/player-races-table.h"
 
 /*!
  * @brief 薬を飲むコマンドのサブルーチン /
@@ -64,7 +68,7 @@ void exe_quaff_potion(player_type *creature_ptr, INVENTORY_IDX item)
 		if (!hex_spelling(creature_ptr, HEX_INHAIL)) stop_hex_spell_all(creature_ptr);
 	}
 
-	o_ptr = REF_ITEM(creature_ptr, creature_ptr->current_floor_ptr, item);
+	o_ptr = ref_item(creature_ptr, item);
 	q_ptr = &forge;
 	object_copy(q_ptr, o_ptr);
 
@@ -114,7 +118,7 @@ void exe_quaff_potion(player_type *creature_ptr, INVENTORY_IDX item)
 
 			if (!(PRACE_IS_(creature_ptr, RACE_GOLEM) ||
 			      PRACE_IS_(creature_ptr, RACE_ZOMBIE) ||
-			      PRACE_IS_(creature_ptr, RACE_DEMON) ||
+			      PRACE_IS_(creature_ptr, RACE_BALROG) ||
 			      PRACE_IS_(creature_ptr, RACE_ANDROID) ||
 			      PRACE_IS_(creature_ptr, RACE_SPECTRE) ||
 			      (mimic_info[creature_ptr->mimic_form].MIMIC_FLAGS & MIMIC_IS_NONLIVING)))
@@ -530,7 +534,7 @@ void exe_quaff_potion(player_type *creature_ptr, INVENTORY_IDX item)
 				break;
 			case RACE_GOLEM:
 			case RACE_ZOMBIE:
-			case RACE_DEMON:
+			case RACE_BALROG:
 			case RACE_SPECTRE:
 				set_food(creature_ptr, creature_ptr->food + ((q_ptr->pval) / 20));
 				break;

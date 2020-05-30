@@ -12,9 +12,11 @@
 #include "player/player-status.h"
 #include "player/player-skill.h"
 #include "player/player-class.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
+#include "object/object2.h"
 #include "object/object-hook.h"
 #include "object/object-broken.h"
+#include "object/object-mark-types.h"
 #include "effect/effect-characteristics.h"
 #include "grid/grid.h"
 #include "object/object-flavor.h"
@@ -26,6 +28,8 @@
 #include "io/targeting.h"
 #include "effect/spells-effect-util.h"
 #include "spell/process-effect.h"
+#include "object/sv-bow-types.h"
+#include "object/tr-types.h"
 
 /*!
  * @brief 矢弾を射撃した際のスレイ倍率をかけた結果を返す /
@@ -35,7 +39,7 @@
  * @param m_ptr 目標モンスターの構造体参照ポインタ
  * @return スレイ倍率をかけたダメージ量
  */
-static MULTIPLY tot_dam_aux_shot(player_type *sniper_ptr, object_type *o_ptr, HIT_POINT tdam, monster_type *m_ptr, SPELL_IDX snipe_type)
+static MULTIPLY calc_shot_damage_with_slay(player_type *sniper_ptr, object_type *o_ptr, HIT_POINT tdam, monster_type *m_ptr, SPELL_IDX snipe_type)
 {
 	MULTIPLY mult = 10;
 
@@ -327,7 +331,7 @@ static MULTIPLY tot_dam_aux_shot(player_type *sniper_ptr, object_type *o_ptr, HI
 	}
 
 	/* Sniper */
-	if (snipe_type) mult = tot_dam_aux_snipe(sniper_ptr, mult, m_ptr, snipe_type);
+	if (snipe_type) mult = calc_snipe_damage_with_slay(sniper_ptr, mult, m_ptr, snipe_type);
 
 	/* Return the total damage */
 	return (tdam * mult / 10);
@@ -697,7 +701,7 @@ void exe_fire(player_type *shooter_ptr, INVENTORY_IDX item, object_type *j_ptr, 
 					else
 					{
 						/* Apply special damage */
-						tdam = tot_dam_aux_shot(shooter_ptr, q_ptr, tdam, m_ptr, snipe_type);
+						tdam = calc_shot_damage_with_slay(shooter_ptr, q_ptr, tdam, m_ptr, snipe_type);
 						tdam = critical_shot(shooter_ptr, q_ptr->weight, q_ptr->to_h, j_ptr->to_h, tdam);
 
 						/* No negative damage */
@@ -908,7 +912,7 @@ bool test_hit_fire(player_type *shooter_ptr, int chance, monster_type *m_ptr, in
 	if (k <= 5) return FALSE;
 	if (k > 95) return TRUE;
 
-	if (shooter_ptr->pseikaku == SEIKAKU_NAMAKE)
+	if (shooter_ptr->pseikaku == PERSONALITY_LAZY)
 		if (one_in_(20)) return FALSE;
 
 	/* Never hit */

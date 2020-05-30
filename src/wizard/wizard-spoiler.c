@@ -14,19 +14,22 @@
 #include "wizard/wizard-spoiler.h"
 #include "util/util.h"
 #include "term/gameterm.h"
-
 #include "system/angband-version.h"
 #include "object/artifact.h"
 #include "core/sort.h"
-#include "market/store.h"
-#include "market/store-util.h"
+#include "store/store.h"
+#include "store/store-util.h"
 #include "monster/monster.h"
+#include "object/object2.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
 #include "object/object-ego.h"
 #include "object/object-kind.h"
 #include "floor/floor-town.h"
-#include "io/files.h"
+#include "io/files-util.h"
+#include "object/tr-types.h"
+#include "object/trc-types.h"
+#include "object/special-object-flags.h"
 
  /*
   * The spoiler file being created
@@ -75,7 +78,7 @@ static concptr attr_to_text(monster_race *r_ptr)
  */
 typedef struct
 {
-	OBJECT_TYPE_VALUE tval;
+	tval_type tval;
 	concptr name;
 } grouper;
 
@@ -491,7 +494,7 @@ static grouper group_artifact[] =
  */
 typedef struct flag_desc
 {
-	const int flag;
+	const tr_type flag;
 	concptr const desc;
 } flag_desc;
 

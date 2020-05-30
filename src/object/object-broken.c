@@ -1,9 +1,12 @@
 ﻿#include "system/angband.h"
+#include "object/object2.h"
 #include "object/object-kind.h"
 #include "combat/snipe.h"
 #include "spell/spells-type.h"
 #include "spell/process-effect.h"
 #include "effect/effect-characteristics.h"
+#include "object/sv-potion-types.h"
+#include "object/tr-types.h"
 
 /*!
 * @brief アイテムが酸で破損するかどうかを判定する

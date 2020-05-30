@@ -53,9 +53,6 @@ typedef const char *concptr; /*!< 文字列定数用ポインタ定義 / A simpl
  */
 typedef int errr;
 
-#undef bool
-#define bool bool_hack /*!< C++環境で重複を避けるためのbool_hack定義 Hack -- prevent problems with C++ */
-
 #define MAX_UCHAR       255 /*!< Maximum value storable in a "byte" (hard-coded) */
 #define MAX_SHORT       32767    /*!< Maximum value storable in a "s16b" (hard-coded) */
 
@@ -98,9 +95,6 @@ typedef s16b FEAT_IDX;			/*!< ゲーム中の地形ID型を定義 */
 typedef s16b FLOOR_IDX;			/*!< ゲーム中のフロアID型を定義 */
 
 typedef byte SEX_IDX;			/*!< ゲーム中のプレイヤー性別ID型を定義 */
-typedef s16b RACE_IDX;			/*!< ゲーム中のプレイヤー種族ID型を定義 */
-typedef s16b CLASS_IDX;			/*!< ゲーム中のプレイヤー職業ID型を定義 */
-typedef s16b CHARACTER_IDX;		/*!< ゲーム中のプレイヤー性格ID型を定義 */
 typedef s16b MIMIC_RACE_IDX;	/*!< ゲーム中のプレイヤー変身種族ID型を定義 */
 typedef s16b PATRON_IDX;		/*!< ゲーム中のプレイヤーパトロンID型を定義 */
 typedef s32b ACTION_IDX;		/*!< プレイヤーが現在取っている常時行動のID定義 */
@@ -180,7 +174,6 @@ typedef int DIRECTION;			/*!< ゲーム中の方角の型定義 */
 typedef s32b EXP;				/*!< ゲーム中の主経験値の型定義 */
 typedef s16b SUB_EXP;			/*!< ゲーム中の副経験値の型定義 */
 
-typedef s32b OBJECT_TYPE_VALUE;    /*!< ゲーム中のアイテム主分類の型定義 */
 typedef s32b OBJECT_SUBTYPE_VALUE; /*!< ゲーム中のアイテム副分類の型定義 */
 typedef s16b PARAMETER_VALUE;      /*!< ゲーム中のアイテム能力値の型定義 */
 typedef s32b WEIGHT;               /*!< ゲーム中の重量の型定義(ポンド) */
@@ -227,7 +220,6 @@ typedef byte FEAT_POWER;   /*!< 地形強度の型定義 */
 
 typedef int QUANTITY; /*!< インターフェース上の指定個数 */
 
-typedef byte BLOW_METHOD; /*!< モンスターの打撃手段ID */
 typedef byte BLOW_EFFECT; /*!< モンスターの打撃効果ID */
 
 typedef int EFFECT_ID; /*!< 効果属性ID */

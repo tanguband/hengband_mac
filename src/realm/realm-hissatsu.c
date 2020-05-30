@@ -6,8 +6,7 @@
 #include "cmd-basic.h"
 #include "dungeon/dungeon.h"
 #include "effect/effect-characteristics.h"
-#include "melee.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 #include "object/artifact.h"
 #include "monster/monster.h"
 #include "player/player-move.h"
@@ -28,6 +27,9 @@
 #include "spell/spells2.h"
 #include "spell/spells3.h"
 #include "spell/spells-detection.h"
+#include "combat/combat-options-type.h"
+#include "cmd/cmd-attack.h"
+#include "object/tr-types.h"
 
 /*!
 * @brief 剣術の各処理を行う
@@ -82,21 +84,21 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			y = caster_ptr->y + ddy_cdd[cdir];
 			x = caster_ptr->x + ddx_cdd[cdir];
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, 0);
+				do_cmd_attack(caster_ptr, y, x, 0);
 			else
 				msg_print(_("攻撃は空を切った。", "You attack the empty air."));
 
 			y = caster_ptr->y + ddy_cdd[(cdir + 7) % 8];
 			x = caster_ptr->x + ddx_cdd[(cdir + 7) % 8];
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, 0);
+				do_cmd_attack(caster_ptr, y, x, 0);
 			else
 				msg_print(_("攻撃は空を切った。", "You attack the empty air."));
 
 			y = caster_ptr->y + ddy_cdd[(cdir + 1) % 8];
 			x = caster_ptr->x + ddx_cdd[(cdir + 1) % 8];
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, 0);
+				do_cmd_attack(caster_ptr, y, x, 0);
 			else
 				msg_print(_("攻撃は空を切った。", "You attack the empty air."));
 		}
@@ -128,7 +130,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_FIRE);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_FIRE);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -162,7 +164,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_MINEUCHI);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_MINEUCHI);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -215,7 +217,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 				return NULL;
 			}
 
-			py_attack(caster_ptr, y, x, 0);
+			do_cmd_attack(caster_ptr, y, x, 0);
 
 			if (!player_can_enter(caster_ptr, caster_ptr->current_floor_ptr->grid_array[y][x].feat, 0) || is_trap(caster_ptr, caster_ptr->current_floor_ptr->grid_array[y][x].feat))
 				break;
@@ -246,7 +248,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_POISON);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_POISON);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -271,7 +273,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_ZANMA);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_ZANMA);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -295,7 +297,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, 0);
+				do_cmd_attack(caster_ptr, y, x, 0);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -379,7 +381,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_HAGAN);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_HAGAN);
 
 			if (!cave_have_flag_bold(caster_ptr->current_floor_ptr, y, x, FF_HURT_ROCK)) break;
 
@@ -405,7 +407,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_COLD);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_COLD);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -430,7 +432,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_KYUSHO);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_KYUSHO);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -455,7 +457,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_MAJIN);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_MAJIN);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -480,7 +482,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_SUTEMI);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_SUTEMI);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -506,7 +508,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_ELEC);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_ELEC);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -559,7 +561,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 						monster_desc(caster_ptr, m_name, m_ptr, 0);
 						msg_format(_("%sには効果がない！", "%s is unharmed!"), m_name);
 					}
-					else py_attack(caster_ptr, y, x, HISSATSU_SEKIRYUKA);
+					else do_cmd_attack(caster_ptr, y, x, HISSATSU_SEKIRYUKA);
 				}
 			}
 		}
@@ -580,7 +582,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_QUAKE);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_QUAKE);
 			else
 				earthquake(caster_ptr, caster_ptr->y, caster_ptr->x, 10, 0);
 		}
@@ -664,7 +666,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 				g_ptr = &caster_ptr->current_floor_ptr->grid_array[y][x];
 
 				if (g_ptr->m_idx)
-					py_attack(caster_ptr, y, x, HISSATSU_3DAN);
+					do_cmd_attack(caster_ptr, y, x, HISSATSU_3DAN);
 				else
 				{
 					msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -737,7 +739,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_DRAIN);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_DRAIN);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));
@@ -839,11 +841,11 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
 			{
-				py_attack(caster_ptr, y, x, 0);
+				do_cmd_attack(caster_ptr, y, x, 0);
 				if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
 				{
 					handle_stuff(caster_ptr);
-					py_attack(caster_ptr, y, x, 0);
+					do_cmd_attack(caster_ptr, y, x, 0);
 				}
 			}
 			else
@@ -922,7 +924,7 @@ concptr do_hissatsu_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type m
 			x = caster_ptr->x + ddx[dir];
 
 			if (caster_ptr->current_floor_ptr->grid_array[y][x].m_idx)
-				py_attack(caster_ptr, y, x, HISSATSU_UNDEAD);
+				do_cmd_attack(caster_ptr, y, x, HISSATSU_UNDEAD);
 			else
 			{
 				msg_print(_("その方向にはモンスターはいません。", "There is no monster."));

@@ -43,7 +43,6 @@
 #include "floor/floor.h"
 #include "floor/floor-generate.h"
 #include "dungeon/dungeon.h"
-#include "grid/grid.h"
 #include "room/rooms.h"
 
 #include "room/rooms-city.h"
@@ -57,7 +56,7 @@
 #include "grid/trap.h"
 
 #include "monster/monster.h"
-
+#include "object/item-apply-magic.h"
 
  /*!
   * 各部屋タイプの生成比定義

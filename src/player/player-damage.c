@@ -6,7 +6,7 @@
 #include "term/gameterm.h"
 
 #include "player/avatar.h"
-#include "market/building.h"
+#include "cmd/cmd-building.h"
 #include "io/write-diary.h"
 #include "autopick/autopick-pref-processor.h"
 #include "cmd/cmd-process-screen.h"
@@ -19,11 +19,11 @@
 #include "object/object-broken.h"
 #include "player/player-move.h"
 #include "player/player-damage.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "player/player-status.h"
 #include "player/player-effects.h"
 #include "player/player-class.h"
-#include "player/player-race.h"
+#include "player/player-races-table.h"
 #include "mspell/monster-spell.h"
 #include "world/world.h"
 #include "view/display-main-window.h"
@@ -31,86 +31,10 @@
 #include "io/report.h"
 #include "floor/wild.h"
 #include "io/save.h"
-#include "io/files.h"
-
-/*!
- * @brief アイテムを指定確率で破損させる /
- * Destroys a type of item on a given percent chance
- * @param player_ptr プレーヤーへの参照ポインタ
- * @param typ 破損判定関数ポインタ
- * @param perc 基本確率
- * @return なし
- * @details
- * Note that missiles are no longer necessarily all destroyed
- * Destruction taken from "melee.c" code for "stealing".
- * New-style wands and rods handled correctly. -LM-
- */
-void inventory_damage(player_type *player_ptr, inven_func typ, int perc)
-{
-	INVENTORY_IDX i;
-	int j, amt;
-	object_type *o_ptr;
-	GAME_TEXT o_name[MAX_NLEN];
-
-	if (CHECK_MULTISHADOW(player_ptr) || player_ptr->current_floor_ptr->inside_arena) return;
-
-	/* Scan through the slots backwards */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		o_ptr = &player_ptr->inventory_list[i];
-		if (!o_ptr->k_idx) continue;
-
-		/* Hack -- for now, skip artifacts */
-		if (object_is_artifact(o_ptr)) continue;
-
-		/* Give this item slot a shot at death */
-		if (!(*typ)(o_ptr)) continue;
-		
-		/* Count the casualties */
-		for (amt = j = 0; j < o_ptr->number; ++j)
-		{
-			if (randint0(100) < perc) amt++;
-		}
-
-		/* Some casualities */
-		if (!amt) continue;
-		
-		object_desc(player_ptr, o_name, o_ptr, OD_OMIT_PREFIX);
-
-		msg_format(_("%s(%c)が%s壊れてしまった！", "%sour %s (%c) %s destroyed!"),
-#ifdef JP
-			o_name, index_to_label(i), ((o_ptr->number > 1) ?
-			((amt == o_ptr->number) ? "全部" : (amt > 1 ? "何個か" : "一個")) : ""));
-#else
-			((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" :
-			(amt > 1 ? "Some of y" : "One of y")) : "Y"), o_name, index_to_label(i), ((amt > 1) ? "were" : "was"));
-#endif
-
-#ifdef JP
-		if (IS_ECHIZEN(player_ptr))
-			msg_print("やりやがったな！");
-		else if ((player_ptr->pseikaku == SEIKAKU_CHARGEMAN))
-		{
-			if (randint0(2) == 0) msg_print(_("ジュラル星人め！", ""));
-			else msg_print(_("弱い者いじめは止めるんだ！", ""));
-		}
-#endif
-
-		/* Potions smash open */
-		if (object_is_potion(o_ptr))
-		{
-			(void)potion_smash_effect(player_ptr, 0, player_ptr->y, player_ptr->x, o_ptr->k_idx);
-		}
-
-		/* Reduce the charges of rods/wands */
-		reduce_charges(o_ptr, amt);
-
-		/* Destroy "amt" items */
-		inven_item_increase(player_ptr, i, -amt);
-		inven_item_optimize(player_ptr, i);
-	}
-}
-
+#include "io/files-util.h"
+#include "inventory/inventory-damage.h"
+#include "mind/racial-mirror-master.h"
+#include "object/tr-types.h"
 
 /*!
 * @brief 酸攻撃による装備のAC劣化処理 /
@@ -205,7 +129,7 @@ HIT_POINT acid_dam(player_type *creature_ptr, HIT_POINT dam, concptr kb_str, int
 	if (creature_ptr->resist_acid) dam = (dam + 2) / 3;
 	if (double_resist) dam = (dam + 2) / 3;
 
-	if (aura || !CHECK_MULTISHADOW(creature_ptr))
+	if (aura || !check_multishadow(creature_ptr))
 	{
 		if ((!(double_resist || creature_ptr->resist_acid)) &&
 			one_in_(HURT_CHANCE))
@@ -256,7 +180,7 @@ HIT_POINT elec_dam(player_type *creature_ptr, HIT_POINT dam, concptr kb_str, int
 	if (creature_ptr->resist_elec) dam = (dam + 2) / 3;
 	if (double_resist) dam = (dam + 2) / 3;
 
-	if (aura || !CHECK_MULTISHADOW(creature_ptr))
+	if (aura || !check_multishadow(creature_ptr))
 	{
 		if ((!(double_resist || creature_ptr->resist_elec)) &&
 			one_in_(HURT_CHANCE))
@@ -305,7 +229,7 @@ HIT_POINT fire_dam(player_type *creature_ptr, HIT_POINT dam, concptr kb_str, int
 	if (creature_ptr->resist_fire) dam = (dam + 2) / 3;
 	if (double_resist) dam = (dam + 2) / 3;
 
-	if (aura || !CHECK_MULTISHADOW(creature_ptr))
+	if (aura || !check_multishadow(creature_ptr))
 	{
 		if ((!(double_resist || creature_ptr->resist_fire)) &&
 			one_in_(HURT_CHANCE))
@@ -353,7 +277,7 @@ HIT_POINT cold_dam(player_type *creature_ptr, HIT_POINT dam, concptr kb_str, int
 	if (creature_ptr->resist_cold) dam = (dam + 2) / 3;
 	if (double_resist) dam = (dam + 2) / 3;
 
-	if (aura || !CHECK_MULTISHADOW(creature_ptr))
+	if (aura || !check_multishadow(creature_ptr))
 	{
 		if ((!(double_resist || creature_ptr->resist_cold)) &&
 			one_in_(HURT_CHANCE))
@@ -424,7 +348,7 @@ int take_hit(player_type *creature_ptr, int damage_type, HIT_POINT damage, concp
 			}
 		}
 
-		if (CHECK_MULTISHADOW(creature_ptr))
+		if (check_multishadow(creature_ptr))
 		{
 			if (damage_type == DAMAGE_FORCE)
 			{
@@ -715,4 +639,52 @@ int take_hit(player_type *creature_ptr, int damage_type, HIT_POINT damage, concp
 		change_wild_mode(creature_ptr, FALSE);
 	}
 	return damage;
+}
+
+/*!
+* @brief 属性に応じた敵オーラによるプレイヤーのダメージ処理
+* @param m_ptr オーラを持つモンスターの構造体参照ポインタ
+* @param immune ダメージを回避できる免疫フラグ
+* @param flags_offset オーラフラグ配列の参照オフセット
+* @param r_flags_offset モンスターの耐性配列の参照オフセット
+* @param aura_flag オーラフラグ配列
+* @param dam_func ダメージ処理を行う関数の参照ポインタ
+* @param message オーラダメージを受けた際のメッセージ
+* @return なし
+*/
+static void process_aura_damage(monster_type *m_ptr, player_type *touched_ptr, bool immune, int flags_offset, int r_flags_offset, u32b aura_flag,
+    HIT_POINT (*dam_func)(player_type *creature_type, HIT_POINT dam, concptr kb_str, int monspell, bool aura), concptr message)
+{
+    monster_race *r_ptr = &r_info[m_ptr->r_idx];
+    if (!(atoffset(BIT_FLAGS, r_ptr, flags_offset) & aura_flag) || immune)
+        return;
+
+    GAME_TEXT mon_name[MAX_NLEN];
+    int aura_damage = damroll(1 + (r_ptr->level / 26), 1 + (r_ptr->level / 17));
+
+    monster_desc(touched_ptr, mon_name, m_ptr, MD_WRONGDOER_NAME);
+    msg_print(message);
+    dam_func(touched_ptr, aura_damage, mon_name, -1, TRUE);
+
+    if (is_original_ap_and_seen(touched_ptr, m_ptr)) {
+        atoffset(BIT_FLAGS, r_ptr, r_flags_offset) |= aura_flag;
+    }
+
+    handle_stuff(touched_ptr);
+}
+
+/*!
+* @brief 敵オーラによるプレイヤーのダメージ処理
+* @param m_ptr オーラを持つモンスターの構造体参照ポインタ
+* @param touched_ptr オーラを持つ相手に振れたクリーチャーの参照ポインタ
+* @return なし
+*/
+void touch_zap_player(monster_type *m_ptr, player_type *touched_ptr)
+{
+    process_aura_damage(m_ptr, touched_ptr, touched_ptr->immune_fire, offsetof(monster_race, flags2), offsetof(monster_race, r_flags2), RF2_AURA_FIRE,
+        fire_dam, _("突然とても熱くなった！", "You are suddenly very hot!"));
+    process_aura_damage(m_ptr, touched_ptr, touched_ptr->immune_cold, offsetof(monster_race, flags3), offsetof(monster_race, r_flags3), RF3_AURA_COLD,
+        cold_dam, _("突然とても寒くなった！", "You are suddenly very cold!"));
+    process_aura_damage(m_ptr, touched_ptr, touched_ptr->immune_elec, offsetof(monster_race, flags2), offsetof(monster_race, r_flags2), RF2_AURA_ELEC,
+        elec_dam, _("電撃をくらった！", "You get zapped!"));
 }

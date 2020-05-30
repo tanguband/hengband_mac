@@ -19,7 +19,8 @@
 #include "io/inet.h"
 #include "term/gameterm.h"
 #include "io/chuukei.h"
-#include "birth/birth.h"
+#include "birth/character-builder.h"
+#include "birth/inventory-initializer.h"
 #include "monster/creature.h"
 #include "grid/feature.h"
 #include "floor/floor-events.h"
@@ -28,14 +29,15 @@
 #include "grid/grid.h"
 #include "io/write-diary.h"
 #include "market/arena-info-table.h"
-#include "market/building.h"
-#include "market/store-util.h"
-#include "market/store.h"
+#include "market/bounty.h"
+#include "store/store-util.h"
+#include "store/store.h"
 #include "object/object-flavor.h"
+#include "object/sv-weapon-types.h"
 #include "player/player-class.h"
 #include "player/player-effects.h"
-#include "player/player-personality.h"
-#include "player/player-race.h"
+#include "player/player-personalities-table.h"
+#include "player/player-races-table.h"
 #include "player/player-skill.h"
 #include "player/process-name.h"
 #include "spell/technic-info-table.h"
@@ -215,7 +217,7 @@ void play_game(player_type* player_ptr, bool new_game)
 
     panel_row_min = floor_ptr->height;
     panel_col_min = floor_ptr->width;
-    if (player_ptr->pseikaku == SEIKAKU_SEXY)
+    if (player_ptr->pseikaku == PERSONALITY_SEXY)
         s_info[player_ptr->pclass].w_max[TV_HAFTED - TV_WEAPON_BEGIN][SV_WHIP] = WEAPON_EXP_MASTER;
 
     set_floor_and_wall(player_ptr->dungeon_idx);

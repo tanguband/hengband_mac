@@ -9,11 +9,13 @@
 #include "floor/floor-events.h"
 #include "grid/grid.h"
 #include "dungeon/quest.h"
-#include "monster/monsterrace-hook.h"
+#include "monster/monster-race-hook.h"
 #include "monster/monster.h"
 #include "player/player-status.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "object/artifact.h"
+#include "object/item-apply-magic.h"
+#include "object/object2.h"
 #include "grid/feature.h"
 #include "world/world.h"
 #include "io/write-diary.h"
@@ -527,7 +529,7 @@ void do_cmd_quest(player_type *player_ptr)
 	if (!get_check(_("クエストに入りますか？", "Do you enter? "))) return;
 	if (IS_ECHIZEN(player_ptr))
 		msg_print(_("『とにかく入ってみようぜぇ。』", ""));
-	else if (player_ptr->pseikaku == SEIKAKU_CHARGEMAN) msg_print("『全滅してやるぞ！』");
+	else if (player_ptr->pseikaku == PERSONALITY_CHARGEMAN) msg_print("『全滅してやるぞ！』");
 
 	/* Player enters a new quest */
 	player_ptr->oldpy = 0;

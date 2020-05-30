@@ -12,26 +12,35 @@
  */
 
 #include "system/angband.h"
+#include "object/object1.h"
 #include "system/system-variables.h"
 #include "io/read-pref-file.h"
 #include "util/util.h"
-
 #include "object/artifact.h"
 #include "floor/floor.h"
 #include "cmd-activate.h"
+#include "object/item-apply-magic.h"
 #include "object/object-kind.h"
 #include "object/object-ego.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
+#include "object/special-object-flags.h"
+#include "object/sv-amulet-types.h"
+#include "object/sv-lite-types.h"
+#include "object/sv-other-types.h"
+#include "object/sv-ring-types.h"
+#include "object/sv-weapon-types.h"
 #include "player/player-move.h"
 #include "player/player-class.h"
 #include "inventory/player-inventory.h"
 #include "monster/monster.h"
-#include "io/files.h"
+#include "io/files-util.h"
 #include "term/gameterm.h"
 #include "cmd-smith.h"
 #include "combat/snipe.h"
 #include "view/display-main-window.h"
+#include "object/tr-types.h"
+#include "object/trc-types.h"
 
 #if defined(MACH_O_CARBON)
 #ifdef verify
@@ -1419,7 +1428,7 @@ s16b wield_slot(player_type *owner_ptr, object_type *o_ptr)
  * @param book_sval ベースアイテムのsval
  * @return 使用可能な魔法書ならばTRUEを返す。
  */
-bool check_book_realm(player_type *owner_ptr, const OBJECT_TYPE_VALUE book_tval, const OBJECT_SUBTYPE_VALUE book_sval)
+bool check_book_realm(player_type *owner_ptr, const tval_type book_tval, const OBJECT_SUBTYPE_VALUE book_sval)
 {
 	if (book_tval < TV_LIFE_BOOK) return FALSE;
 	if (owner_ptr->pclass == CLASS_SORCERER)
@@ -1433,4 +1442,23 @@ bool check_book_realm(player_type *owner_ptr, const OBJECT_TYPE_VALUE book_tval,
 	}
 
 	return (REALM1_BOOK == book_tval || REALM2_BOOK == book_tval);
+}
+
+object_type *ref_item(player_type *owner_ptr, INVENTORY_IDX item)
+{
+    floor_type *floor_ptr = owner_ptr->current_floor_ptr;
+	return item >= 0 ? &owner_ptr->inventory_list[item] : &(floor_ptr->o_list[0 - item]);
+}
+
+/*
+ * Return the "attr" for a given item.
+ * Use "flavor" if available.
+ * Default to user definitions.
+ */
+TERM_COLOR object_attr(object_type *o_ptr)
+{
+    return((k_info[o_ptr->k_idx].flavor) ? (k_info[k_info[o_ptr->k_idx].flavor].x_attr)
+                                   : ((!o_ptr->k_idx || (o_ptr->tval != TV_CORPSE) || (o_ptr->sval != SV_CORPSE) || (k_info[o_ptr->k_idx].x_attr != TERM_DARK))
+                                           ? (k_info[o_ptr->k_idx].x_attr)
+                                           : (r_info[o_ptr->pval].x_attr)));
 }

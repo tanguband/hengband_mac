@@ -23,11 +23,14 @@
 #include "object/chest.h"
 #include "grid/trap.h"
 #include "dungeon/dungeon.h"
-#include "melee.h"
+#include "combat/slaying.h"
+#include "combat/attack-power-table.h"
 #include "object/object-hook.h"
 #include "monster/monster-status.h"
 #include "dungeon/quest.h"
 #include "object/artifact.h"
+#include "object/object2.h"
+#include "object/torch.h"
 #include "player/avatar.h"
 #include "player/player-status.h"
 #include "realm/realm-hex.h"
@@ -36,17 +39,20 @@
 #include "grid/grid.h"
 #include "player/player-move.h"
 #include "player/player-effects.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "inventory/player-inventory.h"
+#include "object/item-use-flags.h"
 #include "object/object-kind.h"
 #include "object/object-broken.h"
 #include "object/object-flavor.h"
+#include "object/special-object-flags.h"
+#include "object/sv-bow-types.h"
 #include "shoot.h"
 #include "combat/snipe.h"
 
 #include "cmd-basic.h"
 #include "dungeon/dungeon-file.h"
-#include "io/files.h"
+#include "io/files-util.h"
 
 #include "view/display-main-window.h"
 #include "io/targeting.h"
@@ -54,6 +60,8 @@
 #include "effect/spells-effect-util.h"
 #include "spell/spells3.h"
 #include "core/output-updater.h"
+#include "cmd/cmd-attack.h"
+#include "object/tr-types.h"
 
 /*!
  * @brief フロア脱出時に出戻りが不可能だった場合に警告を加える処理
@@ -852,7 +860,7 @@ void do_cmd_open(player_type *creature_ptr)
 		{
 			take_turn(creature_ptr, 100);
 			msg_print(_("モンスターが立ちふさがっている！", "There is a monster in the way!"));
-			py_attack(creature_ptr, y, x, 0);
+			do_cmd_attack(creature_ptr, y, x, 0);
 		}
 		else if (o_idx)
 		{
@@ -995,7 +1003,7 @@ void do_cmd_close(player_type *creature_ptr)
 			msg_print(_("モンスターが立ちふさがっている！", "There is a monster in the way!"));
 
 			/* Attack */
-			py_attack(creature_ptr, y, x, 0);
+			do_cmd_attack(creature_ptr, y, x, 0);
 		}
 
 		/* Close the door */
@@ -1235,7 +1243,7 @@ void do_cmd_tunnel(player_type *creature_ptr)
 			msg_print(_("モンスターが立ちふさがっている！", "There is a monster in the way!"));
 
 			/* Attack */
-			py_attack(creature_ptr, y, x, 0);
+			do_cmd_attack(creature_ptr, y, x, 0);
 		}
 
 		/* Try digging */
@@ -1586,7 +1594,7 @@ void do_cmd_disarm(player_type *creature_ptr)
 			msg_print(_("モンスターが立ちふさがっている！", "There is a monster in the way!"));
 
 			/* Attack */
-			py_attack(creature_ptr, y, x, 0);
+			do_cmd_attack(creature_ptr, y, x, 0);
 		}
 
 		/* Disarm chest */
@@ -1768,7 +1776,7 @@ void do_cmd_bash(player_type *creature_ptr)
 			msg_print(_("モンスターが立ちふさがっている！", "There is a monster in the way!"));
 
 			/* Attack */
-			py_attack(creature_ptr, y, x, 0);
+			do_cmd_attack(creature_ptr, y, x, 0);
 		}
 
 		/* Bash a closed door */
@@ -1841,7 +1849,7 @@ void do_cmd_alter(player_type *creature_ptr)
 
 		if (g_ptr->m_idx)
 		{
-			py_attack(creature_ptr, y, x, 0);
+			do_cmd_attack(creature_ptr, y, x, 0);
 		}
 
 		/* Locked doors */
@@ -1973,7 +1981,7 @@ void do_cmd_spike(player_type *creature_ptr)
 		msg_print(_("モンスターが立ちふさがっている！", "There is a monster in the way!"));
 
 		/* Attack */
-		py_attack(creature_ptr, y, x, 0);
+		do_cmd_attack(creature_ptr, y, x, 0);
 	}
 
 	/* Go for it */
@@ -2595,7 +2603,7 @@ bool do_cmd_throw(player_type *creature_ptr, int mult, bool boomerang, OBJECT_ID
 				torch_dice(q_ptr, &dd, &ds); /* throwing a torch */
 				tdam = damroll(dd, ds);
 				/* Apply special damage */
-				tdam = tot_dam_aux(creature_ptr, q_ptr, tdam, m_ptr, 0, TRUE);
+				tdam = calc_attack_damage_with_slay(creature_ptr, q_ptr, tdam, m_ptr, 0, TRUE);
 				tdam = critical_shot(creature_ptr, q_ptr->weight, q_ptr->to_h, 0, tdam);
 				if (q_ptr->to_d > 0)
 					tdam += q_ptr->to_d;

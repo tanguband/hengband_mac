@@ -10,7 +10,7 @@
 #include "spell/spells2.h"
 #include "monster/monster-status.h"
 #include "player/player-move.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "object/artifact.h"
 #include "spell/spells-type.h"
 #include "mspell/mspell-util.h"
@@ -212,7 +212,7 @@ void spell_RF6_TELE_AWAY(player_type* target_ptr, MONSTER_IDX m_idx, MONSTER_IDX
     if (TARGET_TYPE == MONSTER_TO_PLAYER) {
         if (IS_ECHIZEN(target_ptr))
             msg_print(_("くっそ～", ""));
-        else if ((target_ptr->pseikaku == SEIKAKU_CHARGEMAN)) {
+        else if ((target_ptr->pseikaku == PERSONALITY_CHARGEMAN)) {
             if (randint0(2) == 0)
                 msg_print(_("ジュラル星人め！", ""));
             else

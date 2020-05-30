@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "spell/spells-util.h"
+
 bool teleport_away(player_type* caster_ptr, MONSTER_IDX m_idx, POSITION dis, teleport_flags mode);
 void teleport_monster_to(player_type* caster_ptr, MONSTER_IDX m_idx, POSITION ty, POSITION tx, int power, teleport_flags mode);
 bool teleport_player_aux(player_type* creature_ptr, POSITION dis, bool is_quantum_effect, teleport_flags mode);
@@ -22,10 +24,10 @@ int remove_all_curse(player_type* caster_ptr);
 bool alchemy(player_type* caster_ptr);
 
 bool artifact_scroll(player_type* caster_ptr);
-bool ident_spell(player_type* caster_ptr, bool only_equip, OBJECT_TYPE_VALUE item_tester_tval);
+bool ident_spell(player_type* caster_ptr, bool only_equip, tval_type item_tester_tval);
 bool mundane_spell(player_type* ownner_ptr, bool only_equip);
 bool identify_item(player_type* owner_ptr, object_type* o_ptr);
-bool identify_fully(player_type* caster_ptr, bool only_equip, OBJECT_TYPE_VALUE item_tester_tval);
+bool identify_fully(player_type* caster_ptr, bool only_equip, tval_type item_tester_tval);
 bool recharge(player_type* caster_ptr, int power);
 void display_spell_list(player_type* caster_ptr);
 EXP experience_of_spell(player_type* caster_ptr, SPELL_IDX spell, REALM_IDX use_realm);

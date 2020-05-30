@@ -149,7 +149,6 @@
 #include "autopick/autopick.h"
 #include "dungeon/dungeon.h"
 #include "effect/effect-characteristics.h"
-#include "melee.h"
 #include "grid/grid.h"
 #include "grid/trap.h"
 #include "dungeon/quest.h"
@@ -157,18 +156,21 @@
 #include "player/player-move.h"
 #include "player/player-status.h"
 #include "player/player-effects.h"
-#include "player/player-race.h"
+#include "player/player-races-table.h"
 #include "player/player-class.h"
 #include "inventory/player-inventory.h"
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "spell/spells-floor.h"
 #include "grid/feature.h"
 #include "object/warning.h"
+#include "object/special-object-flags.h"
 #include "monster/monster.h"
 #include "mspell/monster-spell.h"
 #include "monster/monster-status.h"
+#include "object/object2.h"
 #include "object/object-hook.h"
 #include "object/object-flavor.h"
+#include "object/object-mark-types.h"
 #include "spell/spells-type.h"
 #include "cmd-basic.h"
 #include "view/display-main-window.h"
@@ -178,6 +180,7 @@
 #include "io/targeting.h"
 #include "spell/process-effect.h"
 #include "spell/spells3.h"
+#include "cmd/cmd-attack.h"
 
 travel_type travel;
 
@@ -297,7 +300,7 @@ void py_pickup_aux(player_type *owner_ptr, OBJECT_IDX o_idx)
 
 	delete_object_idx(owner_ptr, o_idx);
 
-	if (owner_ptr->pseikaku == SEIKAKU_MUNCHKIN)
+	if (owner_ptr->pseikaku == PERSONALITY_MUNCHKIN)
 	{
 		bool old_known = identify_item(owner_ptr, o_ptr);
 
@@ -311,7 +314,7 @@ void py_pickup_aux(player_type *owner_ptr, OBJECT_IDX o_idx)
 	object_desc(owner_ptr, o_name, o_ptr, 0);
 
 #ifdef JP
-	if ((o_ptr->name1 == ART_CRIMSON) && (owner_ptr->pseikaku == SEIKAKU_COMBAT))
+	if ((o_ptr->name1 == ART_CRIMSON) && (owner_ptr->pseikaku == PERSONALITY_COMBAT))
 	{
 		msg_format("こうして、%sは『クリムゾン』を手に入れた。", owner_ptr->name);
 		msg_print("しかし今、『混沌のサーペント』の放ったモンスターが、");
@@ -997,7 +1000,7 @@ void move_player(player_type *creature_ptr, DIRECTION dir, bool do_pickup, bool 
 			/* displace? */
 			if ((stormbringer && (randint1(1000) > 666)) || (creature_ptr->pclass == CLASS_BERSERKER))
 			{
-				py_attack(creature_ptr, y, x, 0);
+				do_cmd_attack(creature_ptr, y, x, 0);
 				can_move = FALSE;
 			}
 			else if (monster_can_cross_terrain(creature_ptr, floor_ptr->grid_array[creature_ptr->y][creature_ptr->x].feat, r_ptr, 0))
@@ -1015,7 +1018,7 @@ void move_player(player_type *creature_ptr, DIRECTION dir, bool do_pickup, bool 
 		}
 		else
 		{
-			py_attack(creature_ptr, y, x, 0);
+			do_cmd_attack(creature_ptr, y, x, 0);
 			can_move = FALSE;
 		}
 	}

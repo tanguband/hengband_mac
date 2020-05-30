@@ -33,6 +33,7 @@
 #include "system/angband.h"
 #include "cmd/cmd-dump.h"
 #include "cmd/dump-util.h"
+#include "floor/floor.h"
 #include "term/gameterm.h"
 #include "system/angband-version.h"
 #include "io/dump-remover.h"
@@ -41,7 +42,7 @@
 
 #include "world/world.h"
 #include "view/display-player.h" // 暫定。後で消す.
-#include "player/player-personality.h"
+#include "player/player-personalities-table.h"
 #include "dungeon/quest.h"
 #include "object/artifact.h"
 #include "floor/floor-town.h"
