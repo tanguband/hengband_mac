@@ -1,66 +1,65 @@
 ﻿#include "system/angband.h"
-#include "core/stuff-handler.h"
-#include "util/util.h"
-#include "main/sound-definitions-table.h"
-
-#include "cmd/cmd-building.h"
-#include "dungeon/quest.h"
-#include "player/player-move.h"
 #include "player/player-status.h"
-#include "player/player-effects.h"
-#include "player/player-skill.h"
-#include "player/race-info-table.h"
-#include "player/mimic-info-table.h"
-#include "player/player-class.h"
-#include "player/player-personality.h"
-#include "player/player-personalities-table.h"
-#include "player/player-damage.h"
-#include "floor/floor.h"
+#include "autopick/autopick-reader-writer.h"
+#include "autopick/autopick.h"
+#include "cmd-action/cmd-pet.h"
+#include "cmd-action/cmd-spell.h"
+#include "cmd-io/cmd-dump.h"
+#include "cmd-item/cmd-magiceat.h"
+#include "cmd/cmd-building.h"
+#include "combat/attack-power-table.h"
+#include "core/stuff-handler.h"
+#include "dungeon/dungeon.h"
+#include "dungeon/quest.h"
 #include "floor/floor-events.h"
+#include "floor/floor.h"
 #include "grid/feature.h"
+#include "inventory/inventory-object.h"
+#include "io/files-util.h"
+#include "io/write-diary.h"
+#include "main/sound-definitions-table.h"
+#include "market/arena-info-table.h"
+#include "mind/racial-force-trainer.h"
+#include "monster/horror-descriptions.h"
+#include "monster/monster-race-hook.h"
+#include "monster/monster-race.h"
+#include "monster/monster-status.h"
+#include "monster/monster.h"
+#include "mutation/mutation.h"
 #include "object/artifact.h"
-#include "player/avatar.h"
-#include "spell/technic-info-table.h"
-#include "spell/spells-status.h"
+#include "object/object-appraiser.h"
+#include "object/object-ego.h"
+#include "object/object-hook.h"
+#include "object/object-mark-types.h"
 #include "object/object1.h"
 #include "object/object2.h"
-#include "object/object-hook.h"
-#include "object/object-ego.h"
 #include "object/special-object-flags.h"
 #include "object/sv-lite-types.h"
 #include "object/sv-weapon-types.h"
-#include "monster/monster.h"
-#include "monster/monster-status.h"
-#include "monster/monster-race-hook.h"
-#include "mutation/mutation.h"
+#include "object/tr-types.h"
+#include "object/trc-types.h"
+#include "pet/pet-util.h"
+#include "player/avatar.h"
+#include "player/mimic-info-table.h"
 #include "player/patron.h"
+#include "player/player-class.h"
+#include "player/player-damage.h"
+#include "player/player-effects.h"
+#include "player/player-move.h"
+#include "player/player-personalities-table.h"
+#include "player/player-personality.h"
+#include "player/player-races-table.h"
+#include "player/player-skill.h"
+#include "player/race-info-table.h"
 #include "realm/realm-hex.h"
 #include "realm/realm-song.h"
-#include "cmd/cmd-pet.h"
-#include "pet/pet-util.h"
-#include "cmd/cmd-spell.h"
-#include "dungeon/dungeon.h"
-#include "object/object-kind.h"
-#include "monster/monster-race.h"
-#include "autopick/autopick.h"
-#include "autopick/autopick-reader-writer.h"
-#include "io/write-diary.h"
-#include "cmd/cmd-dump.h"
-#include "world/world.h"
-#include "view/display-main-window.h"
-#include "io/files-util.h"
-#include "cmd-magiceat.h"
-
-#include "monster/horror-descriptions.h"
-#include "market/arena-info-table.h"
-#include "spell/spells-util.h"
 #include "spell/spells-execution.h"
-#include "player/player-races-table.h"
-#include "combat/attack-power-table.h"
-#include "mind/racial-force-trainer.h"
-#include "object/tr-types.h"
-#include "object/object-mark-types.h"
-#include "object/trc-types.h"
+#include "spell/spells-status.h"
+#include "spell/spells-util.h"
+#include "spell/technic-info-table.h"
+#include "util/util.h"
+#include "view/display-main-window.h"
+#include "world/world.h"
 
 /*!
  * @brief 能力値テーブル / Abbreviations of healthy stats
@@ -2208,12 +2207,12 @@ void calc_bonuses(player_type *creature_ptr)
 				if (o_ptr->curse_flags & TRC_HEAVY_CURSE)
 				{
 					creature_ptr->to_h[slot] -= 15;
-					if (OBJECT_IS_FULL_KNOWN(o_ptr)) creature_ptr->dis_to_h[slot] -= 15;
+					if (object_is_fully_known(o_ptr)) creature_ptr->dis_to_h[slot] -= 15;
 				}
 				else
 				{
 					creature_ptr->to_h[slot] -= 5;
-					if (OBJECT_IS_FULL_KNOWN(o_ptr)) creature_ptr->dis_to_h[slot] -= 5;
+					if (object_is_fully_known(o_ptr)) creature_ptr->dis_to_h[slot] -= 5;
 				}
 			}
 			else
@@ -2221,12 +2220,12 @@ void calc_bonuses(player_type *creature_ptr)
 				if (o_ptr->curse_flags & TRC_HEAVY_CURSE)
 				{
 					creature_ptr->to_h_b -= 15;
-					if (OBJECT_IS_FULL_KNOWN(o_ptr)) creature_ptr->dis_to_h_b -= 15;
+					if (object_is_fully_known(o_ptr)) creature_ptr->dis_to_h_b -= 15;
 				}
 				else
 				{
 					creature_ptr->to_h_b -= 5;
-					if (OBJECT_IS_FULL_KNOWN(o_ptr)) creature_ptr->dis_to_h_b -= 5;
+					if (object_is_fully_known(o_ptr)) creature_ptr->dis_to_h_b -= 5;
 				}
 			}
 		}
@@ -2236,12 +2235,12 @@ void calc_bonuses(player_type *creature_ptr)
 			if (o_ptr->curse_flags & TRC_HEAVY_CURSE)
 			{
 				creature_ptr->to_a -= 30;
-				if (OBJECT_IS_FULL_KNOWN(o_ptr)) creature_ptr->dis_to_a -= 30;
+				if (object_is_fully_known(o_ptr)) creature_ptr->dis_to_a -= 30;
 			}
 			else
 			{
 				creature_ptr->to_a -= 10;
-				if (OBJECT_IS_FULL_KNOWN(o_ptr)) creature_ptr->dis_to_a -= 10;
+				if (object_is_fully_known(o_ptr)) creature_ptr->dis_to_a -= 10;
 			}
 		}
 

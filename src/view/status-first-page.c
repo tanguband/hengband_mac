@@ -5,19 +5,17 @@
  * @author Hourier
  */
 
-#include "system/angband.h"
-#include "combat/shoot.h"
-#include "term/gameterm.h"
 #include "status-first-page.h"
+#include "combat/attack-power-table.h"
+#include "combat/shoot.h"
 #include "display-util.h"
 #include "object/artifact.h"
+#include "object/object-appraiser.h"
 #include "object/object1.h"
-#include "object/object-hook.h"
-#include "object/object-kind.h"
-#include "object/sv-weapon-types.h"
-#include "combat/attack-power-table.h"
-#include "object/tr-types.h"
 #include "object/special-object-flags.h"
+#include "object/sv-weapon-types.h"
+#include "object/tr-types.h"
+#include "term/gameterm.h"
 
 static TERM_COLOR likert_color = TERM_WHITE;
 
@@ -117,7 +115,7 @@ static bool calc_weapon_one_hand(object_type *o_ptr, int hand, int *damage, int 
  */
 static int strengthen_basedam(player_type *creature_ptr, object_type *o_ptr, int basedam, BIT_FLAGS *flgs)
 {
-	if (OBJECT_IS_FULL_KNOWN(o_ptr) && ((o_ptr->name1 == ART_VORPAL_BLADE) || (o_ptr->name1 == ART_CHAINSWORD)))
+	if (object_is_fully_known(o_ptr) && ((o_ptr->name1 == ART_VORPAL_BLADE) || (o_ptr->name1 == ART_CHAINSWORD)))
 	{
 		/* vorpal blade */
 		basedam *= 5;
@@ -263,7 +261,7 @@ static void calc_two_hands(player_type *creature_ptr, int *damage, int *to_h)
 		}
 
 		o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
-		if (calc_weapon_one_hand(o_ptr, i, damage, &basedam)) continue;
+		if (!calc_weapon_one_hand(o_ptr, i, damage, &basedam)) continue;
 
 		to_h[i] = 0;
 		bool poison_needle = FALSE;

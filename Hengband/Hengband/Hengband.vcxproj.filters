@@ -2,55 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\..\src\main-win.c" />
-    <ClCompile Include="..\..\src\cmd\cmd-activate.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\cmd\cmd-basic.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-dump.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-eat.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-gameoption.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-hissatsu.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-item.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-magiceat.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-mane.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-pet.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-quaff.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-read.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-smith.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-spell.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-usestaff.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-zaprod.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-zapwand.c">
       <Filter>cmd</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\combat\shoot.c">
@@ -95,14 +47,8 @@
     <ClCompile Include="..\..\src\io\tokenizer.c">
       <Filter>io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-help.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\player\process-name.c">
       <Filter>player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-save.c">
-      <Filter>cmd</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\core\show-file.c">
       <Filter>core</Filter>
@@ -115,12 +61,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\monster\quantum-effect.c">
       <Filter>monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\special-class-dump.c">
-      <Filter>io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\player-status-dump.c">
-      <Filter>io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\monster\monster-util.c">
       <Filter>monster</Filter>
@@ -151,30 +91,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\io\write-diary.c">
       <Filter>io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\feeling-table.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\monster-group-table.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\diary-subtitle-table.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\object-group-table.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-macro.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-diary.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-draw.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\lighting-level-table.c">
-      <Filter>cmd</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\cmd\cmd-visuals.c">
       <Filter>cmd</Filter>
@@ -215,12 +131,6 @@
     <ClCompile Include="..\..\src\main\music-definitions-table.c">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-process-screen.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\dump-util.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\knowledge\knowledge-uniques.c">
       <Filter>knowledge</Filter>
     </ClCompile>
@@ -251,9 +161,6 @@
     <ClCompile Include="..\..\src\knowledge\knowledge-autopick.c">
       <Filter>knowledge</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-knowledge.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\knowledge\knowledge-inventory.c">
       <Filter>knowledge</Filter>
     </ClCompile>
@@ -271,9 +178,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\autopick\autopick-entry.c">
       <Filter>autopick</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\dump-remover.c">
-      <Filter>io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\autopick\autopick-initializer.c">
       <Filter>autopick</Filter>
@@ -326,9 +230,6 @@
     <ClCompile Include="..\..\src\autopick\autopick-editor-command.c">
       <Filter>autopick</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-autopick.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\autopick\autopick-util.c">
       <Filter>autopick</Filter>
     </ClCompile>
@@ -337,9 +238,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\effect\effect-item.c">
       <Filter>effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\realm\realm.c">
-      <Filter>realm</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\realm\realm-arcane.c">
       <Filter>realm</Filter>
@@ -701,9 +599,6 @@
     <ClCompile Include="..\..\src\player\avatar.c">
       <Filter>player</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\io\character-dump.c">
-      <Filter>io</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\monster\horror-descriptions.c">
       <Filter>monster</Filter>
     </ClCompile>
@@ -793,9 +688,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\mind\racial-samurai.c">
       <Filter>mind</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-menu-content-table.c">
-      <Filter>cmd</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\mspell\mspell-bolt.c">
       <Filter>mspell</Filter>
@@ -1016,9 +908,6 @@
     <ClCompile Include="..\..\src\combat\attack-chaos-effect.c">
       <Filter>combat</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\cmd\cmd-attack.c">
-      <Filter>cmd</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\combat\monster-attack-player.c">
       <Filter>combat</Filter>
     </ClCompile>
@@ -1067,57 +956,135 @@
     <ClCompile Include="..\..\src\pet\pet-util.c">
       <Filter>pet</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-eat.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-item.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-magiceat.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-quaff.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-read.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-smith.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-usestaff.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-zaprod.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-zapwand.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd\cmd-draw.c">
+      <Filter>cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-diary.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-dump.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-gameoption.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-help.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-knowledge.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-macro.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-menu-content-table.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-process-screen.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-save.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\diary-subtitle-table.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\feeling-table.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-action\cmd-attack.c">
+      <Filter>cmd-action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-action\cmd-hissatsu.c">
+      <Filter>cmd-action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-action\cmd-mane.c">
+      <Filter>cmd-action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-action\cmd-pet.c">
+      <Filter>cmd-action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-action\cmd-spell.c">
+      <Filter>cmd-action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-activate.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-autopick.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\lighting-level-table.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\monster-group-table.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io-dump\dump-util.c">
+      <Filter>io-dump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io-dump\character-dump.c">
+      <Filter>io-dump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io-dump\dump-remover.c">
+      <Filter>io-dump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io-dump\player-status-dump.c">
+      <Filter>io-dump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\io-dump\special-class-dump.c">
+      <Filter>io-dump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\knowledge\object-group-table.c">
+      <Filter>knowledge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\floor\floor-object.c">
+      <Filter>floor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\view\object-describer.c">
+      <Filter>view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\object\object-appraiser.c">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\inventory\inventory-object.c">
+      <Filter>inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\object\object-value.c">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\realm\realm-names-table.c">
+      <Filter>realm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\cmd\cmd-activate.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\cmd\cmd-basic.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-dump.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-eat.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-gameoption.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-hissatsu.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-item.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-magiceat.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-mane.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-pet.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-quaff.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-read.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-smith.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-spell.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-usestaff.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-zaprod.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-zapwand.h">
       <Filter>cmd</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\combat\shoot.h">
@@ -1162,14 +1129,8 @@
     <ClInclude Include="..\..\src\io\tokenizer.h">
       <Filter>io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-help.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\player\process-name.h">
       <Filter>player</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-save.h">
-      <Filter>cmd</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\core\show-file.h">
       <Filter>core</Filter>
@@ -1182,12 +1143,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\monster\quantum-effect.h">
       <Filter>monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\special-class-dump.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\player-status-dump.h">
-      <Filter>io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\monster\monster-util.h">
       <Filter>monster</Filter>
@@ -1219,28 +1174,7 @@
     <ClInclude Include="..\..\src\io\write-diary.h">
       <Filter>io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\cmd\feeling-table.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\monster-group-table.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\diary-subtitle-table.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\object-group-table.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-macro.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-diary.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\cmd\cmd-draw.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\lighting-level-table.h">
       <Filter>cmd</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\cmd\cmd-visuals.h">
@@ -1282,12 +1216,6 @@
     <ClInclude Include="..\..\src\main\music-definitions-table.h">
       <Filter>main</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-process-screen.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\dump-util.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\knowledge\knowledge-uniques.h">
       <Filter>knowledge</Filter>
     </ClInclude>
@@ -1317,9 +1245,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\knowledge\knowledge-autopick.h">
       <Filter>knowledge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-knowledge.h">
-      <Filter>cmd</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\knowledge\knowledge-inventory.h">
       <Filter>knowledge</Filter>
@@ -1362,9 +1287,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\autopick\autopick-entry.h">
       <Filter>autopick</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\dump-remover.h">
-      <Filter>io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\autopick\autopick-initializer.h">
       <Filter>autopick</Filter>
@@ -1417,17 +1339,11 @@
     <ClInclude Include="..\..\src\autopick\autopick-editor-command.h">
       <Filter>autopick</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-autopick.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\effect\effect-feature.h">
       <Filter>effect</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\effect\effect-item.h">
       <Filter>effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\realm\realm.h">
-      <Filter>realm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\realm\realm-arcane.h">
       <Filter>realm</Filter>
@@ -1813,9 +1729,6 @@
     <ClInclude Include="..\..\src\player\avatar.h">
       <Filter>player</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\io\character-dump.h">
-      <Filter>io</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\monster\horror-descriptions.h">
       <Filter>monster</Filter>
     </ClInclude>
@@ -1908,9 +1821,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\mind\racial-samurai.h">
       <Filter>mind</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-menu-content-table.h">
-      <Filter>cmd</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\mspell\monster-spell.h">
       <Filter>mspell</Filter>
@@ -2152,9 +2062,6 @@
     <ClInclude Include="..\..\src\combat\attack-chaos-effect.h">
       <Filter>combat</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\cmd\cmd-attack.h">
-      <Filter>cmd</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\combat\monster-attack-player.h">
       <Filter>combat</Filter>
     </ClInclude>
@@ -2284,6 +2191,129 @@
     <ClInclude Include="..\..\src\pet\pet-fall-off.h">
       <Filter>pet</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-eat.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-item.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-magiceat.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-quaff.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-read.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-smith.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-usestaff.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-zaprod.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-zapwand.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-diary.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-dump.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-gameoption.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-help.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-knowledge.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-macro.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-menu-content-table.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-process-screen.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-save.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\diary-subtitle-table.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\feeling-table.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-action\cmd-attack.h">
+      <Filter>cmd-action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-action\cmd-hissatsu.h">
+      <Filter>cmd-action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-action\cmd-mane.h">
+      <Filter>cmd-action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-action\cmd-pet.h">
+      <Filter>cmd-action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-action\cmd-spell.h">
+      <Filter>cmd-action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-activate.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-autopick.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\lighting-level-table.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\monster-group-table.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io-dump\dump-util.h">
+      <Filter>io-dump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io-dump\character-dump.h">
+      <Filter>io-dump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io-dump\dump-remover.h">
+      <Filter>io-dump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io-dump\player-status-dump.h">
+      <Filter>io-dump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\io-dump\special-class-dump.h">
+      <Filter>io-dump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\knowledge\object-group-table.h">
+      <Filter>knowledge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\floor\floor-object.h">
+      <Filter>floor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\view\object-describer.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\object-appraiser.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\inventory\inventory-object.h">
+      <Filter>inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object\object-value.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\realm\realm-names-table.h">
+      <Filter>realm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\wall.bmp" />
@@ -2385,6 +2415,18 @@
     </Filter>
     <Filter Include="pet">
       <UniqueIdentifier>{7c81caa7-dbd8-43f3-8481-9a2ae3967776}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cmd-item">
+      <UniqueIdentifier>{7af80633-259f-406b-a33d-23f6a83013d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cmd-io">
+      <UniqueIdentifier>{cefa5b29-56a9-41dc-a32e-8b9568821503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cmd-action">
+      <UniqueIdentifier>{f578e89d-2670-4f24-8028-61896d5b733e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="io-dump">
+      <UniqueIdentifier>{739c9774-e51a-46eb-87c1-cd7cd332e97c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

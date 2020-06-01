@@ -4,20 +4,19 @@
  * @author Hourier
  */
 
-#include "system/angband.h"
 #include "knowledge/knowledge-inventory.h"
-#include "cmd/dump-util.h"
 #include "core/show-file.h"
-#include "object/object-flavor.h"
-#include "object/special-object-flags.h"
-#include "object/sv-ring-types.h"
-#include "store/store-util.h"
 #include "floor/floor-town.h"
+#include "io-dump/dump-util.h"
+#include "object/object-appraiser.h"
+#include "object/object-flavor.h"
 #include "object/object-hook.h"
-#include "object/object-kind.h"
+#include "object/special-object-flags.h"
 #include "object/sv-amulet-types.h"
 #include "object/sv-protector-types.h"
+#include "object/sv-ring-types.h"
 #include "object/tr-types.h"
+#include "store/store-util.h"
 
 static concptr inven_res_label = _(
 	"                               酸電火冷毒光闇破轟獄因沌劣 盲怖乱痺透命感消復浮",
@@ -170,7 +169,7 @@ static void do_cmd_knowledge_inventory_aux(player_type *creature_ptr, FILE *fff,
 
 	fprintf(fff, "%s %s", where, o_name);
 
-	if (!OBJECT_IS_FULL_KNOWN(o_ptr))
+	if (!object_is_fully_known(o_ptr))
 	{
 		fputs(_("-------不明--------------- -------不明---------\n",
 			"-------unknown------------ -------unknown------\n"), fff);

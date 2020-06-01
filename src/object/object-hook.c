@@ -1,9 +1,16 @@
-﻿#include "system/angband.h"
+﻿/*!
+ * @brief オブジェクトに関する汎用判定処理
+ * @date 2018/09/24
+ * @author deskull
+ */
+
+#include "object/object-hook.h"
+#include "dungeon/quest.h"
 #include "floor/floor.h"
-#include "util/util.h"
+#include "monster/monster.h"
 #include "object/artifact.h"
 #include "object/item-feeling.h"
-#include "object/object-hook.h"
+#include "object/object-appraiser.h"
 #include "object/object-kind.h"
 #include "object/special-object-flags.h"
 #include "object/sv-armor-types.h"
@@ -12,14 +19,13 @@
 #include "object/sv-protector-types.h"
 #include "object/sv-weapon-types.h"
 #include "object/tr-types.h"
-#include "monster/monster.h"
-#include "player/player-class.h"
-#include "player/player-skill.h"
 #include "player/mimic-info-table.h"
-#include "dungeon/quest.h"
-#include "world/world.h"
-#include "view/display-main-window.h"
+#include "player/player-class.h"
 #include "player/player-races-table.h"
+#include "player/player-skill.h"
+#include "util/util.h"
+#include "view/display-main-window.h"
+#include "world/world.h"
 
 /*!
 * @brief 対象のアイテムが矢やクロスボウの矢の材料になるかを返す。/
@@ -394,7 +400,7 @@ bool item_tester_hook_identify_weapon_armour(object_type *o_ptr)
 */
 bool item_tester_hook_identify_fully(object_type *o_ptr)
 {
-	return (bool)(!object_is_known(o_ptr) || !OBJECT_IS_FULL_KNOWN(o_ptr));
+	return (bool)(!object_is_known(o_ptr) || !object_is_fully_known(o_ptr));
 }
 
 /*!

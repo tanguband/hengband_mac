@@ -10,26 +10,26 @@
  * 2013 Deskull rearranged comment for Doxygen.
  */
 
-#include "system/angband.h"
 #include "wizard/wizard-spoiler.h"
-#include "util/util.h"
-#include "term/gameterm.h"
-#include "system/angband-version.h"
-#include "object/artifact.h"
 #include "core/sort.h"
-#include "store/store.h"
-#include "store/store-util.h"
-#include "monster/monster.h"
-#include "object/object2.h"
-#include "object/object-flavor.h"
-#include "object/object-hook.h"
-#include "object/object-ego.h"
-#include "object/object-kind.h"
 #include "floor/floor-town.h"
 #include "io/files-util.h"
+#include "monster/monster.h"
+#include "object/artifact.h"
+#include "object/object-appraiser.h"
+#include "object/object-ego.h"
+#include "object/object-flavor.h"
+#include "object/object-kind.h"
+#include "object/object-value.h"
+#include "object/object2.h"
+#include "object/special-object-flags.h"
 #include "object/tr-types.h"
 #include "object/trc-types.h"
-#include "object/special-object-flags.h"
+#include "store/store-util.h"
+#include "store/store.h"
+#include "system/angband-version.h"
+#include "term/gameterm.h"
+#include "util/util.h"
 
  /*
   * The spoiler file being created
@@ -2412,7 +2412,7 @@ static void spoiler_print_randart(object_type *o_ptr, obj_desc_list *art_ptr)
 	fprintf(fff, "%s\n", art_ptr->description);
 
 	/* unidentified */
-	if (!OBJECT_IS_FULL_KNOWN(o_ptr))
+	if (!object_is_fully_known(o_ptr))
 	{
 		fprintf(fff, _("%s不明\n", "%sUnknown\n"), INDENT1);
 	}

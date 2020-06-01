@@ -17,7 +17,7 @@
 #include "util/util.h"
 
 #include "io/write-diary.h"
-#include "cmd/cmd-dump.h"
+#include "cmd-io/cmd-dump.h"
 #include "mutation/mutation.h"
 
 #include "player/selfinfo.h"
@@ -32,7 +32,7 @@
 #include "spell/spells-floor.h"
 #include "object/item-feeling.h"
 #include "object/object-hook.h"
-#include "cmd-basic.h"
+#include "cmd/cmd-basic.h"
 #include "io/files-util.h"
 #include "floor/floor.h"
 #include "io/targeting.h"

@@ -28,11 +28,11 @@
 #include "player/player-status.h"
 #include "player/player-class.h"
 #include "spell/spells-status.h"
-#include "cmd-spell.h"
+#include "cmd-action/cmd-spell.h"
 #include "spell/spells-floor.h"
 #include "grid/feature.h"
 #include "grid/grid.h"
-#include "cmd-basic.h"
+#include "cmd/cmd-basic.h"
 #include "monster/monster-status.h"
 #include "player/player-effects.h"
 #include "player/player-damage.h"
@@ -46,7 +46,7 @@
 #include "spell/spells3.h"
 #include "spell/spells-detection.h"
 #include "mind/racial-force-trainer.h"
-#include "cmd/cmd-attack.h"
+#include "cmd-action/cmd-attack.h"
 
 /*! 特殊技能の一覧テーブル */
 mind_power const mind_powers[5] =

@@ -2,8 +2,8 @@
 #include "core/stuff-handler.h"
 #include "util/util.h"
 
-#include "cmd-spell.h"
-#include "cmd-basic.h"
+#include "cmd-action/cmd-spell.h"
+#include "cmd/cmd-basic.h"
 #include "dungeon/dungeon.h"
 #include "effect/effect-characteristics.h"
 #include "monster/monster-race-hook.h"
@@ -28,7 +28,7 @@
 #include "spell/spells3.h"
 #include "spell/spells-detection.h"
 #include "combat/combat-options-type.h"
-#include "cmd/cmd-attack.h"
+#include "cmd-action/cmd-attack.h"
 #include "object/tr-types.h"
 
 /*!

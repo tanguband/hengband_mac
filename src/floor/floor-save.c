@@ -33,7 +33,7 @@
 #include "object/object2.h"
 #include "object/object-hook.h"
 #include "pet/pet-util.h"
-#include "cmd-basic.h"
+#include "cmd/cmd-basic.h"
 #include "io/uid-checker.h"
 #include "io/files-util.h"
 #include "player/player-effects.h"
@@ -42,7 +42,7 @@
 #include "world/world.h"
 #include "spell/spells2.h"
 #include "io/write-diary.h"
-#include "cmd/cmd-dump.h"
+#include "cmd-io/cmd-dump.h"
 #include "io/save.h"
 #include "core/player-processor.h"
 

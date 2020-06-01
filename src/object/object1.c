@@ -11,36 +11,36 @@
  * 2014 Deskull rearranged comment for Doxygen.\n
  */
 
-#include "system/angband.h"
 #include "object/object1.h"
-#include "system/system-variables.h"
-#include "io/read-pref-file.h"
-#include "util/util.h"
-#include "object/artifact.h"
+#include "cmd-item/cmd-activate.h"
+#include "cmd-item/cmd-smith.h"
+#include "combat/snipe.h"
 #include "floor/floor.h"
-#include "cmd-activate.h"
+#include "inventory/player-inventory.h"
+#include "io/files-util.h"
+#include "io/read-pref-file.h"
+#include "monster/monster.h"
+#include "object/artifact.h"
 #include "object/item-apply-magic.h"
-#include "object/object-kind.h"
+#include "object/object-appraiser.h"
 #include "object/object-ego.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
+#include "object/object-kind.h"
 #include "object/special-object-flags.h"
 #include "object/sv-amulet-types.h"
 #include "object/sv-lite-types.h"
 #include "object/sv-other-types.h"
 #include "object/sv-ring-types.h"
 #include "object/sv-weapon-types.h"
-#include "player/player-move.h"
-#include "player/player-class.h"
-#include "inventory/player-inventory.h"
-#include "monster/monster.h"
-#include "io/files-util.h"
-#include "term/gameterm.h"
-#include "cmd-smith.h"
-#include "combat/snipe.h"
-#include "view/display-main-window.h"
 #include "object/tr-types.h"
 #include "object/trc-types.h"
+#include "player/player-class.h"
+#include "player/player-move.h"
+#include "system/system-variables.h"
+#include "term/gameterm.h"
+#include "util/util.h"
+#include "view/display-main-window.h"
 
 #if defined(MACH_O_CARBON)
 #ifdef verify
@@ -258,7 +258,7 @@ void object_flags_known(object_type *o_ptr, BIT_FLAGS flgs[TR_FLAG_SIZE])
 		}
 	}
 
-	if (spoil || OBJECT_IS_FULL_KNOWN(o_ptr))
+	if (spoil || object_is_fully_known(o_ptr))
 	{
 		if (object_is_fixed_artifact(o_ptr))
 		{
