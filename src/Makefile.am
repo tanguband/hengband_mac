@@ -189,6 +189,9 @@ hengband_SOURCES = \
 	monster/monster1.c monster/monster2.c \
 	monster/horror-descriptions.c monster/horror-descriptions.h \
 	\
+	pet/pet-fall-off.c pet/pet-fall-off.h \
+	pet/pet-util.c pet/pet-util.h \
+	\
 	mutation/mutation.c mutation/mutation.h \
 	mutation/mutation-processor.c mutation/mutation-processor.h \
 	\
@@ -355,6 +358,7 @@ hengband_SOURCES = \
 	\
 	combat/player-attack-util.h \
 	combat/attack-power-table.c combat/attack-power-table.h \
+	combat/aura-counterattack.c combat/aura-counterattack.h \
 	combat/hallucination-attacks-table.c combat/hallucination-attacks-table.h \
 	combat/monster-attack-types.c combat/monster-attack-types.h \
 	combat/martial-arts-table.c combat/martial-arts-table.h \
@@ -373,6 +377,11 @@ hengband_SOURCES = \
 	combat/melee-postprocess.c combat/melee-postprocess.h \
 	combat/melee-switcher.c combat/melee-switcher.h \
 	combat/melee-util.c combat/melee-util.h \
+	combat/monster-attack-util.c combat/monster-attack-util.h \
+	combat/monster-attack-describer.c combat/monster-attack-describer.h \
+	combat/monster-eating.c combat/monster-eating.h \
+	combat/monster-attack-status.c combat/monster-attack-status.h \
+	combat/monster-attack-switcher.c combat/monster-attack-switcher.h \
 	combat/shoot.c combat/shoot.h \
 	combat/snipe.c combat/snipe.h \
 	\
@@ -488,10 +497,12 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/io \
 	-I$(srcdir)/knowledge \
 	-I$(srcdir)/market \
+	-I$(srcdir)/mind \
 	-I$(srcdir)/monster \
 	-I$(srcdir)/mspell \
 	-I$(srcdir)/mutation \
 	-I$(srcdir)/object \
+	-I$(srcdir)/pet \
 	-I$(srcdir)/player \
 	-I$(srcdir)/realm \
 	-I$(srcdir)/room \

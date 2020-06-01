@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "util/util.h"
 #include "combat/monster-attack-types.h"
+#include "combat/monster-attack-effect.h"
 
 /*
  * Monster blow structure
@@ -13,7 +14,7 @@
 typedef struct monster_blow
 {
     rbm_type method;
-	BLOW_EFFECT effect;
+    rbe_type effect;
 	DICE_NUMBER d_dice;
 	DICE_SID d_side;
 } monster_blow;

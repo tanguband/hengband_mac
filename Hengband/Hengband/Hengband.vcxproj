@@ -177,10 +177,15 @@
     <ClCompile Include="..\..\src\combat\martial-arts-table.c" />
     <ClCompile Include="..\..\src\combat\melee-switcher.c" />
     <ClCompile Include="..\..\src\combat\melee-util.c" />
+    <ClCompile Include="..\..\src\combat\monster-attack-describer.c" />
     <ClCompile Include="..\..\src\combat\monster-attack-monster.c" />
     <ClCompile Include="..\..\src\combat\monster-attack-player.c" />
+    <ClCompile Include="..\..\src\combat\monster-attack-status.c" />
+    <ClCompile Include="..\..\src\combat\monster-attack-switcher.c" />
     <ClCompile Include="..\..\src\combat\monster-attack-types.c" />
     <ClCompile Include="..\..\src\combat\attack-accuracy.c" />
+    <ClCompile Include="..\..\src\combat\monster-attack-util.c" />
+    <ClCompile Include="..\..\src\combat\monster-eating.c" />
     <ClCompile Include="..\..\src\combat\player-attack.c" />
     <ClCompile Include="..\..\src\combat\slaying.c" />
     <ClCompile Include="..\..\src\combat\blood-sucking-processor.c" />
@@ -204,6 +209,7 @@
     <ClCompile Include="..\..\src\mind\racial-samurai.c" />
     <ClCompile Include="..\..\src\mind\samurai-slaying.c" />
     <ClCompile Include="..\..\src\mind\surprise-attack.c" />
+    <ClCompile Include="..\..\src\pet\pet-fall-off.c" />
     <ClCompile Include="..\..\src\mspell\mspell-floor.c" />
     <ClCompile Include="..\..\src\mspell\mspell-particularity.c" />
     <ClCompile Include="..\..\src\mspell\mspell-special.c" />
@@ -228,6 +234,7 @@
     <ClCompile Include="..\..\src\autopick\autopick.c" />
     <ClCompile Include="..\..\src\object\death-scythe.c" />
     <ClCompile Include="..\..\src\object\torch.c" />
+    <ClCompile Include="..\..\src\pet\pet-util.c" />
     <ClCompile Include="..\..\src\player\avatar.c" />
     <ClCompile Include="..\..\src\birth\character-builder.c" />
     <ClCompile Include="..\..\src\birth\birth-explanations-table.c" />
@@ -419,6 +426,7 @@
     <ClCompile Include="..\..\src\spell\process-effect.c" />
     <ClCompile Include="..\..\src\spell\spells-execution.c" />
     <ClCompile Include="..\..\src\spell\technic-info-table.c" />
+    <ClCompile Include="..\..\src\combat\aura-counterattack.c" />
     <ClInclude Include="..\..\src\birth\auto-roller.h" />
     <ClInclude Include="..\..\src\birth\birth-body-spec.h" />
     <ClInclude Include="..\..\src\birth\birth-select-class.h" />
@@ -446,11 +454,16 @@
     <ClInclude Include="..\..\src\combat\martial-arts-table.h" />
     <ClInclude Include="..\..\src\combat\melee-switcher.h" />
     <ClInclude Include="..\..\src\combat\melee-util.h" />
+    <ClInclude Include="..\..\src\combat\monster-attack-describer.h" />
     <ClInclude Include="..\..\src\combat\monster-attack-effect.h" />
     <ClInclude Include="..\..\src\combat\monster-attack-monster.h" />
     <ClInclude Include="..\..\src\combat\monster-attack-player.h" />
+    <ClInclude Include="..\..\src\combat\monster-attack-status.h" />
+    <ClInclude Include="..\..\src\combat\monster-attack-switcher.h" />
     <ClInclude Include="..\..\src\combat\monster-attack-types.h" />
     <ClInclude Include="..\..\src\combat\attack-accuracy.h" />
+    <ClInclude Include="..\..\src\combat\monster-attack-util.h" />
+    <ClInclude Include="..\..\src\combat\monster-eating.h" />
     <ClInclude Include="..\..\src\combat\player-attack-util.h" />
     <ClInclude Include="..\..\src\combat\player-attack.h" />
     <ClInclude Include="..\..\src\combat\slaying.h" />
@@ -475,6 +488,8 @@
     <ClInclude Include="..\..\src\mind\racial-samurai.h" />
     <ClInclude Include="..\..\src\mind\samurai-slaying.h" />
     <ClInclude Include="..\..\src\mind\surprise-attack.h" />
+    <ClInclude Include="..\..\src\pet\pet-fall-off.h" />
+    <ClInclude Include="..\..\src\pet\pet-util.h" />
     <ClInclude Include="..\..\src\mspell\assign-monster-spell.h" />
     <ClInclude Include="..\..\src\mspell\mspell-floor.h" />
     <ClInclude Include="..\..\src\mspell\mspell-particularity.h" />
@@ -793,6 +808,7 @@
     <ClInclude Include="..\..\src\world\world-movement-processor.h" />
     <ClInclude Include="..\..\src\world\world-turn-processor.h" />
     <ClInclude Include="..\src\locele\japanese.h" />
+    <ClInclude Include="..\..\src\combat\aura-counterattack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\system\angband.h" />
