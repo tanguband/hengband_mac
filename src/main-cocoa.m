@@ -21,8 +21,7 @@
 #include "grafmode.h"
 
 #include "cmd/cmd-draw.h"
-#include "cmd/cmd-dump.h"
-#include "cmd/cmd-save.h"
+#include "cmd-io/cmd-save.h"
 #include "core/game-play.h"
 #include "system/system-variables.h"
 #include "main/init.h"
