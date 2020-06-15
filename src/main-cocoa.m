@@ -33,6 +33,7 @@
 #include "world.h"
 #include "gameterm.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
 #include "autopick/autopick-pref-processor.h"
 #include "main/sound-definitions-table.h"
 #include "util/angband-files.h"
