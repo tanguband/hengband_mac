@@ -24,6 +24,7 @@
 #include "grafmode.h"
 #include "io/files-util.h"
 #include "util/angband-files.h"
+#include "view/display-messages.h"
 
 #define GFPARSE_HAVE_NOTHING (0)
 #define GFPARSE_HAVE_NAME (1)
