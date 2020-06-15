@@ -1,10 +1,18 @@
 ﻿#include "cmd-io/cmd-diary.h"
-#include "io/chuukei.h"
-#include "core/show-file.h"
-#include "io/files-util.h"
 #include "cmd-io/diary-subtitle-table.h"
-#include "player/player-personality.h"
+#include "core/asking-player.h"
+#include "core/show-file.h"
+#include "game-option/play-record-options.h"
+#include "main/sound-of-music.h"
+#include "io/chuukei.h"
+#include "io/files-util.h"
+#include "io/input-key-acceptor.h"
 #include "io/write-diary.h"
+#include "player/player-personality.h"
+#include "term/screen-processor.h"
+#include "util/angband-files.h"
+#include "util/int-char-converter.h"
+#include "view/display-messages.h"
 #include "world/world.h"
 
 /*!
@@ -87,10 +95,10 @@ static void do_cmd_erase_diary(void)
 	path_build(buf, sizeof(buf), ANGBAND_DIR_USER, file_name);
 	fd_kill(buf);
 
-	fff = my_fopen(buf, "w");
+	fff = angband_fopen(buf, "w");
 	if (fff)
 	{
-		my_fclose(fff);
+		angband_fclose(fff);
 		msg_format(_("記録を消去しました。", "deleted record."));
 	}
 	else
@@ -109,7 +117,6 @@ static void do_cmd_erase_diary(void)
  */
 void do_cmd_diary(player_type *creature_ptr)
 {
-	FILE_TYPE(FILE_TYPE_TEXT);
 	screen_save();
 	int i;
 	while (TRUE)

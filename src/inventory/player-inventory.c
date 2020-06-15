@@ -1,18 +1,34 @@
 ﻿#include "inventory/player-inventory.h"
+#include "core/asking-player.h"
 #include "core/stuff-handler.h"
+#include "floor/floor-object.h"
 #include "floor/floor.h"
+#include "game-option/birth-options.h"
+#include "game-option/input-options.h"
+#include "game-option/option-flags.h"
+#include "game-option/special-options.h"
+#include "game-option/text-display-options.h"
+#include "inventory/inventory-object.h"
+#include "io/command-repeater.h"
+#include "io/input-key-acceptor.h"
+#include "io/input-key-requester.h"
+#include "main/sound-of-music.h"
 #include "object/item-use-flags.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
 #include "object/object-kind.h"
 #include "object/object-mark-types.h"
-#include "object/object1.h"
-#include "object/object2.h"
-#include "object/sv-other-types.h"
+#include "object/object-info.h"
+#include "sv-definition/sv-other-types.h"
 #include "player/player-move.h"
 #include "term/gameterm.h"
-#include "util/util.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/int-char-converter.h"
+#include "util/quarks.h"
+#include "util/string-processor.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
 
 bool select_ring_slot;
 
@@ -291,7 +307,7 @@ static bool get_tag_floor(floor_type *floor_ptr, COMMAND_CODE *cp, char tag, FLO
 		if (!o_ptr->inscription) continue;
 
 		/* Find a '@' */
-		concptr s = my_strchr(quark_str(o_ptr->inscription), '@');
+		concptr s = angband_strchr(quark_str(o_ptr->inscription), '@');
 
 		/* Process all tags */
 		while (s)
@@ -307,7 +323,7 @@ static bool get_tag_floor(floor_type *floor_ptr, COMMAND_CODE *cp, char tag, FLO
 			}
 
 			/* Find another '@' */
-			s = my_strchr(s + 1, '@');
+			s = angband_strchr(s + 1, '@');
 		}
 	}
 
@@ -330,7 +346,7 @@ static bool get_tag_floor(floor_type *floor_ptr, COMMAND_CODE *cp, char tag, FLO
 		if (!o_ptr->inscription) continue;
 
 		/* Find a '@' */
-		concptr s = my_strchr(quark_str(o_ptr->inscription), '@');
+		concptr s = angband_strchr(quark_str(o_ptr->inscription), '@');
 
 		/* Process all tags */
 		while (s)
@@ -346,7 +362,7 @@ static bool get_tag_floor(floor_type *floor_ptr, COMMAND_CODE *cp, char tag, FLO
 			}
 
 			/* Find another '@' */
-			s = my_strchr(s + 1, '@');
+			s = angband_strchr(s + 1, '@');
 		}
 	}
 
@@ -404,7 +420,7 @@ static bool get_tag(player_type *owner_ptr, COMMAND_CODE *cp, char tag, BIT_FLAG
 		if (!item_tester_okay(owner_ptr, o_ptr, tval) && !(mode & USE_FULL)) continue;
 
 		/* Find a '@' */
-		concptr s = my_strchr(quark_str(o_ptr->inscription), '@');
+		concptr s = angband_strchr(quark_str(o_ptr->inscription), '@');
 
 		/* Process all tags */
 		while (s)
@@ -419,7 +435,7 @@ static bool get_tag(player_type *owner_ptr, COMMAND_CODE *cp, char tag, BIT_FLAG
 			}
 
 			/* Find another '@' */
-			s = my_strchr(s + 1, '@');
+			s = angband_strchr(s + 1, '@');
 		}
 	}
 
@@ -446,7 +462,7 @@ static bool get_tag(player_type *owner_ptr, COMMAND_CODE *cp, char tag, BIT_FLAG
 		if (!item_tester_okay(owner_ptr, o_ptr, tval) && !(mode & USE_FULL)) continue;
 
 		/* Find a '@' */
-		concptr s = my_strchr(quark_str(o_ptr->inscription), '@');
+		concptr s = angband_strchr(quark_str(o_ptr->inscription), '@');
 
 		/* Process all tags */
 		while (s)
@@ -461,7 +477,7 @@ static bool get_tag(player_type *owner_ptr, COMMAND_CODE *cp, char tag, BIT_FLAG
 			}
 
 			/* Find another '@' */
-			s = my_strchr(s + 1, '@');
+			s = angband_strchr(s + 1, '@');
 		}
 	}
 
@@ -764,7 +780,7 @@ static bool get_item_allow(player_type *owner_ptr, INVENTORY_IDX item)
 	if (!o_ptr->inscription) return TRUE;
 
 	/* Find a '!' */
-	concptr s = my_strchr(quark_str(o_ptr->inscription), '!');
+	concptr s = angband_strchr(quark_str(o_ptr->inscription), '!');
 
 	/* Process preventions */
 	while (s)
@@ -777,7 +793,7 @@ static bool get_item_allow(player_type *owner_ptr, INVENTORY_IDX item)
 		}
 
 		/* Find another '!' */
-		s = my_strchr(s + 1, '!');
+		s = angband_strchr(s + 1, '!');
 	}
 
 	return TRUE;
@@ -2825,7 +2841,7 @@ static bool py_pickup_floor_aux(player_type *owner_ptr)
 	OBJECT_IDX item;
 
 	/* Restrict the choices */
-	item_tester_hook = inven_carry_okay;
+	item_tester_hook = check_store_item_to_inventory;
 
 	/* Get an object */
 	q = _("どれを拾いますか？", "Get which item? ");
@@ -2912,7 +2928,7 @@ void py_pickup_floor(player_type *owner_ptr, bool pickup)
 		}
 
 		/* Count non-gold objects that can be picked up. */
-		if (inven_carry_okay(o_ptr))
+		if (check_store_item_to_inventory(o_ptr))
 		{
 			can_pickup++;
 		}

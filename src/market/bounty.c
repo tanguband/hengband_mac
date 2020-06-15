@@ -1,18 +1,33 @@
 ﻿#include "market/bounty.h"
 #include "autopick/autopick.h"
+#include "core/asking-player.h"
 #include "core/stuff-handler.h"
 #include "dungeon/dungeon.h"
+#include "floor/floor.h"
 #include "inventory/inventory-object.h"
+#include "io/input-key-acceptor.h"
 #include "market/bounty-prize-table.h"
 #include "market/building-util.h"
-#include "monster/monster-race-hook.h"
-#include "object/item-apply-magic.h"
-#include "object/object-appraiser.h"
+#include "monster-race/race-flags1.h"
+#include "monster-race/race-flags2.h"
+#include "monster-race/race-flags7.h"
+#include "monster-race/race-flags9.h"
+#include "monster-race/race-indice-types.h"
+#include "monster-race/monster-race-hook.h"
+#include "monster/monster-list.h"
+#include "monster/monster-util.h"
+#include "object-enchant/apply-magic.h"
+#include "object-enchant/item-apply-magic.h"
 #include "object/object-flavor.h"
-#include "object/object2.h"
-#include "object/sv-other-types.h"
+#include "object/object-generator.h"
+#include "object/object-kind-hook.h"
+#include "object/object-info.h"
+#include "perception/object-perception.h"
 #include "player/avatar.h"
-#include "term/gameterm.h"
+#include "sv-definition/sv-other-types.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "view/display-messages.h"
 #include "world/world.h"
 
 /*!
@@ -146,11 +161,11 @@ bool exchange_cash(player_type *player_ptr)
             object_known(&forge);
 
             /*
-			 * Hand it --- Assume there is an empty slot.
-			 * Since a corpse is handed at first,
-			 * there is at least one empty slot.
-			 */
-            item_new = inven_carry(player_ptr, &forge);
+             * Hand it --- Assume there is an empty slot.
+             * Since a corpse is handed at first,
+             * there is at least one empty slot.
+             */
+            item_new = store_item_to_inventory(player_ptr, &forge);
             object_desc(player_ptr, o_name, &forge, 0);
             msg_format(_("%s(%c)を貰った。", "You get %s (%c). "), o_name, index_to_label(item_new));
 
@@ -218,7 +233,8 @@ void show_bounty(void)
     for (int i = 0; i < MAX_BOUNTY; i++) {
         byte color;
         concptr done_mark;
-        monster_race *r_ptr = &r_info[(current_world_ptr->bounty_r_idx[i] > 10000 ? current_world_ptr->bounty_r_idx[i] - 10000 : current_world_ptr->bounty_r_idx[i])];
+        monster_race *r_ptr
+            = &r_info[(current_world_ptr->bounty_r_idx[i] > 10000 ? current_world_ptr->bounty_r_idx[i] - 10000 : current_world_ptr->bounty_r_idx[i])];
 
         if (current_world_ptr->bounty_r_idx[i] > 10000) {
             color = TERM_RED;

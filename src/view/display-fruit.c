@@ -1,6 +1,7 @@
 ﻿#include "system/angband.h"
 #include "display-fruit.h"
-#include "term/gameterm.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
 
 /*!
  * @brief カジノのスロットシンボルを表示する / display fruit for dice slots

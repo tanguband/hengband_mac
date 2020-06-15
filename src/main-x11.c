@@ -93,10 +93,17 @@
  */
 
 #include "system/angband.h"
-#include "main/sound-definitions-table.h"
-#include "system/system-variables.h"
+#include "cmd-io/macro-util.h"
+#include "game-option/runtime-arguments.h"
+#include "game-option/special-options.h"
 #include "io/files-util.h"
+#include "main/sound-definitions-table.h"
+#include "main/sound-of-music.h"
+#include "main/x11-type-string.h"
+#include "system/system-variables.h"
 #include "term/gameterm.h"
+#include "term/term-color-types.h"
+#include "util/int-char-converter.h"
 
 /*
  * Available graphic modes
@@ -902,7 +909,7 @@ static errr Infofnt_text_std(int x, int y, concptr str, int len)
 		char *kanji = malloc(outlen);
 		char *sp; char *kp = kanji;
 		char sbuf[1024];
-		my_strcpy(sbuf, str, sizeof(sbuf));
+		angband_strcpy(sbuf, str, sizeof(sbuf));
 		sp = sbuf;
 		iconv(cd, &sp, &inlen, &kp, &outlen);
 		iconv_close(cd);
@@ -2179,6 +2186,11 @@ static void IMDestroyCallback(XIM xim, XPointer client_data, XPointer call_data)
 }
 #endif
 
+static char force_lower(char a)
+{
+	return ((isupper((a))) ? tolower((a)) : (a))
+}
+
 /*
  * Initialize a term_data
  */
@@ -2331,7 +2343,7 @@ static errr term_data_init(term_data *td, int i)
 	if (ch == NULL) quit("XAllocClassHint failed");
 
 	strcpy(res_name, name);
-	res_name[0] = FORCELOWER(res_name[0]);
+	res_name[0] = force_lower(res_name[0]);
 	ch->res_name = res_name;
 
 	strcpy(res_class, "Angband");

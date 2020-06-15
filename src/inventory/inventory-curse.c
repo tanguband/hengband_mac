@@ -1,20 +1,28 @@
 ﻿#include "inventory/inventory-curse.h"
+#include "art-definition/art-accessory-types.h"
+#include "core/asking-player.h"
 #include "io/files-util.h"
-#include "object/artifact.h"
-#include "object/item-feeling.h"
-#include "object/object-appraiser.h"
-#include "object/object-curse.h"
+#include "monster-floor/monster-summon.h"
+#include "monster-floor/place-monster-types.h"
+#include "object-enchant/item-feeling.h"
+#include "object-enchant/object-curse.h"
+#include "object-enchant/special-object-flags.h"
+#include "object-enchant/tr-types.h"
+#include "object-enchant/trc-types.h"
+#include "object/object-flags.h"
 #include "object/object-flavor.h"
-#include "object/special-object-flags.h"
-#include "object/tr-types.h"
-#include "object/trc-types.h"
+#include "perception/object-perception.h"
 #include "player/player-damage.h"
 #include "player/player-effects.h"
 #include "player/player-move.h"
-#include "player/player-races-table.h"
+#include "player/player-race-types.h"
+#include "spell-kind/spells-random.h"
+#include "spell-kind/spells-teleport.h"
 #include "spell/spells-summon.h"
-#include "spell/spells2.h"
-#include "spell/spells3.h"
+#include "util/bit-flags-calculator.h"
+#include "util/string-processor.h"
+#include "util/quarks.h"
+#include "view/display-messages.h"
 
 #define TRC_P_FLAG_MASK \
     (TRC_TELEPORT_SELF | TRC_CHAINSWORD | TRC_TY_CURSE | TRC_DRAIN_EXP | TRC_ADD_L_CURSE | TRC_ADD_H_CURSE | TRC_CALL_ANIMAL | TRC_CALL_DEMON \
@@ -151,7 +159,7 @@ static void curse_teleport(player_type *creature_ptr)
         if (!have_flag(flgs, TR_TELEPORT))
             continue;
 
-        if (o_ptr->inscription && my_strchr(quark_str(o_ptr->inscription), '.'))
+        if (o_ptr->inscription && angband_strchr(quark_str(o_ptr->inscription), '.'))
             continue;
 
         count++;
@@ -162,7 +170,7 @@ static void curse_teleport(player_type *creature_ptr)
     o_ptr = &creature_ptr->inventory_list[i_keep];
     object_desc(creature_ptr, o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
     msg_format(_("%sがテレポートの能力を発動させようとしている。", "Your %s is activating teleportation."), o_name);
-    if (get_check_strict(_("テレポートしますか？", "Teleport? "), CHECK_OKAY_CANCEL)) {
+    if (get_check_strict(creature_ptr, _("テレポートしますか？", "Teleport? "), CHECK_OKAY_CANCEL)) {
         disturb(creature_ptr, FALSE, TRUE);
         teleport_player(creature_ptr, 50, TELEPORT_SPONTANEOUS);
     } else {

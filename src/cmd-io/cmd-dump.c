@@ -1,54 +1,39 @@
 ﻿/*!
- * @file cmd-dump.c
  * @brief プレイヤーのインターフェイスに関するコマンドの実装 / Interface commands
  * @date 2014/01/02
  * @author
- * <pre>
  * Copyright (c) 1997 Ben Harrison, James E. Wilson, Robert A. Koeneke
  * This software may be copied and distributed for educational, research,
  * and not for profit purposes provided that this copyright and statement
  * are included in all such copies.  Other copyrights may also apply.
- * </pre>
- * @details
- * <pre>
- * A set of functions to maintain automatic dumps of various kinds.
- * The dump commands of original Angband simply add new lines to
- * existing files; these files will become bigger and bigger unless
- * an user deletes some or all of these files by hand at some
- * point.
- * These three functions automatically delete old dumped lines
- * before adding new ones.  Since there are various kinds of automatic
- * dumps in a single file, we add a header and a footer with a type
- * name for every automatic dump, and kill old lines only when the
- * lines have the correct type of header and footer.
- * We need to be quite paranoid about correctness; the user might
- * (mistakenly) edit the file by hand, and see all their work come
- * to nothing on the next auto dump otherwise.  The current code only
- * detects changes by noting inconsistencies between the actual number
- * of lines and the number written in the footer.  Note that this will
- * not catch single-line edits.
- * </pre>
+ * 2020 Hourier Rearranged
  */
 
 #include "cmd-io/cmd-dump.h"
-#include "io-dump/dump-util.h"
-#include "floor/floor.h"
-#include "term/gameterm.h"
-#include "system/angband-version.h"
-#include "io-dump/dump-remover.h"
-#include "io/read-pref-file.h"
-#include "io/interpret-pref-file.h"
-
-#include "world/world.h"
-#include "view/display-player.h" // 暫定。後で消す.
-#include "player/player-personalities-table.h"
-#include "dungeon/quest.h"
-#include "object/artifact.h"
-#include "floor/floor-town.h"
+#include "art-definition/art-bow-types.h"
 #include "cmd-io/feeling-table.h"
-#include "locale/english.h"
-
+#include "core/asking-player.h"
+#include "dungeon/quest.h"
+#include "floor/floor-town.h"
+#include "floor/floor.h"
+#include "io-dump/dump-remover.h"
+#include "io-dump/dump-util.h"
 #include "io/chuukei.h"
+#include "io/input-key-acceptor.h"
+#include "io/interpret-pref-file.h"
+#include "io/read-pref-file.h"
+#include "main/sound-of-music.h"
+#include "locale/english.h"
+#include "player/player-personalities-types.h"
+#include "system/angband-version.h"
+#include "term/gameterm.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/angband-files.h"
+#include "util/int-char-converter.h"
+#include "view/display-messages.h"
+#include "view/display-player.h" // 暫定。後で消す.
+#include "world/world.h"
 
 /*!
  * @brief 画面を再描画するコマンドのメインルーチン
@@ -77,7 +62,6 @@ void do_cmd_colors(player_type *creature_ptr, void(*process_autopick_file_comman
 	char tmp[160];
 	char buf[1024];
 	FILE *auto_dump_stream;
-	FILE_TYPE(FILE_TYPE_TEXT);
 	screen_save();
 	while (TRUE)
 	{
@@ -289,7 +273,7 @@ void do_cmd_time(player_type *creature_ptr)
 	}
 
 	FILE *fff;
-	fff = my_fopen(buf, "rt");
+	fff = angband_fopen(buf, "rt");
 
 	if (!fff) return;
 
@@ -297,7 +281,7 @@ void do_cmd_time(player_type *creature_ptr)
 	int start = 9999;
 	int end = -9999;
 	int num = 0;
-	while (!my_fgets(fff, buf, sizeof(buf)))
+	while (!angband_fgets(fff, buf, sizeof(buf)))
 	{
 		if (!buf[0] || (buf[0] == '#')) continue;
 		if (buf[1] != ':') continue;
@@ -327,5 +311,5 @@ void do_cmd_time(player_type *creature_ptr)
 	}
 
 	msg_print(desc);
-	my_fclose(fff);
+	angband_fclose(fff);
 }

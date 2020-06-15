@@ -1,5 +1,4 @@
 ﻿/*!
- * @file xtra1.c
  * @brief プレイヤーのステータス処理 / status
  * @date 2018/09/25
  * @author
@@ -14,7 +13,7 @@
 #include "autopick/autopick-finder.h"
 #include "autopick/autopick-methods-table.h"
 #include "autopick/autopick-util.h"
-#include "cmd/cmd-building.h"
+#include "cmd-building/cmd-building.h"
 #include "core/player-processor.h"
 #include "core/stuff-handler.h"
 #include "dungeon/dungeon.h"
@@ -22,31 +21,50 @@
 #include "effect/effect-characteristics.h"
 #include "effect/spells-effect-util.h"
 #include "floor/floor-town.h"
+#include "floor/floor.h"
+#include "game-option/map-screen-options.h"
+#include "game-option/option-flags.h"
+#include "game-option/special-options.h"
+#include "game-option/text-display-options.h"
 #include "grid/feature.h"
 #include "grid/grid.h"
 #include "inventory/player-inventory.h"
 #include "io/files-util.h"
+#include "io/input-key-acceptor.h"
 #include "io/input-key-processor.h"
+#include "io/input-key-requester.h"
 #include "io/targeting.h"
+#include "main/sound-of-music.h"
 #include "market/arena-info-table.h"
-#include "monster/monster.h"
-#include "object/artifact.h"
+#include "monster-race/race-flags1.h"
+#include "monster-race/race-flags2.h"
+#include "monster/monster-flag-types.h"
+#include "monster/monster-info.h"
+#include "monster/monster-status.h"
+#include "monster/monster-update.h"
+#include "monster/smart-learn-types.h"
 #include "object/object-flavor.h"
 #include "object/object-kind.h"
 #include "object/object-mark-types.h"
-#include "object/object2.h"
+#include "object/object-info.h"
 #include "player/avatar.h"
 #include "player/mimic-info-table.h"
 #include "player/player-class.h"
 #include "player/player-effects.h"
-#include "player/player-races-table.h"
+#include "player/player-race-types.h"
 #include "player/player-status.h"
-#include "realm/realm-hex.h"
-#include "realm/realm-song.h"
+#include "realm/realm-hex-numbers.h"
+#include "realm/realm-song-numbers.h"
+#include "spell-realm/spells-hex.h"
 #include "spell/spells3.h"
 #include "system/system-variables.h"
 #include "term/gameterm.h"
-#include "util/util.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/bit-flags-calculator.h"
+#include "util/string-processor.h"
+#include "view/display-lore.h"
+#include "view/display-messages.h"
 #include "view/display-player.h"
 #include "view/object-describer.h"
 #include "world/world.h"
@@ -682,10 +700,10 @@ static void print_status(player_type *creature_ptr)
 			hex_spelling(creature_ptr, HEX_CURE_SERIOUS) ||
 			hex_spelling(creature_ptr, HEX_CURE_CRITICAL)) ADD_FLG(BAR_CURE);
 
-		if (HEX_REVENGE_TURN(creature_ptr))
+		if (hex_revenge_turn(creature_ptr))
 		{
-			if (HEX_REVENGE_TYPE(creature_ptr) == 1) ADD_FLG(BAR_PATIENCE);
-			if (HEX_REVENGE_TYPE(creature_ptr) == 2) ADD_FLG(BAR_REVENGE);
+			if (hex_revenge_type(creature_ptr) == 1) ADD_FLG(BAR_PATIENCE);
+			if (hex_revenge_type(creature_ptr) == 2) ADD_FLG(BAR_REVENGE);
 		}
 	}
 
@@ -769,7 +787,7 @@ static void print_title(player_type *creature_ptr)
 	}
 	else
 	{
-		my_strcpy(str, player_title[creature_ptr->pclass][(creature_ptr->lev - 1) / 5], sizeof(str));
+		angband_strcpy(str, player_title[creature_ptr->pclass][(creature_ptr->lev - 1) / 5], sizeof(str));
 		p = str;
 	}
 
@@ -1197,8 +1215,8 @@ static void print_speed(player_type *player_ptr)
 		if (player_ptr->riding)
 		{
 			monster_type *m_ptr = &floor_ptr->m_list[player_ptr->riding];
-			if (MON_FAST(m_ptr) && !MON_SLOW(m_ptr)) attr = TERM_L_BLUE;
-			else if (MON_SLOW(m_ptr) && !MON_FAST(m_ptr)) attr = TERM_VIOLET;
+			if (monster_fast_remaining(m_ptr) && !monster_slow_remaining(m_ptr)) attr = TERM_L_BLUE;
+			else if (monster_slow_remaining(m_ptr) && !monster_fast_remaining(m_ptr)) attr = TERM_VIOLET;
 			else attr = TERM_GREEN;
 		}
 		else if ((is_fast && !player_ptr->slow) || player_ptr->lightspeed) attr = TERM_YELLOW;
@@ -1213,8 +1231,8 @@ static void print_speed(player_type *player_ptr)
 		if (player_ptr->riding)
 		{
 			monster_type *m_ptr = &floor_ptr->m_list[player_ptr->riding];
-			if (MON_FAST(m_ptr) && !MON_SLOW(m_ptr)) attr = TERM_L_BLUE;
-			else if (MON_SLOW(m_ptr) && !MON_FAST(m_ptr)) attr = TERM_VIOLET;
+			if (monster_fast_remaining(m_ptr) && !monster_slow_remaining(m_ptr)) attr = TERM_L_BLUE;
+			else if (monster_slow_remaining(m_ptr) && !monster_fast_remaining(m_ptr)) attr = TERM_VIOLET;
 			else attr = TERM_RED;
 		}
 		else if (is_fast && !player_ptr->slow) attr = TERM_YELLOW;
@@ -1489,13 +1507,13 @@ static void health_redraw(player_type *creature_ptr, bool riding)
 	TERM_COLOR attr = TERM_RED;
 
 	/* Invulnerable */
-	if (MON_INVULNER(m_ptr)) attr = TERM_WHITE;
+	if (monster_invulner_remaining(m_ptr)) attr = TERM_WHITE;
 
 	/* Asleep */
-	else if (MON_CSLEEP(m_ptr)) attr = TERM_BLUE;
+	else if (monster_csleep_remaining(m_ptr)) attr = TERM_BLUE;
 
 	/* Afraid */
-	else if (MON_MONFEAR(m_ptr)) attr = TERM_VIOLET;
+	else if (monster_fear_remaining(m_ptr)) attr = TERM_VIOLET;
 
 	/* Healthy */
 	else if (pct >= 100) attr = TERM_L_GREEN;
@@ -1532,7 +1550,7 @@ static void print_frame_basic(player_type *creature_ptr)
 	else
 	{
 		char str[14];
-		my_strcpy(str, rp_ptr->title, sizeof(str));
+		angband_strcpy(str, rp_ptr->title, sizeof(str));
 		print_field(str, ROW_RACE, COL_RACE);
 	}
 
@@ -3415,7 +3433,7 @@ void display_map(player_type *player_ptr, int *cy, int *cx)
 	C_MAKE(ma, (hgt + 2), TERM_COLOR *);
 	C_MAKE(mc, (hgt + 2), char_ptr);
 	C_MAKE(mp, (hgt + 2), byte_ptr);
-	C_MAKE(match_autopick_yx, (hgt + 2), sint_ptr);
+	C_MAKE(match_autopick_yx, (hgt + 2), int*);
 	C_MAKE(object_autopick_yx, (hgt + 2), object_type **);
 
 	/* Allocate and wipe each line map */
@@ -3621,7 +3639,7 @@ void display_map(player_type *player_ptr, int *cy, int *cx)
 	C_KILL(ma, (hgt + 2), TERM_COLOR *);
 	C_KILL(mc, (hgt + 2), char_ptr);
 	C_KILL(mp, (hgt + 2), byte_ptr);
-	C_KILL(match_autopick_yx, (hgt + 2), sint_ptr);
+	C_KILL(match_autopick_yx, (hgt + 2), int*);
 	C_KILL(object_autopick_yx, (hgt + 2), object_type **);
 
 	/* Free each line map */

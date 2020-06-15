@@ -1,28 +1,42 @@
 ﻿#include "cmd-item/cmd-usestaff.h"
 #include "cmd/cmd-basic.h"
+#include "floor/floor-object.h"
 #include "floor/floor.h"
+#include "game-option/disturbance-options.h"
+#include "inventory/inventory-object.h"
 #include "inventory/player-inventory.h"
 #include "main/sound-definitions-table.h"
+#include "main/sound-of-music.h"
+#include "monster-floor/monster-summon.h"
+#include "monster-floor/place-monster-types.h"
+#include "object-enchant/special-object-flags.h"
 #include "object/item-use-flags.h"
-#include "object/object-appraiser.h"
+#include "object/object-generator.h"
 #include "object/object-hook.h"
+#include "object/object-info.h"
 #include "object/object-kind.h"
-#include "object/object2.h"
-#include "object/special-object-flags.h"
-#include "object/sv-staff-types.h"
+#include "perception/object-perception.h"
 #include "player/avatar.h"
 #include "player/player-class.h"
 #include "player/player-effects.h"
-#include "player/player-races-table.h"
+#include "player/player-race-types.h"
 #include "player/player-status.h"
-#include "spell/spells-detection.h"
-#include "spell/spells-floor.h"
+#include "spell-kind/earthquake.h"
+#include "spell-kind/spells-detection.h"
+#include "spell-kind/spells-floor.h"
+#include "spell-kind/spells-genocide.h"
+#include "spell-kind/spells-lite.h"
+#include "spell-kind/spells-neighbor.h"
+#include "spell-kind/spells-sight.h"
+#include "spell-kind/spells-teleport.h"
+#include "spell/spells-staff-only.h"
 #include "spell/spells-status.h"
 #include "spell/spells-summon.h"
-#include "spell/spells2.h"
 #include "spell/spells3.h"
-#include "util/util.h"
+#include "sv-definition/sv-staff-types.h"
+#include "term/screen-processor.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
 #include "view/object-describer.h"
 
 /*!
@@ -270,8 +284,8 @@ int staff_effect(player_type *creature_ptr, OBJECT_SUBTYPE_VALUE sval, bool *use
 		case SV_STAFF_NOTHING:
 		{
 			msg_print(_("何も起らなかった。", "Nothing happen."));
-			if (PRACE_IS_(creature_ptr, RACE_SKELETON) || PRACE_IS_(creature_ptr, RACE_GOLEM) ||
-				PRACE_IS_(creature_ptr, RACE_ZOMBIE) || PRACE_IS_(creature_ptr, RACE_SPECTRE))
+			if (is_specific_player_race(creature_ptr, RACE_SKELETON) || is_specific_player_race(creature_ptr, RACE_GOLEM) ||
+				is_specific_player_race(creature_ptr, RACE_ZOMBIE) || is_specific_player_race(creature_ptr, RACE_SPECTRE))
 				msg_print(_("もったいない事をしたような気がする。食べ物は大切にしなくては。", "What a waste.  It's your food!"));
 			break;
 		}
@@ -405,7 +419,7 @@ void exe_use_staff(player_type *creature_ptr, INVENTORY_IDX item)
 		/* Unstack the used item */
 		o_ptr->number--;
 		creature_ptr->total_weight -= q_ptr->weight;
-		item = inven_carry(creature_ptr, q_ptr);
+		item = store_item_to_inventory(creature_ptr, q_ptr);
 
 		msg_print(_("杖をまとめなおした。", "You unstack your staff."));
 	}

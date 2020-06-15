@@ -1,40 +1,55 @@
-﻿#include "system/angband.h"
+﻿#include "player/player-damage.h"
+#include "autopick/autopick-pref-processor.h"
+#include "cmd-building/cmd-building.h"
+#include "cmd-io/cmd-process-screen.h"
+#include "core/asking-player.h"
 #include "core/stuff-handler.h"
-#include "util/util.h"
+#include "dungeon/quest.h"
+#include "floor/floor.h"
+#include "floor/wild.h"
+#include "game-option/birth-options.h"
+#include "game-option/cheat-options.h"
+#include "game-option/game-play-options.h"
+#include "game-option/input-options.h"
+#include "game-option/play-record-options.h"
+#include "game-option/special-options.h"
+#include "inventory/inventory-damage.h"
+#include "io/files-util.h"
+#include "io/input-key-acceptor.h"
+#include "io/report.h"
+#include "io/save.h"
+#include "io/write-diary.h"
 #include "main/music-definitions-table.h"
 #include "main/sound-definitions-table.h"
-#include "term/gameterm.h"
-
-#include "player/avatar.h"
-#include "cmd/cmd-building.h"
-#include "io/write-diary.h"
-#include "autopick/autopick-pref-processor.h"
-#include "cmd-io/cmd-process-screen.h"
+#include "main/sound-of-music.h"
 #include "market/arena-info-table.h"
-#include "realm/realm-song.h"
-#include "floor/floor.h"
-#include "object/artifact.h"
+#include "mind/mind-mirror-master.h"
+#include "monster/monster-describer.h"
+#include "monster-race/race-flags2.h"
+#include "monster-race/race-flags3.h"
+#include "monster/monster-description-types.h"
+#include "monster/monster-info.h"
+#include "mspell/monster-spell.h"
+#include "object-enchant/tr-types.h"
+#include "object/object-broken.h"
+#include "object/object-flags.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
-#include "object/object-broken.h"
-#include "player/player-move.h"
-#include "player/player-damage.h"
-#include "player/player-personalities-table.h"
-#include "player/player-status.h"
-#include "player/player-effects.h"
+#include "player/avatar.h"
 #include "player/player-class.h"
-#include "player/player-races-table.h"
-#include "mspell/monster-spell.h"
-#include "world/world.h"
+#include "player/player-effects.h"
+#include "player/player-move.h"
+#include "player/player-personalities-types.h"
+#include "player/player-race-types.h"
+#include "player/player-status.h"
+#include "realm/realm-song-numbers.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/bit-flags-calculator.h"
+#include "util/string-processor.h"
 #include "view/display-main-window.h"
-#include "dungeon/quest.h"
-#include "io/report.h"
-#include "floor/wild.h"
-#include "io/save.h"
-#include "io/files-util.h"
-#include "inventory/inventory-damage.h"
-#include "mind/racial-mirror-master.h"
-#include "object/tr-types.h"
+#include "view/display-messages.h"
+#include "world/world.h"
 
 /*!
 * @brief 酸攻撃による装備のAC劣化処理 /
@@ -174,7 +189,7 @@ HIT_POINT elec_dam(player_type *creature_ptr, HIT_POINT dam, concptr kb_str, int
 	/* Vulnerability (Ouch!) */
 	if (creature_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
 	if (creature_ptr->special_defense & KATA_KOUKIJIN) dam += dam / 3;
-	if (PRACE_IS_(creature_ptr, RACE_ANDROID)) dam += dam / 3;
+	if (is_specific_player_race(creature_ptr, RACE_ANDROID)) dam += dam / 3;
 
 	/* Resist the damage */
 	if (creature_ptr->resist_elec) dam = (dam + 2) / 3;
@@ -222,7 +237,7 @@ HIT_POINT fire_dam(player_type *creature_ptr, HIT_POINT dam, concptr kb_str, int
 
 	/* Vulnerability (Ouch!) */
 	if (creature_ptr->muta3 & MUT3_VULN_ELEM) dam *= 2;
-	if (PRACE_IS_(creature_ptr, RACE_ENT)) dam += dam / 3;
+	if (is_specific_player_race(creature_ptr, RACE_ENT)) dam += dam / 3;
 	if (creature_ptr->special_defense & KATA_KOUKIJIN) dam += dam / 3;
 
 	/* Resist the damage */
@@ -457,7 +472,7 @@ int take_hit(player_type *creature_ptr, int damage_type, HIT_POINT damage, concp
 #else
 				sprintf(dummy, "%s%s", hit_from, !creature_ptr->paralyzed ? "" : " while helpless");
 #endif
-				my_strcpy(creature_ptr->died_from, dummy, sizeof creature_ptr->died_from);
+				angband_strcpy(creature_ptr->died_from, dummy, sizeof creature_ptr->died_from);
 			}
 
 			/* No longer a winner */
@@ -490,7 +505,7 @@ int take_hit(player_type *creature_ptr, int damage_type, HIT_POINT damage, concp
 
 			flush();
 
-			if (get_check_strict(_("画面を保存しますか？", "Dump the screen? "), CHECK_NO_HISTORY))
+			if (get_check_strict(creature_ptr, _("画面を保存しますか？", "Dump the screen? "), CHECK_NO_HISTORY))
 			{
 				do_cmd_save_screen(creature_ptr, process_autopick_file_command);
 			}
@@ -530,7 +545,7 @@ int take_hit(player_type *creature_ptr, int damage_type, HIT_POINT damage, concp
 #else
 					while (!get_string("Last word: ", death_message, 1024));
 #endif
-				} while (winning_seppuku && !get_check_strict(_("よろしいですか？", "Are you sure? "), CHECK_NO_HISTORY));
+				} while (winning_seppuku && !get_check_strict(creature_ptr, _("よろしいですか？", "Are you sure? "), CHECK_NO_HISTORY));
 
 				if (death_message[0] == '\0')
 				{
@@ -562,13 +577,13 @@ int take_hit(player_type *creature_ptr, int damage_type, HIT_POINT damage, concp
 					str = death_message;
 					if (strncmp(str, "「", 2) == 0) str += 2;
 
-					str2 = my_strstr(str, "」");
+					str2 = angband_strstr(str, "」");
 					if (str2 != NULL) *str2 = '\0';
 
 					i = 0;
 					while (i < 9)
 					{
-						str2 = my_strstr(str, " ");
+						str2 = angband_strstr(str, " ");
 						if (str2 == NULL) len = strlen(str);
 						else len = str2 - str;
 

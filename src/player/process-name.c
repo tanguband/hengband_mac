@@ -1,9 +1,13 @@
 ﻿#include "player/process-name.h"
 #include "autopick/autopick-reader-writer.h"
-#include "player/player-personality.h"
+#include "core/asking-player.h"
 #include "io/files-util.h"
+#include "player/player-personality.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/angband-files.h"
+#include "util/string-processor.h"
 #include "world/world.h"
-#include "term/gameterm.h"
 
 /*!
  * @brief プレイヤーの名前をチェックして修正する
@@ -68,7 +72,7 @@ void process_player_name(player_type *creature_ptr, bool sf)
 				i += strlen(PATH_SEP);
 			}
 #if defined(WINDOWS)
-			else if (my_strchr("\"*,/:;<>?\\|", c))
+			else if (angband_strchr("\"*,/:;<>?\\|", c))
 				creature_ptr->base_name[k++] = '_';
 #endif
 			else if (isprint(c))
@@ -88,7 +92,7 @@ void process_player_name(player_type *creature_ptr, bool sf)
 		while (TRUE)
 		{
 			concptr t;
-			t = my_strstr(s, PATH_SEP);
+			t = angband_strstr(s, PATH_SEP);
 			if (!t)
 				break;
 			s = t + 1;

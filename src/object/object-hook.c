@@ -5,25 +5,32 @@
  */
 
 #include "object/object-hook.h"
+#include "art-definition/art-accessory-types.h"
+#include "art-definition/art-armor-types.h"
 #include "dungeon/quest.h"
 #include "floor/floor.h"
-#include "monster/monster.h"
-#include "object/artifact.h"
-#include "object/item-feeling.h"
-#include "object/object-appraiser.h"
+#include "game-option/birth-options.h"
+#include "monster-race/race-indice-types.h"
+#include "object-enchant/artifact.h"
+#include "object-enchant/item-feeling.h"
+#include "object-enchant/special-object-flags.h"
+#include "object-enchant/tr-types.h"
+#include "object-enchant/trg-types.h"
+#include "object/object-flags.h"
 #include "object/object-kind.h"
-#include "object/special-object-flags.h"
-#include "object/sv-armor-types.h"
-#include "object/sv-lite-types.h"
-#include "object/sv-other-types.h"
-#include "object/sv-protector-types.h"
-#include "object/sv-weapon-types.h"
-#include "object/tr-types.h"
+#include "object/object-info.h"
+#include "perception/object-perception.h"
 #include "player/mimic-info-table.h"
 #include "player/player-class.h"
-#include "player/player-races-table.h"
+#include "player/player-race-types.h"
 #include "player/player-skill.h"
-#include "util/util.h"
+#include "sv-definition/sv-armor-types.h"
+#include "sv-definition/sv-lite-types.h"
+#include "sv-definition/sv-other-types.h"
+#include "sv-definition/sv-protector-types.h"
+#include "sv-definition/sv-weapon-types.h"
+#include "util/bit-flags-calculator.h"
+#include "util/string-processor.h"
 #include "view/display-main-window.h"
 #include "world/world.h"
 
@@ -138,19 +145,19 @@ bool item_tester_hook_eatable(object_type *o_ptr)
 {
 	if (o_ptr->tval == TV_FOOD) return TRUE;
 
-	if (PRACE_IS_(p_ptr, RACE_SKELETON) ||
-		PRACE_IS_(p_ptr, RACE_GOLEM) ||
-		PRACE_IS_(p_ptr, RACE_ZOMBIE) ||
-		PRACE_IS_(p_ptr, RACE_SPECTRE))
+	if (is_specific_player_race(p_ptr, RACE_SKELETON) ||
+		is_specific_player_race(p_ptr, RACE_GOLEM) ||
+		is_specific_player_race(p_ptr, RACE_ZOMBIE) ||
+		is_specific_player_race(p_ptr, RACE_SPECTRE))
 	{
 		if (o_ptr->tval == TV_STAFF || o_ptr->tval == TV_WAND)
 			return TRUE;
 	}
-	else if (PRACE_IS_(p_ptr, RACE_BALROG) || (mimic_info[p_ptr->mimic_form].MIMIC_FLAGS & MIMIC_IS_DEMON))
+	else if (is_specific_player_race(p_ptr, RACE_BALROG) || (mimic_info[p_ptr->mimic_form].MIMIC_FLAGS & MIMIC_IS_DEMON))
 	{
 		if (o_ptr->tval == TV_CORPSE &&
 			o_ptr->sval == SV_CORPSE &&
-			my_strchr("pht", r_info[o_ptr->pval].d_char))
+			angband_strchr("pht", r_info[o_ptr->pval].d_char))
 			return TRUE;
 	}
 
@@ -271,7 +278,7 @@ bool item_tester_hook_quaff(object_type *o_ptr)
 {
 	if (o_ptr->tval == TV_POTION) return TRUE;
 
-	if (PRACE_IS_(p_ptr, RACE_ANDROID))
+	if (is_specific_player_race(p_ptr, RACE_ANDROID))
 	{
 		if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL)
 			return TRUE;

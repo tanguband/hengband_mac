@@ -1,8 +1,11 @@
 ﻿#pragma once 
 
-#include "cmd/cmd-building.h"
-#include "object/object-util.h"
-#include "player/player-personalities-table.h"
+/* 人畜無害なenumヘッダを先に読み込む */
+#include "player/player-classes-types.h"
+#include "player/player-race-types.h"
+#include "cmd-building/cmd-building.h"
+#include "player/player-personalities-types.h"
+#include "system/object-type-definition.h"
 
 struct floor_type;
 typedef struct floor_type floor_type;
@@ -788,7 +791,6 @@ extern void take_turn(player_type *creature_ptr, PERCENTAGE need_cost);
 extern void free_turn(player_type *creature_ptr);
 
 extern bool player_place(player_type *creature_ptr, POSITION y, POSITION x);
-extern void sanity_blast(player_type *creature_ptr, monster_type *m_ptr, bool necro);
 
 extern void check_experience(player_type *creature_ptr);
 extern void wreck_the_pattern(player_type *creature_ptr);

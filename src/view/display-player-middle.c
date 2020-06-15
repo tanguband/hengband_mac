@@ -1,14 +1,17 @@
 ﻿#include "view/display-player-middle.h"
+#include "combat/shoot.h"
 #include "floor/floor.h"
-#include "object/object-appraiser.h"
-#include "object/special-object-flags.h"
-#include "object/sv-bow-types.h"
+#include "game-option/birth-options.h"
+#include "game-option/special-options.h"
+#include "monster/monster-status.h"
+#include "object-enchant/special-object-flags.h"
+#include "perception/object-perception.h"
 #include "player/player-effects.h"
-#include "player/player-races-table.h"
+#include "player/player-race-types.h"
 #include "player/player-skill.h"
-#include "realm/realm-song.h"
-#include "shoot.h"
-#include "term/gameterm.h"
+#include "realm/realm-song-numbers.h"
+#include "sv-definition/sv-bow-types.h"
+#include "term/term-color-types.h"
 #include "view/display-util.h"
 #include "view/status-first-page.h"
 #include "world/world.h"
@@ -173,8 +176,8 @@ static int calc_temporary_speed(player_type *creature_ptr)
 	}
 	else
 	{
-		if (MON_FAST(&creature_ptr->current_floor_ptr->m_list[creature_ptr->riding])) tmp_speed += 10;
-		if (MON_SLOW(&creature_ptr->current_floor_ptr->m_list[creature_ptr->riding])) tmp_speed -= 10;
+		if (monster_fast_remaining(&creature_ptr->current_floor_ptr->m_list[creature_ptr->riding])) tmp_speed += 10;
+		if (monster_slow_remaining(&creature_ptr->current_floor_ptr->m_list[creature_ptr->riding])) tmp_speed -= 10;
 	}
 
 	return tmp_speed;

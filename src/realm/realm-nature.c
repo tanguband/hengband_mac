@@ -1,27 +1,36 @@
-﻿#include "system/angband.h"
-#include "util/util.h"
-
+﻿#include "realm/realm-nature.h"
 #include "cmd-action/cmd-spell.h"
-#include "spell/spells-summon.h"
-#include "spell/spells-status.h"
-#include "spell/spells-object.h"
-#include "spell/spells-diceroll.h"
-#include "player/avatar.h"
-#include "spell/spells-floor.h"
-#include "player/player-races-table.h"
-#include "player/player-effects.h"
-#include "player/player-damage.h"
-#include "io/targeting.h"
-#include "effect/spells-effect-util.h"
-#include "realm/realm-nature.h"
-#include "spell/spells-type.h"
-#include "spell/process-effect.h"
 #include "effect/effect-characteristics.h"
-#include "spell/spells2.h"
+#include "effect/spells-effect-util.h"
+#include "floor/floor-object.h"
+#include "io/targeting.h"
+#include "monster-floor/monster-summon.h"
+#include "monster-floor/place-monster-types.h"
+#include "object/object-generator.h"
+#include "object/object-kind-hook.h"
+#include "player/avatar.h"
+#include "player/player-damage.h"
+#include "player/player-effects.h"
+#include "player/player-race-types.h"
+#include "spell-kind/earthquake.h"
+#include "spell-kind/spells-beam.h"
+#include "spell-kind/spells-charm.h"
+#include "spell-kind/spells-detection.h"
+#include "spell-kind/spells-floor.h"
+#include "spell-kind/spells-grid.h"
+#include "spell-kind/spells-launcher.h"
+#include "spell-kind/spells-lite.h"
+#include "spell-kind/spells-neighbor.h"
+#include "spell-kind/spells-sight.h"
+#include "spell/process-effect.h"
+#include "spell/spells-diceroll.h"
+#include "spell/spells-object.h"
+#include "spell/spells-status.h"
+#include "spell/spells-summon.h"
+#include "spell/spell-types.h"
 #include "spell/spells3.h"
-#include "spell/spells-detection.h"
-#include "object/object2.h"
-#include "object/sv-food-types.h"
+#include "sv-definition/sv-food-types.h"
+#include "view/display-messages.h"
 
 /*!
 * @brief 自然領域魔法の各処理を行う
@@ -132,7 +141,7 @@ concptr do_nature_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type mod
 			{
 				lite_area(caster_ptr, damroll(dice, sides), rad);
 
-				if ((PRACE_IS_(caster_ptr, RACE_VAMPIRE) || (caster_ptr->mimic_form == MIMIC_VAMPIRE)) && !caster_ptr->resist_lite)
+				if ((is_specific_player_race(caster_ptr, RACE_VAMPIRE) || (caster_ptr->mimic_form == MIMIC_VAMPIRE)) && !caster_ptr->resist_lite)
 				{
 					msg_print(_("日の光があなたの肉体を焦がした！", "The daylight scorches your flesh!"));
 					take_hit(caster_ptr, DAMAGE_NOESCAPE, damroll(2, 2), _("日の光", "daylight"), -1);
@@ -536,7 +545,7 @@ concptr do_nature_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type mod
 				chg_virtue(caster_ptr, V_ENLIGHTEN, 1);
 				wiz_lite(caster_ptr, FALSE);
 
-				if ((PRACE_IS_(caster_ptr, RACE_VAMPIRE) || (caster_ptr->mimic_form == MIMIC_VAMPIRE)) && !caster_ptr->resist_lite)
+				if ((is_specific_player_race(caster_ptr, RACE_VAMPIRE) || (caster_ptr->mimic_form == MIMIC_VAMPIRE)) && !caster_ptr->resist_lite)
 				{
 					msg_print(_("日光があなたの肉体を焦がした！", "The sunlight scorches your flesh!"));
 					take_hit(caster_ptr, DAMAGE_NOESCAPE, 50, _("日光", "sunlight"), -1);

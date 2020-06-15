@@ -7,18 +7,22 @@
  */
 
 #include "view/display-player.h"
-#include "dungeon/dungeon-file.h"
+#include "info-reader/fixed-map-parser.h"
 #include "dungeon/quest.h"
 #include "floor/floor.h"
+#include "game-option/text-display-options.h"
 #include "knowledge/knowledge-mutations.h"
 #include "object/object-kind.h"
+#include "object/object-info.h"
 #include "player/mimic-info-table.h"
 #include "player/patron.h"
 #include "player/player-personality.h"
 #include "player/player-sex.h"
 #include "status-first-page.h"
 #include "system/system-variables.h" // 暫定。後で消す
-#include "term/gameterm.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/buffer-shaper.h"
 #include "view/display-characteristic.h"
 #include "view/display-player-middle.h"
 #include "view/display-player-misc-info.h"
@@ -188,7 +192,7 @@ static bool search_death_cause(player_type *creature_ptr, char *statmsg, map_nam
 		/* Get the quest text */
 		/* Bewere that INIT_ASSIGN resets the cur_num. */
 		init_flags = INIT_NAME_ONLY;
-		process_dungeon_file(creature_ptr, "q_info.txt", 0, 0, 0, 0);
+		parse_fixed_map(creature_ptr, "q_info.txt", 0, 0, 0, 0);
 #ifdef JP
 		sprintf(statmsg, "…あなたは、クエスト「%s」で%sに殺された。", quest[floor_ptr->inside_quest].name, creature_ptr->died_from);
 #else
@@ -224,7 +228,7 @@ static bool decide_death_in_quest(player_type *creature_ptr, char *statmsg)
 
 	quest_text_line = 0;
 	init_flags = INIT_NAME_ONLY;
-	process_dungeon_file(creature_ptr, "q_info.txt", 0, 0, 0, 0);
+	parse_fixed_map(creature_ptr, "q_info.txt", 0, 0, 0, 0);
 	sprintf(statmsg, _("…あなたは現在、 クエスト「%s」を遂行中だ。", "...Now, you are in the quest '%s'."), quest[floor_ptr->inside_quest].name);
 	return TRUE;
 }
@@ -267,7 +271,7 @@ static void decide_current_floor(player_type *creature_ptr, char *statmsg, map_n
 static void display_current_floor(char *statmsg)
 {
 	char temp[128];
-	roff_to_buf(statmsg, 60, temp, sizeof(temp));
+	shape_buffer(statmsg, 60, temp, sizeof(temp));
 	char  *t;
 	t = temp;
 	for (int i = 0; i < 2; i++)

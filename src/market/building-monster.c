@@ -1,9 +1,18 @@
-﻿#include "system/angband.h"
-#include "market/building-monster.h"
-#include "term/gameterm.h"
-#include "core/sort.h"
+﻿#include "market/building-monster.h"
+#include "core/asking-player.h"
+#include "util/sort.h"
 #include "core/stuff-handler.h"
+#include "game-option/game-play-options.h"
+#include "io/input-key-acceptor.h"
+#include "monster-race/race-flags1.h"
+#include "lore/lore-store.h"
+#include "term/gameterm.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/int-char-converter.h"
+#include "util/string-processor.h"
 #include "view/display-main-window.h"
+#include "view/display-lore.h"
 
 /*!
  * @brief 施設でモンスターの情報を知るメインルーチン / research_mon -KMW-
@@ -29,8 +38,8 @@ bool research_mon(player_type *player_ptr)
     screen_save();
 
     char sym;
-    if (!get_com(_("モンスターの文字を入力して下さい(記号 or ^A全,^Uユ,^N非ユ,^M名前):",
-                     "Enter character to be identified(^A:All,^U:Uniqs,^N:Non uniqs,^M:Name): "),
+    if (!get_com(
+            _("モンスターの文字を入力して下さい(記号 or ^A全,^Uユ,^N非ユ,^M名前):", "Enter character to be identified(^A:All,^U:Uniqs,^N:Non uniqs,^M:Name): "),
             &sym, FALSE))
 
     {
@@ -119,9 +128,9 @@ bool research_mon(player_type *player_ptr)
             }
 
 #ifdef JP
-            if (my_strstr(temp2, temp) || my_strstr(r_name + r_ptr->name, temp))
+            if (angband_strstr(temp2, temp) || angband_strstr(r_name + r_ptr->name, temp))
 #else
-            if (my_strstr(temp2, temp))
+            if (angband_strstr(temp2, temp))
 #endif
                 who[n++] = i;
         } else if (all || (r_ptr->d_char == sym)) {

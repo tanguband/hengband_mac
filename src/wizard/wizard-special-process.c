@@ -16,53 +16,76 @@
 #include "cmd-io/cmd-help.h"
 #include "cmd-io/cmd-save.h"
 #include "cmd/cmd-draw.h"
+#include "core/asking-player.h"
 #include "core/stuff-handler.h"
-#include "dungeon/dungeon-file.h"
 #include "dungeon/dungeon.h"
 #include "dungeon/quest.h"
 #include "floor/floor-object.h"
 #include "floor/floor-save.h"
 #include "floor/floor.h"
+#include "game-option/option-types-table.h"
+#include "game-option/play-record-options.h"
+#include "game-option/special-options.h"
 #include "grid/grid.h"
+#include "info-reader/fixed-map-parser.h"
 #include "inventory/inventory-object.h"
 #include "inventory/player-inventory.h"
 #include "io/files-util.h"
+#include "io/input-key-acceptor.h"
+#include "io/input-key-requester.h"
 #include "io/targeting.h"
 #include "io/write-diary.h"
 #include "market/arena.h"
+#include "monster-floor/monster-generator.h"
+#include "monster-floor/monster-remover.h"
+#include "monster-floor/monster-summon.h"
+#include "monster-floor/place-monster-types.h"
+#include "monster/monster-describer.h"
+#include "monster/monster-description-types.h"
+#include "monster/monster-info.h"
 #include "monster/monster-status.h"
+#include "monster/smart-learn-types.h"
 #include "mspell/monster-spell.h"
 #include "mutation/mutation.h"
-#include "object/artifact.h"
-#include "object/item-apply-magic.h"
+#include "object-enchant/apply-magic.h"
+#include "object-enchant/artifact.h"
+#include "object-enchant/item-apply-magic.h"
+#include "object-enchant/trc-types.h"
+#include "object-enchant/trg-types.h"
 #include "object/item-use-flags.h"
-#include "object/object-appraiser.h"
+#include "object/object-flags.h"
 #include "object/object-flavor.h"
+#include "object/object-generator.h"
 #include "object/object-hook.h"
 #include "object/object-kind.h"
 #include "object/object-value.h"
-#include "object/object2.h"
-#include "object/trc-types.h"
+#include "perception/object-perception.h"
 #include "player/patron.h"
 #include "player/player-class.h"
 #include "player/player-effects.h"
-#include "player/player-races-table.h"
+#include "player/player-race-types.h"
 #include "player/player-skill.h"
 #include "player/player-status.h"
 #include "player/selfinfo.h"
-#include "spell/spells-detection.h"
-#include "spell/spells-floor.h"
+#include "spell-kind/spells-detection.h"
+#include "spell-kind/spells-floor.h"
+#include "spell-kind/spells-sight.h"
+#include "spell-kind/spells-teleport.h"
+#include "spell-kind/spells-world.h"
 #include "spell/spells-object.h"
 #include "spell/spells-status.h"
 #include "spell/spells-summon.h"
 #include "spell/spells-util.h"
-#include "spell/spells-world.h"
-#include "spell/spells2.h"
 #include "spell/spells3.h"
+#include "system/alloc-entries.h"
 #include "system/angband-version.h"
-#include "term/gameterm.h"
-#include "util/util.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/angband-files.h"
+#include "util/bit-flags-calculator.h"
+#include "util/int-char-converter.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
 #include "wizard/wizard-spoiler.h"
 #include "world/world.h"
 
@@ -182,7 +205,7 @@ static void do_cmd_summon_horde(player_type *caster_ptr)
 		if (is_cave_empty_bold(caster_ptr, wy, wx)) break;
 	}
 
-	(void)alloc_horde(caster_ptr, wy, wx);
+	(void)alloc_horde(caster_ptr, wy, wx, summon_specific);
 }
 
 /*!
@@ -1629,10 +1652,8 @@ static void do_cmd_dump_options()
 	char buf[1024];
 	path_build(buf, sizeof buf, ANGBAND_DIR_USER, "opt_info.txt");
 
-	/* File type is "TEXT" */
 	FILE *fff;
-	FILE_TYPE(FILE_TYPE_TEXT);
-	fff = my_fopen(buf, "a");
+	fff = angband_fopen(buf, "a");
 
 	if (!fff)
 	{
@@ -1683,7 +1704,7 @@ static void do_cmd_dump_options()
 	/* Free the "exist" array (2-dimension) */
 	C_KILL(*exist, NUM_O_BIT * NUM_O_SET, int);
 	C_KILL(exist, NUM_O_SET, int *);
-	my_fclose(fff);
+	angband_fclose(fff);
 
 	msg_format(_("オプションbit使用状況をファイル %s に書き出しました。", "Option bits usage dump saved to file %s."), buf);
 }
@@ -1877,7 +1898,7 @@ void do_cmd_debug(player_type *creature_ptr)
 		if (tmp_int >= max_q_idx) break;
 
 		creature_ptr->current_floor_ptr->inside_quest = (QUEST_IDX)tmp_int;
-		process_dungeon_file(creature_ptr, "q_info.txt", 0, 0, 0, 0);
+		parse_fixed_map(creature_ptr, "q_info.txt", 0, 0, 0, 0);
 		quest[tmp_int].status = QUEST_STATUS_TAKEN;
 		creature_ptr->current_floor_ptr->inside_quest = 0;
 	}

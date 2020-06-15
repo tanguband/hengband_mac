@@ -16,10 +16,13 @@
 #include "cmd-action/cmd-spell.h"
 #include "cmd-io/cmd-diary.h"
 #include "cmd-io/cmd-dump.h"
+#include "cmd-io/cmd-gameoption.h"
 #include "cmd-io/cmd-help.h"
 #include "cmd-io/cmd-knowledge.h"
+#include "cmd-io/cmd-lore.h"
 #include "cmd-io/cmd-macro.h"
 #include "cmd-io/cmd-process-screen.h"
+#include "cmd-io/macro-util.h"
 #include "cmd-item/cmd-item.h"
 #include "cmd-item/cmd-magiceat.h"
 #include "cmd-item/cmd-smith.h"
@@ -27,30 +30,43 @@
 #include "cmd/cmd-basic.h"
 #include "cmd/cmd-draw.h"
 #include "cmd/cmd-visuals.h"
-#include "combat/snipe.h"
+#include "core/asking-player.h"
+#include "mind/mind-sniper.h"
 #include "core/stuff-handler.h"
 #include "floor/floor-events.h"
 #include "floor/floor-town.h"
 #include "floor/floor.h"
 #include "floor/wild.h"
+#include "game-option/birth-options.h"
+#include "game-option/game-play-options.h"
+#include "game-option/input-options.h"
+#include "game-option/play-record-options.h"
+#include "game-option/special-options.h"
+#include "game-option/text-display-options.h"
 #include "inventory/inventory-object.h"
 #include "inventory/player-inventory.h"
+#include "io/command-repeater.h"
 #include "io/files-util.h"
+#include "io/input-key-requester.h"
 #include "io/write-diary.h"
 #include "locale/japanese.h"
 #include "main/music-definitions-table.h"
 #include "main/sound-definitions-table.h"
+#include "main/sound-of-music.h"
 #include "market/gold-magnification-table.h"
 #include "mind/mind.h"
-#include "object/item-feeling.h"
+#include "object-enchant/item-feeling.h"
+#include "object-enchant/special-object-flags.h"
 #include "object/item-use-flags.h"
-#include "object/object-appraiser.h"
 #include "object/object-flavor.h"
+#include "object/object-generator.h"
 #include "object/object-hook.h"
 #include "object/object-kind.h"
+#include "object/object-stack.h"
 #include "object/object-value.h"
-#include "object/object2.h"
-#include "object/special-object-flags.h"
+#include "object/object-info.h"
+#include "perception/identification.h"
+#include "perception/object-perception.h"
 #include "player/avatar.h"
 #include "player/player-class.h"
 #include "player/player-effects.h"
@@ -64,8 +80,13 @@
 #include "store/store-util.h"
 #include "system/angband.h"
 #include "term/gameterm.h"
-#include "util/util.h"
+#include "term/screen-processor.h"
+#include "util/bit-flags-calculator.h"
+#include "util/int-char-converter.h"
+#include "util/object-sort.h"
+#include "util/quarks.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
 #include "view/object-describer.h"
 #include "world/world.h"
 
@@ -345,7 +366,7 @@ bool combine_and_reorder_home(int store_num)
  * @details
  * <pre>
  * In all cases, return the slot (or -1) where the object was placed
- * Note that this is a hacked up version of "inven_carry()".
+ * Note that this is a hacked up version of "store_item_to_inventory()".
  * Also note that it may not correctly "adapt" to "knowledge" bacoming
  * known, the player may have to pick stuff up and drop it again.
  * </pre>
@@ -1272,7 +1293,7 @@ static void store_purchase(player_type *player_ptr)
 	 */
 	reduce_charges(j_ptr, o_ptr->number - amt);
 	j_ptr->number = amt;
-	if (!inven_carry_okay(j_ptr))
+	if (!check_store_item_to_inventory(j_ptr))
 	{
 		msg_print(_("そんなにアイテムを持てない。", "You cannot carry that many different items."));
 		return;
@@ -1300,7 +1321,7 @@ static void store_purchase(player_type *player_ptr)
 	 */
 	reduce_charges(j_ptr, o_ptr->number - amt);
 	j_ptr->number = amt;
-	if (!inven_carry_okay(j_ptr))
+	if (!check_store_item_to_inventory(j_ptr))
 	{
 		msg_print(_("ザックにそのアイテムを入れる隙間がない。", "You cannot carry that many items."));
 		return;
@@ -1313,7 +1334,7 @@ static void store_purchase(player_type *player_ptr)
 	{
 		bool combined_or_reordered;
 		distribute_charges(o_ptr, j_ptr, amt);
-		item_new = inven_carry(player_ptr, j_ptr);
+		item_new = store_item_to_inventory(player_ptr, j_ptr);
 		GAME_TEXT o_name[MAX_NLEN];
 		object_desc(player_ptr, o_name, &player_ptr->inventory_list[item_new], 0);
 
@@ -1392,7 +1413,7 @@ static void store_purchase(player_type *player_ptr)
 	j_ptr->inscription = 0;
 	j_ptr->feeling = FEEL_NONE;
 	j_ptr->ident &= ~(IDENT_STORE);
-	item_new = inven_carry(player_ptr, j_ptr);
+	item_new = store_item_to_inventory(player_ptr, j_ptr);
 
 	object_desc(player_ptr, o_name, &player_ptr->inventory_list[item_new], 0);
 	msg_format(_("%s(%c)を手に入れた。", "You have %s (%c)."), o_name, index_to_label(item_new));
@@ -1980,7 +2001,7 @@ static void store_process_command(player_type *client_ptr)
 	}
 	case '=':
 	{
-		do_cmd_options();
+		do_cmd_options(client_ptr);
 		(void)combine_and_reorder_home(STORE_HOME);
 		do_cmd_redraw(client_ptr);
 		display_store(client_ptr);

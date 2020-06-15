@@ -7,16 +7,23 @@
  */
 
 #include "process-death.h"
+#include "core/asking-player.h"
 #include "core/stuff-handler.h"
 #include "floor/floor-town.h"
+#include "floor/floor.h"
 #include "inventory/player-inventory.h"
+#include "io/input-key-acceptor.h"
 #include "object/item-use-flags.h"
-#include "object/object-appraiser.h"
+#include "perception/object-perception.h"
 #include "object/object-flavor.h"
-#include "object/object2.h"
 #include "store/store-util.h"
 #include "store/store.h"
 #include "term/gameterm.h"
+#include "term/screen-processor.h"
+#include "util/buffer-shaper.h"
+#include "util/int-char-converter.h"
+#include "util/string-processor.h"
+#include "view/display-messages.h"
 #include "world/world.h"
 
 #define GRAVE_LINE_WIDTH 31
@@ -68,7 +75,7 @@ static void show_basic_params(player_type *dead_ptr, char *buf)
  */
 static int show_killing_monster(player_type *dead_ptr, char *buf, char *tomb_message, size_t tomb_message_size)
 {
-	roff_to_buf(dead_ptr->died_from, GRAVE_LINE_WIDTH + 1, tomb_message, tomb_message_size);
+	shape_buffer(dead_ptr->died_from, GRAVE_LINE_WIDTH + 1, tomb_message, tomb_message_size);
 	char *t;
 	t = tomb_message + strlen(tomb_message) + 1;
 	if (!*t) return 0;
@@ -80,10 +87,10 @@ static int show_killing_monster(player_type *dead_ptr, char *buf, char *tomb_mes
 		for (t = dummy + strlen(dummy) - 2; iskanji(*(t - 1)); t--) /* Loop */;
 		strcpy(t, "…");
 	}
-	else if (my_strstr(tomb_message, "『") && suffix(dummy, "』"))
+	else if (angband_strstr(tomb_message, "『") && suffix(dummy, "』"))
 	{
 		char dummy2[80];
-		char *name_head = my_strstr(tomb_message, "『");
+		char *name_head = angband_strstr(tomb_message, "『");
 		sprintf(dummy2, "%s%s", name_head, dummy);
 		if (strlen(dummy2) <= GRAVE_LINE_WIDTH)
 		{
@@ -91,10 +98,10 @@ static int show_killing_monster(player_type *dead_ptr, char *buf, char *tomb_mes
 			*name_head = '\0';
 		}
 	}
-	else if (my_strstr(tomb_message, "「") && suffix(dummy, "」"))
+	else if (angband_strstr(tomb_message, "「") && suffix(dummy, "」"))
 	{
 		char dummy2[80];
-		char *name_head = my_strstr(tomb_message, "「");
+		char *name_head = angband_strstr(tomb_message, "「");
 		sprintf(dummy2, "%s%s", name_head, dummy);
 		if (strlen(dummy2) <= GRAVE_LINE_WIDTH)
 		{
@@ -199,7 +206,7 @@ static void show_tomb_detail(player_type *dead_ptr, char *buf)
 	center_string(buf, tomb_message);
 	put_str(buf, 14, 11);
 
-	roff_to_buf(format("by %s.", dead_ptr->died_from), GRAVE_LINE_WIDTH + 1, tomb_message, sizeof(tomb_message));
+	shape_buffer(format("by %s.", dead_ptr->died_from), GRAVE_LINE_WIDTH + 1, tomb_message, sizeof(tomb_message));
 	center_string(buf, tomb_message);
 	char *t;
 	put_str(buf, 15, 11);

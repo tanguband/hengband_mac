@@ -1,5 +1,4 @@
 ﻿/*!
- *  @file cmd1.c
  *  @brief プレイヤーのコマンド処理1 / Movement commands (part 1)
  *  @date 2014/01/02
  *  @author
@@ -140,43 +139,66 @@
  */
 
 #include "player/player-move.h"
+#include "art-definition/art-bow-types.h"
+#include "art-definition/art-sword-types.h"
 #include "autopick/autopick.h"
 #include "cmd-action/cmd-attack.h"
 #include "cmd/cmd-basic.h"
+#include "core/asking-player.h"
 #include "core/special-internal-keys.h"
 #include "core/stuff-handler.h"
 #include "dungeon/dungeon.h"
 #include "dungeon/quest.h"
 #include "effect/effect-characteristics.h"
+#include "floor/floor-object.h"
+#include "game-option/auto-destruction-options.h"
+#include "game-option/disturbance-options.h"
+#include "game-option/input-options.h"
+#include "game-option/map-screen-options.h"
+#include "game-option/play-record-options.h"
+#include "game-option/special-options.h"
+#include "game-option/text-display-options.h"
 #include "grid/feature.h"
 #include "grid/grid.h"
 #include "grid/trap.h"
+#include "inventory/inventory-object.h"
 #include "inventory/player-inventory.h"
+#include "io/input-key-requester.h"
 #include "io/targeting.h"
+#include "locale/vowel-checker.h"
 #include "main/sound-definitions-table.h"
+#include "main/sound-of-music.h"
+#include "monster-race/race-flags-resistance.h"
+#include "monster-race/race-flags1.h"
+#include "monster-race/race-flags2.h"
+#include "monster-race/race-flags7.h"
+#include "monster-race/race-flags8.h"
+#include "monster/monster-describer.h"
+#include "monster/monster-info.h"
 #include "monster/monster-status.h"
-#include "monster/monster.h"
+#include "monster/monster-update.h"
 #include "mspell/monster-spell.h"
-#include "object/artifact.h"
-#include "object/object-appraiser.h"
+#include "object-enchant/special-object-flags.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
 #include "object/object-mark-types.h"
-#include "object/object2.h"
-#include "object/special-object-flags.h"
+#include "object/object-info.h"
 #include "object/warning.h"
+#include "perception/object-perception.h"
 #include "player/player-class.h"
 #include "player/player-effects.h"
-#include "player/player-personalities-table.h"
-#include "player/player-races-table.h"
+#include "player/player-personalities-types.h"
+#include "player/player-race-types.h"
 #include "player/player-status.h"
-#include "realm/realm-song.h"
+#include "realm/realm-song-numbers.h"
+#include "spell-kind/spells-floor.h"
 #include "spell/process-effect.h"
-#include "spell/spells-floor.h"
-#include "spell/spells-type.h"
+#include "spell/spell-types.h"
 #include "spell/spells3.h"
-#include "util/util.h"
+#include "term/screen-processor.h"
+#include "util/bit-flags-calculator.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
 #include "world/world.h"
 
 travel_type travel;
@@ -290,7 +312,7 @@ void py_pickup_aux(player_type *owner_ptr, OBJECT_IDX o_idx)
 #endif
 
 	/* Carry the object */
-	INVENTORY_IDX slot = inven_carry(owner_ptr, o_ptr);
+	INVENTORY_IDX slot = store_item_to_inventory(owner_ptr, o_ptr);
 
 	/* Get the object again */
 	o_ptr = &owner_ptr->inventory_list[slot];
@@ -414,7 +436,7 @@ void carry(player_type *creature_ptr, bool pickup)
 			continue;
 		}
 		
-		if (!inven_carry_okay(o_ptr))
+		if (!check_store_item_to_inventory(o_ptr))
 		{
 			msg_format(_("ザックには%sを入れる隙間がない。", "You have no room for %s."), o_name);
 			continue;
@@ -1031,7 +1053,7 @@ void move_player(player_type *creature_ptr, DIRECTION dir, bool do_pickup, bool 
 			can_move = FALSE;
 			disturb(creature_ptr, FALSE, TRUE);
 		}
-		else if (MON_MONFEAR(riding_m_ptr))
+		else if (monster_fear_remaining(riding_m_ptr))
 		{
 			GAME_TEXT steed_name[MAX_NLEN];
 			monster_desc(creature_ptr, steed_name, riding_m_ptr, 0);
@@ -1076,7 +1098,7 @@ void move_player(player_type *creature_ptr, DIRECTION dir, bool do_pickup, bool 
 			disturb(creature_ptr, FALSE, TRUE);
 		}
 
-		if (can_move && MON_STUNNED(riding_m_ptr) && one_in_(2))
+		if (can_move && monster_stunned_remaining(riding_m_ptr) && one_in_(2))
 		{
 			GAME_TEXT steed_name[MAX_NLEN];
 			monster_desc(creature_ptr, steed_name, riding_m_ptr, 0);

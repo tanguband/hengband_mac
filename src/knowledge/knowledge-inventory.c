@@ -8,15 +8,18 @@
 #include "core/show-file.h"
 #include "floor/floor-town.h"
 #include "io-dump/dump-util.h"
-#include "object/object-appraiser.h"
+#include "object-enchant/special-object-flags.h"
+#include "object-enchant/tr-types.h"
+#include "object/object-flags.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
-#include "object/special-object-flags.h"
-#include "object/sv-amulet-types.h"
-#include "object/sv-protector-types.h"
-#include "object/sv-ring-types.h"
-#include "object/tr-types.h"
+#include "perception/object-perception.h"
 #include "store/store-util.h"
+#include "sv-definition/sv-amulet-types.h"
+#include "sv-definition/sv-protector-types.h"
+#include "sv-definition/sv-ring-types.h"
+#include "util/angband-files.h"
+#include "util/bit-flags-calculator.h"
 
 static concptr inven_res_label = _(
 	"                               酸電火冷毒光闇破轟獄因沌劣 盲怖乱痺透命感消復浮",
@@ -312,7 +315,7 @@ void do_cmd_knowledge_inventory(player_type *creature_ptr)
 		show_home_equipment_resistances(creature_ptr, tval, &label_number, fff);
 	}
 
-	my_fclose(fff);
+	angband_fclose(fff);
 	(void)show_file(creature_ptr, TRUE, file_name, _("*鑑定*済み武器/防具の耐性リスト", "Resistances of *identified* equipment"), 0, 0);
 	fd_kill(file_name);
 }

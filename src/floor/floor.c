@@ -5,17 +5,26 @@
 #include "effect/spells-effect-util.h"
 #include "floor/floor-generate.h"
 #include "floor/floor-object.h"
+#include "game-option/birth-options.h"
+#include "game-option/cheat-options.h"
+#include "game-option/map-screen-options.h"
 #include "grid/grid.h"
 #include "grid/trap.h"
-#include "object/artifact.h"
-#include "object/object-appraiser.h"
+#include "monster-floor/monster-generator.h"
+#include "monster-floor/monster-remover.h"
+#include "monster/monster-update.h"
+#include "monster-floor/place-monster-types.h"
+#include "object-enchant/artifact.h"
+#include "object-enchant/special-object-flags.h"
+#include "object/object-generator.h"
 #include "object/object-hook.h"
 #include "object/object-kind.h"
-#include "object/object1.h"
-#include "object/object2.h"
-#include "object/special-object-flags.h"
+#include "perception/object-perception.h"
 #include "player/player-effects.h"
 #include "room/rooms.h"
+#include "util/bit-flags-calculator.h"
+#include "view/display-messages.h"
+#include "world/world-object.h"
 #include "world/world.h"
 
 /*
@@ -1138,7 +1147,7 @@ void vault_objects(player_type *player_ptr, POSITION y, POSITION x, int num)
  * by "update_view_los()", and very different from the one used by "los()".
  * </pre>
  */
-sint project_path(player_type *player_ptr, u16b *gp, POSITION range, POSITION y1, POSITION x1, POSITION y2, POSITION x2, BIT_FLAGS flg)
+int project_path(player_type *player_ptr, u16b *gp, POSITION range, POSITION y1, POSITION x1, POSITION y2, POSITION x2, BIT_FLAGS flg)
 {
 	if ((x1 == x2) && (y1 == y2)) return 0;
 

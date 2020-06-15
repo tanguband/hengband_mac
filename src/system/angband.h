@@ -31,16 +31,13 @@
 #include "term/z-form.h"
 #include "term/z-rand.h"
 #include "term/z-term.h"
-
+#include "locale/language-switcher.h"
 
 /*
  * Include the "Angband" configuration header
  */
 #include "system/gamevalue.h"
-#include "cmd-io/cmd-gameoption.h"
-
-#include "monster/monster.h"
-#include "monster/monster-race.h"
+#include "monster-race/monster-race.h"
 #include "player/player-status.h"
 
 

@@ -8,11 +8,12 @@
  * So when adding a function, please consider whether you can extract the common part to another file.
  */
 
-#include "system/angband.h"
 #include "mspell/mspell-particularity.h"
+#include "mind/drs-types.h"
+#include "monster/monster-update.h"
 #include "mspell/mspell-type.h"
 #include "mspell/monster-spell.h"
-#include "spell/spells-type.h"
+#include "spell/spell-types.h"
 #include "mspell/mspell-util.h"
 #include "mspell/mspell-damage-calculator.h"
 

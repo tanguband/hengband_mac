@@ -1,6 +1,7 @@
 ﻿#include "io-dump/dump-remover.h"
 #include "io-dump/dump-util.h"
 #include "io/read-pref-file.h"
+#include "util/angband-files.h"
 
 /*!
  * @brief prefファイルを選択して処理する /
@@ -24,7 +25,7 @@ void remove_auto_dump(concptr orig_file, concptr auto_dump_mark)
 	size_t mark_len = strlen(footer_mark_str);
 
 	FILE *orig_fff;
-	orig_fff = my_fopen(orig_file, "r");
+	orig_fff = angband_fopen(orig_file, "r");
 	if (!orig_fff) return;
 
 	FILE *tmp_fff = NULL;
@@ -33,7 +34,7 @@ void remove_auto_dump(concptr orig_file, concptr auto_dump_mark)
 
 	while (TRUE)
 	{
-		if (my_fgets(orig_fff, buf, sizeof(buf)))
+		if (angband_fgets(orig_fff, buf, sizeof(buf)))
 		{
 			if (between_mark)
 			{
@@ -80,18 +81,18 @@ void remove_auto_dump(concptr orig_file, concptr auto_dump_mark)
 		line_num++;
 	}
 
-	my_fclose(orig_fff);
-	my_fclose(tmp_fff);
+	angband_fclose(orig_fff);
+	angband_fclose(tmp_fff);
 
 	if (changed)
 	{
-		tmp_fff = my_fopen(tmp_file, "r");
-		orig_fff = my_fopen(orig_file, "w");
-		while (!my_fgets(tmp_fff, buf, sizeof(buf)))
+		tmp_fff = angband_fopen(tmp_file, "r");
+		orig_fff = angband_fopen(orig_file, "w");
+		while (!angband_fgets(tmp_fff, buf, sizeof(buf)))
 			fprintf(orig_fff, "%s\n", buf);
 
-		my_fclose(orig_fff);
-		my_fclose(tmp_fff);
+		angband_fclose(orig_fff);
+		angband_fclose(tmp_fff);
 	}
 
 	fd_kill(tmp_file);

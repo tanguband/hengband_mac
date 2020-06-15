@@ -1,13 +1,18 @@
 ﻿#include "birth/game-play-initializer.h"
-#include "dungeon/dungeon-file.h"
+#include "info-reader/fixed-map-parser.h"
 #include "dungeon/dungeon.h"
 #include "dungeon/quest.h"
+#include "floor/floor.h"
+#include "game-option/birth-options.h"
+#include "game-option/cheat-options.h"
 #include "market/arena.h"
-#include "object/artifact.h"
+#include "monster-race/race-flags1.h"
+#include "monster-race/race-flags7.h"
+#include "object-enchant/artifact.h"
+#include "object/object-generator.h"
 #include "object/object-kind.h"
-#include "object/object2.h"
 #include "pet/pet-util.h"
-#include "player/player-races-table.h"
+#include "player/player-race-types.h"
 #include "system/system-variables.h"
 #include "world/world.h"
 
@@ -176,7 +181,7 @@ void init_dungeon_quests(player_type *creature_ptr)
     init_flags = INIT_ASSIGN;
     floor_type *floor_ptr = creature_ptr->current_floor_ptr;
     floor_ptr->inside_quest = MIN_RANDOM_QUEST;
-    process_dungeon_file(creature_ptr, "q_info.txt", 0, 0, 0, 0);
+    parse_fixed_map(creature_ptr, "q_info.txt", 0, 0, 0, 0);
     floor_ptr->inside_quest = 0;
     for (int i = MIN_RANDOM_QUEST + number_of_quests - 1; i >= MIN_RANDOM_QUEST; i--) {
         quest_type *q_ptr = &quest[i];
@@ -190,11 +195,11 @@ void init_dungeon_quests(player_type *creature_ptr)
 
     init_flags = INIT_ASSIGN;
     floor_ptr->inside_quest = QUEST_OBERON;
-    process_dungeon_file(creature_ptr, "q_info.txt", 0, 0, 0, 0);
+    parse_fixed_map(creature_ptr, "q_info.txt", 0, 0, 0, 0);
     quest[QUEST_OBERON].status = QUEST_STATUS_TAKEN;
 
     floor_ptr->inside_quest = QUEST_SERPENT;
-    process_dungeon_file(creature_ptr, "q_info.txt", 0, 0, 0, 0);
+    parse_fixed_map(creature_ptr, "q_info.txt", 0, 0, 0, 0);
     quest[QUEST_SERPENT].status = QUEST_STATUS_TAKEN;
     floor_ptr->inside_quest = 0;
 }

@@ -9,13 +9,15 @@
 #include "autopick/autopick-finder.h"
 #include "autopick/autopick-methods-table.h"
 #include "autopick/autopick-reader-writer.h"
+#include "core/asking-player.h"
 #include "io/files-util.h"
-#include "object/item-feeling.h"
-#include "object/object-appraiser.h"
+#include "object-enchant/item-feeling.h"
+#include "perception/object-perception.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
-#include "object/special-object-flags.h"
-#include "util/util.h"
+#include "object-enchant/special-object-flags.h"
+#include "util/angband-files.h"
+#include "view/display-messages.h"
 
 static const char autoregister_header[] = "?:$AUTOREGISTER";
 
@@ -27,12 +29,12 @@ static bool clear_auto_register(player_type *player_ptr)
 	char pref_file[1024];
 	path_build(pref_file, sizeof(pref_file), ANGBAND_DIR_USER, pickpref_filename(player_ptr, PT_WITH_PNAME));
 	FILE *pref_fff;
-	pref_fff = my_fopen(pref_file, "r");
+	pref_fff = angband_fopen(pref_file, "r");
 
 	if (!pref_fff)
 	{
 		path_build(pref_file, sizeof(pref_file), ANGBAND_DIR_USER, pickpref_filename(player_ptr, PT_DEFAULT));
-		pref_fff = my_fopen(pref_file, "r");
+		pref_fff = angband_fopen(pref_file, "r");
 	}
 
 	if (!pref_fff)
@@ -42,7 +44,7 @@ static bool clear_auto_register(player_type *player_ptr)
 
 	char tmp_file[1024];
 	FILE *tmp_fff;
-	tmp_fff = my_fopen_temp(tmp_file, sizeof(tmp_file));
+	tmp_fff = angband_fopen_temp(tmp_file, sizeof(tmp_file));
 	if (!tmp_fff)
 	{
 		fclose(pref_fff);
@@ -56,7 +58,7 @@ static bool clear_auto_register(player_type *player_ptr)
 	char buf[1024];
 	while (TRUE)
 	{
-		if (my_fgets(pref_fff, buf, sizeof(buf))) break;
+		if (angband_fgets(pref_fff, buf, sizeof(buf))) break;
 
 		if (autoregister)
 		{
@@ -74,8 +76,8 @@ static bool clear_auto_register(player_type *player_ptr)
 		}
 	}
 
-	my_fclose(pref_fff);
-	my_fclose(tmp_fff);
+	angband_fclose(pref_fff);
+	angband_fclose(tmp_fff);
 
 	bool okay = TRUE;
 	if (num)
@@ -96,14 +98,14 @@ static bool clear_auto_register(player_type *player_ptr)
 
 	if (autoregister)
 	{
-		tmp_fff = my_fopen(tmp_file, "r");
-		pref_fff = my_fopen(pref_file, "w");
+		tmp_fff = angband_fopen(tmp_file, "r");
+		pref_fff = angband_fopen(pref_file, "w");
 
-		while (!my_fgets(tmp_fff, buf, sizeof(buf)))
+		while (!angband_fgets(tmp_fff, buf, sizeof(buf)))
 			fprintf(pref_fff, "%s\n", buf);
 
-		my_fclose(pref_fff);
-		my_fclose(tmp_fff);
+		angband_fclose(pref_fff);
+		angband_fclose(tmp_fff);
 	}
 
 	fd_kill(tmp_file);
@@ -150,19 +152,19 @@ bool autopick_autoregister(player_type *player_ptr, object_type *o_ptr)
 	char pref_file[1024];
 	FILE *pref_fff;
 	path_build(pref_file, sizeof(pref_file), ANGBAND_DIR_USER, pickpref_filename(player_ptr, PT_WITH_PNAME));
-	pref_fff = my_fopen(pref_file, "r");
+	pref_fff = angband_fopen(pref_file, "r");
 
 	if (!pref_fff)
 	{
 		path_build(pref_file, sizeof(pref_file), ANGBAND_DIR_USER, pickpref_filename(player_ptr, PT_DEFAULT));
-		pref_fff = my_fopen(pref_file, "r");
+		pref_fff = angband_fopen(pref_file, "r");
 	}
 
 	if (pref_fff)
 	{
 		while (TRUE)
 		{
-			if (my_fgets(pref_fff, buf, sizeof(buf)))
+			if (angband_fgets(pref_fff, buf, sizeof(buf)))
 			{
 				player_ptr->autopick_autoregister = FALSE;
 				break;
@@ -186,7 +188,7 @@ bool autopick_autoregister(player_type *player_ptr, object_type *o_ptr)
 		player_ptr->autopick_autoregister = FALSE;
 	}
 
-	pref_fff = my_fopen(pref_file, "a");
+	pref_fff = angband_fopen(pref_file, "a");
 	if (!pref_fff)
 	{
 		msg_format(_("%s を開くことができませんでした。", "Failed to open %s."), pref_file);

@@ -1,13 +1,20 @@
-﻿#include "system/angband.h"
+﻿#include "cmd/cmd-draw.h"
+#include "core/asking-player.h"
 #include "core/stuff-handler.h"
-#include "cmd/cmd-draw.h"
 #include "io/files-util.h"
-#include "term/gameterm.h"
-#include "view/display-main-window.h" // 暫定。後で消す.
+#include "io/input-key-acceptor.h"
+#include "main/sound-of-music.h"
 #include "player/player-effects.h"
-#include "view/display-player.h" // 暫定。後で消す.
+#include "player/player-race-types.h"
 #include "player/process-name.h"
-#include "player/player-races-table.h"
+#include "term/gameterm.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/int-char-converter.h"
+#include "util/string-processor.h"
+#include "view/display-main-window.h" // 暫定。後で消す.
+#include "view/display-messages.h"
+#include "view/display-player.h" // 暫定。後で消す.
 
 /*!
  * @brief 画面を再描画するコマンドのメインルーチン
@@ -175,7 +182,7 @@ void do_cmd_messages(int num_now)
 			if (!shower || !shower[0]) continue;
 
 			concptr str = msg;
-			while ((str = my_strstr(str, shower)) != NULL)
+			while ((str = angband_strstr(str, shower)) != NULL)
 			{
 				int len = strlen(shower);
 				Term_putstr(str - msg, num_lines + 1 - j, len, TERM_YELLOW, shower);
@@ -225,7 +232,7 @@ void do_cmd_messages(int num_now)
 			for (int z = i + 1; z < n; z++)
 			{
 				concptr msg = message_str(z);
-				if (my_strstr(msg, finder_str))
+				if (angband_strstr(msg, finder_str))
 				{
 					i = z;
 					break;

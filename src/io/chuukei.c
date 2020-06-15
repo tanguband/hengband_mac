@@ -6,17 +6,17 @@
     2014 Deskull rearranged comment for Doxygen.
  */
 
-#include "system/angband.h"
-
-#include "io/signal-handlers.h"
-#include "io/files-util.h"
-#include "util/util.h"
-#include "term/gameterm.h"
+#include "io/chuukei.h"
 #include "cmd-io/cmd-dump.h"
 #include "cmd/cmd-draw.h"
+#include "core/asking-player.h"
+#include "io/files-util.h"
 #include "io/inet.h"
+#include "io/signal-handlers.h"
 #include "locale/japanese.h"
-#include "io/chuukei.h"
+#include "term/gameterm.h"
+#include "util/angband-files.h"
+#include "view/display-messages.h"
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -256,7 +256,7 @@ static int read_chuukei_prf(concptr prf_name)
 	FILE *fp;
 
 	path_build(buf, sizeof(buf), ANGBAND_DIR_XTRA, prf_name);
-	fp = my_fopen(buf, "r");
+	fp = angband_fopen(buf, "r");
 
 	if (!fp) return -1;
 
@@ -265,7 +265,7 @@ static int read_chuukei_prf(concptr prf_name)
 	server_name[0] = 0;
 	browse_delay = DEFAULT_DELAY;
 
-	while (0 == my_fgets(fp, buf, sizeof(buf)))
+	while (0 == angband_fgets(fp, buf, sizeof(buf)))
 	{
 		/* サーバ名 */
 		if (!strncmp(buf, "server:", 7))
@@ -287,7 +287,7 @@ static int read_chuukei_prf(concptr prf_name)
 		}
 	}
 
-	my_fclose(fp);
+	angband_fclose(fp);
 
 	/* prfファイルが完全でない */
 	if (server_port == -1 || server_name[0] == 0) return -1;

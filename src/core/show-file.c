@@ -1,7 +1,16 @@
 ﻿#include "core/show-file.h"
+#include "core/asking-player.h"
 #include "io/files-util.h"
+#include "io/input-key-acceptor.h"
+#include "main/sound-of-music.h"
 #include "system/angband-version.h"
 #include "term/gameterm.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/angband-files.h"
+#include "util/int-char-converter.h"
+#include "util/string-processor.h"
+#include "view/display-messages.h"
 
 /*!
  * todo 表示とそれ以外を分割する
@@ -44,11 +53,11 @@ static void show_file_aux_line(concptr str, int cy, concptr shower)
 		concptr ptr;
 		if (shower)
 		{
-			ptr = my_strstr(&lcstr[i], shower);
+			ptr = angband_strstr(&lcstr[i], shower);
 			if (ptr) showercol = ptr - &lcstr[i];
 		}
 
-		ptr = in_tag ? my_strchr(&str[i], in_tag) : my_strstr(&str[i], tag_str);
+		ptr = in_tag ? angband_strchr(&str[i], in_tag) : angband_strstr(&str[i], tag_str);
 		if (ptr) bracketcol = ptr - &str[i];
 		if (bracketcol < endcol) endcol = bracketcol;
 		if (showercol < endcol) endcol = showercol;
@@ -155,21 +164,21 @@ bool show_file(player_type *creature_ptr, bool show_version, concptr name, concp
 	{
 		strcpy(caption, what);
 		strcpy(path, name);
-		fff = my_fopen(path, "r");
+		fff = angband_fopen(path, "r");
 	}
 
 	if (!fff)
 	{
 		sprintf(caption, _("ヘルプ・ファイル'%s'", "Help file '%s'"), name);
 		path_build(path, sizeof(path), ANGBAND_DIR_HELP, name);
-		fff = my_fopen(path, "r");
+		fff = angband_fopen(path, "r");
 	}
 
 	if (!fff)
 	{
 		sprintf(caption, _("スポイラー・ファイル'%s'", "Info file '%s'"), name);
 		path_build(path, sizeof(path), ANGBAND_DIR_INFO, name);
-		fff = my_fopen(path, "r");
+		fff = angband_fopen(path, "r");
 	}
 
 	if (!fff)
@@ -181,7 +190,7 @@ bool show_file(player_type *creature_ptr, bool show_version, concptr name, concp
 				path[i] = PATH_SEP[0];
 
 		sprintf(caption, _("スポイラー・ファイル'%s'", "Info file '%s'"), name);
-		fff = my_fopen(path, "r");
+		fff = angband_fopen(path, "r");
 	}
 
 	if (!fff)
@@ -202,7 +211,7 @@ bool show_file(player_type *creature_ptr, bool show_version, concptr name, concp
 	while (TRUE)
 	{
 		char *str = buf;
-		if (my_fgets(fff, buf, sizeof(buf))) break;
+		if (angband_fgets(fff, buf, sizeof(buf))) break;
 		if (!prefix(str, "***** "))
 		{
 			next++;
@@ -248,8 +257,8 @@ bool show_file(player_type *creature_ptr, bool show_version, concptr name, concp
 
 		if (next > line)
 		{
-			my_fclose(fff);
-			fff = my_fopen(path, "r");
+			angband_fclose(fff);
+			fff = angband_fopen(path, "r");
 			if (!fff) return FALSE;
 
 			next = 0;
@@ -257,7 +266,7 @@ bool show_file(player_type *creature_ptr, bool show_version, concptr name, concp
 
 		while (next < line)
 		{
-			if (my_fgets(fff, buf, sizeof(buf))) break;
+			if (angband_fgets(fff, buf, sizeof(buf))) break;
 			if (prefix(buf, "***** ")) continue;
 			next++;
 		}
@@ -268,7 +277,7 @@ bool show_file(player_type *creature_ptr, bool show_version, concptr name, concp
 		{
 			concptr str = buf;
 			if (!i) line = next;
-			if (my_fgets(fff, buf, sizeof(buf))) break;
+			if (angband_fgets(fff, buf, sizeof(buf))) break;
 			if (prefix(buf, "***** ")) continue;
 			next++;
 			if (find && !i)
@@ -276,7 +285,7 @@ bool show_file(player_type *creature_ptr, bool show_version, concptr name, concp
 				char lc_buf[1024];
 				strcpy(lc_buf, str);
 				str_tolower(lc_buf);
-				if (!my_strstr(lc_buf, find)) continue;
+				if (!angband_strstr(lc_buf, find)) continue;
 			}
 
 			find = NULL;
@@ -461,13 +470,13 @@ bool show_file(player_type *creature_ptr, bool show_version, concptr name, concp
 			strcpy(xtmp, "");
 
 			if (!get_string(_("ファイル名: ", "File name: "), xtmp, 80)) continue;
-			my_fclose(fff);
+			angband_fclose(fff);
 			path_build(buff, sizeof(buff), ANGBAND_DIR_USER, xtmp);
 
 			/* Hack -- Re-Open the file */
-			fff = my_fopen(path, "r");
+			fff = angband_fopen(path, "r");
 
-			ffp = my_fopen(buff, "w");
+			ffp = angband_fopen(buff, "w");
 
 			if (!(fff && ffp))
 			{
@@ -477,14 +486,14 @@ bool show_file(player_type *creature_ptr, bool show_version, concptr name, concp
 			}
 
 			sprintf(xtmp, "%s: %s", creature_ptr->name, what ? what : caption);
-			my_fputs(ffp, xtmp, 80);
-			my_fputs(ffp, "\n", 80);
+			angband_fputs(ffp, xtmp, 80);
+			angband_fputs(ffp, "\n", 80);
 
-			while (!my_fgets(fff, buff, sizeof(buff)))
-				my_fputs(ffp, buff, 80);
-			my_fclose(fff);
-			my_fclose(ffp);
-			fff = my_fopen(path, "r");
+			while (!angband_fgets(fff, buff, sizeof(buff)))
+				angband_fputs(ffp, buff, 80);
+			angband_fclose(fff);
+			angband_fclose(ffp);
+			fff = angband_fopen(path, "r");
 		}
 
 		if ((skey == ESCAPE) || (skey == '<')) break;
@@ -494,6 +503,22 @@ bool show_file(player_type *creature_ptr, bool show_version, concptr name, concp
 		if (skey == 'q') break;
 	}
 
-	my_fclose(fff);
+	angband_fclose(fff);
 	return (skey != 'q');
+}
+
+/*
+ * Convert string to lower case
+ */
+void str_tolower(char *str)
+{
+    for (; *str; str++) {
+#ifdef JP
+        if (iskanji(*str)) {
+            str++;
+            continue;
+        }
+#endif
+        *str = (char)tolower(*str);
+    }
 }

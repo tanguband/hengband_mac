@@ -5,6 +5,14 @@ AUTOMAKE_OPTIONS = foreign subdir-objects nostdinc
 bin_PROGRAMS = hengband
 
 hengband_SOURCES = \
+	art-definition/art-accessory-types.h \
+	art-definition/art-armor-types.h \
+	art-definition/art-bow-types.h \
+	art-definition/art-protector-types.h \
+	art-definition/art-sword-types.h \
+	art-definition/art-weapon-types.h \
+	art-definition/random-art-effects.h \
+	\
 	autopick/autopick.c autopick/autopick.h \
 	autopick/autopick-commands-table.h autopick/autopick-dirty-flags.h \
 	autopick/autopick-editor-table.h autopick/autopick-flags-table.h \
@@ -46,10 +54,8 @@ hengband_SOURCES = \
 	birth/auto-roller.c birth/auto-roller.h \
 	birth/birth-wizard.c birth/birth-wizard.h \
 	\
-	cmd/cmd-building.c cmd/cmd-building.h \
 	cmd/cmd-basic.c cmd/cmd-basic.h \
 	cmd/cmd-draw.c cmd/cmd-draw.h \
-	cmd/cmd-inn.c cmd/cmd-inn.h \
 	cmd/cmd-visuals.c cmd/cmd-visuals.h \
 	\
 	cmd-action/cmd-attack.c cmd-action/cmd-attack.h \
@@ -58,18 +64,23 @@ hengband_SOURCES = \
 	cmd-action/cmd-pet.c cmd-action/cmd-pet.h \
 	cmd-action/cmd-spell.c cmd-action/cmd-spell.h \
 	\
+	cmd-building/cmd-building.c cmd-building/cmd-building.h \
+	cmd-building/cmd-inn.c cmd-building/cmd-inn.h \
+	\
 	cmd-io/cmd-autopick.c cmd-io/cmd-autopick.h \
 	cmd-io/cmd-diary.c cmd-io/cmd-diary.h \
 	cmd-io/cmd-dump.c cmd-io/cmd-dump.h \
 	cmd-io/cmd-gameoption.c cmd-io/cmd-gameoption.h \
 	cmd-io/cmd-help.c cmd-io/cmd-help.h \
 	cmd-io/cmd-knowledge.c cmd-io/cmd-knowledge.h \
+	cmd-io/cmd-lore.c cmd-io/cmd-lore.h \
 	cmd-io/cmd-macro.c cmd-io/cmd-macro.h \
 	cmd-io/cmd-menu-content-table.c cmd-io/cmd-menu-content-table.h \
 	cmd-io/cmd-process-screen.c cmd-io/cmd-process-screen.h \
 	cmd-io/cmd-save.c cmd-io/cmd-save.h \
 	cmd-io/diary-subtitle-table.c cmd-io/diary-subtitle-table.h \
 	cmd-io/feeling-table.c cmd-io/feeling-table.h \
+	cmd-io/macro-util.c cmd-io/macro-util.h \
 	\
 	cmd-item/cmd-activate.c cmd-item/cmd-activate.h \
 	cmd-item/cmd-eat.c cmd-item/cmd-eat.h \
@@ -82,52 +93,35 @@ hengband_SOURCES = \
 	cmd-item/cmd-zaprod.c cmd-item/cmd-zaprod.h \
 	cmd-item/cmd-zapwand.c cmd-item/cmd-zapwand.h \
 	\
-	combat/player-attack-util.h \
 	combat/attack-power-table.c combat/attack-power-table.h \
 	combat/aura-counterattack.c combat/aura-counterattack.h \
 	combat/hallucination-attacks-table.c combat/hallucination-attacks-table.h \
-	combat/monster-attack-types.c combat/monster-attack-types.h \
 	combat/martial-arts-table.c combat/martial-arts-table.h \
-	combat/insults-moans.c combat/insults-moans.h \
-	combat/monster-attack-effect.h \
 	combat/attack-accuracy.c combat/attack-accuracy.h \
 	combat/slaying.c combat/slaying.h \
 	combat/combat-options-type.h \
 	combat/attack-criticality.c combat/attack-criticality.h \
-	combat/player-attack.c combat/player-attack.h \
-	combat/blood-sucking-processor.c combat/blood-sucking-processor.h \
 	combat/vorpal-weapon.c combat/vorpal-weapon.h \
-	combat/attack-chaos-effect.c combat/attack-chaos-effect.h \
-	combat/monster-attack-player.c combat/monster-attack-player.h \
-	combat/monster-attack-monster.c combat/monster-attack-monster.h \
-	combat/melee-postprocess.c combat/melee-postprocess.h \
-	combat/melee-switcher.c combat/melee-switcher.h \
-	combat/melee-util.c combat/melee-util.h \
-	combat/monster-attack-util.c combat/monster-attack-util.h \
-	combat/monster-attack-describer.c combat/monster-attack-describer.h \
-	combat/monster-eating.c combat/monster-eating.h \
-	combat/monster-attack-status.c combat/monster-attack-status.h \
-	combat/monster-attack-switcher.c combat/monster-attack-switcher.h \
 	combat/shoot.c combat/shoot.h \
-	combat/snipe.c combat/snipe.h \
 	\
-	core/game-play.c core/game-play.h \
-	core/show-file.c core/show-file.h \
-	core/stuff-handler.c core/stuff-handler.h \
-	core/special-internal-keys.h \
-	core/output-updater.c core/output-updater.h \
+	core/asking-player.c core/asking-player.h \
 	core/game-closer.c core/game-closer.h \
-	core/turn-compensator.c core/turn-compensator.h \
-	core/hp-mp-regenerator.c core/hp-mp-regenerator.h \
+	core/game-play.c core/game-play.h \
 	core/hp-mp-processor.c core/hp-mp-processor.h \
+	core/hp-mp-regenerator.c core/hp-mp-regenerator.h \
 	core/magic-effects-timeout-reducer.c core/magic-effects-timeout-reducer.h \
+	core/output-updater.c core/output-updater.h \
 	core/player-processor.c core/player-processor.h \
 	core/scores.c core/scores.h \
-	core/sort.c core/sort.h \
+	core/show-file.c core/show-file.h \
+	core/special-internal-keys.h \
+	core/speed-table.c core/speed-table.h \
+	core/stuff-handler.c core/stuff-handler.h \
+	core/turn-compensator.c core/turn-compensator.h \
+	core/visuals-reseter.c core/visuals-reseter.h \
 	\
 	dungeon/dungeon.c dungeon/dungeon.h \
 	dungeon/dungeon-processor.c dungeon/dungeon-processor.h \
-	dungeon/dungeon-file.c dungeon/dungeon-file.h \
 	dungeon/quest.h dungeon/quest.c \
 	\
 	effect/effect-feature.c effect/effect-feature.h \
@@ -139,7 +133,6 @@ hengband_SOURCES = \
 	effect/effect-monster-util.c effect/effect-monster-util.h \
 	effect/effect-monster-resist-hurt.c effect/effect-monster-resist-hurt.h \
 	effect/effect-monster-psi.c effect/effect-monster-psi.h \
-	effect/effect-monster-domination.c effect/effect-monster-domination.h \
 	effect/effect-monster-oldies.c effect/effect-monster-oldies.h \
 	effect/effect-monster-charm.c effect/effect-monster-charm.h \
 	effect/effect-monster-lite-dark.c effect/effect-monster-lite-dark.h \
@@ -154,19 +147,55 @@ hengband_SOURCES = \
 	effect/effect-player-switcher.c effect/effect-player-switcher.h \
 	effect/effect-characteristics.h \
 	\
+	floor/fixed-map-generator.c floor/fixed-map-generator.h \
 	floor/floor.c floor/floor.h \
 	floor/floor-events.c floor/floor-events.h \
 	floor/floor-generate.c floor/floor-generate.h \
 	floor/floor-object.c floor/floor-object.h \
-	floor/geometry.c floor/geometry.h \
-	floor/pattern-walk.c floor/pattern-walk.h \
 	floor/floor-save.h floor/floor-save.c \
 	floor/floor-streams.c floor/floor-streams.h \
 	floor/floor-town.h floor/floor-town.c \
+	floor/geometry.c floor/geometry.h \
+	floor/pattern-walk.c floor/pattern-walk.h \
 	floor/wild.h floor/wild.c \
+	\
+	game-option/auto-destruction-option.c game-option/auto-destruction-option.h \
+	game-option/birth-options.c game-option/birth-options.h \
+	game-option/cheat-options.c game-option/cheat-options.h \
+	game-option/cheat-types.h \
+	game-option/disturbance-options.c game-option/disturbance-options.h \
+	game-option/game-play-options.c game-option/game-play-options.h \
+	game-option/input-options.c game-option/input-options.h \
+	game-option/keymap-directory-getter.c game-option/keymap-directory-getter.h \
+	game-option/map-screen-options.c game-option/map-screen-options.h \
+	game-option/option-flags.c game-option/option-flags.h \
+	game-option/option-types-table.c game-option/option-types-table.h \
+	game-option/play-record-options.c game-option/play-record-options.h \
+	game-option/runtime-arguments.c game-option/runtime-arguments.h \
+	game-option/special-options.c game-option/special-options.h \
+	game-option/text-display-options.c game-option/text-display-options.h \
 	\
 	grid/feature.c grid/feature.h \
 	grid/grid.c grid/grid.h grid/trap.c grid/trap.h \
+	\
+	info-reader/artifact-reader.c info-reader/artifact-reader.h \
+	info-reader/dungeon-info-tokens-table.c info-reader/dungeon-info-tokens-table.h \
+	info-reader/dungeon-reader.c info-reader/dungeon-reader.h \
+	info-reader/ego-reader.c info-reader/ego-reader.h \
+	info-reader/feature-info-tokens-table.c info-reader/feature-info-tokens-table.h \
+	info-reader/feature-reader.c info-reader/feature-reader.h \
+	info-reader/fixed-map-parser.c info-reader/fixed-map-parser.h \
+	info-reader/general-parser.c info-reader/general-parser.h \
+	info-reader/info-reader-util.c info-reader/info-reader-util.h \
+	info-reader/kind-info-tokens-table.c info-reader/kind-info-tokens-table.h \
+	info-reader/kind-reader.c info-reader/kind-reader.h \
+	info-reader/magic-reader.c info-reader/magic-reader.h \
+	info-reader/parse-error-types.h \
+	info-reader/race-info-tokens-table.c info-reader/race-info-tokens-table.h \
+	info-reader/race-reader.c info-reader/race-reader.h \
+	info-reader/random-grid-effect-types.h \
+	info-reader/skill-reader.c info-reader/skill-reader.h \
+	info-reader/vault-reader.c info-reader/vault-reader.h \
 	\
 	inventory/inventory-curse.c inventory/inventory-curse.h \
 	inventory/inventory-damage.c inventory/inventory-damage.h \
@@ -174,26 +203,28 @@ hengband_SOURCES = \
 	inventory/pack-overflow.c inventory/pack-overflow.h \
 	inventory/player-inventory.c inventory/player-inventory.h \
 	inventory/recharge-processor.c inventory/recharge-processor.h \
-	inventory/simple-appraiser.c inventory/simple-appraiser.h \
 	\
+	io/chuukei.c io/chuukei.h \
+	io/command-repeater.c io/command-repeater.h \
+	io/exit-panic.c io/exit-panic.h \
 	io/files-util.c io/files-util.h \
 	io/gf-descriptions.c io/gf-descriptions.h \
+	io/inet.c io/inet.h \
+	io/input-key-acceptor.c io/input-key-acceptor.h \
+	io/input-key-processor.c io/input-key-processor.h \
+	io/input-key-requester.c io/input-key-requester.h \
+	io/interpret-pref-file.c io/interpret-pref-file.h \
+	io/load.c io/load.h \
+	io/mutations-dump.c io/mutations-dump.h \
+	io/pref-file-expressor.c io/pref-file-expressor.h \
+	io/read-pref-file.c io/read-pref-file.h \
+	io/report.c io/report.h \
+	io/save.c io/save.h \
+	io/signal-handlers.c io/signal-handlers.h \
 	io/targeting.c io/targeting.h \
 	io/tokenizer.c io/tokenizer.h \
-	io/interpret-pref-file.c io/interpret-pref-file.h \
-	io/read-pref-file.c io/read-pref-file.h \
-	io/exit-panic.c io/exit-panic.h \
-	io/write-diary.c io/write-diary.h \
-	io/mutations-dump.c io/mutations-dump.h \
-	io/report.c io/report.h \
-	io/signal-handlers.c io/signal-handlers.h \
 	io/uid-checker.c io/uid-checker.h \
-	io/input-key-processor.c io/input-key-processor.h \
-	io/load.c io/load.h \
-	io/save.c io/save.h \
-	io/inet.c io/inet.h \
-	io/chuukei.c io/chuukei.h \
-	io/pref-file-expressor.c io/pref-file-expressor.h \
+	io/write-diary.c io/write-diary.h \
 	\
 	io-dump/character-dump.c io-dump/character-dump.h \
 	io-dump/dump-remover.c io-dump/dump-remover.h \
@@ -215,14 +246,26 @@ hengband_SOURCES = \
 	knowledge/monster-group-table.c knowledge/monster-group-table.h \
 	knowledge/object-group-table.c knowledge/object-group-table.h \
 	\
-	locale/japanese.c locale/japanese.h locale/english.c locale/english.h \
+	locale/english.c locale/english.h \
+	locale/japanese.c locale/japanese.h \
+	locale/language-switcher.h \
+	locale/vowel-checker.c locale/vowel-checker.h \
+	\
+	lore/combat-types-setter.c lore/combat-types-setter.h \
+	lore/lore-calculator.c lore/lore-calculator.h \
+	lore/lore-store.c lore/lore-store.h \
+	lore/lore-util.c lore/lore-util.h \
+	lore/magic-types-setter.c lore/magic-types-setter.h \
+	lore/monster-lore.c lore/monster-lore.h \
 	\
 	main.c main-x11.c main-gcu.c \
 	\
+	main/init.c main/init.h \
 	main/music-definitions-table.c main/music-definitions-table.h \
 	main/sound-definitions-table.c main/sound-definitions-table.h \
+	main/sound-of-music.c main/sound-of-music.h \
 	main/x11-gamma-builder.c main/x11-gamma-builder.h \
-	main/init.c main/init.h \
+	main/x11-type-string.c main/x11-type-string.h \
 	\
 	market/arena-info-table.c market/arena-info-table.h \
 	market/building-util.c market/building-util.h \
@@ -243,33 +286,80 @@ hengband_SOURCES = \
 	market/building-enchanter.c market/building-enchanter.h \
 	market/building-actions-table.h \
 	\
-	mind/mind.c mind/mind.h \
-	mind/racial.c mind/racial.h \
-	mind/racial-samurai.c mind/racial-samurai.h \
-	mind/racial-mirror-master.c mind/racial-mirror-master.h \
-	mind/racial-force-trainer.c mind/racial-force-trainer.h \
-	mind/monk-attack.c mind/monk-attack.h \
-	mind/samurai-slaying.c mind/samurai-slaying.h \
-	mind/surprise-attack.c mind/surprise-attack.h \
+	melee/monster-attack-monster.c melee/monster-attack-monster.h \
+	melee/melee-postprocess.c melee/melee-postprocess.h \
+	melee/melee-switcher.c melee/melee-switcher.h \
+	melee/melee-util.c melee/melee-util.h \
 	\
-	monster/creature.h monster/creature.c \
-	monster/monster.h monster/monster-race.c monster/monster-race.h \
-	monster/monster-util.c monster/monster-util.h \
-	monster/monster-direction.c monster/monster-direction.h \
-	monster/monster-attack.c monster/monster-attack.h \
-	monster/monster-move.c monster/monster-move.h \
-	monster/monster-object.c monster/monster-object.h \
-	monster/monster-runaway.c monster/monster-runaway.h \
-	monster/monster-safety-hiding.c monster/monster-safety-hiding.h \
-	monster/monster-sweep-grid.c monster/monster-sweep-grid.h \
-	monster/monster-update.c monster/monster-update.h \
-	monster/quantum-effect.c monster/quantum-effect.h \
-	monster/monster-race-hook.c monster/monster-race-hook.h \
-	monster/monster-dist-offsets.c monster/monster-dist-offsets.h \
-	monster/monster-process.c monster/monster-process.h \
-	monster/monster-status.c monster/monster-status.h \
-	monster/monster1.c monster/monster2.c \
+	mind/drs-typs.h \
+	mind/mind.c mind/mind.h \
+	mind/mind-cavalry.c mind/mind-cavalry.h \
+	mind/mind-force-trainer.c mind/mind-force-trainer.h \
+	mind/mind-mindcrafter.c mind/mind-mindcrafter.h \
+	mind/mind-mirror-master.c mind/mind-mirror-master.h \
+	mind/mind-ninja.c mind/mind-ninja.h \
+	mind/mind-samurai.c mind/mind-samurai.h \
+	mind/mind-sniper.c mind/mind-sniper.h \
+	mind/mind-warrior.c mind/mind-warrior.h \
+	mind/mind-warrior-mage.c mind/mind-warrior-mage.h \
+	mind/monk-attack.c mind/monk-attack.h \
+	mind/snipe-types.h \
+	mind/racial.c mind/racial.h \
+	mind/racial-android.c mind/racial-android.h \
+	mind/racial-balrog.c mind/racial-balrog.h \
+	mind/racial-draconian.c mind/racial-draconian.h \
+	mind/racial-vampire.c mind/racial-vampire.h \
+	\
 	monster/horror-descriptions.c monster/horror-descriptions.h \
+	monster/monster-compaction.c monster/monster-compaction.h \
+	monster/monster-describer.c monster/monster-describer.h \
+	monster/monster-description-types.h \
+	monster/monster-flag-types.h \
+	monster/monster-info.c monster/monster-info.h \
+	monster/monster-list.c monster/monster-list.h \
+	monster/monster-processor.c monster/monster-processor.h \
+	monster/monster-processor-util.c monster/monster-processor-util.h \
+	monster/monster-timed-effect-types.h \
+	monster/smart-learn-types.h \
+	monster/monster-status.c monster/monster-status.h \
+	monster/monster-update.c monster/monster-update.h \
+	monster/monster-util.c monster/monster-util.h \
+	\
+	monster-attack/insults-moans.c monster-attack/insults-moans.h \
+	monster-attack/monster-attack-describer.c monster-attack/monster-attack-describer.h \
+	monster-attack/monster-attack-effect.h \
+	monster-attack/monster-attack-player.c monster-attack/monster-attack-player.h \
+	monster-attack/monster-attack-processor.c monster-attack/monster-attack-processor.h \
+	monster-attack/monster-attack-status.c monster-attack/monster-attack-status.h \
+	monster-attack/monster-attack-switcher.c monster-attack/monster-attack-switcher.h \
+	monster-attack/monster-attack-types.c monster-attack/monster-attack-types.h \
+	monster-attack/monster-attack-util.c monster-attack/monster-attack-util.h \
+	monster-attack/monster-eating.c monster-attack/monster-eating.h \
+	\
+	monster-floor/monster-death.c monster-floor/monster-death.h \
+	monster-floor/monster-direction.c monster-floor/monster-direction.h \
+	monster-floor/monster-dist-offsets.c monster-floor/monster-dist-offsets.h \
+	monster-floor/monster-generator.c monster-floor/monster-generator.h \
+	monster-floor/monster-move.c monster-floor/monster-move.h \
+	monster-floor/monster-object.c monster-floor/monster-object.h \
+	monster-floor/monster-remover.c monster-floor/monster-remover.h \
+	monster-floor/monster-runaway.c monster-floor/monster-runaway.h \
+	monster-floor/monster-safety-hiding.c monster-floor/monster-safety-hiding.h \
+	monster-floor/monster-summon.c monster-floor/monster-summon.h \
+	monster-floor/monster-sweep-grid.c monster-floor/monster-sweep-grid.h \
+	monster-floor/one-monster-placer.c monster-floor/one-monster-placer.h \
+	monster-floor/place-monster-types.h \
+	monster-floor/quantum-effect.c monster-floor/quantum-effect.h \
+	\
+	monster-race/monster-race.c monster-race/monster-race.h \
+	monster-race/monster-race-hook.c monster-race/monster-race-hook.h \
+	monster-race/race-flags-resistance.h \
+	monster-race/race-flags1.h monster-race/race-flags2.h \
+	monster-race/race-flags3.h monster-race/race-flags4.h \
+	monster-race/race-flags-ability1.h monster-race/race-flags-ability2.h \
+	monster-race/race-flags7.h monster-race/race-flags8.h \
+	monster-race/race-flags9.h \
+	monster-race/race-indice-types.h \
 	\
 	mspell/monster-spell.h \
 	mspell/mspells1.c mspell/mspells2.c mspell/mspells3.c \
@@ -284,47 +374,59 @@ hengband_SOURCES = \
 	mspell/mspell-ball.c mspell/mspell-ball.h \
 	mspell/mspell-bolt.c mspell/mspell-bolt.h \
 	mspell/mspell-floor.c mspell/mspell-floor.h \
-	mspell/mspell-status.c mspell/mspell-status.h \
 	mspell/mspell-special.c mspell/mspell-special.h \
+	mspell/mspell-status.c mspell/mspell-status.h \
+	mspell/mspell-summon-checker.c mspell/mspell-summon-checker.h \
 	mspell/mspell-particularity.c mspell/mspell-particularity.h \
 	\
 	mutation/mutation.c mutation/mutation.h \
 	mutation/mutation-processor.c mutation/mutation-processor.h \
 	\
-	object/artifact.c object/artifact.h \
-	object/chest.c object/chest.h \
-	object/death-scythe.c object/death-scythe.h \
-	object/object1.c object/object1.h \
-	object/object2.c object/object2.h \
-	object/object-appraiser.c object/object-appraiser.h \
-	object/object-boost.c object/object-boost.h \
 	object/object-broken.c object/object-broken.h \
-	object/object-curse.c object/object-curse.h \
-	object/object-ego.c object/object-ego.h \
+	object/object-flags.c object/object-flags.h \
 	object/object-flavor.c object/object-flavor.h \
+	object/object-generator.c object/object-generator.h \
 	object/object-hook.c object/object-hook.h \
+	object/object-info.c object/object-info.h \
 	object/object-kind.c object/object-kind.h \
 	object/object-kind-hook.c object/object-kind-hook.h \
+	object/object-stack.c object/object-stack.h \
 	object/object-value.c object/object-value.h \
+	object/object-value-calc.c object/object-value-calc.h \
 	object/lite-processor.c object/lite-processor.h \
-	object/torch.c object/torch.h \
-	object/tr-types.h object/trc-types.h object/tval-types.h \
+	object/tval-types.h \
 	object/warning.c object/warning.h \
-	object/item-apply-magic.h \
 	object/object-mark-types.h \
-	object/object-util.h \
-	object/old-ego-extra-values.h \
-	object/special-object-flags.h \
-	object/sv-amulet-types.h object/sv-bow-types.h \
-	object/sv-digging-types.h object/sv-food-types.h \
-	object/sv-weapon-types.h object/sv-protector-types.h object/sv-armor-types.h \
-	object/sv-lite-types.h object/sv-potion-types.h object/sv-ring-types.h \
-	object/sv-rod-types.h object/sv-scroll-types.h \
-	object/sv-staff-types.h object/sv-wand-types.h object/sv-other-types.h \
-	object/item-feeling.h object/item-use-flags.h \
+	object/item-use-flags.h \
+	\
+	object-enchant/activation-info-table.c object-enchant/activation-info-table.h \
+	object-enchant/apply-magic.c object-enchant/apply-magic.h \
+	object-enchant/apply-magic-accessory.c object-enchant/apply-magic-accessory.h \
+	object-enchant/apply-magic-armor.c object-enchant/apply-magic-armor.h \
+	object-enchant/apply-magic-others.c object-enchant/apply-magic-others.h \
+	object-enchant/apply-magic-weapon.c object-enchant/apply-magic-weapon.h \
+	object-enchant/artifact.c object-enchant/artifact.h \
+	object-enchant/dragon-breaths-table.c object-enchant/dragon-breaths-table.h \
+	object-enchant/object-boost.c object-enchant/object-boost.h \
+	object-enchant/object-curse.c object-enchant/object-curse.h \
+	object-enchant/object-ego.c object-enchant/object-ego.h \
+	object-enchant/item-apply-magic.h object-enchant/item-feeling.h \
+	object-enchant/old-ego-extra-values.h object-enchant/special-object-flags.h \
+	object-enchant/random-art-bias-types.h \
+	object-enchant/tr-types.h object-enchant/trc-types.h \
+	object-enchant/trg-types.h \
+	\
+	perception/identification.c perception/identification.h \
+	perception/object-perception.c perception/object-perception.h \
+	perception/simple-perception.c perception/simple-perception.h \
+	\
+	pet/pet-fall-off.c pet/pet-fall-off.h \
+	pet/pet-util.c pet/pet-util.h \
 	\
 	player/avatar.h player/avatar.c \
+	player/eldritch-horror.c player/eldritch-horror.h \
 	player/mimic-info-table.c player/mimic-info-table.h \
+	player/patron.c player/patron.h \
 	player/process-death.c player/process-death.h \
 	player/process-name.c player/process-name.h \
 	player/race-info-table.c player/race-info-table.h\
@@ -332,22 +434,24 @@ hengband_SOURCES = \
 	player/permanent-resistances.c player/permanent-resistances.h \
 	player/temporary-resistances.c player/temporary-resistances.h \
 	player/digestion-processor.c player/digestion-processor.h \
-	player/player-move.c player/player-move.h \
-	player/player-damage.c player/player-damage.h \
-	player/player-status.c player/player-status.h \
-	player/player-effects.c player/player-effects.h \
-	player/player-skill.c player/player-skill.h \
+	player/player-classes-types.h \
 	player/player-class.c player/player-class.h \
-	player/player-race.c player/player-race.h \
-	player/player-races-table.h \
-	player/player-classes-table.h \
-	player/player-personalities-table.h \
-	player/patron.h player/patron.c \
+	player/player-damage.c player/player-damage.h \
+	player/player-effects.c player/player-effects.h \
+	player/player-move.c player/player-move.h \
 	player/player-personality.c player/player-personality.h \
-	player/player-sex.c player/player-sex.h player/selfinfo.c player/selfinfo.h \
+	player/player-race.c player/player-race.h \
+	player/player-race-types.h \
+	player/player-skill.c player/player-skill.h \
+	player/player-status.c player/player-status.h \
+	player/player-personalities-types.h \
+	player/player-sex.c player/player-sex.h \
+	player/selfinfo.c player/selfinfo.h \
 	\
-	pet/pet-fall-off.c pet/pet-fall-off.h \
-	pet/pet-util.c pet/pet-util.h \
+	player-attack/player-attack-util.h \
+	player-attack/attack-chaos-effect.c player-attack/attack-chaos-effect.h \
+	player-attack/blood-sucking-processor.c player-attack/blood-sucking-processor.h \
+	player-attack/player-attack.c player-attack/player-attack.h \
 	\
 	realm/realm-arcane.c realm/realm-arcane.h \
 	realm/realm-chaos.c realm/realm-chaos.h \
@@ -356,6 +460,7 @@ hengband_SOURCES = \
 	realm/realm-daemon.c realm/realm-daemon.h \
 	realm/realm-death.c realm/realm-death.h \
 	realm/realm-hex.c realm/realm-hex.h \
+	realm/realm-hex-numbers.h \
 	realm/realm-hissatsu.c realm/realm-hissatsu.h \
 	realm/realm-life.c realm/realm-life.h \
 	realm/realm-names-table.c realm/realm-names-table.h \
@@ -363,6 +468,7 @@ hengband_SOURCES = \
 	realm/realm-song.c realm/realm-song.h \
 	realm/realm-sorcery.c realm/realm-sorcery.h \
 	realm/realm-trump.c realm/realm-trump.h \
+	realm/realm-types.h \
 	\
 	room/rooms.c room/rooms.h room/rooms-city.c room/rooms-city.h \
 	room/rooms-fractal.c room/rooms-fractal.h \
@@ -373,20 +479,45 @@ hengband_SOURCES = \
 	room/rooms-pit-nest.c room/rooms-pit-nest.h \
 	room/pit-nest-kinds-table.c room/pit-nest-kinds-table.h \
 	\
-	spell/technic-info-table.c spell/technic-info-table.h \
-	spell/spells-execution.c spell/spells-execution.h \
-	spell/spells-util.h spell/spells-type.h \
+	specific-object/bow.c specific-object/bow.h \
+	specific-object/chest.c specific-object/chest.h \
+	specific-object/death-scythe.c specific-object/death-scythe.h \
+	specific-object/torch.c specific-object/torch.h \
+	\
 	spell/process-effect.c spell/process-effect.h \
-	spell/spells1.c spell/spells1.h spell/spells2.c spell/spells2.h \
+	spell/range-calc.c spell/range-calc.h \
 	spell/spells3.c spell/spells3.h \
-	spell/music-checker.c spell/music-checker.h \
+	spell/spells-describer.c spell/spells-describer.h \
 	spell/spells-diceroll.c spell/spells-diceroll.h \
-	spell/spells-floor.c spell/spells-floor.h \
+	spell/spells-execution.c spell/spells-execution.h \
 	spell/spells-object.c spell/spells-object.h \
-	spell/spells-status.c spell/spells-status.h \
+	spell/spells-staff-only.c spell/spells-staff-only.h \
 	spell/spells-summon.c spell/spells-summon.h \
-	spell/spells-world.c spell/spells-world.h \
-	spell/spells-detection.c spell/spells-detection.h \
+	spell/spells-status.c spell/spells-status.h \
+	spell/spell-types.h spell/spells-util.h \
+	spell/technic-info-table.c spell/technic-info-table.h \
+	\
+	spell-kind/earthquake.c spell-kind/earthquake.h \
+	spell-kind/spells-beam.c spell-kind/spells-beam.h \
+	spell-kind/spells-charm.c spell-kind/spells-charm.h \
+	spell-kind/spells-detection.c spell-kind/spells-detection.h \
+	spell-kind/spells-floor.c spell-kind/spells-floor.h \
+	spell-kind/spells-genocide.c spell-kind/spells-genocide.h \
+	spell-kind/spells-grid.c spell-kind/spells-grid.h \
+	spell-kind/spells-launcher.c spell-kind/spells-launcher.h \
+	spell-kind/spells-lite.c spell-kind/spells-lite.h \
+	spell-kind/spells-neighbor.c spell-kind/spells-neighbor.h \
+	spell-kind/spells-pet.c spell-kind/spells-pet.h \
+	spell-kind/spells-random.c spell-kind/spells-random.h \
+	spell-kind/spells-sight.c spell-kind/spells-sight.h \
+	spell-kind/spells-specific-bolt.c spell-kind/spells-specific-bolt.h \
+	spell-kind/spells-teleport.c spell-kind/spells-teleport.h \
+	spell-kind/spells-world.c spell-kind/spells-world.h \
+	\
+	spell-realm/spells-crusade.c spell-realm/spells-crusade.h \
+	spell-realm/spells-hex.c spell-realm/spells-hex.h \
+	spell-realm/spells-song.c spell-realm/spells-song.h \
+	spell-realm/spells-trump.c spell-realm/spells-trump.h \
 	\
 	store/store.c store/store.h \
 	store/black-market.c store/black-market.h \
@@ -396,22 +527,56 @@ hengband_SOURCES = \
 	store/store-owners.c store/store-owners.h \
 	store/store-owner-comments.c store/store-owner-comments.h \
 	\
+	sv-definition/sv-amulet-types.h sv-definition/sv-armor-types.h \
+	sv-definition/sv-bow-types.h sv-definition/sv-digging-types.h \
+	sv-definition/sv-food-types.h sv-definition/sv-lite-types.h \
+	sv-definition/sv-potion-types.h sv-definition/sv-protector-types.h \
+	sv-definition/sv-ring-types.h sv-definition/sv-rod-types.h \
+	sv-definition/sv-scroll-types.h sv-definition/sv-staff-types.h \
+	sv-definition/sv-wand-types.h sv-definition/sv-weapon-types.h \
+	sv-definition/sv-other-types.h \
+	\
+	system/alloc-entries.c system/alloc-entries.h \
+	system/alloc-entry-definition.h \
 	system/angband.h system/angband-version.h \
+	system/building-type-definition.c system/building-type-definition.h \
+	system/game-option-types.h \
 	system/h-basic.h system/h-config.h \
 	system/h-define.h system/h-system.h system/h-type.h \
+	system/monster-race-definition.h \
+	system/monster-type-definition.h \
+	system/object-type-definition.h \
 	system/system-variables.c system/system-variables.h \
 	system/gamevalue.h \
 	\
 	term/gameterm.c term/gameterm.h \
+	term/screen-processor.c term/screen-processor.h \
+	term/term-color-types.h \
 	term/z-form.c term/z-form.h term/z-rand.c term/z-rand.h \
 	term/z-term.c term/z-term.h term/z-util.c term/z-util.h \
 	term/z-virt.c term/z-virt.h \
 	\
-	util/util.c util/util.h \
+	util/angband-files.c util/angband-files.h \
+	util/buffer-shaper.c util/buffer-shaper.h \
+	util/buffer-shaper.c util/buffer-shaper.h \
+	util/bit-flags-calculator.h \
+	util/int-char-converter.h \
+	util/object-sort.c util/object-sort.h \
+	util/quarks.c util/quarks.h \
+	util/sort.c util/sort.h \
+	util/string-processor.c util/string-processor.h \
+	util/tag-sorter.c util/tag-sorter.h \
 	\
 	view/display-characteristic.c view/display-characteristic.h \
 	view/display-fruit.c view/display-fruit.h \
+	view/display-lore-attacks.c view/display-lore-attacks.h \
+	view/display-lore-drops.c view/display-lore-drops.h \
+	view/display-lore-magics.c view/display-lore-magics.h \
+	view/display-lore-status.c view/display-lore-status.h \
+	view/display-lore.c view/display-lore.h \
 	view/display-main-window.c view/display-main-window.h \
+	view/display-messages.c view/display-messages.h \
+	view/display-monster-status.c view/display-monster-status.h \
 	view/display-player-stat-info.c view/display-player-stat-info.h \
 	view/display-player-misc-info.c view/display-player-misc-info.h \
 	view/display-player-middle.c view/display-player-middle.h \
@@ -425,6 +590,7 @@ hengband_SOURCES = \
 	wizard/wizard-special-process.c wizard/wizard-special-process.h \
 	\
 	world/world.c world/world.h \
+	world/world-object.c world/world-object.h \
 	world/world-movement-processor.c world/world-movement-processor.h \
 	world/world-turn-processor.c world/world-turn-processor.h
 
@@ -523,22 +689,34 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/dungeon \
 	-I$(srcdir)/effect \
 	-I$(srcdir)/floor \
+	-I$(srcdir)/game-option \
 	-I$(srcdir)/grid \
+	-I$(srcdir)/info-reader \
 	-I$(srcdir)/inventory \
 	-I$(srcdir)/io \
 	-I$(srcdir)/io-dump \
 	-I$(srcdir)/knowledge \
+	-I$(srcdir)/lore \
 	-I$(srcdir)/market \
 	-I$(srcdir)/mind \
 	-I$(srcdir)/monster \
+	-I$(srcdir)/monster-attack \
+	-I$(srcdir)/monster-floor \
+	-I$(srcdir)/monster-race \
 	-I$(srcdir)/mspell \
 	-I$(srcdir)/mutation \
 	-I$(srcdir)/object \
+	-I$(srcdir)/object-enchant \
 	-I$(srcdir)/pet \
 	-I$(srcdir)/player \
+	-I$(srcdir)/player-attack \
 	-I$(srcdir)/realm \
 	-I$(srcdir)/room \
+	-I$(srcdir)/specific-object \
 	-I$(srcdir)/spell \
+	-I$(srcdir)/spell-kind \
+	-I$(srcdir)/spell-realm \
+	-I$(srcdir)/sv-definition \
 	-I$(srcdir)/system \
 	-I$(srcdir)/term \
 	-I$(srcdir)/util \

@@ -10,28 +10,36 @@
  * 2013 Deskull rearranged comment for Doxygen.
  */
 
-#include "system/angband.h"
-#include "util/util.h"
-#include "system/system-variables.h"
-
-#include "dungeon/dungeon.h"
 #include "floor/wild.h"
-#include "world/world.h"
-#include "monster/monster.h"
-#include "realm/realm-hex.h"
-#include "player/player-status.h"
-#include "player/player-effects.h"
-#include "grid/grid.h"
-#include "monster/monster-status.h"
+#include "core/asking-player.h"
+#include "dungeon/dungeon.h"
 #include "dungeon/quest.h"
-#include "dungeon/dungeon-file.h"
-#include "io/tokenizer.h"
-#include "io/files-util.h"
-#include "grid/feature.h"
 #include "floor/floor-town.h"
+#include "game-option/birth-options.h"
+#include "game-option/map-screen-options.h"
+#include "grid/feature.h"
+#include "grid/grid.h"
+#include "info-reader/fixed-map-parser.h"
+#include "info-reader/parse-error-types.h"
+#include "io/files-util.h"
+#include "io/tokenizer.h"
+#include "main/init.h"
+#include "monster-floor/monster-generator.h"
+#include "monster-floor/monster-remover.h"
+#include "monster-floor/monster-summon.h"
+#include "monster-floor/place-monster-types.h"
+#include "monster/monster-info.h"
+#include "monster/monster-status.h"
+#include "monster/monster-util.h"
+#include "player/player-effects.h"
+#include "player/player-status.h"
 #include "realm/realm-names-table.h"
-
+#include "spell-realm/spells-hex.h"
+#include "system/system-variables.h"
+#include "util/bit-flags-calculator.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
+#include "world/world.h"
 
 #define MAX_FEAT_IN_TERRAIN 18
 
@@ -363,7 +371,7 @@ static void generate_area(player_type *player_ptr, POSITION y, POSITION x, bool 
 		else
 			init_flags = INIT_CREATE_DUNGEON;
 
-		process_dungeon_file(player_ptr, "t_info.txt", 0, 0, MAX_HGT, MAX_WID);
+		parse_fixed_map(player_ptr, "t_info.txt", 0, 0, MAX_HGT, MAX_WID);
 
 		if (!corner && !border) player_ptr->visit |= (1L << (player_ptr->town_num - 1));
 	}
@@ -479,7 +487,7 @@ void wilderness_gen(player_type *creature_ptr)
 	panel_row_min = floor_ptr->height;
 	panel_col_min = floor_ptr->width;
 
-	process_dungeon_file(creature_ptr, "w_info.txt", 0, 0, current_world_ptr->max_wild_y, current_world_ptr->max_wild_x);
+	parse_fixed_map(creature_ptr, "w_info.txt", 0, 0, current_world_ptr->max_wild_y, current_world_ptr->max_wild_x);
 	POSITION x = creature_ptr->wilderness_x;
 	POSITION y = creature_ptr->wilderness_y;
 	get_mon_num_prep(creature_ptr, get_monster_hook(creature_ptr), NULL);
@@ -681,7 +689,7 @@ void wilderness_gen(player_type *creature_ptr)
 			mode |= PM_ALLOW_SLEEP;
 
 		/* Make a resident */
-		(void)alloc_monster(creature_ptr, generate_encounter ? 0 : 3, mode);
+		(void)alloc_monster(creature_ptr, generate_encounter ? 0 : 3, mode, summon_specific);
 	}
 
 	if(generate_encounter) creature_ptr->ambush_flag = TRUE;
@@ -717,7 +725,7 @@ void wilderness_gen_small(player_type *creature_ptr)
 		}
 	}
 
-	process_dungeon_file(creature_ptr, "w_info.txt", 0, 0, current_world_ptr->max_wild_y, current_world_ptr->max_wild_x);
+	parse_fixed_map(creature_ptr, "w_info.txt", 0, 0, current_world_ptr->max_wild_y, current_world_ptr->max_wild_x);
 
 	/* Fill the map */
 	for (int i = 0; i < current_world_ptr->max_wild_x; i++)
@@ -1136,7 +1144,7 @@ bool change_wild_mode(player_type *creature_ptr, bool encount)
 
 		if (!monster_is_valid(m_ptr)) continue;
 		if (is_pet(m_ptr) && i != creature_ptr->riding) have_pet = TRUE;
-		if (MON_CSLEEP(m_ptr)) continue;
+		if (monster_csleep_remaining(m_ptr)) continue;
 		if (m_ptr->cdis > MAX_SIGHT) continue;
 		if (!is_hostile(m_ptr)) continue;
 		msg_print(_("敵がすぐ近くにいるときは広域マップに入れない！",
@@ -1150,7 +1158,7 @@ bool change_wild_mode(player_type *creature_ptr, bool encount)
 		concptr msg = _("ペットを置いて広域マップに入りますか？",
 			"Do you leave your pets behind? ");
 
-		if (!get_check_strict(msg, CHECK_OKAY_CANCEL))
+		if (!get_check_strict(creature_ptr, msg, CHECK_OKAY_CANCEL))
 		{
 			free_turn(creature_ptr);
 			return FALSE;

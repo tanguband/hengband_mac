@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "system/angband.h"
+#include "system/monster-type-definition.h"
 
 typedef struct player_type player_type;
 
@@ -32,56 +33,18 @@ extern bool player_can_see_bold(player_type *creature_ptr, POSITION y, POSITION 
 #define TEMP_MAX 2298
 
 //!< 対象グリッドの一覧をまとめる構造体
-typedef struct
-{
+typedef struct pos_list {
 	POSITION_IDX n; //!< Array of grids for use by various functions (see grid.c")
 	POSITION y[TEMP_MAX];
 	POSITION x[TEMP_MAX];
 } pos_list;
 
-//!< ターゲット指定構造体
-typedef struct
-{
-	DIRECTION dir;
-	POSITION y;
-	POSITION x;
-} target_dir;
-
 /*
  * Simple structure to hold a map location
  */
-typedef struct coord coord;
-
-struct coord
-{
+typedef struct coord {
 	POSITION y;
 	POSITION x;
-};
+} coord;
 
-/*
- * Is the monster seen by the player?
- */
-#define is_seen(A) \
-	((bool)((A)->ml && (!ignore_unview || p_ptr->phase_out || \
-	 (player_can_see_bold(p_ptr, (A)->fy, (A)->fx) && projectable(p_ptr, p_ptr->y, p_ptr->x, (A)->fy, (A)->fx)))))
-
-/*
- * todo is_seen() の関数マクロをバラそうとしたがインクルード関係のコンパイルエラーで失敗
- * Is the monster seen by the player?
- * @param creature_ptr プレーヤーへの参照ポインタ
- * @param m_ptr 個々のモンスターへの参照ポインタ
- * @return 個々のモンスターがプレーヤーが見えたらTRUE
- */
-
-/*
-extern bool is_seen(player_type *creature_ptr, monster_type *m_ptr);
-bool is_seen(player_type *creature_ptr, monster_type *m_ptr)
-{
-	bool is_inside_view = !ignore_unview;
-	is_inside_view |= creature_ptr->phase_out;
-	is_inside_view |= player_can_see_bold(creature_ptr, m_ptr->fy, m_ptr->fx) &&
-		projectable(creature_ptr, creature_ptr->y, creature_ptr->x, m_ptr->fy, m_ptr->fx);
-	return m_ptr->ml && is_inside_view;
-}
-
-*/
+bool is_seen(player_type *creature_ptr, monster_type *m_ptr);

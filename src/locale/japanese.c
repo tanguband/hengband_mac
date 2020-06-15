@@ -4,9 +4,9 @@
  *  @date 2014/07/07
  */
 
-#include "system/angband.h"
-#include "util/util.h"
-#include "japanese.h"
+#include "locale/japanese.h"
+#include "util/string-processor.h"
+#include "view/display-messages.h"
 
 #ifdef JP
 
@@ -529,7 +529,7 @@ void guess_convert_to_system_encoding(char* strbuf, int buflen)
 	if (is_utf8_str(strbuf)) {
 		char* work;
 		C_MAKE(work, buflen, char);
-		my_strcpy(work, strbuf, buflen);
+		angband_strcpy(work, strbuf, buflen);
 		if (!utf8_to_sys(work, strbuf, buflen)) {
 			msg_print("警告:文字コードの変換に失敗しました");
 			msg_print(NULL);

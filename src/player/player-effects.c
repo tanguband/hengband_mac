@@ -17,51 +17,58 @@
 #include "birth/birth-body-spec.h"
 #include "birth/birth-stat.h"
 #include "birth/character-builder.h"
+#include "cmd-building/cmd-building.h"
 #include "cmd-io/cmd-dump.h"
-#include "cmd/cmd-building.h"
-#include "combat/snipe.h"
+#include "core/speed-table.h"
 #include "core/stuff-handler.h"
 #include "dungeon/quest.h"
 #include "floor/floor.h"
 #include "floor/wild.h"
+#include "game-option/birth-options.h"
+#include "game-option/disturbance-options.h"
 #include "grid/grid.h"
 #include "inventory/inventory-object.h"
 #include "io/files-util.h"
+#include "io/input-key-acceptor.h"
 #include "io/report.h"
 #include "io/save.h"
-#include "monster/creature.h"
+#include "locale/vowel-checker.h"
+#include "mind/mind-sniper.h"
 #include "monster/monster-status.h"
 #include "mspell/monster-spell.h"
 #include "mutation/mutation.h"
-#include "object/artifact.h"
-#include "object/item-feeling.h"
-#include "object/object-appraiser.h"
-#include "object/object-ego.h"
+#include "object-enchant/artifact.h"
+#include "object-enchant/item-feeling.h"
+#include "object-enchant/object-ego.h"
+#include "object-enchant/special-object-flags.h"
+#include "object-enchant/trg-types.h"
+#include "object/object-generator.h"
 #include "object/object-hook.h"
 #include "object/object-kind.h"
+#include "object/object-value-calc.h"
 #include "object/object-value.h"
-#include "object/object2.h"
-#include "object/special-object-flags.h"
-#include "object/sv-armor-types.h"
-#include "object/sv-protector-types.h"
-#include "object/sv-weapon-types.h"
+#include "perception/object-perception.h"
 #include "player/avatar.h"
 #include "player/player-class.h"
 #include "player/player-damage.h"
 #include "player/player-move.h"
-#include "player/player-personalities-table.h"
+#include "player/player-personalities-types.h"
 #include "player/player-personality.h"
-#include "player/player-races-table.h"
+#include "player/player-race-types.h"
 #include "player/player-sex.h"
 #include "player/player-status.h"
 #include "player/race-info-table.h"
-#include "realm/realm-hex.h"
-#include "realm/realm-song.h"
-#include "spell/spells-floor.h"
+#include "realm/realm-song-numbers.h"
+#include "spell-kind/spells-floor.h"
+#include "spell-realm/spells-hex.h"
 #include "spell/spells-status.h"
-#include "term/gameterm.h"
-#include "util/util.h"
+#include "sv-definition/sv-armor-types.h"
+#include "sv-definition/sv-protector-types.h"
+#include "sv-definition/sv-weapon-types.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
 #include "world/world.h"
 
  /*!
@@ -274,7 +281,7 @@ void reset_tim_flags(player_type *creature_ptr)
 	while(creature_ptr->energy_need < 0) creature_ptr->energy_need += ENERGY_NEED();
 	creature_ptr->timewalk = FALSE;
 
-	if (PRACE_IS_(creature_ptr, RACE_BALROG) && (creature_ptr->lev > 44)) creature_ptr->oppose_fire = 1;
+	if (is_specific_player_race(creature_ptr, RACE_BALROG) && (creature_ptr->lev > 44)) creature_ptr->oppose_fire = 1;
 	if ((creature_ptr->pclass == CLASS_NINJA) && (creature_ptr->lev > 44)) creature_ptr->oppose_pois = 1;
 	if (creature_ptr->pclass == CLASS_BERSERKER) creature_ptr->shero = 1;
 
@@ -2352,7 +2359,7 @@ bool set_oppose_fire(player_type *creature_ptr, TIME_EFFECT v, bool do_dec)
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 	if (creature_ptr->is_dead) return FALSE;
 
-	if ((PRACE_IS_(creature_ptr, RACE_BALROG) && (creature_ptr->lev > 44)) || (creature_ptr->mimic_form == MIMIC_DEMON)) v = 1;
+	if ((is_specific_player_race(creature_ptr, RACE_BALROG) && (creature_ptr->lev > 44)) || (creature_ptr->mimic_form == MIMIC_DEMON)) v = 1;
 	if (v)
 	{
 		if (creature_ptr->oppose_fire && !do_dec)
@@ -2486,7 +2493,7 @@ bool set_stun(player_type *creature_ptr, TIME_EFFECT v)
 	bool notice = FALSE;
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 	if (creature_ptr->is_dead) return FALSE;
-	if (PRACE_IS_(creature_ptr, RACE_GOLEM) || ((creature_ptr->pclass == CLASS_BERSERKER) && (creature_ptr->lev > 34))) v = 0;
+	if (is_specific_player_race(creature_ptr, RACE_GOLEM) || ((creature_ptr->pclass == CLASS_BERSERKER) && (creature_ptr->lev > 34))) v = 0;
 
 	if (creature_ptr->stun > 100)
 	{

@@ -14,39 +14,58 @@
  * 特殊技能を揃えて実装している。
  */
 
-#include "system/angband.h"
-#include "core/stuff-handler.h"
-#include "util/util.h"
-#include "main/sound-definitions-table.h"
-
 #include "mind/mind.h"
-
-#include "effect/effect-characteristics.h"
-#include "spell/spells-summon.h"
-#include "player/avatar.h"
-#include "player/player-move.h"
-#include "player/player-status.h"
-#include "player/player-class.h"
-#include "spell/spells-status.h"
+#include "cmd-action/cmd-attack.h"
 #include "cmd-action/cmd-spell.h"
-#include "spell/spells-floor.h"
+#include "cmd/cmd-basic.h"
+#include "core/asking-player.h"
+#include "core/stuff-handler.h"
+#include "effect/effect-characteristics.h"
+#include "effect/spells-effect-util.h"
+#include "game-option/disturbance-options.h"
+#include "game-option/input-options.h"
+#include "game-option/text-display-options.h"
 #include "grid/feature.h"
 #include "grid/grid.h"
-#include "cmd/cmd-basic.h"
-#include "monster/monster-status.h"
-#include "player/player-effects.h"
-#include "player/player-damage.h"
-#include "view/display-main-window.h"
+#include "io/command-repeater.h"
+#include "io/input-key-acceptor.h"
+#include "io/input-key-requester.h"
 #include "io/targeting.h"
-#include "realm/realm-song.h"
-#include "effect/spells-effect-util.h"
-#include "spell/spells-type.h"
+#include "main/sound-definitions-table.h"
+#include "main/sound-of-music.h"
+#include "mind/mind-force-trainer.h"
+#include "mind/mind-mindcrafter.h"
+#include "mind/mind-mirror-master.h"
+#include "mind/mind-ninja.h"
+#include "mind/mind-warrior.h"
+#include "monster-floor/monster-summon.h"
+#include "monster/monster-status.h"
+#include "monster-floor/place-monster-types.h"
+#include "player/avatar.h"
+#include "player/player-class.h"
+#include "player/player-damage.h"
+#include "player/player-effects.h"
+#include "player/player-move.h"
+#include "player/player-status.h"
+#include "realm/realm-song-numbers.h"
 #include "spell/process-effect.h"
-#include "spell/spells2.h"
+#include "spell-kind/earthquake.h"
+#include "spell-kind/spells-detection.h"
+#include "spell-kind/spells-floor.h"
+#include "spell-kind/spells-grid.h"
+#include "spell-kind/spells-launcher.h"
+#include "spell-kind/spells-lite.h"
+#include "spell-kind/spells-sight.h"
+#include "spell/spells-status.h"
+#include "spell/spells-summon.h"
+#include "spell-kind/spells-teleport.h"
+#include "spell/spell-types.h"
 #include "spell/spells3.h"
-#include "spell/spells-detection.h"
-#include "mind/racial-force-trainer.h"
-#include "cmd-action/cmd-attack.h"
+#include "term/screen-processor.h"
+#include "util/buffer-shaper.h"
+#include "util/int-char-converter.h"
+#include "view/display-main-window.h"
+#include "view/display-messages.h"
 
 /*! 特殊技能の一覧テーブル */
 mind_power const mind_powers[5] =
@@ -2041,7 +2060,7 @@ void do_cmd_mind_browse(player_type *caster_ptr)
 		Term_erase(12, 17, 255);
 		Term_erase(12, 16, 255);
 
-		roff_to_buf(mind_tips[use_mind][n], 62, temp, sizeof(temp));
+		shape_buffer(mind_tips[use_mind][n], 62, temp, sizeof(temp));
 		for(j=0, line = 17;temp[j];j+=(1+strlen(&temp[j])))
 		{
 			prt(&temp[j], line, 15);

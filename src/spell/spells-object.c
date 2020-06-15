@@ -5,42 +5,53 @@
  */
 
 #include "spell/spells-object.h"
+#include "art-definition/art-weapon-types.h"
 #include "autopick/autopick.h"
 #include "cmd/cmd-basic.h"
+#include "core/asking-player.h"
 #include "floor/floor-object.h"
 #include "floor/floor.h"
+#include "game-option/disturbance-options.h"
 #include "grid/grid.h"
 #include "inventory/inventory-object.h"
 #include "inventory/player-inventory.h"
 #include "io/targeting.h"
-#include "object/artifact.h"
-#include "object/item-apply-magic.h"
-#include "object/item-feeling.h"
+#include "monster-race/race-flags1.h"
+#include "object-enchant/apply-magic.h"
+#include "object-enchant/artifact.h"
+#include "object-enchant/item-apply-magic.h"
+#include "object-enchant/item-feeling.h"
+#include "object-enchant/object-boost.h"
+#include "object-enchant/object-ego.h"
+#include "object-enchant/special-object-flags.h"
+#include "object-enchant/tr-types.h"
+#include "object-enchant/trc-types.h"
+#include "object-enchant/trg-types.h"
 #include "object/item-use-flags.h"
-#include "object/object-appraiser.h"
-#include "object/object-boost.h"
-#include "object/object-ego.h"
+#include "object/object-flags.h"
 #include "object/object-flavor.h"
+#include "object/object-generator.h"
 #include "object/object-hook.h"
+#include "object/object-kind-hook.h"
 #include "object/object-kind.h"
-#include "object/object2.h"
-#include "object/special-object-flags.h"
-#include "object/sv-lite-types.h"
-#include "object/sv-other-types.h"
-#include "object/sv-protector-types.h"
-#include "object/sv-scroll-types.h"
-#include "object/sv-staff-types.h"
-#include "object/sv-weapon-types.h"
-#include "object/tr-types.h"
-#include "object/trc-types.h"
+#include "perception/object-perception.h"
 #include "player/avatar.h"
 #include "player/player-class.h"
 #include "player/player-damage.h"
 #include "player/player-effects.h"
 #include "player/player-status.h"
 #include "spell/spells3.h"
-#include "util/util.h"
+#include "sv-definition/sv-food-types.h"
+#include "sv-definition/sv-lite-types.h"
+#include "sv-definition/sv-other-types.h"
+#include "sv-definition/sv-protector-types.h"
+#include "sv-definition/sv-scroll-types.h"
+#include "sv-definition/sv-staff-types.h"
+#include "sv-definition/sv-weapon-types.h"
+#include "term/screen-processor.h"
+#include "util/bit-flags-calculator.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
 
 typedef struct
 {
@@ -181,7 +192,7 @@ bool create_ammo(player_type *creature_ptr)
 		apply_magic(creature_ptr, q_ptr, creature_ptr->lev, AM_NO_FIXED_ART);
 		q_ptr->discount = 99;
 
-		slot = inven_carry(creature_ptr, q_ptr);
+		slot = store_item_to_inventory(creature_ptr, q_ptr);
 
 		object_desc(creature_ptr, o_name, q_ptr, 0);
 		msg_format(_("%sを作った。", "You make some ammo."), o_name);
@@ -225,7 +236,7 @@ bool create_ammo(player_type *creature_ptr)
 		msg_format(_("%sを作った。", "You make some ammo."), o_name);
 
 		vary_item(creature_ptr, item, -1);
-		slot = inven_carry(creature_ptr, q_ptr);
+		slot = store_item_to_inventory(creature_ptr, q_ptr);
 
 		/* Auto-inscription */
 		if (slot >= 0) autopick_alter_item(creature_ptr, slot, FALSE);
@@ -263,7 +274,7 @@ bool create_ammo(player_type *creature_ptr)
 
 		vary_item(creature_ptr, item, -1);
 
-		slot = inven_carry(creature_ptr, q_ptr);
+		slot = store_item_to_inventory(creature_ptr, q_ptr);
 
 		/* Auto-inscription */
 		if (slot >= 0) autopick_alter_item(creature_ptr, slot, FALSE);
@@ -1433,4 +1444,15 @@ void brand_weapon(player_type *caster_ptr, int brand_type)
 	o_ptr->discount = 99;
 	chg_virtue(caster_ptr, V_ENCHANT, 2);
 	calc_android_exp(caster_ptr);
+}
+
+bool create_ration(player_type *creature_ptr)
+{
+	object_type *q_ptr;
+	object_type forge;
+	q_ptr = &forge;
+	object_prep(q_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
+	(void)drop_near(creature_ptr, q_ptr, -1, creature_ptr->y, creature_ptr->x);
+	msg_print(_("食事を料理して作った。", "You cook some food."));
+	return TRUE;
 }

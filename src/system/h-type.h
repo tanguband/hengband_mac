@@ -19,7 +19,6 @@
  * It must be true that char/byte takes exactly 1 byte
  * It must be true that sind/uind takes exactly 2 bytes
  * It must be true that sbig/ubig takes exactly 4 bytes
- * On Sparc's, a sint takes 4 bytes (2 is legal)
  * On Sparc's, a uint takes 4 bytes (2 is legal)
  * On Sparc's, a long takes 4 bytes (8 is legal)
  * On Sparc's, a huge takes 4 bytes (8 is legal)
@@ -64,7 +63,6 @@ typedef int errr;
 /* typedef signed char syte; */
 typedef unsigned char byte; /*!< byte型をunsighned charとして定義 / Note that unsigned values can cause math problems / An unsigned byte of memory */
 typedef char bool; /*!< bool型をcharとして定義 / Note that a bool is smaller than a full "int" / Simple True/False type */
-typedef int sint; /*!< sint型をintとして定義 / A signed, standard integer (at least 2 bytes) */
 typedef unsigned int uint; /* uint型をintとして定義 /  An unsigned, "standard" integer (often pre-defined) */
 
 /* The largest possible unsigned integer */
@@ -101,8 +99,8 @@ typedef s32b ACTION_IDX;		/*!< プレイヤーが現在取っている常時行�
 typedef s16b BACT_IDX;			/*!< 町の施設処理のID定義 */
 typedef s16b BACT_RESTRICT_IDX;	/*!< 町の施設処理の規制処理ID定義 */
 
-typedef s16b MONRACE_IDX;		/*!< ゲーム中のモンスター種族ID型を定義 */
-typedef s16b MONSTER_IDX;		/*!< ゲーム中のモンスター個体ID型を定義 */
+typedef s16b MONRACE_IDX;		/*!< todo monster_race_typeに差し替えて消滅させる ゲーム中のモンスター種族ID型を定義 */
+typedef s16b MONSTER_IDX;		/*!< todo monster_race_typeに差し替えて消滅させる ゲーム中のモンスター個体ID型を定義 */
 typedef s16b DUNGEON_IDX;		/*!< ゲーム中のダンジョンID型を定義 */
 typedef s16b REALM_IDX;			/*!< ゲーム中の魔法領域ID型を定義 */
 typedef s16b ARTIFACT_IDX;		/*!< ゲーム中のアーティファクトID型を定義 */
@@ -235,7 +233,6 @@ typedef s16b FEAT_PRIORITY; /*!< 地形の縮小表示優先順位 */
 /*** Pointers to all the basic types defined above ***/
 typedef char *char_ptr;
 typedef byte *byte_ptr;
-typedef sint *sint_ptr;
 
 /*** Pointers to Functions of special types (for various purposes) ***/
 /* A generic function takes a user data and a special data */
@@ -243,9 +240,6 @@ typedef errr	(*func_gen)(vptr, vptr);
 
 /* An equality testing function takes two things to compare (bool) */
 typedef bool	(*func_eql)(vptr, vptr);
-
-/* A comparison function takes two things and to compare (-1,0,+1) */
-typedef sint	(*func_cmp)(vptr, vptr);
 
 /* A hasher takes a thing (and a max hash size) to hash (0 to siz - 1) */
 typedef uint	(*func_hsh)(vptr, uint);

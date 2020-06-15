@@ -9,19 +9,21 @@
  */
 
 #include "system/angband.h"
-#include "system/system-variables.h"
-#include "io/uid-checker.h"
-#include "io/signal-handlers.h"
+#include "autopick/autopick-pref-processor.h"
+#include "core/game-play.h"
+#include "core/scores.h"
+#include "game-option/runtime-arguments.h"
+#include "io/chuukei.h"
 #include "io/files-util.h"
 #include "io/inet.h"
+#include "io/signal-handlers.h"
+#include "io/uid-checker.h"
 #include "main/init.h"
-#include "core/scores.h"
-#include "term/gameterm.h"
 #include "player/process-name.h"
-#include "io/chuukei.h"
-#include "autopick/autopick-pref-processor.h"
 #include "system/angband-version.h"
-#include "core/game-play.h"
+#include "system/system-variables.h"
+#include "term/gameterm.h"
+#include "term/term-color-types.h"
 
 /*
  * Available graphic modes
@@ -124,7 +126,7 @@ static void change_path(concptr info)
 	concptr s;
 
 	/* Find equal sign */
-	s = my_strchr(info, '=');
+	s = angband_strchr(info, '=');
 
 	/* Verify equal sign */
 	if (!s) quit_fmt("Try '-d<what>=<path>' not '-d%s'", info);

@@ -1,11 +1,14 @@
 ﻿#include "inventory/inventory-damage.h"
+#include "art-definition/art-bow-types.h"
+#include "floor/floor.h"
 #include "inventory/inventory-object.h"
-#include "mind/racial-mirror-master.h"
-#include "object/artifact.h"
+#include "mind/mind-mirror-master.h"
 #include "object/object-broken.h"
 #include "object/object-flavor.h"
 #include "object/object-hook.h"
-#include "object/object2.h"
+#include "object/object-stack.h"
+#include "object/object-info.h"
+#include "view/display-messages.h"
 
 /*!
  * @brief アイテムを指定確率で破損させる /

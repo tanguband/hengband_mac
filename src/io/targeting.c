@@ -1,5 +1,4 @@
 ﻿/*!
- * @file xtra2.c
  * @brief 雑多なその他の処理2 / effects of various "objects"
  * @date 2014/02/06
  * @author
@@ -10,40 +9,62 @@
  * 2014 Deskull rearranged comment for Doxygen.
  */
 
-#include "system/angband.h"
-#include "util/util.h"
-#include "system/system-variables.h"
-#include "core/stuff-handler.h"
-#include "term/gameterm.h"
 #include "io/targeting.h"
-
-#include "cmd/cmd-building.h"
 #include "cmd-action/cmd-pet.h"
-#include "dungeon/dungeon-file.h"
-#include "object/object2.h"
-#include "object/object-curse.h"
-#include "object/object-flavor.h"
-#include "object/object-mark-types.h"
-#include "monster/monster.h"
-#include "monster/monster-race-hook.h"
-#include "object/object-kind-hook.h"
-#include "core/sort.h"
-#include "spell/spells-summon.h"
-#include "grid/grid.h"
-#include "floor/floor.h"
-#include "floor/floor-events.h"
-#include "floor/floor-town.h"
-#include "inventory/player-inventory.h"
-#include "player/player-move.h"
-#include "player/player-status.h"
-#include "monster/monster-status.h"
-#include "view/display-main-window.h"
-#include "grid/feature.h"
-#include "dungeon/quest.h"
+#include "cmd-building/cmd-building.h"
+#include "core/asking-player.h"
+#include "util/sort.h"
+#include "core/stuff-handler.h"
+#include "info-reader/fixed-map-parser.h"
 #include "dungeon/dungeon.h"
-#include "world/world.h"
+#include "dungeon/quest.h"
 #include "effect/spells-effect-util.h"
-#include "player/player-races-table.h"
+#include "floor/floor-events.h"
+#include "floor/floor-object.h"
+#include "floor/floor-town.h"
+#include "floor/floor.h"
+#include "game-option/cheat-options.h"
+#include "game-option/disturbance-options.h"
+#include "game-option/game-play-options.h"
+#include "game-option/input-options.h"
+#include "game-option/keymap-directory-getter.h"
+#include "game-option/map-screen-options.h"
+#include "grid/feature.h"
+#include "grid/grid.h"
+#include "inventory/player-inventory.h"
+#include "io/command-repeater.h"
+#include "io/input-key-acceptor.h"
+#include "io/input-key-requester.h"
+#include "locale/vowel-checker.h"
+#include "main/sound-of-music.h"
+#include "monster-race/race-flags1.h"
+#include "monster-race/monster-race-hook.h"
+#include "monster/monster-describer.h"
+#include "monster/monster-description-types.h"
+#include "monster/monster-flag-types.h"
+#include "monster/monster-info.h"
+#include "monster/monster-status.h"
+#include "monster/monster-update.h"
+#include "monster/smart-learn-types.h"
+#include "object-enchant/object-curse.h"
+#include "object/object-flavor.h"
+#include "object/object-kind-hook.h"
+#include "object/object-mark-types.h"
+#include "player/player-move.h"
+#include "player/player-race-types.h"
+#include "player/player-status.h"
+#include "spell/spells-summon.h"
+#include "system/building-type-definition.h"
+#include "system/system-variables.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/bit-flags-calculator.h"
+#include "util/int-char-converter.h"
+#include "view/display-main-window.h"
+#include "view/display-messages.h"
+#include "view/display-lore.h"
+#include "view/display-monster-status.h"
+#include "world/world.h"
 
  /*!
   * @brief コンソール上におけるマップ表示の左上位置を返す /
@@ -900,7 +921,7 @@ static char target_set_aux(player_type *subject_ptr, POSITION y, POSITION x, BIT
 		/* Get the quest text */
 		init_flags = INIT_NAME_ONLY;
 
-		process_dungeon_file(subject_ptr, "q_info.txt", 0, 0, 0, 0);
+		parse_fixed_map(subject_ptr, "q_info.txt", 0, 0, 0, 0);
 
 		name = format(_("クエスト「%s」(%d階相当)", "the entrance to the quest '%s'(level %d)"),
 			quest[g_ptr->special].name, quest[g_ptr->special].level);
@@ -1697,7 +1718,7 @@ bool get_direction(player_type *creature_ptr, DIRECTION *dp, bool allow_under, b
 		monster_type *m_ptr = &creature_ptr->current_floor_ptr->m_list[creature_ptr->riding];
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-		if (MON_CONFUSED(m_ptr))
+		if (monster_confused_remaining(m_ptr))
 		{
 			/* Standard confusion */
 			if (randint0(100) < 75)
@@ -1732,7 +1753,7 @@ bool get_direction(player_type *creature_ptr, DIRECTION *dp, bool allow_under, b
 			monster_type *m_ptr = &creature_ptr->current_floor_ptr->m_list[creature_ptr->riding];
 
 			monster_desc(creature_ptr, m_name, m_ptr, 0);
-			if (MON_CONFUSED(m_ptr))
+			if (monster_confused_remaining(m_ptr))
 			{
 				msg_format(_("%sは混乱している。", "%^s is confused."), m_name);
 			}
@@ -1835,7 +1856,7 @@ bool get_rep_dir(player_type *creature_ptr, DIRECTION *dp, bool under)
 		monster_type *m_ptr = &creature_ptr->current_floor_ptr->m_list[creature_ptr->riding];
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-		if (MON_CONFUSED(m_ptr))
+		if (monster_confused_remaining(m_ptr))
 		{
 			/* Standard confusion */
 			if (randint0(100) < 75)
@@ -1870,7 +1891,7 @@ bool get_rep_dir(player_type *creature_ptr, DIRECTION *dp, bool under)
 			monster_type *m_ptr = &creature_ptr->current_floor_ptr->m_list[creature_ptr->riding];
 
 			monster_desc(creature_ptr, m_name, m_ptr, 0);
-			if (MON_CONFUSED(m_ptr))
+			if (monster_confused_remaining(m_ptr))
 			{
 				msg_format(_("%sは混乱している。", "%^s is confused."), m_name);
 			}

@@ -1,19 +1,19 @@
-﻿#include "system/angband.h"
-#include "player/digestion-processor.h"
-#include "world/world.h"
-#include "realm/realm-song.h"
+﻿#include "player/digestion-processor.h"
+#include "core/speed-table.h"
+#include "object-enchant/trc-types.h"
 #include "player/player-damage.h"
 #include "player/player-effects.h"
-#include "monster/creature.h"
 #include "player/player-move.h"
-#include "object/trc-types.h"
+#include "realm/realm-song-numbers.h"
+#include "view/display-messages.h"
+#include "world/world.h"
 
 /*!
  * @brief 10ゲームターンが進行するごとにプレイヤーの腹を減らす
  * @param creature_ptr プレーヤーへの参照ポインタ
  * @return なし
  */
-void starve_player(player_type* creature_ptr)
+void starve_player(player_type *creature_ptr)
 {
     if (creature_ptr->phase_out)
         return;

@@ -3,11 +3,12 @@
  * @date 2020/04/25
  * @author Hourier
  */
-#include "system/angband.h"
-#include "autopick/autopick-editor-table.h"
-#include "autopick/autopick-commands-table.h"
-#include "autopick/autopick-keys-table.h"
+
 #include "autopick/autopick-menu-data-table.h"
+#include "autopick/autopick-commands-table.h"
+#include "autopick/autopick-editor-table.h"
+#include "autopick/autopick-keys-table.h"
+#include "util/int-char-converter.h"
 
 command_menu_type menu_data[MENU_DATA_NUM] =
 {

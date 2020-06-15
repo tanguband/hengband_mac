@@ -9,11 +9,10 @@
  */
 
  /* Purpose: a generic, efficient, terminal window package -BEN- */
-#include "system/angband.h"
-
-#include "term/gameterm.h"
 #include "term/z-term.h"
-
+#include "game-option/runtime-arguments.h"
+#include "game-option/special-options.h"
+#include "term/term-color-types.h"
 #include "term/z-virt.h"
 
 /* Special flags in the attr data */

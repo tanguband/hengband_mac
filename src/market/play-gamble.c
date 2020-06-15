@@ -1,12 +1,15 @@
-﻿#include "system/angband.h"
-#include "play-gamble.h"
-#include "term/gameterm.h"
-#include "player/avatar.h"
+﻿#include "play-gamble.h"
+#include "core/asking-player.h"
 #include "core/show-file.h"
+#include "io/input-key-acceptor.h"
+#include "market/building-actions-table.h"
 #include "market/building-util.h"
 #include "market/poker.h"
+#include "player/avatar.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
 #include "view/display-fruit.h"
-#include "market/building-actions-table.h"
+#include "view/display-messages.h"
 
 /*!
  * @brief カジノ1プレイごとのメインルーチン / gamble_comm

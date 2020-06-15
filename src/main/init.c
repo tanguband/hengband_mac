@@ -30,21 +30,36 @@
  */
 
 #include "main/init.h"
-#include "cmd/cmd-building.h"
-#include "dungeon/dungeon-file.h"
+#include "cmd-building/cmd-building.h"
+#include "cmd-io/macro-util.h"
+#include "info-reader/fixed-map-parser.h" // 相互参照、後で何とかする.
 #include "dungeon/dungeon.h"
 #include "dungeon/quest.h"
 #include "floor/floor-town.h"
 #include "floor/floor.h"
 #include "floor/wild.h"
+#include "game-option/option-flags.h"
+#include "game-option/option-types-table.h"
 #include "grid/feature.h"
 #include "grid/trap.h"
+#include "info-reader/artifact-reader.h"
+#include "info-reader/dungeon-reader.h"
+#include "info-reader/ego-reader.h"
+#include "info-reader/feature-reader.h"
+#include "info-reader/general-parser.h"
+#include "info-reader/kind-reader.h"
+#include "info-reader/magic-reader.h"
+#include "info-reader/race-reader.h"
+#include "info-reader/skill-reader.h"
+#include "info-reader/parse-error-types.h"
+#include "info-reader/vault-reader.h"
 #include "io/files-util.h"
 #include "io/read-pref-file.h"
 #include "io/uid-checker.h"
 #include "market/articles-on-sale.h"
-#include "object/artifact.h"
-#include "object/object-ego.h"
+#include "monster-race/race-flags7.h"
+#include "object-enchant/artifact.h"
+#include "object-enchant/object-ego.h"
 #include "object/object-kind.h"
 #include "player/player-class.h"
 #include "player/player-skill.h"
@@ -52,14 +67,27 @@
 #include "room/rooms.h"
 #include "store/store-util.h"
 #include "store/store.h"
+#include "system/alloc-entries.h"
 #include "system/angband-version.h"
+#include "system/building-type-definition.h"
 #include "system/system-variables.h"
 #include "term/gameterm.h"
-#include "util/util.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/angband-files.h"
+#include "util/quarks.h"
+#include "util/tag-sorter.h"
+#include "view/display-messages.h"
 #include "world/world.h"
 
 #include <sys/stat.h>
 #include <sys/types.h>
+
+/*!
+ * @brief マクロ登録の最大数 / Maximum number of macros (see "io.c")
+ * @note Default: assume at most 256 macros are used
+ */
+static const int MACRO_MAX = 256;
 
 static void put_title(void);
 
@@ -301,19 +329,17 @@ concptr err_str[PARSE_ERROR_MAX] =
 
 };
 
-
 /*
  * File headers
  */
-header v_head; /*!< Vault情報のヘッダ構造体 */
-header f_head; /*!< 地形情報のヘッダ構造体 */
-header k_head; /*!< ペースアイテム情報のヘッダ構造体 */
-header a_head; /*!< 固定アーティファクト情報のヘッダ構造体 */
-header e_head; /*!< アイテムエゴ情報のヘッダ構造体 */
-header r_head; /*!< モンスター種族情報のヘッダ構造体 */
-header d_head; /*!< ダンジョン情報のヘッダ構造体 */
-header s_head; /*!< プレイヤー職業技能情報のヘッダ構造体 */
-header m_head; /*!< プレイヤー職業魔法情報のヘッダ構造体 */
+static angband_header v_head; /*!< Vault情報のヘッダ構造体 */
+static angband_header k_head; /*!< ペースアイテム情報のヘッダ構造体 */
+static angband_header a_head; /*!< 固定アーティファクト情報のヘッダ構造体 */
+static angband_header e_head; /*!< アイテムエゴ情報のヘッダ構造体 */
+static angband_header r_head; /*!< モンスター種族情報のヘッダ構造体 */
+static angband_header d_head; /*!< ダンジョン情報のヘッダ構造体 */
+static angband_header s_head; /*!< プレイヤー職業技能情報のヘッダ構造体 */
+static angband_header m_head; /*!< プレイヤー職業魔法情報のヘッダ構造体 */
 
 /*!
  * @brief テキストファイルとrawファイルの更新時刻を比較する
@@ -359,12 +385,12 @@ static errr check_modification_date(int fd, concptr template_file)
  * @param head rawファイルのヘッダ
  * @return エラーコード
  */
-static errr init_info_raw(int fd, header *head)
+static errr init_info_raw(int fd, angband_header *head)
 {
-	header test;
+	angband_header test;
 
 	/* Read and Verify the header */
-	if (fd_read(fd, (char*)(&test), sizeof(header)) ||
+	if (fd_read(fd, (char*)(&test), sizeof(angband_header)) ||
 		(test.v_major != head->v_major) ||
 		(test.v_minor != head->v_minor) ||
 		(test.v_patch != head->v_patch) ||
@@ -426,7 +452,7 @@ static errr init_info_raw(int fd, header *head)
  * @param len データの長さ
  * @return エラーコード
  */
-static void init_header(header *head, IDX num, int len)
+static void init_header(angband_header *head, IDX num, int len)
 {
 	/* Save the "version" */
 	head->v_major = FAKE_VER_MAJOR;
@@ -439,12 +465,12 @@ static void init_header(header *head, IDX num, int len)
 	head->info_len = len;
 
 	/* Save the size of "*_head" and "*_info" */
-	head->head_size = sizeof(header);
+	head->head_size = sizeof(angband_header);
 	head->info_size = head->info_num * head->info_len;
 }
 
 
-static void update_header(header *head, void **info, char **name, char **text, char **tag)
+static void update_header(angband_header *head, void **info, char **name, char **text, char **tag)
 {
 	if (info) *info = head->info_ptr;
 	if (name) *name = head->name_ptr;
@@ -467,7 +493,7 @@ static void update_header(header *head, void **info, char **name, char **text, c
  * Note that we let each entry have a unique "name" and "text" string,
  * even if the string happens to be empty (everyone has a unique '\0').
  */
-static errr init_info(concptr filename, header *head, void **info, char **name, char **text, char **tag)
+static errr init_info(concptr filename, angband_header *head, void **info, char **name, char **text, char **tag)
 {
 	/* General buffer */
 	char buf[1024];
@@ -514,14 +540,14 @@ static errr init_info(concptr filename, header *head, void **info, char **name, 
 	/*** Load the ascii template file ***/
 	path_build(buf, sizeof(buf), ANGBAND_DIR_EDIT, format("%s.txt", filename));
 	FILE *fp;
-	fp = my_fopen(buf, "r");
+	fp = angband_fopen(buf, "r");
 
 	/* Parse it */
 	if (!fp) quit(format(_("'%s.txt'ファイルをオープンできません。", "Cannot open '%s.txt' file."), filename));
 
 	/* Parse the file */
 	err = init_info_txt(fp, buf, head, head->parse_info_txt);
-	my_fclose(fp);
+	angband_fclose(fp);
 
 	/* Errors */
 	if (err)
@@ -560,8 +586,6 @@ static errr init_info(concptr filename, header *head, void **info, char **name, 
 	}
 
 	/*** Dump the binary image file ***/
-	/* File type is "DATA" */
-	FILE_TYPE(FILE_TYPE_DATA);
 	path_build(buf, sizeof(buf), ANGBAND_DIR_DATA, format(_("%s_j.raw", "%s.raw"), filename));
 
 	/* Grab permissions */
@@ -805,7 +829,7 @@ static errr init_m_info(void)
  */
 static errr init_misc(player_type *player_ptr)
 {
-	return process_dungeon_file(player_ptr, "misc.txt", 0, 0, 0, 0);
+	return parse_fixed_map(player_ptr, "misc.txt", 0, 0, 0, 0);
 }
 
 
@@ -956,175 +980,6 @@ static errr init_quests(void)
 
 	return 0;
 }
-
-/*! 地形タグ情報から地形IDを得られなかった場合にTRUEを返すグローバル変数 */
-static bool feat_tag_is_not_found = FALSE;
-
-/*!
- * @brief 地形タグからIDを得る /
- * Initialize quest array
- * @return 地形ID
- */
-s16b f_tag_to_index_in_init(concptr str)
-{
-	FEAT_IDX feat = f_tag_to_index(str);
-
-	if (feat < 0) feat_tag_is_not_found = TRUE;
-
-	return feat;
-}
-
-
-/*!
- * @brief 地形の汎用定義をタグを通じて取得する /
- * Initialize feature variables
- * @return エラーコード
- */
-static errr init_feat_variables(void)
-{
-	feat_none = f_tag_to_index_in_init("NONE");
-
-	feat_floor = f_tag_to_index_in_init("FLOOR");
-	feat_glyph = f_tag_to_index_in_init("GLYPH");
-	feat_explosive_rune = f_tag_to_index_in_init("EXPLOSIVE_RUNE");
-	feat_mirror = f_tag_to_index_in_init("MIRROR");
-	
-	feat_door[DOOR_DOOR].open = f_tag_to_index_in_init("OPEN_DOOR");
-	feat_door[DOOR_DOOR].broken = f_tag_to_index_in_init("BROKEN_DOOR");
-	feat_door[DOOR_DOOR].closed = f_tag_to_index_in_init("CLOSED_DOOR");
-
-	/* Locked doors */
-	FEAT_IDX i;
-	for (i = 1; i < MAX_LJ_DOORS; i++)
-	{
-		s16b door = f_tag_to_index(format("LOCKED_DOOR_%d", i));
-		if (door < 0) break;
-		feat_door[DOOR_DOOR].locked[i - 1] = door;
-	}
-
-	if (i == 1) return PARSE_ERROR_UNDEFINED_TERRAIN_TAG;
-	feat_door[DOOR_DOOR].num_locked = i - 1;
-
-	/* Jammed doors */
-	for (i = 0; i < MAX_LJ_DOORS; i++)
-	{
-		s16b door = f_tag_to_index(format("JAMMED_DOOR_%d", i));
-		if (door < 0) break;
-		feat_door[DOOR_DOOR].jammed[i] = door;
-	}
-
-	if (!i) return PARSE_ERROR_UNDEFINED_TERRAIN_TAG;
-	feat_door[DOOR_DOOR].num_jammed = i;
-
-	/* Glass doors */
-	feat_door[DOOR_GLASS_DOOR].open = f_tag_to_index_in_init("OPEN_GLASS_DOOR");
-	feat_door[DOOR_GLASS_DOOR].broken = f_tag_to_index_in_init("BROKEN_GLASS_DOOR");
-	feat_door[DOOR_GLASS_DOOR].closed = f_tag_to_index_in_init("CLOSED_GLASS_DOOR");
-
-	/* Locked glass doors */
-	for (i = 1; i < MAX_LJ_DOORS; i++)
-	{
-		s16b door = f_tag_to_index(format("LOCKED_GLASS_DOOR_%d", i));
-		if (door < 0) break;
-		feat_door[DOOR_GLASS_DOOR].locked[i - 1] = door;
-	}
-
-	if (i == 1) return PARSE_ERROR_UNDEFINED_TERRAIN_TAG;
-	feat_door[DOOR_GLASS_DOOR].num_locked = i - 1;
-
-	/* Jammed glass doors */
-	for (i = 0; i < MAX_LJ_DOORS; i++)
-	{
-		s16b door = f_tag_to_index(format("JAMMED_GLASS_DOOR_%d", i));
-		if (door < 0) break;
-		feat_door[DOOR_GLASS_DOOR].jammed[i] = door;
-	}
-
-	if (!i) return PARSE_ERROR_UNDEFINED_TERRAIN_TAG;
-	feat_door[DOOR_GLASS_DOOR].num_jammed = i;
-
-	/* Curtains */
-	feat_door[DOOR_CURTAIN].open = f_tag_to_index_in_init("OPEN_CURTAIN");
-	feat_door[DOOR_CURTAIN].broken = feat_door[DOOR_CURTAIN].open;
-	feat_door[DOOR_CURTAIN].closed = f_tag_to_index_in_init("CLOSED_CURTAIN");
-	feat_door[DOOR_CURTAIN].locked[0] = feat_door[DOOR_CURTAIN].closed;
-	feat_door[DOOR_CURTAIN].num_locked = 1;
-	feat_door[DOOR_CURTAIN].jammed[0] = feat_door[DOOR_CURTAIN].closed;
-	feat_door[DOOR_CURTAIN].num_jammed = 1;
-
-	/* Stairs */
-	feat_up_stair = f_tag_to_index_in_init("UP_STAIR");
-	feat_down_stair = f_tag_to_index_in_init("DOWN_STAIR");
-	feat_entrance = f_tag_to_index_in_init("ENTRANCE");
-
-	/* Normal traps */
-	init_normal_traps();
-
-	/* Special traps */
-	feat_trap_open = f_tag_to_index_in_init("TRAP_OPEN");
-	feat_trap_armageddon = f_tag_to_index_in_init("TRAP_ARMAGEDDON");
-	feat_trap_piranha = f_tag_to_index_in_init("TRAP_PIRANHA");
-
-	/* Rubble */
-	feat_rubble = f_tag_to_index_in_init("RUBBLE");
-
-	/* Seams */
-	feat_magma_vein = f_tag_to_index_in_init("MAGMA_VEIN");
-	feat_quartz_vein = f_tag_to_index_in_init("QUARTZ_VEIN");
-
-	/* Walls */
-	feat_granite = f_tag_to_index_in_init("GRANITE");
-	feat_permanent = f_tag_to_index_in_init("PERMANENT");
-
-	/* Glass floor */
-	feat_glass_floor = f_tag_to_index_in_init("GLASS_FLOOR");
-
-	/* Glass walls */
-	feat_glass_wall = f_tag_to_index_in_init("GLASS_WALL");
-	feat_permanent_glass_wall = f_tag_to_index_in_init("PERMANENT_GLASS_WALL");
-
-	/* Pattern */
-	feat_pattern_start = f_tag_to_index_in_init("PATTERN_START");
-	feat_pattern_1 = f_tag_to_index_in_init("PATTERN_1");
-	feat_pattern_2 = f_tag_to_index_in_init("PATTERN_2");
-	feat_pattern_3 = f_tag_to_index_in_init("PATTERN_3");
-	feat_pattern_4 = f_tag_to_index_in_init("PATTERN_4");
-	feat_pattern_end = f_tag_to_index_in_init("PATTERN_END");
-	feat_pattern_old = f_tag_to_index_in_init("PATTERN_OLD");
-	feat_pattern_exit = f_tag_to_index_in_init("PATTERN_EXIT");
-	feat_pattern_corrupted = f_tag_to_index_in_init("PATTERN_CORRUPTED");
-
-	/* Various */
-	feat_black_market = f_tag_to_index_in_init("BLACK_MARKET");
-	feat_town = f_tag_to_index_in_init("TOWN");
-
-	/* Terrains */
-	feat_deep_water = f_tag_to_index_in_init("DEEP_WATER");
-	feat_shallow_water = f_tag_to_index_in_init("SHALLOW_WATER");
-	feat_deep_lava = f_tag_to_index_in_init("DEEP_LAVA");
-	feat_shallow_lava = f_tag_to_index_in_init("SHALLOW_LAVA");
-	feat_heavy_cold_zone = f_tag_to_index_in_init("HEAVY_COLD_ZONE");
-	feat_cold_zone = f_tag_to_index_in_init("COLD_ZONE");
-	feat_heavy_electrical_zone = f_tag_to_index_in_init("HEAVY_ELECTRICAL_ZONE");
-	feat_electrical_zone = f_tag_to_index_in_init("ELECTRICAL_ZONE");
-	feat_deep_acid_puddle = f_tag_to_index_in_init("DEEP_ACID_PUDDLE");
-	feat_shallow_acid_puddle = f_tag_to_index_in_init("SHALLOW_ACID_PUDDLE");
-	feat_deep_poisonous_puddle = f_tag_to_index_in_init("DEEP_POISONOUS_PUDDLE");
-	feat_shallow_poisonous_puddle = f_tag_to_index_in_init("SHALLOW_POISONOUS_PUDDLE");
-	feat_dirt = f_tag_to_index_in_init("DIRT");
-	feat_grass = f_tag_to_index_in_init("GRASS");
-	feat_flower = f_tag_to_index_in_init("FLOWER");
-	feat_brake = f_tag_to_index_in_init("BRAKE");
-	feat_tree = f_tag_to_index_in_init("TREE");
-	feat_mountain = f_tag_to_index_in_init("MOUNTAIN");
-	feat_swamp = f_tag_to_index_in_init("SWAMP");
-
-	feat_undetected = f_tag_to_index_in_init("UNDETECTED");
-
-	init_wilderness_terrains();
-	return feat_tag_is_not_found ? PARSE_ERROR_UNDEFINED_TERRAIN_TAG : 0;
-}
-
 
 /*!
  * @brief その他の初期情報更新 /
@@ -1527,20 +1382,20 @@ void init_angband(player_type *player_ptr, void(*process_autopick_file_command)(
 
 	/* Open the News file */
 	FILE *fp;
-	fp = my_fopen(buf, "r");
+	fp = angband_fopen(buf, "r");
 
 	/* Dump */
 	if (fp)
 	{
 		/* Dump the file to the screen */
 		int i = 0;
-		while (0 == my_fgets(fp, buf, sizeof(buf)))
+		while (0 == angband_fgets(fp, buf, sizeof(buf)))
 		{
 			/* Display and advance */
 			Term_putstr(0, i++, -1, TERM_WHITE, buf);
 		}
 
-		my_fclose(fp);
+		angband_fclose(fp);
 	}
 
 	Term_flush();
@@ -1554,9 +1409,6 @@ void init_angband(player_type *player_ptr, void(*process_autopick_file_command)(
 	BIT_FLAGS file_permission = 0664;
 	if (fd < 0)
 	{
-		/* File type is "DATA" */
-		FILE_TYPE(FILE_TYPE_DATA);
-
 		/* Grab permissions */
 		safe_setuid_grab();
 
@@ -1699,13 +1551,14 @@ static void put_title(void)
 		IS_STABLE_VERSION ? _("安定版", "Stable") : _("開発版", "Developing"));
 	int col = (80 - strlen(title)) / 2;
 	col = col < 0 ? 0 : col;
+    const int VER_INFO_ROW = 3; //!< タイトル表記(行)
 	prt(title, VER_INFO_ROW, col);
 }
 
 
 /*!
- * @brief サムチェック情報を出力 / Get check sum in string form
- * @return サムチェック情報の文字列
+ * @brief チェックサム情報を出力 / Get check sum in string form
+ * @return チェックサム情報の文字列
  */
 concptr get_check_sum(void)
 {

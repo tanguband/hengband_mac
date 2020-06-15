@@ -1,29 +1,37 @@
-﻿#include "system/angband.h"
-#include "birth/birth-wizard.h"
-#include "term/gameterm.h"
-#include "player/player-sex.h"
-#include "birth/birth-explanations-table.h"
+﻿#include "birth/birth-wizard.h"
 #include "birth/auto-roller.h"
-#include "main/sound-definitions-table.h"
-#include "player/patron.h"
-#include "world/world.h"
-#include "birth/quick-start.h"
-#include "birth/birth-util.h"
-#include "cmd-io/cmd-help.h"
-#include "birth/birth-select-race.h"
+#include "birth/birth-body-spec.h"
+#include "birth/birth-explanations-table.h"
 #include "birth/birth-select-class.h"
 #include "birth/birth-select-personality.h"
+#include "birth/birth-select-race.h"
 #include "birth/birth-select-realm.h"
-#include "birth/game-play-initializer.h"
 #include "birth/birth-stat.h"
-#include "birth/birth-body-spec.h"
-#include "birth/history-generator.h"
+#include "birth/birth-util.h"
+#include "birth/game-play-initializer.h"
 #include "birth/history-editor.h"
-#include "player/process-name.h"
+#include "birth/history-generator.h"
+#include "birth/quick-start.h"
+#include "cmd-io/cmd-gameoption.h"
+#include "cmd-io/cmd-help.h"
+#include "core/asking-player.h"
+#include "game-option/birth-options.h"
+#include "io/input-key-acceptor.h"
+#include "main/sound-definitions-table.h"
+#include "main/sound-of-music.h"
 #include "player/avatar.h"
-#include "view/display-main-window.h" // 暫定。後で消す.
+#include "player/patron.h"
+#include "player/player-sex.h"
+#include "player/process-name.h"
+#include "system/game-option-types.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/buffer-shaper.h"
+#include "util/int-char-converter.h"
 #include "view/display-birth.h" // 暫定。後で消す予定。
+#include "view/display-main-window.h" // 暫定。後で消す.
 #include "view/display-player.h" // 暫定。後で消す.
+#include "world/world.h"
 
 /*!
  * オートローラーの内容を描画する間隔 /
@@ -43,10 +51,8 @@ static void display_initial_birth_message(player_type *creature_ptr)
     put_str(_("種族        :", "Race        :"), 4, 1);
     put_str(_("職業        :", "Class       :"), 5, 1);
     c_put_str(TERM_L_BLUE, creature_ptr->name, 1, 34);
-    put_str(_("キャラクターを作成します。('S'やり直す, 'Q'終了, '?'ヘルプ)",
-                "Make your charactor. ('S' Restart, 'Q' Quit, '?' Help)"), 8, 10);
-    put_str(_("注意：《性別》の違いはゲーム上ほとんど影響を及ぼしません。",
-                "Note: Your 'sex' does not have any significant gameplay effects."), 23, 5);
+    put_str(_("キャラクターを作成します。('S'やり直す, 'Q'終了, '?'ヘルプ)", "Make your charactor. ('S' Restart, 'Q' Quit, '?' Help)"), 8, 10);
+    put_str(_("注意：《性別》の違いはゲーム上ほとんど影響を及ぼしません。", "Note: Your 'sex' does not have any significant gameplay effects."), 23, 5);
 }
 
 /*!
@@ -62,7 +68,7 @@ static void display_help_on_sex_select(player_type *creature_ptr, char c)
         do_cmd_help(creature_ptr);
     else if (c == '=') {
         screen_save();
-        do_cmd_options_aux(OPT_PAGE_BIRTH, _("初期オプション((*)はスコアに影響)", "Birth Option((*)s effect score)"));
+        do_cmd_options_aux(creature_ptr, OPT_PAGE_BIRTH, _("初期オプション((*)はスコアに影響)", "Birth Option((*)s effect score)"));
         screen_load();
     } else if (c != '4' && c != '6')
         bell();
@@ -155,7 +161,7 @@ static bool let_player_select_race(player_type *creature_ptr)
             return FALSE;
 
         clear_from(10);
-        roff_to_buf(race_explanations[creature_ptr->prace], 74, temp, sizeof(temp));
+        shape_buffer(race_explanations[creature_ptr->prace], 74, temp, sizeof(temp));
         concptr t = temp;
         for (int i = 0; i < 10; i++) {
             if (t[0] == 0)
@@ -165,7 +171,7 @@ static bool let_player_select_race(player_type *creature_ptr)
                 t += strlen(t) + 1;
             }
         }
-        if (get_check_strict(_("よろしいですか？", "Are you sure? "), CHECK_DEFAULT_Y))
+        if (get_check_strict(creature_ptr, _("よろしいですか？", "Are you sure? "), CHECK_DEFAULT_Y))
             break;
 
         clear_from(10);
@@ -185,7 +191,7 @@ static bool let_player_select_class(player_type *creature_ptr)
             return FALSE;
 
         clear_from(10);
-        roff_to_buf(class_explanations[creature_ptr->pclass], 74, temp, sizeof(temp));
+        shape_buffer(class_explanations[creature_ptr->pclass], 74, temp, sizeof(temp));
         concptr t = temp;
         for (int i = 0; i < 9; i++) {
             if (t[0] == 0)
@@ -196,7 +202,7 @@ static bool let_player_select_class(player_type *creature_ptr)
             }
         }
 
-        if (get_check_strict(_("よろしいですか？", "Are you sure? "), CHECK_DEFAULT_Y))
+        if (get_check_strict(creature_ptr, _("よろしいですか？", "Are you sure? "), CHECK_DEFAULT_Y))
             break;
 
         c_put_str(TERM_WHITE, "              ", 5, 15);
@@ -214,7 +220,7 @@ static bool let_player_select_personality(player_type *creature_ptr)
             return FALSE;
 
         clear_from(10);
-        roff_to_buf(personality_explanations[creature_ptr->pseikaku], 74, temp, sizeof(temp));
+        shape_buffer(personality_explanations[creature_ptr->pseikaku], 74, temp, sizeof(temp));
         concptr t = temp;
         for (int i = 0; i < A_MAX; i++) {
             if (t[0] == 0)
@@ -225,7 +231,7 @@ static bool let_player_select_personality(player_type *creature_ptr)
             }
         }
 
-        if (get_check_strict(_("よろしいですか？", "Are you sure? "), CHECK_DEFAULT_Y))
+        if (get_check_strict(creature_ptr, _("よろしいですか？", "Are you sure? "), CHECK_DEFAULT_Y))
             break;
 
         c_put_str(TERM_L_BLUE, creature_ptr->name, 1, 34);
@@ -256,14 +262,14 @@ static bool let_player_build_character(player_type *creature_ptr)
     return TRUE;
 }
 
-static void display_initial_options(void)
+static void display_initial_options(player_type *creature_ptr)
 {
     clear_from(10);
     put_str("                                   ", 3, 40);
     put_str("                                   ", 4, 40);
     put_str("                                   ", 5, 40);
     screen_save();
-    do_cmd_options_aux(OPT_PAGE_BIRTH, _("初期オプション((*)はスコアに影響)", "Birth Option((*)s effect score)"));
+    do_cmd_options_aux(creature_ptr, OPT_PAGE_BIRTH, _("初期オプション((*)はスコアに影響)", "Birth Option((*)s effect score)"));
     screen_load();
 }
 
@@ -504,7 +510,7 @@ bool player_birth_wizard(player_type *creature_ptr, void (*process_autopick_file
     if (!let_player_build_character(creature_ptr))
         return FALSE;
 
-    display_initial_options();
+    display_initial_options(creature_ptr);
     if (autoroller || autochara)
         auto_round = 0L;
 

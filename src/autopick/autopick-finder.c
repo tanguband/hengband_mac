@@ -5,15 +5,20 @@
  * @author Hourier
  */
 
-#include "system/angband.h"
 #include "autopick/autopick-finder.h"
 #include "autopick/autopick-dirty-flags.h"
 #include "autopick/autopick-entry.h"
 #include "autopick/autopick-matcher.h"
+#include "core/show-file.h"
+#include "inventory/player-inventory.h"
+#include "io/input-key-acceptor.h"
+#include "main/sound-of-music.h"
 #include "object/item-use-flags.h"
 #include "object/object-flavor.h"
-#include "term/gameterm.h"
-#include "inventory/player-inventory.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/int-char-converter.h"
+#include "util/string-processor.h"
 
  /*
   * @brief —^‚¦‚ç‚ê‚½ƒAƒCƒeƒ€‚ª©“®E‚¢‚ÌƒŠƒXƒg‚É“o˜^‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğŒŸõ‚·‚é
@@ -262,7 +267,7 @@ byte get_string_for_search(player_type *player_ptr, object_type **o_handle, conc
 			}
 
 			buf[pos] = '\0';
-			my_strcat(buf, tmp, len + 1);
+			angband_strcat(buf, tmp, len + 1);
 
 			break;
 		}
@@ -357,7 +362,7 @@ void search_for_string(text_body_type *tb, concptr search_str, bool forward)
 			if (--i < 0) break;
 		}
 
-		pos = my_strstr(tb->lines_list[i], search_str);
+		pos = angband_strstr(tb->lines_list[i], search_str);
 		if (!pos) continue;
 
 		if ((tb->states[i] & LSTAT_BYPASS) &&

@@ -1,33 +1,53 @@
 ﻿#include "combat/shoot.h"
-#include "combat/snipe.h"
+#include "art-definition/art-bow-types.h"
+#include "mind/mind-sniper.h"
 #include "core/stuff-handler.h"
 #include "effect/effect-characteristics.h"
 #include "effect/spells-effect-util.h"
+#include "floor/floor-object.h"
+#include "game-option/cheat-types.h"
+#include "game-option/special-options.h"
 #include "grid/grid.h"
 #include "inventory/inventory-object.h"
 #include "io/targeting.h"
 #include "main/sound-definitions-table.h"
+#include "main/sound-of-music.h"
+#include "mind/snipe-types.h"
+#include "monster-race/race-flags-resistance.h"
+#include "monster-race/race-flags1.h"
+#include "monster-race/race-flags2.h"
+#include "monster-race/race-flags3.h"
+#include "monster-race/race-flags7.h"
+#include "monster-race/race-indice-types.h"
+#include "monster/monster-describer.h"
+#include "monster-floor/monster-death.h"
 #include "monster/monster-status.h"
-#include "monster/monster.h"
+#include "monster/monster-info.h"
+#include "monster-floor/monster-move.h"
+#include "monster/monster-update.h"
 #include "mspell/monster-spell.h"
-#include "object/artifact.h"
+#include "object-enchant/artifact.h"
+#include "object-enchant/tr-types.h"
 #include "object/object-broken.h"
+#include "object/object-flags.h"
 #include "object/object-flavor.h"
+#include "object/object-generator.h"
 #include "object/object-hook.h"
 #include "object/object-kind.h"
 #include "object/object-mark-types.h"
-#include "object/object2.h"
-#include "object/sv-bow-types.h"
-#include "object/tr-types.h"
+#include "object/object-info.h"
 #include "player/avatar.h"
 #include "player/player-class.h"
-#include "player/player-personalities-table.h"
+#include "player/player-personalities-types.h"
 #include "player/player-skill.h"
 #include "player/player-status.h"
 #include "spell/process-effect.h"
-#include "term/gameterm.h"
-#include "util/util.h"
+#include "spell/spell-types.h"
+#include "sv-definition/sv-bow-types.h"
+#include "util/bit-flags-calculator.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
+#include "world/world-object.h"
 
 /*!
  * @brief 矢弾を射撃した際のスレイ倍率をかけた結果を返す /
@@ -616,7 +636,7 @@ void exe_fire(player_type *shooter_ptr, INVENTORY_IDX item, object_type *j_ptr, 
 				/* Note the collision */
 				hit_body = TRUE;
 
-				if (MON_CSLEEP(m_ptr))
+				if (monster_csleep_remaining(m_ptr))
 				{
 					if (!(r_ptr->flags3 & RF3_EVIL) || one_in_(5)) chg_virtue(shooter_ptr, V_COMPASSION, -1);
 					if (!(r_ptr->flags3 & RF3_EVIL) || one_in_(5)) chg_virtue(shooter_ptr, V_HONOUR, -1);
@@ -923,7 +943,7 @@ bool test_hit_fire(player_type *shooter_ptr, int chance, monster_type *m_ptr, in
 		ac /= 8;
 	}
 
-	if (m_ptr->r_idx == MON_GOEMON && !MON_CSLEEP(m_ptr)) ac *= 3;
+	if (m_ptr->r_idx == MON_GOEMON && !monster_csleep_remaining(m_ptr)) ac *= 3;
 
 	/* Invisible monsters are harder to hit */
 	if (!vis) chance = (chance + 1) / 2;
@@ -931,7 +951,7 @@ bool test_hit_fire(player_type *shooter_ptr, int chance, monster_type *m_ptr, in
 	/* Power competes against armor */
 	if (randint0(chance) < (ac * 3 / 4))
 	{
-		if (m_ptr->r_idx == MON_GOEMON && !MON_CSLEEP(m_ptr))
+		if (m_ptr->r_idx == MON_GOEMON && !monster_csleep_remaining(m_ptr))
 		{
 			GAME_TEXT m_name[MAX_NLEN];
 			monster_desc(shooter_ptr, m_name, m_ptr, 0);

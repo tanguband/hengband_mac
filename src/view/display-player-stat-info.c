@@ -6,15 +6,16 @@
  * ここにこれ以上関数を引っ越してくるのは禁止。何ならここから更に分割していく
  */
 
-#include "system/angband.h"
 #include "display-player-stat-info.h"
+#include "object-enchant/tr-types.h"
+#include "object/object-flags.h"
 #include "player/mimic-info-table.h"
-#include "term/gameterm.h"
-#include "player/player-personality.h"
 #include "player/permanent-resistances.h"
-#include "player/player-races-table.h"
-#include "object/object1.h"
-#include "object/tr-types.h"
+#include "player/player-personality.h"
+#include "player/player-race-types.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/bit-flags-calculator.h"
 
 /*!
  * @brief プレーヤーのパラメータ基礎値 (腕力等)を18以下になるようにして返す
@@ -50,7 +51,7 @@ static int calc_basic_stat(player_type *creature_ptr, int stat_num)
  */
 static int compensate_special_race(player_type *creature_ptr, int stat_num)
 {
-	if (!PRACE_IS_(creature_ptr, RACE_ENT)) return 0;
+	if (!is_specific_player_race(creature_ptr, RACE_ENT)) return 0;
 
 	int r_adj = 0;
 	switch (stat_num)

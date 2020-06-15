@@ -1,66 +1,54 @@
 ﻿/*!
- * @file mspells1.c
  * @brief モンスター魔法の実装 / Monster spells (attack player)
  * @date 2014/01/17
  * @author
- * Copyright (c) 1997 Ben Harrison, James E. Wilson, Robert A. Koeneke\n
- * This software may be copied and distributed for educational, research,\n
- * and not for profit purposes provided that this copyright and statement\n
- * are included in all such copies.  Other copyrights may also apply.\n
- * 2014 Deskull rearranged comment for Doxygen.\n
- * @details
- * And now for Intelligent monster attacks (including spells).\n
- *\n
- * Original idea and code by "DRS" (David Reeves Sward).\n
- * Major modifications by "BEN" (Ben Harrison).\n
- *\n
- * Give monsters more intelligent attack/spell selection based on\n
- * observations of previous attacks on the player, and/or by allowing\n
- * the monster to "cheat" and know the player status.\n
- *\n
- * Maintain an idea of the player status, and use that information\n
- * to occasionally eliminate "ineffective" spell attacks.  We could\n
- * also eliminate ineffective normal attacks, but there is no reason\n
- * for the monster to do this, since he gains no benefit.\n
- * Note that MINDLESS monsters are not allowed to use this code.\n
- * And non-INTELLIGENT monsters only use it partially effectively.\n
- *\n
- * Actually learn what the player resists, and use that information\n
- * to remove attacks or spells before using them.  This will require\n
- * much less space, if I am not mistaken.  Thus, each monster gets a\n
- * set of 32 bit flags, "smart", build from the various "SM_*" flags.\n
- *\n
- * This has the added advantage that attacks and spells are related.\n
- * The "smart_learn" option means that the monster "learns" the flags\n
- * that should be set, and "smart_cheat" means that he "knows" them.\n
- * So "smart_cheat" means that the "smart" field is always up to date,\n
- * while "smart_learn" means that the "smart" field is slowly learned.\n
- * Both of them have the same effect on the "choose spell" routine.\n
+ * Copyright (c) 1997 Ben Harrison, James E. Wilson, Robert A. Koeneke
+ * This software may be copied and distributed for educational, research,
+ * and not for profit purposes provided that this copyright and statement
+ * are included in all such copies.  Other copyrights may also apply.
+ * 2014 Deskull rearranged comment for Doxygen.
  */
 
 #include "system/angband.h"
-#include "util/util.h"
-
-#include "effect/effect-characteristics.h"
 #include "dungeon/dungeon.h"
-#include "grid/grid.h"
-#include "object/object-curse.h"
 #include "dungeon/quest.h"
-#include "realm/realm-hex.h"
-#include "player/player-move.h"
-#include "player/player-status.h"
-#include "monster/monster.h"
-#include "mspell/monster-spell.h"
-#include "spell/spells-type.h"
-#include "world/world.h"
-#include "realm/realm-song.h"
-#include "view/display-main-window.h"
-#include "player/player-races-table.h"
-#include "player/player-class.h"
-#include "spell/process-effect.h"
-#include "spell/spells3.h"
-#include "mspell/mspell-learn-checker.h"
+#include "effect/effect-characteristics.h"
+#include "game-option/birth-options.h"
+#include "grid/grid.h"
+#include "monster-race/race-flags-ability1.h"
+#include "monster-race/race-flags-ability2.h"
+#include "monster-race/race-flags-resistance.h"
+#include "monster-race/race-flags2.h"
+#include "monster-race/race-flags3.h"
+#include "monster-race/race-flags4.h"
+#include "monster-race/race-flags7.h"
+#include "monster-race/race-flags9.h"
+#include "monster-race/race-indice-types.h"
+#include "monster/monster-describer.h"
+#include "monster/monster-description-types.h"
+#include "monster/monster-flag-types.h"
+#include "monster/monster-info.h"
+#include "monster-floor/monster-move.h"
+#include "monster/monster-status.h"
+#include "monster/smart-learn-types.h"
 #include "mspell/assign-monster-spell.h"
+#include "mspell/monster-spell.h"
+#include "mspell/mspell-learn-checker.h"
+#include "object-enchant/object-curse.h"
+#include "player/player-class.h"
+#include "player/player-move.h"
+#include "player/player-race-types.h"
+#include "player/player-status.h"
+#include "realm/realm-song-numbers.h"
+#include "spell-kind/spells-teleport.h"
+#include "spell-realm/spells-hex.h"
+#include "spell/process-effect.h"
+#include "spell/range-calc.h"
+#include "spell/spell-types.h"
+#include "util/bit-flags-calculator.h"
+#include "view/display-main-window.h"
+#include "view/display-messages.h"
+#include "world/world.h"
 
 #define DO_SPELL_NONE    0
 #define DO_SPELL_BR_LITE 1
@@ -259,7 +247,7 @@ static void remove_bad_spells(MONSTER_IDX m_idx, player_type *target_ptr, u32b *
 
 	if (smart & (SM_RES_NETH))
 	{
-		if (PRACE_IS_(target_ptr, RACE_SPECTRE))
+		if (is_specific_player_race(target_ptr, RACE_SPECTRE))
 		{
 			f4 &= ~(RF4_BR_NETH);
 			f5 &= ~(RF5_BA_NETH);
@@ -281,7 +269,7 @@ static void remove_bad_spells(MONSTER_IDX m_idx, player_type *target_ptr, u32b *
 
 	if (smart & (SM_RES_DARK))
 	{
-		if (PRACE_IS_(target_ptr, RACE_VAMPIRE))
+		if (is_specific_player_race(target_ptr, RACE_VAMPIRE))
 		{
 			f4 &= ~(RF4_BR_DARK);
 			f5 &= ~(RF5_BA_DARK);
@@ -958,7 +946,7 @@ bool dispel_check(player_type *creature_ptr, MONSTER_IDX m_idx)
 
 	if (creature_ptr->riding && (creature_ptr->current_floor_ptr->m_list[creature_ptr->riding].mspeed < 135))
 	{
-		if (MON_FAST(&creature_ptr->current_floor_ptr->m_list[creature_ptr->riding])) return TRUE;
+		if (monster_fast_remaining(&creature_ptr->current_floor_ptr->m_list[creature_ptr->riding])) return TRUE;
 	}
 
 	/* No need to cast dispel spell */
@@ -1084,7 +1072,7 @@ static int choose_attack_spell(player_type *target_ptr, MONSTER_IDX m_idx, byte 
 	}
 
 	/* Hurt badly or afraid, attempt to flee */
-	if (((m_ptr->hp < m_ptr->maxhp / 3) || MON_MONFEAR(m_ptr)) && one_in_(2))
+	if (((m_ptr->hp < m_ptr->maxhp / 3) || monster_fear_remaining(m_ptr)) && one_in_(2))
 	{
 		/* Choose escape spell if possible */
 		if (escape_num) return (escape[randint0(escape_num)]);
@@ -1186,7 +1174,7 @@ static int choose_attack_spell(player_type *target_ptr, MONSTER_IDX m_idx, byte 
 	}
 
 	/* Haste self if we aren't already somewhat hasted (rarely) */
-	if (haste_num && (randint0(100) < 20) && !MON_FAST(m_ptr))
+	if (haste_num && (randint0(100) < 20) && !monster_fast_remaining(m_ptr))
 	{
 		/* Choose haste spell */
 		return (haste[randint0(haste_num)]);
@@ -1358,7 +1346,7 @@ bool make_attack_spell(MONSTER_IDX m_idx, player_type *target_ptr)
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	/* Cannot cast spells when confused */
-	if (MON_CONFUSED(m_ptr))
+	if (monster_confused_remaining(m_ptr))
 	{
 		reset_target(m_ptr);
 		return FALSE;
@@ -1691,7 +1679,7 @@ bool make_attack_spell(MONSTER_IDX m_idx, player_type *target_ptr)
 
 	/* Check for spell failure (inate attacks never fail) */
 	if (!spell_is_inate(thrown_spell)
-		&& (in_no_magic_dungeon || (MON_STUNNED(m_ptr) && one_in_(2)) || (randint0(100) < failrate)))
+		&& (in_no_magic_dungeon || (monster_stunned_remaining(m_ptr) && one_in_(2)) || (randint0(100) < failrate)))
 	{
 		disturb(target_ptr, TRUE, TRUE);
 		msg_format(_("%^sは呪文を唱えようとしたが失敗した。", "%^s tries to cast a spell, but fails."), m_name);

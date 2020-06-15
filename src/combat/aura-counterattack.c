@@ -7,12 +7,17 @@
 #include "combat/aura-counterattack.h"
 #include "effect/effect-characteristics.h"
 #include "floor/floor.h"
+#include "monster-race/race-flags-resistance.h"
+#include "monster-race/race-flags3.h"
 #include "monster/monster-status.h"
+#include "monster/monster-info.h"
 #include "object/object-hook.h"
-#include "realm/realm-hex.h"
+#include "realm/realm-hex-numbers.h"
 #include "spell/process-effect.h"
-#include "spell/spells-type.h"
-#include "spell/spells3.h"
+#include "spell-realm/spells-hex.h"
+#include "spell-kind/spells-teleport.h"
+#include "spell/spell-types.h"
+#include "view/display-messages.h"
 
 static void aura_fire_by_monster_attack(player_type *target_ptr, monap_type *monap_ptr)
 {

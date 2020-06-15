@@ -4,14 +4,15 @@
  * @author deskull
  */
 #include "object/object-broken.h"
-#include "combat/snipe.h"
 #include "effect/effect-characteristics.h"
+#include "mind/snipe-types.h"
+#include "object-enchant/tr-types.h"
+#include "object/object-flags.h"
 #include "object/object-kind.h"
-#include "object/object2.h"
-#include "object/sv-potion-types.h"
-#include "object/tr-types.h"
 #include "spell/process-effect.h"
-#include "spell/spells-type.h"
+#include "spell/spell-types.h"
+#include "sv-definition/sv-potion-types.h"
+#include "util/bit-flags-calculator.h"
 
 /*!
 * @brief アイテムが酸で破損するかどうかを判定する

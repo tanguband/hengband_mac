@@ -1,23 +1,28 @@
-﻿#include "system/angband.h"
-#include "floor/pattern-walk.h"
-#include "dungeon/dungeon.h"
-#include "io/write-diary.h"
-#include "player/player-move.h"
-#include "player/player-effects.h"
-#include "spell/spells-status.h"
-#include "player/player-damage.h"
-#include "realm/realm-song.h"
-#include "spell/spells3.h"
+﻿#include "floor/pattern-walk.h"
 #include "cmd-io/cmd-save.h"
+#include "core/asking-player.h"
+#include "dungeon/dungeon.h"
 #include "dungeon/quest.h"
-#include "player/player-races-table.h"
+#include "game-option/birth-options.h"
+#include "game-option/play-record-options.h"
+#include "game-option/special-options.h"
+#include "io/input-key-requester.h"
+#include "io/write-diary.h"
+#include "player/player-damage.h"
+#include "player/player-effects.h"
+#include "player/player-move.h"
+#include "player/player-race-types.h"
+#include "realm/realm-song-numbers.h"
+#include "spell/spells-status.h"
+#include "spell-kind/spells-teleport.h"
+#include "view/display-messages.h"
 
 /*!
  * @brief パターン終点到達時のテレポート処理を行う
  * @param creature_ptr プレーヤーへの参照ポインタ
  * @return なし
  */
-static void pattern_teleport(player_type* creature_ptr)
+static void pattern_teleport(player_type *creature_ptr)
 {
     DEPTH min_level = 0;
     DEPTH max_level = 99;
@@ -70,9 +75,9 @@ static void pattern_teleport(player_type* creature_ptr)
     free_turn(creature_ptr);
 
     /*
-	 * Clear all saved floors
-	 * and create a first saved floor
-	 */
+     * Clear all saved floors
+     * and create a first saved floor
+     */
     prepare_change_floor_mode(creature_ptr, CFM_FIRST_FLOOR);
     creature_ptr->leaving = TRUE;
 }
@@ -81,13 +86,13 @@ static void pattern_teleport(player_type* creature_ptr)
  * @brief 各種パターン地形上の特別な処理 / Returns TRUE if we are on the Pattern...
  * @return 実際にパターン地形上にプレイヤーが居た場合はTRUEを返す。
  */
-bool pattern_effect(player_type* creature_ptr)
+bool pattern_effect(player_type *creature_ptr)
 {
-    floor_type* floor_ptr = creature_ptr->current_floor_ptr;
+    floor_type *floor_ptr = creature_ptr->current_floor_ptr;
     if (!pattern_tile(floor_ptr, creature_ptr->y, creature_ptr->x))
         return FALSE;
 
-    if ((PRACE_IS_(creature_ptr, RACE_AMBERITE)) && (creature_ptr->cut > 0) && one_in_(10)) {
+    if ((is_specific_player_race(creature_ptr, RACE_AMBERITE)) && (creature_ptr->cut > 0) && one_in_(10)) {
         wreck_the_pattern(creature_ptr);
     }
 
@@ -103,11 +108,11 @@ bool pattern_effect(player_type* creature_ptr)
         msg_print(_("「パターン」のこの部分は他の部分より強力でないようだ。", "This section of the Pattern looks less powerful."));
 
         /*
-		 * We could make the healing effect of the
-		 * Pattern center one-time only to avoid various kinds
-		 * of abuse, like luring the win monster into fighting you
-		 * in the middle of the pattern...
-		 */
+         * We could make the healing effect of the
+         * Pattern center one-time only to avoid various kinds
+         * of abuse, like luring the win monster into fighting you
+         * in the middle of the pattern...
+         */
         break;
 
     case PATTERN_TILE_OLD:
@@ -124,7 +129,7 @@ bool pattern_effect(player_type* creature_ptr)
         break;
 
     default:
-        if (PRACE_IS_(creature_ptr, RACE_AMBERITE) && !one_in_(2))
+        if (is_specific_player_race(creature_ptr, RACE_AMBERITE) && !one_in_(2))
             return TRUE;
         else if (!IS_INVULN(creature_ptr))
             take_hit(creature_ptr, DAMAGE_NOESCAPE, damroll(1, 3), _("「パターン」を歩いたダメージ", "walking the Pattern"), -1);

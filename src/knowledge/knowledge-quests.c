@@ -4,21 +4,24 @@
  * @author Hourier
  */
 
-#include "system/angband.h"
 #include "knowledge-quests.h"
-#include "io-dump/dump-util.h"
-#include "dungeon/quest.h"
-#include "system/system-variables.h" // 暫定、init_flagsのため。後で消すかも.
-#include "object/artifact.h"
-#include "object/object2.h"
-#include "object/object-flavor.h"
-#include "object/special-object-flags.h"
-#include "dungeon/dungeon.h"
-#include "dungeon/dungeon-file.h"
-#include "core/sort.h"
-#include "world/world.h"
 #include "core/show-file.h"
+#include "util/sort.h"
+#include "dungeon/dungeon.h"
+#include "dungeon/quest.h"
+#include "floor/floor.h"
+#include "info-reader/fixed-map-parser.h"
+#include "io-dump/dump-util.h"
 #include "locale/english.h"
+#include "object-enchant/artifact.h"
+#include "object-enchant/special-object-flags.h"
+#include "object/object-flavor.h"
+#include "object/object-generator.h"
+#include "object/object-kind-hook.h"
+#include "system/system-variables.h" // 暫定、init_flagsのため。後で消すかも.
+#include "term/screen-processor.h"
+#include "util/angband-files.h"
+#include "world/world.h"
 
  /*
   * Check on the status of an active quest
@@ -27,7 +30,6 @@
   */
 void do_cmd_checkquest(player_type *creature_ptr)
 {
-	FILE_TYPE(FILE_TYPE_TEXT);
 	screen_save();
 	do_cmd_knowledge_quests(creature_ptr);
 	screen_load();
@@ -66,7 +68,7 @@ static void do_cmd_knowledge_quests_current(player_type *creature_ptr, FILE *fff
 		quest_text_line = 0;
 		creature_ptr->current_floor_ptr->inside_quest = i;
 		init_flags = INIT_SHOW_TEXT;
-		process_dungeon_file(creature_ptr, "q_info.txt", 0, 0, 0, 0);
+		parse_fixed_map(creature_ptr, "q_info.txt", 0, 0, 0, 0);
 		creature_ptr->current_floor_ptr->inside_quest = old_quest;
 		if (quest[i].flags & QUEST_FLAG_SILENT) continue;
 
@@ -199,7 +201,7 @@ static bool do_cmd_knowledge_quests_aux(player_type *player_ptr, FILE *fff, IDX 
 		IDX old_quest = floor_ptr->inside_quest;
 		floor_ptr->inside_quest = q_idx;
 		init_flags = INIT_NAME_ONLY;
-		process_dungeon_file(player_ptr, "q_info.txt", 0, 0, 0, 0);
+		parse_fixed_map(player_ptr, "q_info.txt", 0, 0, 0, 0);
 		floor_ptr->inside_quest = old_quest;
 		if (q_ptr->flags & QUEST_FLAG_SILENT) return FALSE;
 	}
@@ -348,7 +350,7 @@ void do_cmd_knowledge_quests(player_type *creature_ptr)
 		do_cmd_knowledge_quests_wiz_random(fff);
 	}
 
-	my_fclose(fff);
+	angband_fclose(fff);
 	(void)show_file(creature_ptr, TRUE, file_name, _("クエスト達成状況", "Quest status"), 0, 0);
 	fd_kill(file_name);
 	C_KILL(quest_num, max_q_idx, QUEST_IDX);

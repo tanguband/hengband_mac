@@ -1,5 +1,4 @@
 ﻿/*!
- * @file floors.c
  * @brief 保存された階の管理 / management of the saved floor
  * @date 2014/01/04
  * @author
@@ -10,43 +9,59 @@
  * 2014 Deskull rearranged comment for Doxygen. \n
  */
 
-#include "system/angband.h"
-#include "cmd/cmd-building.h"
-#include "system/system-variables.h"
-#include "io/load.h"
-#include "util/util.h"
-
-#include "object/artifact.h"
-#include "dungeon/dungeon.h"
-#include "floor/floor.h"
 #include "floor/floor-save.h"
+#include "cmd-building/cmd-building.h"
+#include "cmd-io/cmd-dump.h"
+#include "cmd/cmd-basic.h"
+#include "core/asking-player.h"
+#include "dungeon/dungeon.h"
+#include "dungeon/quest.h"
 #include "floor/floor-events.h"
 #include "floor/floor-generate.h"
-#include "grid/feature.h"
+#include "floor/floor-object.h"
+#include "floor/floor.h"
 #include "floor/geometry.h"
-#include "grid/grid.h"
-#include "monster/monster.h"
-#include "dungeon/quest.h"
 #include "floor/wild.h"
-#include "spell/spells-floor.h"
+#include "game-option/birth-options.h"
+#include "game-option/play-record-options.h"
+#include "grid/feature.h"
+#include "grid/grid.h"
+#include "io/files-util.h"
+#include "io/load.h"
+#include "io/save.h"
+#include "io/uid-checker.h"
+#include "io/write-diary.h"
+#include "main/sound-of-music.h"
+#include "mind/mind-mirror-master.h"
+#include "monster-floor/monster-generator.h"
+#include "monster-floor/monster-remover.h"
+#include "monster-floor/monster-summon.h"
+#include "monster-race/race-flags1.h"
+#include "monster-race/race-flags2.h"
+#include "monster-race/race-flags7.h"
+#include "monster/monster-describer.h"
+#include "monster/monster-description-types.h"
+#include "monster/monster-flag-types.h"
+#include "monster/monster-info.h"
+#include "monster/monster-list.h"
 #include "monster/monster-status.h"
-#include "object/object2.h"
+#include "monster/monster-update.h"
+#include "monster/smart-learn-types.h"
+#include "object-enchant/artifact.h"
 #include "object/object-hook.h"
 #include "pet/pet-util.h"
-#include "cmd/cmd-basic.h"
-#include "io/uid-checker.h"
-#include "io/files-util.h"
-#include "player/player-effects.h"
 #include "player/player-class.h"
-#include "player/player-personalities-table.h"
-#include "world/world.h"
-#include "spell/spells2.h"
-#include "io/write-diary.h"
-#include "cmd-io/cmd-dump.h"
-#include "io/save.h"
-#include "core/player-processor.h"
-
+#include "player/player-effects.h"
+#include "player/player-personalities-types.h"
+#include "spell-kind/spells-floor.h"
+#include "system/system-variables.h"
+#include "util/angband-files.h"
+#include "util/bit-flags-calculator.h"
 #include "view/display-main-window.h"
+#include "view/display-messages.h"
+#include "world/world.h"
+
+bool repair_monsters;
 
 static FLOOR_IDX new_floor_id;  /*!<次のフロアのID / floor_id of the destination */
 static u32b latest_visit_mark;  /*!<フロアを渡った回数？(確認中) / Max number of visit_mark */
@@ -420,7 +435,7 @@ static void preserve_pet(player_type *master_ptr)
 				POSITION dis = distance(master_ptr->y, master_ptr->x, m_ptr->fy, m_ptr->fx);
 
 				/* Confused (etc.) monsters don't follow. */
-				if (MON_CONFUSED(m_ptr) || MON_STUNNED(m_ptr) || MON_CSLEEP(m_ptr)) continue;
+				if (monster_confused_remaining(m_ptr) || monster_stunned_remaining(m_ptr) || monster_csleep_remaining(m_ptr)) continue;
 
 				/* Pet of other pet don't follow. */
 				if (m_ptr->parent_m_idx) continue;
@@ -478,7 +493,7 @@ static void preserve_pet(player_type *master_ptr)
 		{
 			/* Its parent have gone, it also goes away. */
 
-			if (is_seen(m_ptr))
+			if (is_seen(master_ptr, m_ptr))
 			{
 				GAME_TEXT m_name[MAX_NLEN];
 				monster_desc(master_ptr, m_name, m_ptr, 0);
@@ -525,7 +540,7 @@ static void place_pet(player_type *master_ptr)
 {
 	int i;
 	int max_num = master_ptr->wild_mode ? 1 : MAX_PARTY_MON;
-
+        floor_type *floor_ptr = master_ptr->current_floor_ptr;
 	for (i = 0; i < max_num; i++)
 	{
 		POSITION cy = 0, cx = 0;
@@ -535,7 +550,7 @@ static void place_pet(player_type *master_ptr)
 
 		if (i == 0)
 		{
-			m_idx = m_pop(master_ptr);
+			m_idx = m_pop(floor_ptr);
 			master_ptr->riding = m_idx;
 			if (m_idx)
 			{
@@ -557,7 +572,7 @@ static void place_pet(player_type *master_ptr)
 				}
 				if (j) break;
 			}
-			m_idx = (d == 6) ? 0 : m_pop(master_ptr);
+			m_idx = (d == 6) ? 0 : m_pop(floor_ptr);
 		}
 
 		if (m_idx)
@@ -1266,7 +1281,7 @@ void change_floor(player_type *creature_ptr)
 			for (i = 0; i < alloc_times; i++)
 			{
 				/* Make a (group of) new monster */
-				(void)alloc_monster(creature_ptr, 0, 0);
+				(void)alloc_monster(creature_ptr, 0, 0, summon_specific);
 			}
 
 		}

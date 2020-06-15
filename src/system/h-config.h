@@ -83,18 +83,6 @@
 # define PATH_SEP "\\"
 #endif
 
- /*
- * The Macintosh allows the use of a "file type" when creating a file
- */
-#if defined(MACH_O_CARBON)
-# define FILE_TYPE_TEXT 'TEXT'
-# define FILE_TYPE_DATA 'DATA'
-# define FILE_TYPE_SAVE 'SAVE'
-# define FILE_TYPE(X) (_ftype = (X))
-#else
-# define FILE_TYPE(X) ((void)0)
-#endif
-
 /*
  * Linux has "stricmp()" with a different name
  */
@@ -284,8 +272,8 @@
 /*
  * Hack -- Mach-O (native binary format of OS X) is basically a Un*x
  * but has Mac OS/Windows-like user interface.  Disabling the Un*x-like
- * behavior (PRIVATE_USER_PATH, SAVEFILE_USE_UID) for both the historical
- * Mac OS X interface (MACH_O_CARBON) and the modern one (MACH_O_COCOA).
+ * behavior (PRIVATE_USER_PATH, SAVEFILE_USE_UID) for the modern Mac OS X
+ * interface (MACH_O_COCOA).
  */
 #if defined(MACH_O_CARBON) || defined(MACH_O_COCOA)
 # ifdef PRIVATE_USER_PATH

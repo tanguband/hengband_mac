@@ -1,11 +1,13 @@
-﻿#include "system/angband.h"
-#include "birth/history-editor.h"
+﻿#include "birth/history-editor.h"
 #include "io/files-util.h"
-#include "view/display-main-window.h" // 暫定。後で消す.
-#include "term/gameterm.h"
-#include "view/display-player.h" // 暫定。後で消す.
-#include "locale/japanese.h"
+#include "io/input-key-acceptor.h"
 #include "io/read-pref-file.h"
+#include "locale/japanese.h"
+#include "term/screen-processor.h"
+#include "term/term-color-types.h"
+#include "util/int-char-converter.h"
+#include "view/display-main-window.h" // 暫定。後で消す.
+#include "view/display-player.h" // 暫定。後で消す.
 
 /*!
  * @brief 生い立ちメッセージを編集する。/Character background edit-mode

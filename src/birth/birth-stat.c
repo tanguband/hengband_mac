@@ -1,11 +1,11 @@
 ﻿#include "system/angband.h"
 #include "birth/birth-stat.h"
-#include "object/sv-weapon-types.h"
+#include "sv-definition/sv-weapon-types.h"
 #include "player/player-personality.h"
-#include "player/player-personalities-table.h"
+#include "player/player-personalities-types.h"
 #include "player/player-skill.h"
 #include "spell/spells-status.h"
-#include "player/player-races-table.h"
+#include "player/player-race-types.h"
 
 /*!
  * @brief プレイヤーの能力値表現に基づいて加減算を行う。

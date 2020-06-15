@@ -1,5 +1,4 @@
 ﻿/*
- * @file cmd-dump.c
  * @brief プレイヤーのインターフェイスに関するコマンドの実装 / Interface commands
  * @date 2020/03/01
  * @author Mogami & Hourier
@@ -14,16 +13,19 @@
  *     Add a footer, and close the file.
  */
 
-#include "system/angband.h"
-#include "io-dump/dump-remover.h"
 #include "io/read-pref-file.h"
-#include "io/interpret-pref-file.h"
 #include "autopick/autopick-pref-processor.h"
-#include "io/files-util.h"
-#include "io/pref-file-expressor.h"
-#include "world/world.h"
-#include "system/system-variables.h"
 #include "autopick/autopick-reader-writer.h"
+#include "core/asking-player.h"
+#include "io-dump/dump-remover.h"
+#include "io/files-util.h"
+#include "io/interpret-pref-file.h"
+#include "io/pref-file-expressor.h"
+#include "system/system-variables.h"
+#include "util/angband-files.h"
+#include "util/buffer-shaper.h"
+#include "view/display-messages.h"
+#include "world/world.h"
 
 // todo コールバック関数に変更するので、いずれ消す.
 #define PREF_TYPE_NORMAL   0
@@ -50,7 +52,7 @@ static int auto_dump_line_num;
 static errr process_pref_file_aux(player_type *creature_ptr, concptr name, int preftype, void(*process_autopick_file_command)(char*))
 {
 	FILE *fp;
-	fp = my_fopen(name, "r");
+	fp = angband_fopen(name, "r");
 	if (!fp) return -1;
 
 	char buf[1024];
@@ -58,7 +60,7 @@ static errr process_pref_file_aux(player_type *creature_ptr, concptr name, int p
 	int line = -1;
 	errr err = 0;
 	bool bypass = FALSE;
-	while (my_fgets(fp, buf, sizeof(buf)) == 0)
+	while (angband_fgets(fp, buf, sizeof(buf)) == 0)
 	{
 		line++;
 		if (!buf[0]) continue;
@@ -129,7 +131,7 @@ static errr process_pref_file_aux(player_type *creature_ptr, concptr name, int p
 		msg_print(NULL);
 	}
 
-	my_fclose(fp);
+	angband_fclose(fp);
 	return (err);
 }
 
@@ -235,7 +237,7 @@ bool open_auto_dump(FILE **fpp, concptr buf, concptr mark)
 	concptr auto_dump_mark = mark;
 	sprintf(header_mark_str, auto_dump_header, auto_dump_mark);
 	remove_auto_dump(buf, mark);
-	*fpp = my_fopen(buf, "a");
+	*fpp = angband_fopen(buf, "a");
 	if (!fpp)
 	{
 		msg_format(_("%s を開くことができませんでした。", "Failed to open %s."), buf);
@@ -266,7 +268,7 @@ void close_auto_dump(FILE **fpp, concptr auto_dump_mark)
 	auto_dump_printf(*fpp, _("# *警告!!* 後で自動的に削除されるので編集しないでください。\n",
 		"# Don't edit them; changes will be deleted and replaced automatically.\n"));
 	fprintf(*fpp, "%s (%d)\n", footer_mark_str, auto_dump_line_num);
-	my_fclose(*fpp);
+	angband_fclose(*fpp);
 }
 
 /*!
@@ -353,7 +355,7 @@ bool read_histpref(player_type *creature_ptr, void (*process_autopick_file_comma
     while ((n > 0) && (s[n - 1] == ' '))
         s[--n] = '\0';
 
-    roff_to_buf(s, 60, temp, sizeof(temp));
+    shape_buffer(s, 60, temp, sizeof(temp));
     t = temp;
     for (i = 0; i < 4; i++) {
         if (t[0] == 0)
