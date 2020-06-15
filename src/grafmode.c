@@ -23,6 +23,7 @@
 #include "angband.h"
 #include "grafmode.h"
 #include "io/files-util.h"
+#include "util/angband-files.h"
 
 #define GFPARSE_HAVE_NOTHING (0)
 #define GFPARSE_HAVE_NAME (1)
@@ -463,12 +464,12 @@ bool init_graphics_modes(void) {
     gps.dir_len = strlen(line);
     path_build(buf, sizeof(buf), line, "list.txt");
 
-    f = my_fopen(buf, "r");
+    f = angband_fopen(buf, "r");
     if (!f) {
 	msg_format("Cannot open '%s'.", buf);
 	gps.result = 1;
     } else {
-	while (my_fgets(f, line, sizeof line) == 0) {
+	while (angband_fgets(f, line, sizeof line) == 0) {
 	    ++gps.line_no;
 	    parse_line(&gps, line);
 	    if (gps.result != 0) {
@@ -477,7 +478,7 @@ bool init_graphics_modes(void) {
 	}
 
 	finish_parse_grafmode(&gps, gps.result == 0);
-	my_fclose(f);
+	angband_fclose(f);
     }
 
     /* Result */

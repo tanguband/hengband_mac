@@ -32,6 +32,7 @@
 #include "view/display-main-window.h"
 #include "autopick/autopick-pref-processor.h"
 #include "main/sound-definitions-table.h"
+#include "util/angband-files.h"
 
 #if defined(MACH_O_COCOA)
 
@@ -176,7 +177,7 @@ static wchar_t convert_two_byte_eucjp_to_utf16_native(const char *cp);
 	/* Find and open the config file */
 	char path[1024];
 	path_build(path, sizeof(path), sound_dir, "sound.cfg");
-	FILE *fff = my_fopen(path, "r");
+	FILE *fff = angband_fopen(path, "r");
 
 	/* Handle errors */
 	if (!fff) {
@@ -195,7 +196,7 @@ static wchar_t convert_two_byte_eucjp_to_utf16_native(const char *cp);
 	    /* Parse the file */
 	    /* Lines are always of the form "name = sample [sample ...]" */
 	    char buffer[2048];
-	    while (my_fgets(fff, buffer, sizeof(buffer)) == 0) {
+	    while (angband_fgets(fff, buffer, sizeof(buffer)) == 0) {
 		char *msg_name;
 		char *cfg_sample_list;
 		char *search;
@@ -308,7 +309,7 @@ static wchar_t convert_two_byte_eucjp_to_utf16_native(const char *cp);
 	    }
 	}
 	/* Close the file */
-	my_fclose(fff);
+	angband_fclose(fff);
     }
 
     @autoreleasepool {
