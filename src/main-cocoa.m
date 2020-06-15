@@ -25,6 +25,8 @@
 #include "core/asking-player.h"
 #include "core/game-play.h"
 #include "core/visuals-reseter.h"
+#include "game-option/runtime-arguments.h"
+#include "game-option/special-options.h"
 #include "system/system-variables.h"
 #include "main/init.h"
 #include "io/files-util.h"
