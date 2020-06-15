@@ -22,6 +22,7 @@
 
 #include "cmd/cmd-draw.h"
 #include "cmd-io/cmd-save.h"
+#include "core/asking-player.h"
 #include "core/game-play.h"
 #include "core/visuals-reseter.h"
 #include "system/system-variables.h"
