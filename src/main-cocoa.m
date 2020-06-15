@@ -30,6 +30,7 @@
 #include "system/system-variables.h"
 #include "main/init.h"
 #include "io/files-util.h"
+#include "io/input-key-acceptor.h"
 #include "world.h"
 #include "gameterm.h"
 #include "term/screen-processor.h"
