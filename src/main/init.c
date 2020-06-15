@@ -76,6 +76,7 @@
 #include "term/term-color-types.h"
 #include "util/angband-files.h"
 #include "util/quarks.h"
+#include "util/string-processor.h"
 #include "util/tag-sorter.h"
 #include "view/display-messages.h"
 #include "world/world.h"
@@ -232,7 +233,7 @@ bool dir_create(concptr path)
 		    if (len - 1 > 512) return FALSE;
 
 		    /* Create the parent path string, plus null-padding */
-		    my_strcpy(buf, path, len + 1);
+		    angband_strcpy(buf, path, len + 1);
 
 		    /* Skip if the parent exists */
 		    if (dir_exists(buf)) continue;
