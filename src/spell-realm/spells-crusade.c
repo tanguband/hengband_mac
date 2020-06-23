@@ -7,6 +7,8 @@
 #include "spell-realm/spells-crusade.h"
 #include "effect/effect-characteristics.h"
 #include "floor/floor.h"
+#include "grid/feature.h"
+#include "grid/grid.h"
 #include "io/targeting.h"
 #include "spell/range-calc.h"
 #include "spell/process-effect.h"

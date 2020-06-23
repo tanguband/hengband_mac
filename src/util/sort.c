@@ -1,10 +1,12 @@
 ﻿#include "util/sort.h"
-#include "floor/floor.h"
 #include "dungeon/quest.h"
-#include "object-enchant/artifact.h"
+#include "floor/floor.h"
+#include "grid/feature.h"
+#include "grid/grid.h"
 #include "monster-race/race-flags1.h"
 #include "monster-race/monster-race.h"
 #include "monster/monster-flag-types.h"
+#include "object-enchant/artifact.h"
 
 /*
  * Angband sorting algorithm -- quick sort in place

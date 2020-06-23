@@ -1,4 +1,5 @@
 ﻿#include "world/world-turn-processor.h"
+#include "cmd-building/cmd-building.h"
 #include "cmd-io/cmd-save.h"
 #include "core/hp-mp-processor.h"
 #include "core/hp-mp-regenerator.h"
@@ -10,6 +11,7 @@
 #include "game-option/cheat-options.h"
 #include "game-option/special-options.h"
 #include "game-option/text-display-options.h"
+#include "grid/grid.h"
 #include "inventory/inventory-curse.h"
 #include "inventory/recharge-processor.h"
 #include "io/write-diary.h"

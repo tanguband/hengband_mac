@@ -1,4 +1,5 @@
 ﻿#include "dungeon/dungeon-processor.h"
+#include "cmd-building/cmd-building.h"
 #include "cmd-io/cmd-dump.h"
 #include "core/hp-mp-regenerator.h"
 #include "core/player-processor.h"
@@ -13,6 +14,7 @@
 #include "io/targeting.h"
 #include "io/write-diary.h"
 #include "market/arena.h"
+#include "monster-race/monster-race.h"
 #include "monster-race/race-flags1.h"
 #include "monster/monster-compaction.h"
 #include "monster/monster-processor.h"

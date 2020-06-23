@@ -3,12 +3,7 @@
 /* 人畜無害なenumヘッダを先に読み込む */
 #include "player/player-classes-types.h"
 #include "player/player-race-types.h"
-#include "cmd-building/cmd-building.h"
 #include "player/player-personalities-types.h"
-#include "system/object-type-definition.h"
-
-struct floor_type;
-typedef struct floor_type floor_type;
 
 /*
  * Most of the "player" information goes here.
@@ -90,8 +85,8 @@ extern const byte adj_chr_chm[];
 extern const concptr stat_names[6];
 extern const concptr stat_names_reduced[6];
 
-struct floor_type;
-
+typedef struct floor_type floor_type;
+typedef struct object_type object_type;
 typedef struct player_type
 {
 	int player_uid;
@@ -759,7 +754,7 @@ typedef struct player_type
 	byte tval_xtra;		/* Correct xtra tval */
 	byte tval_ammo;		/* Correct ammo tval */
 
-	byte pspeed;		/* Current speed */
+	s16b pspeed;		/* Current speed */
 
 	ENERGY energy_use;	/* Energy use this turn */
 

@@ -1,4 +1,5 @@
 ﻿#include "effect/effect-monster-spirit.h"
+#include "monster-race/monster-race.h"
 #include "monster-race/race-flags1.h"
 #include "monster-race/race-flags2.h"
 #include "monster-race/race-flags3.h"
@@ -8,7 +9,7 @@
 #include "monster/monster-describer.h"
 #include "monster/monster-status.h"
 #include "monster/monster-info.h"
-#include "mspell/monster-spell.h"
+#include "mspell/mspell-mask-definitions.h"
 #include "player/player-effects.h"
 #include "view/display-messages.h"
 

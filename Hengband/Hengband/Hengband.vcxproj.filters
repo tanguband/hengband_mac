@@ -1400,6 +1400,12 @@
     <ClCompile Include="..\..\src\spell-realm\spells-song.c">
       <Filter>spell-realm</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\mspell\monster-power-table.c">
+      <Filter>mspell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\view\status-bars-table.c">
+      <Filter>view</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\cmd\cmd-basic.h">
@@ -2031,9 +2037,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\core\scores.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\mspell\monster-spell.h">
-      <Filter>mspell</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\mspell\mspell-bolt.h">
       <Filter>mspell</Filter>
@@ -3072,6 +3075,30 @@
     </ClInclude>
     <ClInclude Include="..\..\src\spell-realm\spells-song.h">
       <Filter>spell-realm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mind\mind-blue-mage.h">
+      <Filter>mind</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mspell\mspell-mask-definitions.h">
+      <Filter>mspell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mspell\monster-power-table.h">
+      <Filter>mspell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mspell\mspells1.h">
+      <Filter>mspell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mspell\mspells2.h">
+      <Filter>mspell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mspell\mspells3.h">
+      <Filter>mspell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\view\status-bars-table.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\view\main-window-row-column.h">
+      <Filter>view</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -44,10 +44,7 @@
   * Note the special fields for the "MONSTER_FLOW" code.
   */
 
-typedef struct grid_type grid_type;
-
-struct grid_type
-{
+typedef struct grid_type {
 	BIT_FLAGS info;		/* Hack -- grid flags */
 
 	FEAT_IDX feat;		/* Hack -- feature type */
@@ -66,13 +63,10 @@ struct grid_type
 	byte cost;		/* Hack -- cost of flowing */
 	byte dist;		/* Hack -- distance from player */
 	byte when;		/* Hack -- when cost was computed */
-};
+} grid_type;
 
-/*
- *  A structure type for terrain template of saving dungeon floor
- */
-typedef struct
-{
+/*  A structure type for terrain template of saving dungeon floor */
+typedef struct grid_template_type {
 	BIT_FLAGS info;
 	FEAT_IDX feat;
 	FEAT_IDX mimic;
@@ -160,8 +154,6 @@ typedef struct
 #define DOOR_GLASS_DOOR  1
 #define DOOR_CURTAIN     2
 
-#define MAX_DOOR_TYPES   3
-
 extern bool new_player_spot(player_type *creature_ptr);
 extern pos_list tmp_pos;
 
@@ -184,7 +176,7 @@ extern bool player_can_enter(player_type *creature_ptr, FEAT_IDX feature, BIT_FL
 extern POSITION distance(POSITION y1, POSITION x1, POSITION y2, POSITION x2);
 extern void update_local_illumination(player_type *creature_ptr, POSITION y, POSITION x);
 extern bool no_lite(player_type *creature_ptr);
-extern void print_rel(player_type *subject_ptr, SYMBOL_CODE c, TERM_COLOR a, TERM_LEN y, TERM_LEN x);
+extern void print_rel(player_type *subject_ptr, SYMBOL_CODE c, TERM_COLOR a, POSITION y, POSITION x);
 extern void note_spot(player_type *player_ptr, POSITION y, POSITION x);
 extern void lite_spot(player_type *player_ptr, POSITION y, POSITION x);
 extern void update_flow(player_type *subject_ptr);

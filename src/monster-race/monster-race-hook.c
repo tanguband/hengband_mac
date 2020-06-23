@@ -16,7 +16,7 @@
 #include "monster-race/race-indice-types.h"
 #include "monster/monster-list.h"
 #include "monster/monster-util.h"
-#include "mspell/monster-spell.h"
+#include "mspell/mspell-mask-definitions.h"
 #include "util/string-processor.h"
 
 /*! 通常pit生成時のモンスターの構成条件ID / Race index for "monster pit (clone)" */

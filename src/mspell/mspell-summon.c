@@ -3,20 +3,25 @@
 #include "game-option/birth-options.h"
 #include "monster-floor/monster-summon.h"
 #include "monster-floor/place-monster-types.h"
+#include "monster-race/monster-race.h"
 #include "monster-race/race-flags1.h"
 #include "monster-race/race-indice-types.h"
 #include "monster/monster-describer.h"
 #include "monster/monster-description-types.h"
 #include "monster/monster-info.h"
 #include "monster/monster-status.h"
-#include "mspell/monster-spell.h"
 #include "mspell/mspell-util.h"
+#include "mspell/mspells1.h"
 #include "player/player-move.h"
 #include "spell-kind/spells-launcher.h"
 #include "spell/process-effect.h"
 #include "spell/spells-summon.h"
 #include "spell/spell-types.h"
 #include "view/display-messages.h"
+
+/* summoning number */
+#define S_NUM_6 (easy_band ? 2 : 6)
+#define S_NUM_4 (easy_band ? 1 : 4)
 
 /*!
  * @brief 特定条件のモンスター召喚のみPM_ALLOW_UNIQUEを許可する /

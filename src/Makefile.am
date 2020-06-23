@@ -292,6 +292,7 @@ hengband_SOURCES = \
 	\
 	mind/drs-types.h \
 	mind/mind.c mind/mind.h \
+	mind/mind-blue-mage.h \
 	mind/mind-cavalry.c mind/mind-cavalry.h \
 	mind/mind-force-trainer.c mind/mind-force-trainer.h \
 	mind/mind-mindcrafter.c mind/mind-mindcrafter.h \
@@ -360,9 +361,11 @@ hengband_SOURCES = \
 	monster-race/race-flags9.h \
 	monster-race/race-indice-types.h \
 	\
-	mspell/monster-spell.h \
-	mspell/mspells1.c mspell/mspells2.c mspell/mspells3.c \
 	mspell/assign-monster-spell.c mspell/assign-monster-spell.h \
+	mspell/monster-power-table.c mspell/monster-power-table..h \
+	mspell/mspells1.c mspell/mspells1.h \
+	mspell/mspells2.c mspell/mspells2.h \
+	mspell/mspells3.c mspell/mspells3.h \
 	mspell/mspell-summon.c mspell/mspell-summon.h \
 	mspell/mspell-util.c mspell/mspell-util.h \
 	mspell/mspell-curse.c mspell/mspell-curse.h \
@@ -373,6 +376,7 @@ hengband_SOURCES = \
 	mspell/mspell-ball.c mspell/mspell-ball.h \
 	mspell/mspell-bolt.c mspell/mspell-bolt.h \
 	mspell/mspell-floor.c mspell/mspell-floor.h \
+	mspell/mspell-mask-definitions.h \
 	mspell/mspell-special.c mspell/mspell-special.h \
 	mspell/mspell-status.c mspell/mspell-status.h \
 	mspell/mspell-particularity.c mspell/mspell-particularity.h \
@@ -567,6 +571,7 @@ hengband_SOURCES = \
 	util/string-processor.c util/string-processor.h \
 	util/tag-sorter.c util/tag-sorter.h \
 	\
+	view/display-birth.c view/display-birth.h \
 	view/display-characteristic.c view/display-characteristic.h \
 	view/display-fruit.c view/display-fruit.h \
 	view/display-lore-attacks.c view/display-lore-attacks.h \
@@ -581,10 +586,11 @@ hengband_SOURCES = \
 	view/display-player-misc-info.c view/display-player-misc-info.h \
 	view/display-player-middle.c view/display-player-middle.h \
 	view/display-player.c view/display-player.h \
+	view/display-util.c view/display-util.h \
+	view/main-window-row-column.h \
 	view/object-describer.c view/object-describer.h \
 	view/status-first-page.c view/status-first-page.h \
-	view/display-util.c view/display-util.h \
-	view/display-birth.c view/display-birth.h \
+	view/status-bars-table.c view/status-bars-table.h \
 	\
 	wizard/wizard-spoiler.c wizard/wizard-spoiler.h\
 	wizard/wizard-special-process.c wizard/wizard-special-process.h \
