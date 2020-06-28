@@ -3858,3 +3858,201 @@ bool drop_weapons(player_type *creature_ptr)
 
 	return FALSE;
 }
+
+void calc_timelimit_status(player_type *creature_ptr)
+{
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->see_inv = TRUE;
+        creature_ptr->free_act = TRUE;
+        creature_ptr->slow_digest = TRUE;
+        creature_ptr->regenerate = TRUE;
+        creature_ptr->levitation = TRUE;
+        creature_ptr->hold_exp = TRUE;
+        creature_ptr->telepathy = TRUE;
+        creature_ptr->lite = TRUE;
+        creature_ptr->sustain_str = TRUE;
+        creature_ptr->sustain_int = TRUE;
+        creature_ptr->sustain_wis = TRUE;
+        creature_ptr->sustain_con = TRUE;
+        creature_ptr->sustain_dex = TRUE;
+        creature_ptr->sustain_chr = TRUE;
+        creature_ptr->resist_acid = TRUE;
+        creature_ptr->resist_elec = TRUE;
+        creature_ptr->resist_fire = TRUE;
+        creature_ptr->resist_cold = TRUE;
+        creature_ptr->resist_pois = TRUE;
+        creature_ptr->resist_conf = TRUE;
+        creature_ptr->resist_sound = TRUE;
+        creature_ptr->resist_lite = TRUE;
+        creature_ptr->resist_dark = TRUE;
+        creature_ptr->resist_chaos = TRUE;
+        creature_ptr->resist_disen = TRUE;
+        creature_ptr->resist_shard = TRUE;
+        creature_ptr->resist_nexus = TRUE;
+        creature_ptr->resist_blind = TRUE;
+        creature_ptr->resist_neth = TRUE;
+        creature_ptr->resist_fear = TRUE;
+        creature_ptr->reflect = TRUE;
+        creature_ptr->sh_fire = TRUE;
+        creature_ptr->sh_elec = TRUE;
+        creature_ptr->sh_cold = TRUE;
+        creature_ptr->to_a += 100;
+        creature_ptr->dis_to_a += 100;
+    } else if (creature_ptr->tsubureru || creature_ptr->shield || creature_ptr->magicdef) {
+        creature_ptr->to_a += 50;
+        creature_ptr->dis_to_a += 50;
+    }
+
+    if (creature_ptr->tim_res_nether) {
+        creature_ptr->resist_neth = TRUE;
+    }
+
+    if (creature_ptr->tim_sh_fire) {
+        creature_ptr->sh_fire = TRUE;
+    }
+
+    if (creature_ptr->tim_res_time) {
+        creature_ptr->resist_time = TRUE;
+    }
+
+	if (creature_ptr->stun > 50) {
+        creature_ptr->to_h[0] -= 20;
+        creature_ptr->to_h[1] -= 20;
+        creature_ptr->to_h_b -= 20;
+        creature_ptr->to_h_m -= 20;
+        creature_ptr->dis_to_h[0] -= 20;
+        creature_ptr->dis_to_h[1] -= 20;
+        creature_ptr->dis_to_h_b -= 20;
+        creature_ptr->to_d[0] -= 20;
+        creature_ptr->to_d[1] -= 20;
+        creature_ptr->to_d_m -= 20;
+        creature_ptr->dis_to_d[0] -= 20;
+        creature_ptr->dis_to_d[1] -= 20;
+    } else if (creature_ptr->stun) {
+        creature_ptr->to_h[0] -= 5;
+        creature_ptr->to_h[1] -= 5;
+        creature_ptr->to_h_b -= 5;
+        creature_ptr->to_h_m -= 5;
+        creature_ptr->dis_to_h[0] -= 5;
+        creature_ptr->dis_to_h[1] -= 5;
+        creature_ptr->dis_to_h_b -= 5;
+        creature_ptr->to_d[0] -= 5;
+        creature_ptr->to_d[1] -= 5;
+        creature_ptr->to_d_m -= 5;
+        creature_ptr->dis_to_d[0] -= 5;
+        creature_ptr->dis_to_d[1] -= 5;
+    }
+
+    if (creature_ptr->wraith_form) {
+        creature_ptr->reflect = TRUE;
+        creature_ptr->pass_wall = TRUE;
+    }
+
+    if (creature_ptr->kabenuke) {
+        creature_ptr->pass_wall = TRUE;
+    }
+
+    if (is_blessed(creature_ptr)) {
+        creature_ptr->to_a += 5;
+        creature_ptr->dis_to_a += 5;
+        creature_ptr->to_h[0] += 10;
+        creature_ptr->to_h[1] += 10;
+        creature_ptr->to_h_b += 10;
+        creature_ptr->to_h_m += 10;
+        creature_ptr->dis_to_h[0] += 10;
+        creature_ptr->dis_to_h[1] += 10;
+        creature_ptr->dis_to_h_b += 10;
+    }
+
+    if (creature_ptr->magicdef) {
+        creature_ptr->resist_blind = TRUE;
+        creature_ptr->resist_conf = TRUE;
+        creature_ptr->reflect = TRUE;
+        creature_ptr->free_act = TRUE;
+        creature_ptr->levitation = TRUE;
+    }
+
+    if (IS_HERO(creature_ptr)) {
+        creature_ptr->to_h[0] += 12;
+        creature_ptr->to_h[1] += 12;
+        creature_ptr->to_h_b += 12;
+        creature_ptr->to_h_m += 12;
+        creature_ptr->dis_to_h[0] += 12;
+        creature_ptr->dis_to_h[1] += 12;
+        creature_ptr->dis_to_h_b += 12;
+    }
+
+    if (creature_ptr->shero) {
+        creature_ptr->to_h[0] += 12;
+        creature_ptr->to_h[1] += 12;
+        creature_ptr->to_h_b -= 12;
+        creature_ptr->to_h_m += 12;
+        creature_ptr->to_d[0] += 3 + (creature_ptr->lev / 5);
+        creature_ptr->to_d[1] += 3 + (creature_ptr->lev / 5);
+        creature_ptr->to_d_m += 3 + (creature_ptr->lev / 5);
+        creature_ptr->dis_to_h[0] += 12;
+        creature_ptr->dis_to_h[1] += 12;
+        creature_ptr->dis_to_h_b -= 12;
+        creature_ptr->dis_to_d[0] += 3 + (creature_ptr->lev / 5);
+        creature_ptr->dis_to_d[1] += 3 + (creature_ptr->lev / 5);
+        creature_ptr->to_a -= 10;
+        creature_ptr->dis_to_a -= 10;
+        creature_ptr->skill_stl -= 7;
+        creature_ptr->skill_dev -= 20;
+        creature_ptr->skill_sav -= 30;
+        creature_ptr->skill_srh -= 15;
+        creature_ptr->skill_fos -= 15;
+        creature_ptr->skill_tht -= 20;
+        creature_ptr->skill_dig += 30;
+    }
+
+    if (IS_FAST(creature_ptr)) {
+        creature_ptr->pspeed += 10;
+    }
+
+    if (creature_ptr->slow) {
+        creature_ptr->pspeed -= 10;
+    }
+
+    if (is_time_limit_esp(creature_ptr)) {
+        creature_ptr->telepathy = TRUE;
+    }
+
+    if (creature_ptr->ele_immune) {
+        if (creature_ptr->special_defense & DEFENSE_ACID)
+            creature_ptr->immune_acid = TRUE;
+        else if (creature_ptr->special_defense & DEFENSE_ELEC)
+            creature_ptr->immune_elec = TRUE;
+        else if (creature_ptr->special_defense & DEFENSE_FIRE)
+            creature_ptr->immune_fire = TRUE;
+        else if (creature_ptr->special_defense & DEFENSE_COLD)
+            creature_ptr->immune_cold = TRUE;
+    }
+
+    if (creature_ptr->tim_invis) {
+        creature_ptr->see_inv = TRUE;
+    }
+
+    if (creature_ptr->tim_infra) {
+        creature_ptr->see_infra += 3;
+    }
+
+    if (creature_ptr->tim_regen) {
+        creature_ptr->regenerate = TRUE;
+    }
+
+    if (creature_ptr->tim_levitation) {
+        creature_ptr->levitation = TRUE;
+    }
+
+    if (creature_ptr->tim_reflect) {
+        creature_ptr->reflect = TRUE;
+    }
+
+    if (IS_HERO(creature_ptr) || creature_ptr->shero) {
+        creature_ptr->resist_fear = TRUE;
+    }
+
+	if (is_time_limit_stealth(creature_ptr))
+        creature_ptr->skill_stl += 99;
+}
