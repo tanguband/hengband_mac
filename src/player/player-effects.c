@@ -3997,8 +3997,6 @@ void calc_timelimit_status(player_type *creature_ptr)
         creature_ptr->dis_to_d[1] += 3 + (creature_ptr->lev / 5);
         creature_ptr->to_a -= 10;
         creature_ptr->dis_to_a -= 10;
-        creature_ptr->skill_srh -= 15;
-        creature_ptr->skill_fos -= 15;
         creature_ptr->skill_tht -= 20;
         creature_ptr->skill_dig += 30;
     }
@@ -4030,10 +4028,6 @@ void calc_timelimit_status(player_type *creature_ptr)
         creature_ptr->see_inv = TRUE;
     }
 
-    if (creature_ptr->tim_infra) {
-        creature_ptr->see_infra += 3;
-    }
-
     if (creature_ptr->tim_regen) {
         creature_ptr->regenerate = TRUE;
     }
@@ -4050,6 +4044,4 @@ void calc_timelimit_status(player_type *creature_ptr)
         creature_ptr->resist_fear = TRUE;
     }
 
-	if (is_time_limit_stealth(creature_ptr))
-        creature_ptr->skill_stl += 99;
 }

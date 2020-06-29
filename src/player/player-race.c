@@ -127,18 +127,12 @@ void calc_race_status(player_type *creature_ptr)
     else
         tmp_rp_ptr = &race_info[creature_ptr->prace];
 
-    creature_ptr->see_infra += tmp_rp_ptr->infra;
-    creature_ptr->skill_sav += tmp_rp_ptr->r_sav;
-    creature_ptr->skill_srh += tmp_rp_ptr->r_srh;
-    creature_ptr->skill_fos += tmp_rp_ptr->r_fos;
-    creature_ptr->skill_thn += tmp_rp_ptr->r_thn;
     creature_ptr->skill_thb += tmp_rp_ptr->r_thb;
     creature_ptr->skill_tht += tmp_rp_ptr->r_thb;
 
 	for (int i = 0; i < A_MAX; i++) {
         creature_ptr->stat_add[i] += tmp_rp_ptr->r_adj[i];
     }
-
 
     if (creature_ptr->mimic_form) {
         switch (creature_ptr->mimic_form) {
