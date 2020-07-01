@@ -93,6 +93,10 @@ static void calc_to_hit_shoot(player_type *creature_ptr);
 static void calc_to_hit_throw(player_type *creature_ptr);
 static void calc_dig(player_type *creature_ptr);
 static void calc_num_blow(player_type *creature_ptr, int i);
+static void calc_strength_addition(player_type *creature_ptr);
+static void calc_intelligence_addition(player_type *creature_ptr);
+static void calc_wisdom_addition(player_type *creature_ptr);
+static void calc_dexterity_addition(player_type *creature_ptr);
 
 /*!
  * @brief 能力値テーブル / Abbreviations of healthy stats
@@ -1474,151 +1478,7 @@ void calc_bonuses(player_type *creature_ptr)
 		creature_ptr->stat_add[i] += (cp_ptr->c_adj[i] + ap_ptr->a_adj[i]);
 	}
 
-	if (creature_ptr->muta3)
-	{
-		if (creature_ptr->muta3 & MUT3_HYPER_STR)
-		{
-			creature_ptr->stat_add[A_STR] += 4;
-		}
-
-		if (creature_ptr->muta3 & MUT3_PUNY)
-		{
-			creature_ptr->stat_add[A_STR] -= 4;
-		}
-
-		if (creature_ptr->muta3 & MUT3_HYPER_INT)
-		{
-			creature_ptr->stat_add[A_INT] += 4;
-			creature_ptr->stat_add[A_WIS] += 4;
-		}
-
-		if (creature_ptr->muta3 & MUT3_MORONIC)
-		{
-			creature_ptr->stat_add[A_INT] -= 4;
-			creature_ptr->stat_add[A_WIS] -= 4;
-		}
-
-		if (creature_ptr->muta3 & MUT3_RESILIENT)
-		{
-			creature_ptr->stat_add[A_CON] += 4;
-		}
-
-		if (creature_ptr->muta3 & MUT3_XTRA_FAT)
-		{
-			creature_ptr->stat_add[A_CON] += 2;
-			creature_ptr->pspeed -= 2;
-		}
-
-		if (creature_ptr->muta3 & MUT3_ALBINO)
-		{
-			creature_ptr->stat_add[A_CON] -= 4;
-		}
-
-		if (creature_ptr->muta3 & MUT3_FLESH_ROT)
-		{
-			creature_ptr->stat_add[A_CON] -= 2;
-			creature_ptr->stat_add[A_CHR] -= 1;
-			creature_ptr->regenerate = FALSE;
-		}
-
-		if (creature_ptr->muta3 & MUT3_SILLY_VOI)
-		{
-			creature_ptr->stat_add[A_CHR] -= 4;
-		}
-
-		if (creature_ptr->muta3 & MUT3_BLANK_FAC)
-		{
-			creature_ptr->stat_add[A_CHR] -= 1;
-		}
-
-		if (creature_ptr->muta3 & MUT3_XTRA_LEGS)
-		{
-			creature_ptr->pspeed += 3;
-		}
-
-		if (creature_ptr->muta3 & MUT3_SHORT_LEG)
-		{
-			creature_ptr->pspeed -= 3;
-		}
-
-		if (creature_ptr->muta3 & MUT3_ELEC_TOUC)
-		{
-			creature_ptr->sh_elec = TRUE;
-		}
-
-		if (creature_ptr->muta3 & MUT3_FIRE_BODY)
-		{
-			creature_ptr->sh_fire = TRUE;
-			creature_ptr->lite = TRUE;
-		}
-
-		if (creature_ptr->muta3 & MUT3_WART_SKIN)
-		{
-			creature_ptr->stat_add[A_CHR] -= 2;
-			creature_ptr->to_a += 5;
-			creature_ptr->dis_to_a += 5;
-		}
-
-		if (creature_ptr->muta3 & MUT3_SCALES)
-		{
-			creature_ptr->stat_add[A_CHR] -= 1;
-			creature_ptr->to_a += 10;
-			creature_ptr->dis_to_a += 10;
-		}
-
-		if (creature_ptr->muta3 & MUT3_IRON_SKIN)
-		{
-			creature_ptr->stat_add[A_DEX] -= 1;
-			creature_ptr->to_a += 25;
-			creature_ptr->dis_to_a += 25;
-		}
-
-		if (creature_ptr->muta3 & MUT3_WINGS)
-		{
-			creature_ptr->levitation = TRUE;
-		}
-
-		if (creature_ptr->muta3 & MUT3_FEARLESS)
-		{
-			creature_ptr->resist_fear = TRUE;
-		}
-
-		if (creature_ptr->muta3 & MUT3_REGEN)
-		{
-			creature_ptr->regenerate = TRUE;
-		}
-
-		if (creature_ptr->muta3 & MUT3_ESP)
-		{
-			creature_ptr->telepathy = TRUE;
-		}
-
-		if (creature_ptr->muta3 & MUT3_LIMBER)
-		{
-			creature_ptr->stat_add[A_DEX] += 3;
-		}
-
-		if (creature_ptr->muta3 & MUT3_ARTHRITIS)
-		{
-			creature_ptr->stat_add[A_DEX] -= 3;
-		}
-
-		if (creature_ptr->muta3 & MUT3_MOTION)
-		{
-			creature_ptr->free_act = TRUE;
-		}
-
-		if (creature_ptr->muta3 & MUT3_ILL_NORM)
-		{
-			creature_ptr->stat_add[A_CHR] = 0;
-		}
-	}
-
-	if (creature_ptr->tsuyoshi)
-	{
-		creature_ptr->stat_add[A_STR] += 4;
-		creature_ptr->stat_add[A_CON] += 4;
-	}
+	set_mutation_flags(creature_ptr);
 
 	calc_equipment_status(creature_ptr);
 
@@ -1669,25 +1529,16 @@ void calc_bonuses(player_type *creature_ptr)
 		}
 		if (creature_ptr->special_defense & KAMAE_BYAKKO)
 		{
-			creature_ptr->stat_add[A_STR] += 2;
 			creature_ptr->stat_add[A_DEX] += 2;
 			creature_ptr->stat_add[A_CON] -= 3;
 		}
-		else if (creature_ptr->special_defense & KAMAE_SEIRYU)
-		{
-		}
 		else if (creature_ptr->special_defense & KAMAE_GENBU)
 		{
-			creature_ptr->stat_add[A_INT] -= 1;
-			creature_ptr->stat_add[A_WIS] -= 1;
 			creature_ptr->stat_add[A_DEX] -= 2;
 			creature_ptr->stat_add[A_CON] += 3;
 		}
 		else if (creature_ptr->special_defense & KAMAE_SUZAKU)
 		{
-			creature_ptr->stat_add[A_STR] -= 2;
-			creature_ptr->stat_add[A_INT] += 1;
-			creature_ptr->stat_add[A_WIS] += 1;
 			creature_ptr->stat_add[A_DEX] += 2;
 			creature_ptr->stat_add[A_CON] -= 2;
 		}
@@ -1712,10 +1563,8 @@ void calc_bonuses(player_type *creature_ptr)
 	if (creature_ptr->realm1 == REALM_HEX)
 	{
 		if (hex_spelling(creature_ptr, HEX_DETECT_EVIL)) creature_ptr->esp_evil = TRUE;
-		if (hex_spelling(creature_ptr, HEX_XTRA_MIGHT)) creature_ptr->stat_add[A_STR] += 4;
 		if (hex_spelling(creature_ptr, HEX_BUILDING))
 		{
-			creature_ptr->stat_add[A_STR] += 4;
 			creature_ptr->stat_add[A_DEX] += 4;
 			creature_ptr->stat_add[A_CON] += 4;
 		}
@@ -1753,6 +1602,11 @@ void calc_bonuses(player_type *creature_ptr)
 			creature_ptr->dis_to_a += (s16b)ac;
 		}
 	}
+
+	calc_strength_addition(creature_ptr);
+    calc_intelligence_addition(creature_ptr);
+    calc_wisdom_addition(creature_ptr);
+    calc_dexterity_addition(creature_ptr);
 
 	int count = 0;
 	for (int i = 0; i < A_MAX; i++)
@@ -3797,6 +3651,166 @@ static void calc_num_blow(player_type* creature_ptr, int i)
 
     }
 }
+
+static void calc_strength_addition(player_type *creature_ptr)
+{
+
+	if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_ENT) {
+        if (creature_ptr->lev > 25)
+            creature_ptr->stat_add[A_STR]++;
+        if (creature_ptr->lev > 40)
+            creature_ptr->stat_add[A_STR]++;
+        if (creature_ptr->lev > 45)
+            creature_ptr->stat_add[A_STR]++;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        object_type *o_ptr;
+        BIT_FLAGS flgs[TR_FLAG_SIZE];
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        object_flags(o_ptr, flgs);
+        if (have_flag(flgs, TR_STR)) {
+            creature_ptr->stat_add[A_STR] += o_ptr->pval;
+        }
+    }
+	
+	if (creature_ptr->realm1 == REALM_HEX) {
+        if (hex_spelling(creature_ptr, HEX_XTRA_MIGHT)) {
+                creature_ptr->stat_add[A_STR] += 4;
+            }
+        if (hex_spelling(creature_ptr, HEX_BUILDING)) {
+            creature_ptr->stat_add[A_STR] += 4;
+        }
+    }
+
+	if (creature_ptr->special_defense & KAMAE_BYAKKO) {
+        creature_ptr->stat_add[A_STR] += 2;
+    } else if (creature_ptr->special_defense & KAMAE_SUZAKU) {
+        creature_ptr->stat_add[A_STR] -= 2;
+    }
+
+	if (creature_ptr->muta3) {
+
+        if (creature_ptr->muta3 & MUT3_HYPER_STR) {
+            creature_ptr->stat_add[A_STR] += 4;
+        }
+
+        if (creature_ptr->muta3 & MUT3_PUNY) {
+            creature_ptr->stat_add[A_STR] -= 4;
+        }
+    }
+
+	if (creature_ptr->tsuyoshi) {
+        creature_ptr->stat_add[A_STR] += 4;
+        creature_ptr->stat_add[A_CON] += 4;
+    }
+}
+
+void calc_intelligence_addition(player_type *creature_ptr)
+{
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        object_type *o_ptr;
+        BIT_FLAGS flgs[TR_FLAG_SIZE];
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        object_flags(o_ptr, flgs);
+		if (have_flag(flgs, TR_INT)) {
+            creature_ptr->stat_add[A_INT] += o_ptr->pval;
+        }
+    }
+
+	if (creature_ptr->special_defense & KAMAE_GENBU)
+    {
+        creature_ptr->stat_add[A_INT] -= 1;
+    }
+    else if (creature_ptr->special_defense & KAMAE_SUZAKU)
+    {
+        creature_ptr->stat_add[A_INT] += 1;
+    }
+
+	if (creature_ptr->muta3) {
+        if (creature_ptr->muta3 & MUT3_HYPER_INT) {
+            creature_ptr->stat_add[A_INT] += 4;
+        }
+
+        if (creature_ptr->muta3 & MUT3_MORONIC) {
+            creature_ptr->stat_add[A_INT] -= 4;
+        }
+    }
+}
+
+static void calc_wisdom_addition(player_type *creature_ptr)
+{
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        object_type *o_ptr;
+        BIT_FLAGS flgs[TR_FLAG_SIZE];
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        object_flags(o_ptr, flgs);
+        if (have_flag(flgs, TR_WIS)) {
+            creature_ptr->stat_add[A_WIS] += o_ptr->pval;
+        }
+    }
+	
+	if (creature_ptr->muta3) {
+
+        if (creature_ptr->muta3 & MUT3_HYPER_INT) {
+            creature_ptr->stat_add[A_WIS] += 4;
+        }
+
+        if (creature_ptr->muta3 & MUT3_MORONIC) {
+            creature_ptr->stat_add[A_WIS] -= 4;
+        }
+    }
+
+	if (creature_ptr->special_defense & KAMAE_GENBU) {
+        creature_ptr->stat_add[A_WIS] -= 1;
+    } else if (creature_ptr->special_defense & KAMAE_SUZAKU) {
+        creature_ptr->stat_add[A_WIS] += 1;
+    }
+}
+
+static void calc_dexterity_addition(player_type* creature_ptr) {
+
+	if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_ENT) {
+        if (creature_ptr->lev > 25)
+            creature_ptr->stat_add[A_DEX]--;
+        if (creature_ptr->lev > 40)
+            creature_ptr->stat_add[A_DEX]--;
+        if (creature_ptr->lev > 45)
+            creature_ptr->stat_add[A_DEX]--;
+    }
+
+	for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        object_type *o_ptr;
+        BIT_FLAGS flgs[TR_FLAG_SIZE];
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        object_flags(o_ptr, flgs);
+        if (have_flag(flgs, TR_DEX)) {
+            creature_ptr->stat_add[A_DEX] += o_ptr->pval;
+        }
+    }
+
+	if (creature_ptr->muta3 & MUT3_IRON_SKIN) {
+        creature_ptr->stat_add[A_DEX] -= 1;
+    }
+
+    if (creature_ptr->muta3 & MUT3_LIMBER) {
+        creature_ptr->stat_add[A_DEX] += 3;
+    }
+
+    if (creature_ptr->muta3 & MUT3_ARTHRITIS) {
+        creature_ptr->stat_add[A_DEX] -= 3;
+    }
+}
+
+
 
 /*!
  * @brief プレイヤーの所持重量制限を計算する /
