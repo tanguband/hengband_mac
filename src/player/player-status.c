@@ -1,5 +1,6 @@
 ﻿#include "system/angband.h"
 #include "player/player-status.h"
+#include "player/player-personality.h"
 #include "art-definition/art-sword-types.h"
 #include "art-definition/art-weapon-types.h"
 #include "autopick/autopick-reader-writer.h"
@@ -100,6 +101,7 @@ static void calc_dexterity_addition(player_type *creature_ptr);
 static void calc_constitution_addition(player_type *creature_ptr);
 static void calc_charisma_addition(player_type *creature_ptr);
 static void calc_to_magic_chance(player_type *creature_ptr);
+static void calc_base_ac(player_type *creature_ptr);
 
 /*!
  * @brief 能力値テーブル / Abbreviations of healthy stats
@@ -1230,7 +1232,6 @@ int spell_exp_level(int spell_exp)
  */
 static void clear_creature_bonuses(player_type *creature_ptr)
 {
-    creature_ptr->dis_ac = creature_ptr->ac = 0;
     creature_ptr->dis_to_h[0] = creature_ptr->to_h[0] = 0;
     creature_ptr->dis_to_h[1] = creature_ptr->to_h[1] = 0;
     creature_ptr->dis_to_d[0] = creature_ptr->to_d[0] = 0;
@@ -1444,24 +1445,7 @@ void calc_bonuses(player_type *creature_ptr)
 
 	calc_class_status(creature_ptr);
     calc_timelimit_status(creature_ptr);
-
-	if (creature_ptr->pseikaku == PERSONALITY_SEXY) creature_ptr->cursed |= (TRC_AGGRAVATE);
-	if (creature_ptr->pseikaku == PERSONALITY_CHARGEMAN)
-	{
-		creature_ptr->resist_conf = TRUE;
-	}
-
-	if (creature_ptr->pseikaku == PERSONALITY_LUCKY) creature_ptr->muta3 |= MUT3_GOOD_LUCK;
-	if (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)
-	{
-		creature_ptr->resist_blind = TRUE;
-		creature_ptr->resist_conf = TRUE;
-		creature_ptr->hold_exp = TRUE;
-		if (creature_ptr->pclass != CLASS_NINJA) creature_ptr->lite = TRUE;
-
-		if ((creature_ptr->prace != RACE_KLACKON) && (creature_ptr->prace != RACE_SPRITE))
-			creature_ptr->pspeed += (creature_ptr->lev) / 10 + 5;
-	}
+	set_personality_flags(creature_ptr);
 
 	if (music_singing(creature_ptr, MUSIC_WALL))
 	{
@@ -1471,12 +1455,6 @@ void calc_bonuses(player_type *creature_ptr)
 	set_mutation_flags(creature_ptr);
 
 	calc_equipment_status(creature_ptr);
-
-	if (object_is_armour(&creature_ptr->inventory_list[INVEN_RARM]) || object_is_armour(&creature_ptr->inventory_list[INVEN_LARM]))
-	{
-		creature_ptr->ac += creature_ptr->skill_exp[GINOU_SHIELD] * (1 + creature_ptr->lev / 22) / 2000;
-		creature_ptr->dis_ac += creature_ptr->skill_exp[GINOU_SHIELD] * (1 + creature_ptr->lev / 22) / 2000;
-	}
 
 	if (old_mighty_throw != creature_ptr->mighty_throw)
 	{
@@ -1516,21 +1494,6 @@ void calc_bonuses(player_type *creature_ptr)
 		{
 			creature_ptr->to_a += (creature_ptr->lev / 3);
 			creature_ptr->dis_to_a += (creature_ptr->lev / 3);
-		}
-		if (creature_ptr->special_defense & KAMAE_BYAKKO)
-		{
-			creature_ptr->stat_add[A_DEX] += 2;
-			creature_ptr->stat_add[A_CON] -= 3;
-		}
-		else if (creature_ptr->special_defense & KAMAE_GENBU)
-		{
-			creature_ptr->stat_add[A_DEX] -= 2;
-			creature_ptr->stat_add[A_CON] += 3;
-		}
-		else if (creature_ptr->special_defense & KAMAE_SUZAKU)
-		{
-			creature_ptr->stat_add[A_DEX] += 2;
-			creature_ptr->stat_add[A_CON] -= 2;
 		}
 	}
 
@@ -1581,8 +1544,8 @@ void calc_bonuses(player_type *creature_ptr)
 			ac += 5;
 			if (o_ptr->curse_flags & TRC_HEAVY_CURSE) ac += 7;
 			if (o_ptr->curse_flags & TRC_PERMA_CURSE) ac += 13;
-			creature_ptr->to_a += (s16b)ac;
-			creature_ptr->dis_to_a += (s16b)ac;
+			creature_ptr->to_a += ac;
+			creature_ptr->dis_to_a += ac;
 		}
 	}
 
@@ -1593,7 +1556,8 @@ void calc_bonuses(player_type *creature_ptr)
     calc_constitution_addition(creature_ptr);
     calc_charisma_addition(creature_ptr);
     calc_to_magic_chance(creature_ptr);
-
+    calc_base_ac(creature_ptr);
+    calc_base_ac_display(creature_ptr);
 
 	int count = 0;
 	for (int i = 0; i < A_MAX; i++)
@@ -3852,6 +3816,15 @@ static void calc_dexterity_addition(player_type *creature_ptr)
             creature_ptr->stat_add[A_DEX] += 4;
         }
     }
+
+	if (creature_ptr->special_defense & KAMAE_BYAKKO) {
+        creature_ptr->stat_add[A_DEX] += 2;
+    } else if (creature_ptr->special_defense & KAMAE_GENBU) {
+        creature_ptr->stat_add[A_DEX] -= 2;
+    } else if (creature_ptr->special_defense & KAMAE_SUZAKU) {
+        creature_ptr->stat_add[A_DEX] += 2;
+    }
+
 }
 
 static void calc_constitution_addition(player_type *creature_ptr)
@@ -3916,6 +3889,14 @@ static void calc_constitution_addition(player_type *creature_ptr)
 
 	if (creature_ptr->tsuyoshi) {
         creature_ptr->stat_add[A_CON] += 4;
+    }
+
+	if (creature_ptr->special_defense & KAMAE_BYAKKO) {
+        creature_ptr->stat_add[A_CON] -= 3;
+    } else if (creature_ptr->special_defense & KAMAE_GENBU) {
+        creature_ptr->stat_add[A_CON] += 3;
+    } else if (creature_ptr->special_defense & KAMAE_SUZAKU) {
+        creature_ptr->stat_add[A_CON] -= 2;
     }
 }
 
@@ -3994,6 +3975,39 @@ static void calc_to_magic_chance(player_type* creature_ptr)
                 creature_ptr->to_m_chance += 3;
             }
         }
+    }
+}
+
+
+static void calc_base_ac(player_type *creature_ptr) 
+{ 
+	creature_ptr->ac = 0;
+
+	for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        object_type *o_ptr;
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        creature_ptr->ac += o_ptr->ac;
+    }
+	if (object_is_armour(&creature_ptr->inventory_list[INVEN_RARM]) || object_is_armour(&creature_ptr->inventory_list[INVEN_LARM])) {
+        creature_ptr->ac += creature_ptr->skill_exp[GINOU_SHIELD] * (1 + creature_ptr->lev / 22) / 2000;
+    }
+}
+
+static void calc_base_ac_display(player_type *creature_ptr)
+{ 
+	creature_ptr->dis_ac = 0;
+
+	for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        object_type *o_ptr;
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        creature_ptr->dis_ac += o_ptr->ac;
+    }
+	if (object_is_armour(&creature_ptr->inventory_list[INVEN_RARM]) || object_is_armour(&creature_ptr->inventory_list[INVEN_LARM])) {
+        creature_ptr->dis_ac += creature_ptr->skill_exp[GINOU_SHIELD] * (1 + creature_ptr->lev / 22) / 2000;
     }
 }
 
