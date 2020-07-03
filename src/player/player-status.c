@@ -102,6 +102,7 @@ static void calc_constitution_addition(player_type *creature_ptr);
 static void calc_charisma_addition(player_type *creature_ptr);
 static void calc_to_magic_chance(player_type *creature_ptr);
 static void calc_base_ac(player_type *creature_ptr);
+static void calc_base_ac_display(player_type *creature_ptr);
 
 /*!
  * @brief 能力値テーブル / Abbreviations of healthy stats
