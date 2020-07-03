@@ -46,10 +46,6 @@ void calc_equipment_status(player_type* creature_ptr) {
         if (o_ptr->name1 == ART_CHAINSWORD)
             creature_ptr->cursed |= TRC_CHAINSWORD;
 
-        if (have_flag(flgs, TR_CON))
-            creature_ptr->stat_add[A_CON] += o_ptr->pval;
-        if (have_flag(flgs, TR_CHR))
-            creature_ptr->stat_add[A_CHR] += o_ptr->pval;
         if (have_flag(flgs, TR_INFRA))
             creature_ptr->see_infra += o_ptr->pval;
         if (have_flag(flgs, TR_TUNNEL))
@@ -249,14 +245,6 @@ void calc_equipment_status(player_type* creature_ptr) {
             creature_ptr->heavy_spell = TRUE;
         if (o_ptr->name2 == EGO_AMU_NAIVETY)
             creature_ptr->down_saving = TRUE;
-
-        if (o_ptr->curse_flags & TRC_LOW_MAGIC) {
-            if (o_ptr->curse_flags & TRC_HEAVY_CURSE) {
-                creature_ptr->to_m_chance += 10;
-            } else {
-                creature_ptr->to_m_chance += 3;
-            }
-        }
 
         if (o_ptr->tval == TV_CAPTURE)
             continue;

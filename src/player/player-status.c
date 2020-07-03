@@ -97,6 +97,9 @@ static void calc_strength_addition(player_type *creature_ptr);
 static void calc_intelligence_addition(player_type *creature_ptr);
 static void calc_wisdom_addition(player_type *creature_ptr);
 static void calc_dexterity_addition(player_type *creature_ptr);
+static void calc_constitution_addition(player_type *creature_ptr);
+static void calc_charisma_addition(player_type *creature_ptr);
+static void calc_to_magic_chance(player_type *creature_ptr);
 
 /*!
  * @brief 能力値テーブル / Abbreviations of healthy stats
@@ -1227,9 +1230,6 @@ int spell_exp_level(int spell_exp)
  */
 static void clear_creature_bonuses(player_type *creature_ptr)
 {
-    for (int i = 0; i < A_MAX; i++)
-        creature_ptr->stat_add[i] = 0;
-
     creature_ptr->dis_ac = creature_ptr->ac = 0;
     creature_ptr->dis_to_h[0] = creature_ptr->to_h[0] = 0;
     creature_ptr->dis_to_h[1] = creature_ptr->to_h[1] = 0;
@@ -1239,7 +1239,6 @@ static void clear_creature_bonuses(player_type *creature_ptr)
     creature_ptr->dis_to_a = creature_ptr->to_a = 0;
     creature_ptr->to_h_m = 0;
     creature_ptr->to_d_m = 0;
-    creature_ptr->to_m_chance = 0;
     creature_ptr->to_dd[0] = creature_ptr->to_ds[0] = 0;
     creature_ptr->to_dd[1] = creature_ptr->to_ds[1] = 0;
 
@@ -1447,12 +1446,8 @@ void calc_bonuses(player_type *creature_ptr)
     calc_timelimit_status(creature_ptr);
 
 	if (creature_ptr->pseikaku == PERSONALITY_SEXY) creature_ptr->cursed |= (TRC_AGGRAVATE);
-	if (creature_ptr->pseikaku == PERSONALITY_LAZY) creature_ptr->to_m_chance += 10;
-	if (creature_ptr->pseikaku == PERSONALITY_SHREWD) creature_ptr->to_m_chance -= 3;
-	if ((creature_ptr->pseikaku == PERSONALITY_PATIENT) || (creature_ptr->pseikaku == PERSONALITY_MIGHTY)) creature_ptr->to_m_chance++;
 	if (creature_ptr->pseikaku == PERSONALITY_CHARGEMAN)
 	{
-		creature_ptr->to_m_chance += 5;
 		creature_ptr->resist_conf = TRUE;
 	}
 
@@ -1471,11 +1466,6 @@ void calc_bonuses(player_type *creature_ptr)
 	if (music_singing(creature_ptr, MUSIC_WALL))
 	{
 		creature_ptr->kill_wall = TRUE;
-	}
-
-	for (int i = 0; i < A_MAX; i++)
-	{
-		creature_ptr->stat_add[i] += (cp_ptr->c_adj[i] + ap_ptr->a_adj[i]);
 	}
 
 	set_mutation_flags(creature_ptr);
@@ -1546,8 +1536,6 @@ void calc_bonuses(player_type *creature_ptr)
 
 	if (creature_ptr->special_defense & KATA_KOUKIJIN)
 	{
-		for (int i = 0; i < A_MAX; i++)
-			creature_ptr->stat_add[i] += 5;
 		creature_ptr->to_a -= 50;
 		creature_ptr->dis_to_a -= 50;
 	}
@@ -1563,11 +1551,6 @@ void calc_bonuses(player_type *creature_ptr)
 	if (creature_ptr->realm1 == REALM_HEX)
 	{
 		if (hex_spelling(creature_ptr, HEX_DETECT_EVIL)) creature_ptr->esp_evil = TRUE;
-		if (hex_spelling(creature_ptr, HEX_BUILDING))
-		{
-			creature_ptr->stat_add[A_DEX] += 4;
-			creature_ptr->stat_add[A_CON] += 4;
-		}
 
 		if (hex_spelling(creature_ptr, HEX_DEMON_AURA))
 		{
@@ -1607,6 +1590,10 @@ void calc_bonuses(player_type *creature_ptr)
     calc_intelligence_addition(creature_ptr);
     calc_wisdom_addition(creature_ptr);
     calc_dexterity_addition(creature_ptr);
+    calc_constitution_addition(creature_ptr);
+    calc_charisma_addition(creature_ptr);
+    calc_to_magic_chance(creature_ptr);
+
 
 	int count = 0;
 	for (int i = 0; i < A_MAX; i++)
@@ -3654,6 +3641,14 @@ static void calc_num_blow(player_type* creature_ptr, int i)
 
 static void calc_strength_addition(player_type *creature_ptr)
 {
+    const player_race *tmp_rp_ptr;
+    if (creature_ptr->mimic_form)
+        tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
+    else
+        tmp_rp_ptr = &race_info[creature_ptr->prace];
+    const player_class *c_ptr = &class_info[creature_ptr->pclass];
+    const player_personality *a_ptr = &personality_info[creature_ptr->pseikaku];
+	creature_ptr->stat_add[A_STR] = tmp_rp_ptr->r_adj[A_STR] + c_ptr->c_adj[A_STR] + a_ptr->a_adj[A_STR];
 
 	if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_ENT) {
         if (creature_ptr->lev > 25)
@@ -3685,6 +3680,10 @@ static void calc_strength_addition(player_type *creature_ptr)
         }
     }
 
+	if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+       creature_ptr->stat_add[A_STR] += 5;
+    }
+
 	if (creature_ptr->special_defense & KAMAE_BYAKKO) {
         creature_ptr->stat_add[A_STR] += 2;
     } else if (creature_ptr->special_defense & KAMAE_SUZAKU) {
@@ -3704,13 +3703,21 @@ static void calc_strength_addition(player_type *creature_ptr)
 
 	if (creature_ptr->tsuyoshi) {
         creature_ptr->stat_add[A_STR] += 4;
-        creature_ptr->stat_add[A_CON] += 4;
     }
 }
 
 void calc_intelligence_addition(player_type *creature_ptr)
 {
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    const player_race *tmp_rp_ptr;
+    if (creature_ptr->mimic_form)
+        tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
+    else
+        tmp_rp_ptr = &race_info[creature_ptr->prace];
+    const player_class *c_ptr = &class_info[creature_ptr->pclass];
+    const player_personality *a_ptr = &personality_info[creature_ptr->pseikaku];
+    creature_ptr->stat_add[A_INT] = tmp_rp_ptr->r_adj[A_INT] + c_ptr->c_adj[A_INT] + a_ptr->a_adj[A_INT];
+
+	for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -3731,6 +3738,10 @@ void calc_intelligence_addition(player_type *creature_ptr)
         creature_ptr->stat_add[A_INT] += 1;
     }
 
+	if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+        creature_ptr->stat_add[A_INT] += 5;
+    }
+
 	if (creature_ptr->muta3) {
         if (creature_ptr->muta3 & MUT3_HYPER_INT) {
             creature_ptr->stat_add[A_INT] += 4;
@@ -3744,7 +3755,16 @@ void calc_intelligence_addition(player_type *creature_ptr)
 
 static void calc_wisdom_addition(player_type *creature_ptr)
 {
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    const player_race *tmp_rp_ptr;
+    if (creature_ptr->mimic_form)
+        tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
+    else
+        tmp_rp_ptr = &race_info[creature_ptr->prace];
+    const player_class *c_ptr = &class_info[creature_ptr->pclass];
+    const player_personality *a_ptr = &personality_info[creature_ptr->pseikaku];
+    creature_ptr->stat_add[A_WIS] = tmp_rp_ptr->r_adj[A_WIS] + c_ptr->c_adj[A_WIS] + a_ptr->a_adj[A_WIS];
+
+	for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -3767,6 +3787,10 @@ static void calc_wisdom_addition(player_type *creature_ptr)
         }
     }
 
+	if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+        creature_ptr->stat_add[A_WIS] += 5;
+    }
+
 	if (creature_ptr->special_defense & KAMAE_GENBU) {
         creature_ptr->stat_add[A_WIS] -= 1;
     } else if (creature_ptr->special_defense & KAMAE_SUZAKU) {
@@ -3774,9 +3798,19 @@ static void calc_wisdom_addition(player_type *creature_ptr)
     }
 }
 
-static void calc_dexterity_addition(player_type* creature_ptr) {
+static void calc_dexterity_addition(player_type *creature_ptr)
+{
 
-	if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_ENT) {
+    const player_race *tmp_rp_ptr;
+    if (creature_ptr->mimic_form)
+        tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
+    else
+        tmp_rp_ptr = &race_info[creature_ptr->prace];
+    const player_class *c_ptr = &class_info[creature_ptr->pclass];
+    const player_personality *a_ptr = &personality_info[creature_ptr->pseikaku];
+    creature_ptr->stat_add[A_DEX] = tmp_rp_ptr->r_adj[A_DEX] + c_ptr->c_adj[A_DEX] + a_ptr->a_adj[A_DEX];
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_ENT) {
         if (creature_ptr->lev > 25)
             creature_ptr->stat_add[A_DEX]--;
         if (creature_ptr->lev > 40)
@@ -3785,7 +3819,7 @@ static void calc_dexterity_addition(player_type* creature_ptr) {
             creature_ptr->stat_add[A_DEX]--;
     }
 
-	for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -3797,7 +3831,11 @@ static void calc_dexterity_addition(player_type* creature_ptr) {
         }
     }
 
-	if (creature_ptr->muta3 & MUT3_IRON_SKIN) {
+    if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+        creature_ptr->stat_add[A_DEX] += 5;
+    }
+
+    if (creature_ptr->muta3 & MUT3_IRON_SKIN) {
         creature_ptr->stat_add[A_DEX] -= 1;
     }
 
@@ -3808,8 +3846,156 @@ static void calc_dexterity_addition(player_type* creature_ptr) {
     if (creature_ptr->muta3 & MUT3_ARTHRITIS) {
         creature_ptr->stat_add[A_DEX] -= 3;
     }
+
+    if (creature_ptr->realm1 == REALM_HEX) {
+        if (hex_spelling(creature_ptr, HEX_BUILDING)) {
+            creature_ptr->stat_add[A_DEX] += 4;
+        }
+    }
 }
 
+static void calc_constitution_addition(player_type *creature_ptr)
+{
+    const player_race *tmp_rp_ptr;
+    if (creature_ptr->mimic_form)
+        tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
+    else
+        tmp_rp_ptr = &race_info[creature_ptr->prace];
+    const player_class *c_ptr = &class_info[creature_ptr->pclass];
+    const player_personality *a_ptr = &personality_info[creature_ptr->pseikaku];
+    creature_ptr->stat_add[A_CON] = tmp_rp_ptr->r_adj[A_CON] + c_ptr->c_adj[A_CON] + a_ptr->a_adj[A_CON];
+
+	if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_ENT) {
+        if (creature_ptr->lev > 25)
+            creature_ptr->stat_add[A_CON]++;
+        if (creature_ptr->lev > 40)
+            creature_ptr->stat_add[A_CON]++;
+        if (creature_ptr->lev > 45)
+            creature_ptr->stat_add[A_CON]++;
+    }
+
+	for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        object_type *o_ptr;
+        BIT_FLAGS flgs[TR_FLAG_SIZE];
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        object_flags(o_ptr, flgs);
+        if (have_flag(flgs, TR_CON))
+            creature_ptr->stat_add[A_CON] += o_ptr->pval;
+	}
+
+	if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+            creature_ptr->stat_add[A_CON] += 5;
+        }
+
+	if (creature_ptr->muta3) {
+        if (creature_ptr->muta3 & MUT3_RESILIENT) {
+            creature_ptr->stat_add[A_CON] += 4;
+        }
+
+        if (creature_ptr->muta3 & MUT3_ALBINO) {
+            creature_ptr->stat_add[A_CON] -= 4;
+        }
+
+        if (creature_ptr->muta3 & MUT3_XTRA_FAT) {
+            creature_ptr->stat_add[A_CON] += 2;
+        }
+
+        if (creature_ptr->muta3 & MUT3_FLESH_ROT) {
+            creature_ptr->stat_add[A_CON] -= 2;
+        }
+
+	}
+
+	if (creature_ptr->realm1 == REALM_HEX) {
+        if (hex_spelling(creature_ptr, HEX_BUILDING)) {
+            creature_ptr->stat_add[A_CON] += 4;
+        }
+    }
+
+	if (creature_ptr->tsuyoshi) {
+        creature_ptr->stat_add[A_CON] += 4;
+    }
+}
+
+static void calc_charisma_addition(player_type *creature_ptr)
+{
+    const player_race *tmp_rp_ptr;
+    if (creature_ptr->mimic_form)
+        tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
+    else
+        tmp_rp_ptr = &race_info[creature_ptr->prace];
+    const player_class *c_ptr = &class_info[creature_ptr->pclass];
+    const player_personality *a_ptr = &personality_info[creature_ptr->pseikaku];
+    creature_ptr->stat_add[A_CHR] = tmp_rp_ptr->r_adj[A_CHR] + c_ptr->c_adj[A_CHR] + a_ptr->a_adj[A_CHR];
+
+	for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        object_type *o_ptr;
+        BIT_FLAGS flgs[TR_FLAG_SIZE];
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        object_flags(o_ptr, flgs);
+        if (have_flag(flgs, TR_CHR))
+            creature_ptr->stat_add[A_CHR] += o_ptr->pval;
+    }
+
+	if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+        creature_ptr->stat_add[A_CHR] += 5;
+    }
+
+    if (creature_ptr->muta3) {
+        if (creature_ptr->muta3 & MUT3_FLESH_ROT) {
+            creature_ptr->stat_add[A_CHR] -= 1;
+        }
+        if (creature_ptr->muta3 & MUT3_SILLY_VOI) {
+            creature_ptr->stat_add[A_CHR] -= 4;
+        }
+        if (creature_ptr->muta3 & MUT3_BLANK_FAC) {
+            creature_ptr->stat_add[A_CHR] -= 1;
+        }
+        if (creature_ptr->muta3 & MUT3_WART_SKIN) {
+            creature_ptr->stat_add[A_CHR] -= 2;
+        }
+        if (creature_ptr->muta3 & MUT3_SCALES) {
+            creature_ptr->stat_add[A_CHR] -= 1;
+        }
+        if (creature_ptr->muta3 & MUT3_ILL_NORM) {
+            creature_ptr->stat_add[A_CHR] = 0;
+        }
+    }
+}
+
+static void calc_to_magic_chance(player_type* creature_ptr)
+{
+    creature_ptr->to_m_chance = 0;
+
+	if (creature_ptr->pseikaku == PERSONALITY_LAZY)
+        creature_ptr->to_m_chance += 10;
+    if (creature_ptr->pseikaku == PERSONALITY_SHREWD)
+        creature_ptr->to_m_chance -= 3;
+    if ((creature_ptr->pseikaku == PERSONALITY_PATIENT) || (creature_ptr->pseikaku == PERSONALITY_MIGHTY))
+        creature_ptr->to_m_chance++;
+    if (creature_ptr->pseikaku == PERSONALITY_CHARGEMAN)
+        creature_ptr->to_m_chance += 5;
+
+	for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        object_type *o_ptr;
+        BIT_FLAGS flgs[TR_FLAG_SIZE];
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        object_flags(o_ptr, flgs);
+        if (o_ptr->curse_flags & TRC_LOW_MAGIC) {
+            if (o_ptr->curse_flags & TRC_HEAVY_CURSE) {
+                creature_ptr->to_m_chance += 10;
+            } else {
+                creature_ptr->to_m_chance += 3;
+            }
+        }
+    }
+}
 
 
 /*!

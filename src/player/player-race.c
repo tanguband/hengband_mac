@@ -121,15 +121,10 @@ bool is_specific_player_race(player_type *creature_ptr, player_race_type prace) 
 void calc_race_status(player_type *creature_ptr)
 {
     const player_race *tmp_rp_ptr;
-	
-	if (creature_ptr->mimic_form)
+		if (creature_ptr->mimic_form)
         tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
     else
         tmp_rp_ptr = &race_info[creature_ptr->prace];
-
-	for (int i = 0; i < A_MAX; i++) {
-        creature_ptr->stat_add[i] += tmp_rp_ptr->r_adj[i];
-    }
 
     if (creature_ptr->mimic_form) {
         switch (creature_ptr->mimic_form) {
@@ -347,13 +342,6 @@ void calc_race_status(player_type *creature_ptr)
         case RACE_ENT:
             if (!creature_ptr->inventory_list[INVEN_RARM].k_idx)
                 creature_ptr->skill_dig += creature_ptr->lev * 10;
-
-            if (creature_ptr->lev > 25)
-                creature_ptr->stat_add[A_CON]++;
-            if (creature_ptr->lev > 40)
-                creature_ptr->stat_add[A_CON]++;
-            if (creature_ptr->lev > 45)
-                creature_ptr->stat_add[A_CON]++;
             break;
         case RACE_ARCHON:
             creature_ptr->levitation = TRUE;
