@@ -103,6 +103,9 @@ static void calc_charisma_addition(player_type *creature_ptr);
 static void calc_to_magic_chance(player_type *creature_ptr);
 static void calc_base_ac(player_type *creature_ptr);
 static void calc_base_ac_display(player_type *creature_ptr);
+static void calc_to_ac(player_type *creature_ptr);
+static void calc_to_ac_display(player_type *creature_ptr);
+static void calc_speed(player_type *creature_ptr);
 
 /*!
  * @brief 能力値テーブル / Abbreviations of healthy stats
@@ -1238,7 +1241,6 @@ static void clear_creature_bonuses(player_type *creature_ptr)
     creature_ptr->dis_to_d[0] = creature_ptr->to_d[0] = 0;
     creature_ptr->dis_to_d[1] = creature_ptr->to_d[1] = 0;
     creature_ptr->dis_to_h_b = creature_ptr->to_h_b = 0;
-    creature_ptr->dis_to_a = creature_ptr->to_a = 0;
     creature_ptr->to_h_m = 0;
     creature_ptr->to_d_m = 0;
     creature_ptr->to_dd[0] = creature_ptr->to_ds[0] = 0;
@@ -1320,7 +1322,6 @@ static void clear_creature_bonuses(player_type *creature_ptr)
     creature_ptr->migite = FALSE;
     creature_ptr->hidarite = FALSE;
     creature_ptr->no_flowed = FALSE;
-    creature_ptr->pspeed = 110;
     creature_ptr->yoiyami = FALSE;
     creature_ptr->easy_2weapon = FALSE;
     creature_ptr->down_saving = FALSE;
@@ -1464,52 +1465,11 @@ void calc_bonuses(player_type *creature_ptr)
 
 	if (creature_ptr->cursed & TRC_TELEPORT) creature_ptr->cursed &= ~(TRC_TELEPORT_SELF);
 
-	if (((creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER)) && !heavy_armor(creature_ptr))
-	{
-		if (!(creature_ptr->inventory_list[INVEN_BODY].k_idx))
-		{
-			creature_ptr->to_a += (creature_ptr->lev * 3) / 2;
-			creature_ptr->dis_to_a += (creature_ptr->lev * 3) / 2;
-		}
-		if (!(creature_ptr->inventory_list[INVEN_OUTER].k_idx) && (creature_ptr->lev > 15))
-		{
-			creature_ptr->to_a += ((creature_ptr->lev - 13) / 3);
-			creature_ptr->dis_to_a += ((creature_ptr->lev - 13) / 3);
-		}
-		if (!(creature_ptr->inventory_list[INVEN_LARM].k_idx) && (creature_ptr->lev > 10))
-		{
-			creature_ptr->to_a += ((creature_ptr->lev - 8) / 3);
-			creature_ptr->dis_to_a += ((creature_ptr->lev - 8) / 3);
-		}
-		if (!(creature_ptr->inventory_list[INVEN_HEAD].k_idx) && (creature_ptr->lev > 4))
-		{
-			creature_ptr->to_a += (creature_ptr->lev - 2) / 3;
-			creature_ptr->dis_to_a += (creature_ptr->lev - 2) / 3;
-		}
-		if (!(creature_ptr->inventory_list[INVEN_HANDS].k_idx))
-		{
-			creature_ptr->to_a += (creature_ptr->lev / 2);
-			creature_ptr->dis_to_a += (creature_ptr->lev / 2);
-		}
-		if (!(creature_ptr->inventory_list[INVEN_FEET].k_idx))
-		{
-			creature_ptr->to_a += (creature_ptr->lev / 3);
-			creature_ptr->dis_to_a += (creature_ptr->lev / 3);
-		}
-	}
-
-	if (creature_ptr->special_defense & KATA_KOUKIJIN)
-	{
-		creature_ptr->to_a -= 50;
-		creature_ptr->dis_to_a -= 50;
-	}
-
 	if (creature_ptr->sh_fire) creature_ptr->lite = TRUE;
 
 	if (is_specific_player_race(creature_ptr, RACE_GOLEM) || is_specific_player_race(creature_ptr, RACE_ANDROID))
 	{
 		creature_ptr->to_a += 10 + (creature_ptr->lev * 2 / 5);
-		creature_ptr->dis_to_a += 10 + (creature_ptr->lev * 2 / 5);
 	}
 
 	if (creature_ptr->realm1 == REALM_HEX)
@@ -1525,8 +1485,6 @@ void calc_bonuses(player_type *creature_ptr)
 		if (hex_spelling(creature_ptr, HEX_ICE_ARMOR))
 		{
 			creature_ptr->sh_cold = TRUE;
-			creature_ptr->to_a += 30;
-			creature_ptr->dis_to_a += 30;
 		}
 
 		if (hex_spelling(creature_ptr, HEX_SHOCK_CLOAK))
@@ -1558,7 +1516,9 @@ void calc_bonuses(player_type *creature_ptr)
     calc_charisma_addition(creature_ptr);
     calc_to_magic_chance(creature_ptr);
     calc_base_ac(creature_ptr);
+    calc_to_ac(creature_ptr);
     calc_base_ac_display(creature_ptr);
+    calc_to_ac_display(creature_ptr);
 
 	int count = 0;
 	for (int i = 0; i < A_MAX; i++)
@@ -1654,10 +1614,6 @@ void calc_bonuses(player_type *creature_ptr)
 		creature_ptr->update |= (PU_MONSTERS);
 	}
 
-	if (creature_ptr->food >= PY_FOOD_MAX) creature_ptr->pspeed -= 10;
-
-	if (creature_ptr->special_defense & KAMAE_SUZAKU) creature_ptr->pspeed += 10;
-
 	if ((creature_ptr->migite && (empty_hands_status & EMPTY_HAND_RARM)) ||
 		(creature_ptr->hidarite && (empty_hands_status & EMPTY_HAND_LARM)))
 	{
@@ -1720,21 +1676,6 @@ void calc_bonuses(player_type *creature_ptr)
 	{
 		monster_type *riding_m_ptr = &floor_ptr->m_list[creature_ptr->riding];
 		monster_race *riding_r_ptr = &r_info[riding_m_ptr->r_idx];
-		SPEED speed = riding_m_ptr->mspeed;
-
-		if (riding_m_ptr->mspeed > 110)
-		{
-			creature_ptr->pspeed = 110 + (s16b)((speed - 110) * (creature_ptr->skill_exp[GINOU_RIDING] * 3 + creature_ptr->lev * 160L - 10000L) / (22000L));
-			if (creature_ptr->pspeed < 110) creature_ptr->pspeed = 110;
-		}
-		else
-		{
-			creature_ptr->pspeed = speed;
-		}
-
-		creature_ptr->pspeed += (creature_ptr->skill_exp[GINOU_RIDING] + creature_ptr->lev * 160L) / 3200;
-		if (monster_fast_remaining(riding_m_ptr)) creature_ptr->pspeed += 10;
-		if (monster_slow_remaining(riding_m_ptr)) creature_ptr->pspeed -= 10;
 		riding_levitation = (riding_r_ptr->flags7 & RF7_CAN_FLY) ? TRUE : FALSE;
 		if (riding_r_ptr->flags7 & (RF7_CAN_SWIM | RF7_AQUATIC)) creature_ptr->can_swim = TRUE;
 
@@ -1979,16 +1920,8 @@ void calc_bonuses(player_type *creature_ptr)
 			creature_ptr->dis_to_d[0] += (creature_ptr->lev / 6);
 		}
 
-		if (creature_ptr->special_defense & KAMAE_BYAKKO)
+		if (creature_ptr->special_defense & KAMAE_SEIRYU)
 		{
-			creature_ptr->to_a -= 40;
-			creature_ptr->dis_to_a -= 40;
-
-		}
-		else if (creature_ptr->special_defense & KAMAE_SEIRYU)
-		{
-			creature_ptr->to_a -= 50;
-			creature_ptr->dis_to_a -= 50;
 			creature_ptr->resist_acid = TRUE;
 			creature_ptr->resist_fire = TRUE;
 			creature_ptr->resist_elec = TRUE;
@@ -2064,15 +1997,7 @@ void calc_bonuses(player_type *creature_ptr)
 		if (creature_ptr->num_blow[i] < 1) creature_ptr->num_blow[i] = 1;
 	}
 
-	/* Maximum speed is (+99). (internally it's 110 + 99) */
-	/* Temporary lightspeed forces to be maximum speed */
-	if ((creature_ptr->lightspeed && !creature_ptr->riding) || (creature_ptr->pspeed > 209))
-	{
-		creature_ptr->pspeed = 209;
-	}
-
-	/* Minimum speed is (-99). (internally it's 110 - 99) */
-	if (creature_ptr->pspeed < 11) creature_ptr->pspeed = 11;
+	calc_speed(creature_ptr);
 
 	if (creature_ptr->pspeed != old_speed)
 	{
@@ -3996,6 +3921,64 @@ static void calc_base_ac(player_type *creature_ptr)
     }
 }
 
+static void calc_to_ac(player_type *creature_ptr)
+{
+    creature_ptr->to_a = 0;
+
+    if (creature_ptr->muta3 & MUT3_WART_SKIN) {
+        creature_ptr->to_a += 5;
+    }
+
+    if (creature_ptr->muta3 & MUT3_SCALES) {
+        creature_ptr->to_a += 10;
+    }
+
+    if (creature_ptr->muta3 & MUT3_IRON_SKIN) {
+        creature_ptr->to_a += 25;
+    }
+
+	if (((creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER)) && !heavy_armor(creature_ptr)) {
+        if (!(creature_ptr->inventory_list[INVEN_BODY].k_idx)) {
+            creature_ptr->to_a += (creature_ptr->lev * 3) / 2;
+        }
+        if (!(creature_ptr->inventory_list[INVEN_OUTER].k_idx) && (creature_ptr->lev > 15)) {
+            creature_ptr->to_a += ((creature_ptr->lev - 13) / 3);
+        }
+        if (!(creature_ptr->inventory_list[INVEN_LARM].k_idx) && (creature_ptr->lev > 10)) {
+            creature_ptr->to_a += ((creature_ptr->lev - 8) / 3);
+        }
+        if (!(creature_ptr->inventory_list[INVEN_HEAD].k_idx) && (creature_ptr->lev > 4)) {
+            creature_ptr->to_a += (creature_ptr->lev - 2) / 3;
+        }
+        if (!(creature_ptr->inventory_list[INVEN_HANDS].k_idx)) {
+            creature_ptr->to_a += (creature_ptr->lev / 2);
+        }
+        if (!(creature_ptr->inventory_list[INVEN_FEET].k_idx)) {
+            creature_ptr->to_a += (creature_ptr->lev / 3);
+        }
+    }
+
+	if (creature_ptr->realm1 == REALM_HEX) {
+        if (hex_spelling(creature_ptr, HEX_ICE_ARMOR)) {
+            creature_ptr->to_a += 30;
+        }
+    }
+
+	if (creature_ptr->special_defense & KAMAE_BYAKKO) {
+        creature_ptr->to_a -= 40;
+    } else if (creature_ptr->special_defense & KAMAE_SEIRYU) {
+        creature_ptr->to_a -= 50;
+    } else if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+        creature_ptr->to_a -= 50;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->to_a += 100;
+    } else if (creature_ptr->tsubureru || creature_ptr->shield || creature_ptr->magicdef) {
+        creature_ptr->to_a += 50;
+    }
+}
+
 static void calc_base_ac_display(player_type *creature_ptr)
 { 
 	creature_ptr->dis_ac = 0;
@@ -4010,6 +3993,190 @@ static void calc_base_ac_display(player_type *creature_ptr)
 	if (object_is_armour(&creature_ptr->inventory_list[INVEN_RARM]) || object_is_armour(&creature_ptr->inventory_list[INVEN_LARM])) {
         creature_ptr->dis_ac += creature_ptr->skill_exp[GINOU_SHIELD] * (1 + creature_ptr->lev / 22) / 2000;
     }
+}
+
+static void calc_to_ac_display(player_type *creature_ptr)
+{
+    creature_ptr->dis_to_a = 0;
+
+    if (((creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER)) && !heavy_armor(creature_ptr)) {
+        if (!(creature_ptr->inventory_list[INVEN_BODY].k_idx)) {
+            creature_ptr->dis_to_a += (creature_ptr->lev * 3) / 2;
+        }
+        if (!(creature_ptr->inventory_list[INVEN_OUTER].k_idx) && (creature_ptr->lev > 15)) {
+            creature_ptr->dis_to_a += ((creature_ptr->lev - 13) / 3);
+        }
+        if (!(creature_ptr->inventory_list[INVEN_LARM].k_idx) && (creature_ptr->lev > 10)) {
+            creature_ptr->dis_to_a += ((creature_ptr->lev - 8) / 3);
+        }
+        if (!(creature_ptr->inventory_list[INVEN_HEAD].k_idx) && (creature_ptr->lev > 4)) {
+            creature_ptr->dis_to_a += (creature_ptr->lev - 2) / 3;
+        }
+        if (!(creature_ptr->inventory_list[INVEN_HANDS].k_idx)) {
+            creature_ptr->dis_to_a += (creature_ptr->lev / 2);
+        }
+        if (!(creature_ptr->inventory_list[INVEN_FEET].k_idx)) {
+            creature_ptr->dis_to_a += (creature_ptr->lev / 3);
+        }
+    }
+
+	if (is_specific_player_race(creature_ptr, RACE_GOLEM) || is_specific_player_race(creature_ptr, RACE_ANDROID)) {
+        creature_ptr->dis_to_a += 10 + (creature_ptr->lev * 2 / 5);
+    }
+
+	if (creature_ptr->realm1 == REALM_HEX) {
+        if (hex_spelling(creature_ptr, HEX_ICE_ARMOR)) {
+            creature_ptr->dis_to_a += 30;
+        }
+    }
+
+    if (creature_ptr->muta3) {
+        if (creature_ptr->muta3 & MUT3_WART_SKIN) {
+            creature_ptr->dis_to_a += 5;
+        }
+
+        if (creature_ptr->muta3 & MUT3_SCALES) {
+            creature_ptr->dis_to_a += 10;
+        }
+
+        if (creature_ptr->muta3 & MUT3_IRON_SKIN) {
+            creature_ptr->dis_to_a += 25;
+        }
+    }
+
+	if (creature_ptr->special_defense & KAMAE_BYAKKO) {
+        creature_ptr->dis_to_a -= 40;
+    } else if (creature_ptr->special_defense & KAMAE_SEIRYU) {
+        creature_ptr->dis_to_a -= 50;
+    } else if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+        creature_ptr->dis_to_a -= 50;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->dis_to_a += 100;
+    } else if (creature_ptr->tsubureru || creature_ptr->shield || creature_ptr->magicdef) {
+        creature_ptr->dis_to_a += 50;
+    }
+}
+
+static void calc_speed(player_type *creature_ptr)
+{
+    creature_ptr->pspeed = 110;
+
+	if (!creature_ptr->riding) {
+        const player_race *tmp_rp_ptr;
+        if (creature_ptr->mimic_form)
+            tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
+        else
+            tmp_rp_ptr = &race_info[creature_ptr->prace];
+
+        if (is_specific_player_race(creature_ptr, RACE_KLACKON) || is_specific_player_race(creature_ptr, RACE_SPRITE))
+            creature_ptr->pspeed += (creature_ptr->lev) / 10;
+
+        for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+            object_type *o_ptr = &creature_ptr->inventory_list[i];
+            BIT_FLAGS flgs[TR_FLAG_SIZE];
+            object_flags(o_ptr, flgs);
+
+            if (!o_ptr->k_idx)
+                continue;
+            if (have_flag(flgs, TR_SPEED))
+                creature_ptr->pspeed += o_ptr->pval;
+        }
+    
+
+        if (creature_ptr->mimic_form) {
+            switch (creature_ptr->mimic_form) {
+            case MIMIC_DEMON:
+                creature_ptr->pspeed += 3;
+                break;
+            case MIMIC_DEMON_LORD:
+                creature_ptr->pspeed += 5;
+                break;
+            case MIMIC_VAMPIRE:
+                creature_ptr->pspeed += 3;
+                break;
+            }
+        }
+
+        if (creature_ptr->pclass == CLASS_FORCETRAINER && !(heavy_armor(creature_ptr))) {
+            if (!(is_specific_player_race(creature_ptr, RACE_KLACKON) || is_specific_player_race(creature_ptr, RACE_SPRITE)
+                    || (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)))
+                creature_ptr->pspeed += (creature_ptr->lev) / 10;
+        }
+
+        if (creature_ptr->pclass == CLASS_BERSERKER) {
+            creature_ptr->pspeed += 2;
+            if (creature_ptr->lev > 29)
+                creature_ptr->pspeed++;
+            if (creature_ptr->lev > 39)
+                creature_ptr->pspeed++;
+            if (creature_ptr->lev > 44)
+                creature_ptr->pspeed++;
+            if (creature_ptr->lev > 49)
+                creature_ptr->pspeed++;
+        }
+
+        if (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN && creature_ptr->prace != RACE_KLACKON && creature_ptr->prace != RACE_SPRITE) {
+            creature_ptr->pspeed += (creature_ptr->lev) / 10 + 5;
+        }
+
+        if (IS_FAST(creature_ptr)) {
+            creature_ptr->pspeed += 10;
+        }
+
+        if (creature_ptr->slow) {
+            creature_ptr->pspeed -= 10;
+        }
+
+		if (creature_ptr->food >= PY_FOOD_MAX)
+            creature_ptr->pspeed -= 10;
+
+        if (creature_ptr->special_defense & KAMAE_SUZAKU)
+            creature_ptr->pspeed += 10;
+
+        if (creature_ptr->muta3) {
+
+            if (creature_ptr->muta3 & MUT3_XTRA_FAT) {
+                creature_ptr->pspeed -= 2;
+            }
+
+            if (creature_ptr->muta3 & MUT3_XTRA_LEGS) {
+                creature_ptr->pspeed += 3;
+            }
+
+            if (creature_ptr->muta3 & MUT3_SHORT_LEG) {
+                creature_ptr->pspeed -= 3;
+            }
+        }
+    } else {
+        monster_type *riding_m_ptr = &creature_ptr->current_floor_ptr->m_list[creature_ptr->riding];
+        SPEED speed = riding_m_ptr->mspeed;
+
+        if (riding_m_ptr->mspeed > 110) {
+            creature_ptr->pspeed = 110 + (s16b)((speed - 110) * (creature_ptr->skill_exp[GINOU_RIDING] * 3 + creature_ptr->lev * 160L - 10000L) / (22000L));
+            if (creature_ptr->pspeed < 110)
+                creature_ptr->pspeed = 110;
+        } else {
+            creature_ptr->pspeed = speed;
+        }
+
+        creature_ptr->pspeed += (creature_ptr->skill_exp[GINOU_RIDING] + creature_ptr->lev * 160L) / 3200;
+        if (monster_fast_remaining(riding_m_ptr))
+            creature_ptr->pspeed += 10;
+        if (monster_slow_remaining(riding_m_ptr))
+            creature_ptr->pspeed -= 10;
+    }
+
+	/* Maximum speed is (+99). (internally it's 110 + 99) */
+    /* Temporary lightspeed forces to be maximum speed */
+    if ((creature_ptr->lightspeed && !creature_ptr->riding) || (creature_ptr->pspeed > 209)) {
+        creature_ptr->pspeed = 209;
+    }
+
+    /* Minimum speed is (-99). (internally it's 110 - 99) */
+    if (creature_ptr->pspeed < 11)
+        creature_ptr->pspeed = 11;
 }
 
 

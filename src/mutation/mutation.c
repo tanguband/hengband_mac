@@ -1891,20 +1891,8 @@ void set_mutation_flags(player_type *creature_ptr)
 {
     if (creature_ptr->muta3) {
 
-        if (creature_ptr->muta3 & MUT3_XTRA_FAT) {
-            creature_ptr->pspeed -= 2;
-        }
-
         if (creature_ptr->muta3 & MUT3_FLESH_ROT) {
             creature_ptr->regenerate = FALSE;
-        }
-
-        if (creature_ptr->muta3 & MUT3_XTRA_LEGS) {
-            creature_ptr->pspeed += 3;
-        }
-
-        if (creature_ptr->muta3 & MUT3_SHORT_LEG) {
-            creature_ptr->pspeed -= 3;
         }
 
         if (creature_ptr->muta3 & MUT3_ELEC_TOUC) {
@@ -1914,21 +1902,6 @@ void set_mutation_flags(player_type *creature_ptr)
         if (creature_ptr->muta3 & MUT3_FIRE_BODY) {
             creature_ptr->sh_fire = TRUE;
             creature_ptr->lite = TRUE;
-        }
-
-        if (creature_ptr->muta3 & MUT3_WART_SKIN) {
-            creature_ptr->to_a += 5;
-            creature_ptr->dis_to_a += 5;
-        }
-
-        if (creature_ptr->muta3 & MUT3_SCALES) {
-            creature_ptr->to_a += 10;
-            creature_ptr->dis_to_a += 10;
-        }
-
-        if (creature_ptr->muta3 & MUT3_IRON_SKIN) {
-            creature_ptr->to_a += 25;
-            creature_ptr->dis_to_a += 25;
         }
 
         if (creature_ptr->muta3 & MUT3_WINGS) {

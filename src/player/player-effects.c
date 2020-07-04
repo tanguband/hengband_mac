@@ -3896,12 +3896,7 @@ void calc_timelimit_status(player_type *creature_ptr)
         creature_ptr->sh_fire = TRUE;
         creature_ptr->sh_elec = TRUE;
         creature_ptr->sh_cold = TRUE;
-        creature_ptr->to_a += 100;
-        creature_ptr->dis_to_a += 100;
-    } else if (creature_ptr->tsubureru || creature_ptr->shield || creature_ptr->magicdef) {
-        creature_ptr->to_a += 50;
-        creature_ptr->dis_to_a += 50;
-    }
+    } 
 
     if (creature_ptr->tim_res_nether) {
         creature_ptr->resist_neth = TRUE;
@@ -3998,14 +3993,6 @@ void calc_timelimit_status(player_type *creature_ptr)
         creature_ptr->to_a -= 10;
         creature_ptr->dis_to_a -= 10;
         creature_ptr->skill_dig += 30;
-    }
-
-    if (IS_FAST(creature_ptr)) {
-        creature_ptr->pspeed += 10;
-    }
-
-    if (creature_ptr->slow) {
-        creature_ptr->pspeed -= 10;
     }
 
     if (is_time_limit_esp(creature_ptr)) {
