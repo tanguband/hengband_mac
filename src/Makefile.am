@@ -685,6 +685,7 @@ hengband_LINK = $(LINK)
 endif
 
 DEFAULT_INCLUDES = -I$(srcdir) \
+	-I$(srcdir)/art-definition \
 	-I$(srcdir)/autopick \
 	-I$(srcdir)/birth \
 	-I$(srcdir)/cmd \
@@ -704,6 +705,7 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/knowledge \
 	-I$(srcdir)/lore \
 	-I$(srcdir)/market \
+	-I$(srcdir)/melee \
 	-I$(srcdir)/mind \
 	-I$(srcdir)/monster \
 	-I$(srcdir)/monster-attack \
