@@ -105,8 +105,9 @@ static void calc_base_ac_display(player_type *creature_ptr);
 static void calc_to_ac(player_type *creature_ptr);
 static void calc_to_ac_display(player_type *creature_ptr);
 static void calc_speed(player_type *creature_ptr);
+static void calc_weapon_penalty(player_type *creature_ptr, INVENTORY_IDX slot);
 
-/*!
+    /*!
  * @brief 能力値テーブル / Abbreviations of healthy stats
  */
 const concptr stat_names[6] = {
@@ -813,72 +814,21 @@ void calc_bonuses(player_type *creature_ptr)
         creature_ptr->dis_to_h[default_hand] += (creature_ptr->skill_exp[GINOU_SUDE] - WEAPON_EXP_BEGINNER) / 200;
     }
 
-    if (has_melee_weapon(creature_ptr, INVEN_RARM) && has_melee_weapon(creature_ptr, INVEN_LARM)) {
-        int penalty1, penalty2;
-        penalty1 = ((100 - creature_ptr->skill_exp[GINOU_NITOURYU] / 160) - (130 - creature_ptr->inventory_list[INVEN_RARM].weight) / 8);
-        penalty2 = ((100 - creature_ptr->skill_exp[GINOU_NITOURYU] / 160) - (130 - creature_ptr->inventory_list[INVEN_LARM].weight) / 8);
-        if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_QUICKTHORN) && (creature_ptr->inventory_list[INVEN_LARM].name1 == ART_TINYTHORN)) {
-            penalty1 = penalty1 / 2 - 5;
-            penalty2 = penalty2 / 2 - 5;
-            creature_ptr->pspeed += 7;
-            creature_ptr->to_a += 10;
-            creature_ptr->dis_to_a += 10;
-        }
-        if (creature_ptr->easy_2weapon) {
-            if (penalty1 > 0)
-                penalty1 /= 2;
-            if (penalty2 > 0)
-                penalty2 /= 2;
-        } else if ((creature_ptr->inventory_list[INVEN_LARM].tval == TV_SWORD)
-            && ((creature_ptr->inventory_list[INVEN_LARM].sval == SV_MAIN_GAUCHE) || (creature_ptr->inventory_list[INVEN_LARM].sval == SV_WAKIZASHI))) {
-            penalty1 = MAX(0, penalty1 - 10);
-            penalty2 = MAX(0, penalty2 - 10);
-        }
-        if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_MUSASI_KATANA) && (creature_ptr->inventory_list[INVEN_LARM].name1 == ART_MUSASI_WAKIZASI)) {
-            penalty1 = MIN(0, penalty1);
-            penalty2 = MIN(0, penalty2);
-            creature_ptr->to_a += 10;
-            creature_ptr->dis_to_a += 10;
-        } else {
-            if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_MUSASI_KATANA) && (penalty1 > 0))
-                penalty1 /= 2;
-            if ((creature_ptr->inventory_list[INVEN_LARM].name1 == ART_MUSASI_WAKIZASI) && (penalty2 > 0))
-                penalty2 /= 2;
-        }
+	calc_weapon_penalty(creature_ptr, INVEN_RARM);
+    calc_weapon_penalty(creature_ptr, INVEN_LARM);
 
-        if (creature_ptr->inventory_list[INVEN_RARM].tval == TV_POLEARM)
-            penalty1 += 10;
-        if (creature_ptr->inventory_list[INVEN_LARM].tval == TV_POLEARM)
-            penalty2 += 10;
-        creature_ptr->to_h[0] -= (s16b)penalty1;
-        creature_ptr->to_h[1] -= (s16b)penalty2;
-        creature_ptr->dis_to_h[0] -= (s16b)penalty1;
-        creature_ptr->dis_to_h[1] -= (s16b)penalty2;
-    }
-
-    int j = creature_ptr->total_weight;
-    if (!creature_ptr->riding) {
-        count = (int)weight_limit(creature_ptr);
-    } else {
+    if (creature_ptr->riding) {
         monster_type *riding_m_ptr = &floor_ptr->m_list[creature_ptr->riding];
         monster_race *riding_r_ptr = &r_info[riding_m_ptr->r_idx];
         riding_levitation = (riding_r_ptr->flags7 & RF7_CAN_FLY) ? TRUE : FALSE;
         if (riding_r_ptr->flags7 & (RF7_CAN_SWIM | RF7_AQUATIC))
-            creature_ptr->can_swim = TRUE;
+           creature_ptr->can_swim = TRUE;
 
         if (!(riding_r_ptr->flags2 & RF2_PASS_WALL))
             creature_ptr->pass_wall = FALSE;
         if (riding_r_ptr->flags2 & RF2_KILL_WALL)
             creature_ptr->kill_wall = TRUE;
-
-        if (creature_ptr->skill_exp[GINOU_RIDING] < RIDING_EXP_SKILLED)
-            j += (creature_ptr->wt * 3 * (RIDING_EXP_SKILLED - creature_ptr->skill_exp[GINOU_RIDING])) / RIDING_EXP_SKILLED;
-
-        count = 1500 + riding_r_ptr->level * 25;
-    }
-
-    if (j > count)
-        creature_ptr->pspeed -= ((j - count) / (count / 5));
+	}
 
     creature_ptr->to_d[0] += ((int)(adj_str_td[creature_ptr->stat_ind[A_STR]]) - 128);
     creature_ptr->to_d[1] += ((int)(adj_str_td[creature_ptr->stat_ind[A_STR]]) - 128);
@@ -3059,6 +3009,14 @@ static void calc_to_ac(player_type *creature_ptr)
         creature_ptr->to_a += 10 + (creature_ptr->lev * 2 / 5);
     }
 
+    if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_QUICKTHORN) && (creature_ptr->inventory_list[INVEN_LARM].name1 == ART_TINYTHORN)) {
+        creature_ptr->to_a += 10;
+    }
+
+	if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_MUSASI_KATANA) && (creature_ptr->inventory_list[INVEN_LARM].name1 == ART_MUSASI_WAKIZASI)) {
+        creature_ptr->to_a += 10;
+    }
+
     if (creature_ptr->muta3 & MUT3_WART_SKIN) {
         creature_ptr->to_a += 5;
     }
@@ -3208,6 +3166,13 @@ static void calc_to_ac_display(player_type *creature_ptr)
         creature_ptr->dis_to_a += 10 + (creature_ptr->lev * 2 / 5);
     }
 
+    if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_QUICKTHORN) && (creature_ptr->inventory_list[INVEN_LARM].name1 == ART_TINYTHORN)) {
+        creature_ptr->dis_to_a += 10;
+    }
+    if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_MUSASI_KATANA) && (creature_ptr->inventory_list[INVEN_LARM].name1 == ART_MUSASI_WAKIZASI)) {
+        creature_ptr->dis_to_a += 10;
+    }
+
     if (((creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER)) && !heavy_armor(creature_ptr)) {
         if (!(creature_ptr->inventory_list[INVEN_BODY].k_idx)) {
             creature_ptr->dis_to_a += (creature_ptr->lev * 3) / 2;
@@ -3296,38 +3261,59 @@ static void calc_speed(player_type *creature_ptr)
 
 	creature_ptr->pspeed = 110;
 
+    int j = creature_ptr->total_weight;
+    int count;
     if (!creature_ptr->riding) {
-        const player_race *tmp_rp_ptr;
-        if (creature_ptr->mimic_form)
-            tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
-        else
-            tmp_rp_ptr = &race_info[creature_ptr->prace];
+    } else {
+    }
 
-        if (is_specific_player_race(creature_ptr, RACE_KLACKON) || is_specific_player_race(creature_ptr, RACE_SPRITE))
-            creature_ptr->pspeed += (creature_ptr->lev) / 10;
 
-        for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-            object_type *o_ptr = &creature_ptr->inventory_list[i];
-            BIT_FLAGS flgs[TR_FLAG_SIZE];
-            object_flags(o_ptr, flgs);
+    if (!creature_ptr->riding) {
+        count = (int)weight_limit(creature_ptr);
 
-            if (!o_ptr->k_idx)
-                continue;
-            if (have_flag(flgs, TR_SPEED))
-                creature_ptr->pspeed += o_ptr->pval;
-        }
+		const player_race *tmp_rp_ptr;
+            if (creature_ptr->mimic_form)
+                tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
+            else
+                tmp_rp_ptr = &race_info[creature_ptr->prace];
 
-        if (creature_ptr->mimic_form) {
-            switch (creature_ptr->mimic_form) {
-            case MIMIC_DEMON:
+            if (is_specific_player_race(creature_ptr, RACE_KLACKON) || is_specific_player_race(creature_ptr, RACE_SPRITE))
+                creature_ptr->pspeed += (creature_ptr->lev) / 10;
+
+            for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+                object_type *o_ptr = &creature_ptr->inventory_list[i];
+                BIT_FLAGS flgs[TR_FLAG_SIZE];
+                object_flags(o_ptr, flgs);
+
+                if (!o_ptr->k_idx)
+                    continue;
+                if (have_flag(flgs, TR_SPEED))
+                    creature_ptr->pspeed += o_ptr->pval;
+            }
+
+            if (creature_ptr->mimic_form) {
+                switch (creature_ptr->mimic_form) {
+                case MIMIC_DEMON:
+                    creature_ptr->pspeed += 3;
+                    break;
+                case MIMIC_DEMON_LORD:
+                    creature_ptr->pspeed += 5;
+                    break;
+                case MIMIC_VAMPIRE:
+                    creature_ptr->pspeed += 3;
+                    break;
+                }
+            }
+
+        if (creature_ptr->pclass == CLASS_NINJA) {
+            if (heavy_armor(creature_ptr)) {
+                creature_ptr->pspeed -= (creature_ptr->lev) / 10;
+            } else if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || creature_ptr->migite)
+                && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || creature_ptr->hidarite)) {
                 creature_ptr->pspeed += 3;
-                break;
-            case MIMIC_DEMON_LORD:
-                creature_ptr->pspeed += 5;
-                break;
-            case MIMIC_VAMPIRE:
-                creature_ptr->pspeed += 3;
-                break;
+                if (!(is_specific_player_race(creature_ptr, RACE_KLACKON) || is_specific_player_race(creature_ptr, RACE_SPRITE)
+                        || (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)))
+                    creature_ptr->pspeed += (creature_ptr->lev) / 10;
             }
         }
 
@@ -3396,8 +3382,15 @@ static void calc_speed(player_type *creature_ptr)
             }
         }
 
+		if (has_melee_weapon(creature_ptr, INVEN_RARM) && has_melee_weapon(creature_ptr, INVEN_LARM)) {
+            if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_QUICKTHORN) && (creature_ptr->inventory_list[INVEN_LARM].name1 == ART_TINYTHORN)) {
+                creature_ptr->pspeed += 7;
+            }
+        }
+
     } else {
         monster_type *riding_m_ptr = &creature_ptr->current_floor_ptr->m_list[creature_ptr->riding];
+        monster_race *riding_r_ptr = &r_info[riding_m_ptr->r_idx];
         SPEED speed = riding_m_ptr->mspeed;
 
         if (riding_m_ptr->mspeed > 110) {
@@ -3409,11 +3402,20 @@ static void calc_speed(player_type *creature_ptr)
         }
 
         creature_ptr->pspeed += (creature_ptr->skill_exp[GINOU_RIDING] + creature_ptr->lev * 160L) / 3200;
-        if (monster_fast_remaining(riding_m_ptr))
+
+		if (monster_fast_remaining(riding_m_ptr))
             creature_ptr->pspeed += 10;
         if (monster_slow_remaining(riding_m_ptr))
             creature_ptr->pspeed -= 10;
-    }
+
+        if (creature_ptr->skill_exp[GINOU_RIDING] < RIDING_EXP_SKILLED)
+            j += (creature_ptr->wt * 3 * (RIDING_EXP_SKILLED - creature_ptr->skill_exp[GINOU_RIDING])) / RIDING_EXP_SKILLED;
+
+        count = 1500 + riding_r_ptr->level * 25;
+	}
+
+    if (j > count)
+        creature_ptr->pspeed -= ((j - count) / (count / 5));
 
 	if (creature_ptr->action == ACTION_SEARCH)
         creature_ptr->pspeed -= 10;
@@ -3427,6 +3429,38 @@ static void calc_speed(player_type *creature_ptr)
     /* Minimum speed is (-99). (internally it's 110 - 99) */
     if (creature_ptr->pspeed < 11)
         creature_ptr->pspeed = 11;
+}
+
+
+void calc_weapon_penalty(player_type *creature_ptr, INVENTORY_IDX slot)
+{
+    if (has_melee_weapon(creature_ptr, INVEN_RARM) && has_melee_weapon(creature_ptr, INVEN_LARM)) {
+        int penalty;
+        penalty = ((100 - creature_ptr->skill_exp[GINOU_NITOURYU] / 160) - (130 - creature_ptr->inventory_list[slot].weight) / 8);
+        if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_QUICKTHORN) && (creature_ptr->inventory_list[INVEN_LARM].name1 == ART_TINYTHORN)) {
+            penalty = penalty / 2 - 5;
+        }
+        if (creature_ptr->easy_2weapon) {
+            if (penalty > 0)
+                penalty /= 2;
+        } else if ((creature_ptr->inventory_list[INVEN_LARM].tval == TV_SWORD)
+            && ((creature_ptr->inventory_list[INVEN_LARM].sval == SV_MAIN_GAUCHE) || (creature_ptr->inventory_list[INVEN_LARM].sval == SV_WAKIZASHI))) {
+            penalty = MAX(0, penalty - 10);
+        }
+        if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_MUSASI_KATANA) && (creature_ptr->inventory_list[INVEN_LARM].name1 == ART_MUSASI_WAKIZASI)) {
+            penalty = MIN(0, penalty);
+        } else {
+            if ((creature_ptr->inventory_list[INVEN_RARM].name1 == ART_MUSASI_KATANA) && (penalty > 0))
+                penalty /= 2;
+            if ((creature_ptr->inventory_list[INVEN_LARM].name1 == ART_MUSASI_WAKIZASI) && (penalty > 0))
+                penalty /= 2;
+        }
+
+        if (creature_ptr->inventory_list[slot].tval == TV_POLEARM)
+            penalty += 10;
+        creature_ptr->to_h[slot - INVEN_RARM] -= (s16b)penalty;
+        creature_ptr->dis_to_h[slot - INVEN_RARM] -= (s16b)penalty;
+    }
 }
 
 /*!
