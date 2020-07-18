@@ -123,6 +123,9 @@ static void calc_to_hit_bow_display(player_type *creature_ptr);
 static void calc_to_damage_misc(player_type *creature_ptr);
 static void calc_to_hit_misc(player_type *creature_ptr);
 
+static void calc_to_weapon_dice_num(player_type *creature_ptr, INVENTORY_IDX slot);
+static void calc_to_weapon_dice_side(player_type *creature_ptr, INVENTORY_IDX slot);
+
 /*!
  * @brief 能力値テーブル / Abbreviations of healthy stats
  */
@@ -505,9 +508,6 @@ int spell_exp_level(int spell_exp)
  */
 static void clear_creature_bonuses(player_type *creature_ptr)
 {
-    creature_ptr->to_dd[0] = creature_ptr->to_ds[0] = 0;
-    creature_ptr->to_dd[1] = creature_ptr->to_ds[1] = 0;
-
     creature_ptr->extra_blows[0] = creature_ptr->extra_blows[1] = 0;
     creature_ptr->num_fire = 100;
     creature_ptr->tval_xtra = 0;
@@ -615,7 +615,7 @@ static void clear_creature_bonuses(player_type *creature_ptr)
  */
 void calc_bonuses(player_type *creature_ptr)
 {
-    int hold;
+    creature_ptr->hold = 0;
     int default_hand = 0;
     int empty_hands_status = empty_hands(creature_ptr, TRUE);
     object_type *o_ptr;
@@ -789,27 +789,19 @@ void calc_bonuses(player_type *creature_ptr)
             creature_ptr->kill_wall = TRUE;
     }
 
-    hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
+    creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
     o_ptr = &creature_ptr->inventory_list[INVEN_BOW];
     creature_ptr->heavy_shoot = is_heavy_shoot(creature_ptr, o_ptr);
-
-    if (creature_ptr->heavy_shoot) {
-        creature_ptr->dis_to_h_b += 2 * (hold - o_ptr->weight / 10);
-    }
 
     if (o_ptr->k_idx) {
         creature_ptr->tval_ammo = (byte)bow_tval_ammo(o_ptr);
         if (o_ptr->k_idx && !creature_ptr->heavy_shoot) {
             creature_ptr->num_fire = calc_num_fire(creature_ptr, o_ptr);
-            if ((creature_ptr->pclass == CLASS_SNIPER) && (creature_ptr->tval_ammo == TV_BOLT)) {
-                creature_ptr->to_h_b += (10 + (creature_ptr->lev / 5));
-                creature_ptr->dis_to_h_b += (10 + (creature_ptr->lev / 5));
-            }
         }
     }
 
     if (creature_ptr->ryoute)
-        hold *= 2;
+        creature_ptr->hold *= 2;
 
     for (int i = 0; i < 2; i++) {
         o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
@@ -825,11 +817,13 @@ void calc_bonuses(player_type *creature_ptr)
             }
         }
 
+        calc_to_weapon_dice_num(creature_ptr, INVEN_RARM + i);
+        calc_to_weapon_dice_side(creature_ptr, INVEN_RARM + i);
+
         if (creature_ptr->riding == 0)
             continue;
 
         if ((o_ptr->tval == TV_POLEARM) && ((o_ptr->sval == SV_LANCE) || (o_ptr->sval == SV_HEAVY_LANCE))) {
-            creature_ptr->to_dd[i] += 2;
             continue;
         }
 
@@ -2122,12 +2116,12 @@ static void calc_dig(player_type *creature_ptr)
 
     if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_ENT && !creature_ptr->inventory_list[INVEN_RARM].k_idx) {
         creature_ptr->skill_dig += creature_ptr->lev * 10;
-	}
+    }
 
-	if (creature_ptr->shero)
+    if (creature_ptr->shero)
         creature_ptr->skill_dig += 30;
 
-	creature_ptr->skill_dig += adj_str_dig[creature_ptr->stat_ind[A_STR]];
+    creature_ptr->skill_dig += adj_str_dig[creature_ptr->stat_ind[A_STR]];
 
     if (creature_ptr->pclass == CLASS_BERSERKER)
         creature_ptr->skill_dig += (100 + creature_ptr->lev * 8);
@@ -2159,12 +2153,12 @@ static void calc_dig(player_type *creature_ptr)
 
 static void calc_num_blow(player_type *creature_ptr, int i)
 {
-    int hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
+    creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     bool omoi = FALSE;
     if (creature_ptr->ryoute)
-        hold *= 2;
+        creature_ptr->hold *= 2;
 
     o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
     object_flags(o_ptr, flgs);
@@ -2176,9 +2170,9 @@ static void calc_num_blow(player_type *creature_ptr, int i)
         return;
     }
 
-    if (hold < o_ptr->weight / 10) {
+    if (creature_ptr->hold < o_ptr->weight / 10) {
         creature_ptr->heavy_wield[i] = TRUE;
-    } else if (creature_ptr->ryoute && (hold < o_ptr->weight / 5))
+    } else if (creature_ptr->ryoute && (creature_ptr->hold < o_ptr->weight / 5))
         omoi = TRUE;
 
     if ((i == 1) && (o_ptr->tval == TV_SWORD) && ((o_ptr->sval == SV_MAIN_GAUCHE) || (o_ptr->sval == SV_WAKIZASHI))) {
@@ -3556,7 +3550,7 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     object_flags(o_ptr, flgs);
 
-    int hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
+    creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
 
     creature_ptr->to_h[id] = 0;
 
@@ -3601,8 +3595,8 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
         }
     }
 
-    if (hold < o_ptr->weight / 10) {
-        creature_ptr->to_h[id] += 2 * (hold - o_ptr->weight / 10);
+    if (creature_ptr->hold < o_ptr->weight / 10) {
+        creature_ptr->to_h[id] += 2 * (creature_ptr->hold - o_ptr->weight / 10);
     }
 
     if (is_blessed(creature_ptr)) {
@@ -3635,7 +3629,7 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
 {
     int id = slot - INVEN_RARM;
     object_type *o_ptr = &creature_ptr->inventory_list[slot];
-    int hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
+    creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     object_flags(o_ptr, flgs);
 
@@ -3682,8 +3676,8 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
         }
     }
 
-    if (hold < o_ptr->weight / 10) {
-        creature_ptr->dis_to_h[id] += 2 * (hold - o_ptr->weight / 10);
+    if (creature_ptr->hold < o_ptr->weight / 10) {
+        creature_ptr->dis_to_h[id] += 2 * (creature_ptr->hold - o_ptr->weight / 10);
     }
 
     if (is_blessed(creature_ptr)) {
@@ -3763,17 +3757,24 @@ static void calc_to_hit_bow(player_type *creature_ptr)
     creature_ptr->to_h_b += ((int)(adj_dex_th[creature_ptr->stat_ind[A_DEX]]) - 128);
     creature_ptr->to_h_b += ((int)(adj_str_th[creature_ptr->stat_ind[A_STR]]) - 128);
 
-    int hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
+    creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
     object_type *o_ptr = &creature_ptr->inventory_list[INVEN_BOW];
 
     if (is_heavy_shoot(creature_ptr, o_ptr)) {
-        creature_ptr->to_h_b += 2 * (hold - o_ptr->weight / 10);
+        creature_ptr->to_h_b += 2 * (creature_ptr->hold - o_ptr->weight / 10);
+    }
+
+    if (o_ptr->k_idx) {
+        if (o_ptr->k_idx && !creature_ptr->heavy_shoot) {
+            if ((creature_ptr->pclass == CLASS_SNIPER) && (creature_ptr->tval_ammo == TV_BOLT)) {
+                creature_ptr->to_h_b += (10 + (creature_ptr->lev / 5));
+            }
+        }
     }
 }
 
 static void calc_to_hit_bow_display(player_type *creature_ptr)
 {
-
     creature_ptr->dis_to_h_b = 0;
     creature_ptr->dis_to_h_b += ((int)(adj_dex_th[creature_ptr->stat_ind[A_DEX]]) - 128);
     creature_ptr->dis_to_h_b += ((int)(adj_str_th[creature_ptr->stat_ind[A_STR]]) - 128);
@@ -3813,6 +3814,20 @@ static void calc_to_hit_bow_display(player_type *creature_ptr)
 
     if (creature_ptr->shero) {
         creature_ptr->dis_to_h_b -= 12;
+    }
+
+    object_type *o_ptr = &creature_ptr->inventory_list[INVEN_BOW];
+
+    if (creature_ptr->heavy_shoot) {
+        creature_ptr->dis_to_h_b += 2 * (creature_ptr->hold - o_ptr->weight / 10);
+    }
+
+    if (o_ptr->k_idx) {
+        if (o_ptr->k_idx && !creature_ptr->heavy_shoot) {
+            if ((creature_ptr->pclass == CLASS_SNIPER) && (creature_ptr->tval_ammo == TV_BOLT)) {
+                creature_ptr->dis_to_h_b += (10 + (creature_ptr->lev / 5));
+            }
+        }
     }
 }
 
@@ -3893,6 +3908,25 @@ static void calc_to_hit_misc(player_type *creature_ptr)
 
     creature_ptr->to_h_m += ((int)(adj_dex_th[creature_ptr->stat_ind[A_DEX]]) - 128);
     creature_ptr->to_h_m += ((int)(adj_str_th[creature_ptr->stat_ind[A_STR]]) - 128);
+}
+
+static void calc_to_weapon_dice_num(player_type *creature_ptr, INVENTORY_IDX slot)
+{
+    object_type *o_ptr = &creature_ptr->inventory_list[slot];
+    int id = slot - INVEN_RARM;
+    creature_ptr->to_dd[id] = 0;
+
+    if (creature_ptr->riding) {
+
+        if ((o_ptr->tval == TV_POLEARM) && ((o_ptr->sval == SV_LANCE) || (o_ptr->sval == SV_HEAVY_LANCE))) {
+            creature_ptr->to_dd[id] += 2;
+        }
+    }
+}
+
+static void calc_to_weapon_dice_side(player_type *creature_ptr, INVENTORY_IDX slot) {
+    int id = slot - INVEN_RARM;
+    creature_ptr->to_ds[id] = 0;
 }
 
 /*!
