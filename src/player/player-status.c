@@ -82,6 +82,8 @@
 #include "world/world.h"
 
 static bool is_martial_arts_mode(player_type *creature_ptr);
+static bool is_not_ninja_weapon(player_type *creature_ptr, int i);
+static bool is_not_monk_weapon(player_type *creature_ptr, int i);
 
 static void calc_intra_vision(player_type *creature_ptr);
 static void calc_stealth(player_type *creature_ptr);
@@ -770,7 +772,8 @@ void calc_bonuses(player_type *creature_ptr)
         creature_ptr->update |= (PU_MONSTERS);
     }
 
-    if ((creature_ptr->right_hand_weapon && (empty_hands_status & EMPTY_HAND_RARM)) || (creature_ptr->left_hand_weapon && (empty_hands_status & EMPTY_HAND_LARM))) {
+    if ((creature_ptr->right_hand_weapon && (empty_hands_status & EMPTY_HAND_RARM))
+        || (creature_ptr->left_hand_weapon && (empty_hands_status & EMPTY_HAND_LARM))) {
         creature_ptr->to_h[default_hand] += (creature_ptr->skill_exp[GINOU_SUDE] - WEAPON_EXP_BEGINNER) / 200;
         creature_ptr->dis_to_h[default_hand] += (creature_ptr->skill_exp[GINOU_SUDE] - WEAPON_EXP_BEGINNER) / 200;
     }
@@ -843,33 +846,15 @@ void calc_bonuses(player_type *creature_ptr)
         if (!has_melee_weapon(creature_ptr, INVEN_RARM + i))
             continue;
 
-        tval_type tval = creature_ptr->inventory_list[INVEN_RARM + i].tval - TV_WEAPON_BEGIN;
-        OBJECT_SUBTYPE_VALUE sval = creature_ptr->inventory_list[INVEN_RARM + i].sval;
-
-        creature_ptr->to_h[i] += (creature_ptr->weapon_exp[tval][sval] - WEAPON_EXP_BEGINNER) / 200;
-        creature_ptr->dis_to_h[i] += (creature_ptr->weapon_exp[tval][sval] - WEAPON_EXP_BEGINNER) / 200;
-        if ((creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER)) {
-            if (!s_info[creature_ptr->pclass].w_max[tval][sval]) {
-                creature_ptr->to_h[i] -= 40;
-                creature_ptr->dis_to_h[i] -= 40;
-                creature_ptr->icky_wield[i] = TRUE;
-            }
-
-            continue;
+        if (is_not_monk_weapon(creature_ptr, i)) {
+            creature_ptr->to_h[i] -= 40;
+            creature_ptr->dis_to_h[i] -= 40;
+            creature_ptr->icky_wield[i] = TRUE;
         }
 
-        if (creature_ptr->pclass != CLASS_NINJA)
-            continue;
-
-        if ((s_info[CLASS_NINJA].w_max[tval][sval] > WEAPON_EXP_BEGINNER) && (creature_ptr->inventory_list[INVEN_LARM - i].tval != TV_SHIELD))
-            continue;
-
-        creature_ptr->to_h[i] -= 40;
-        creature_ptr->dis_to_h[i] -= 40;
-        creature_ptr->icky_wield[i] = TRUE;
-        creature_ptr->num_blow[i] /= 2;
-        if (creature_ptr->num_blow[i] < 1)
-            creature_ptr->num_blow[i] = 1;
+        if (is_not_ninja_weapon(creature_ptr, i)) {
+            creature_ptr->icky_wield[i] = TRUE;
+        }
     }
 
     calc_speed(creature_ptr);
@@ -2054,9 +2039,25 @@ static void calc_dig(player_type *creature_ptr)
         creature_ptr->skill_dig = 1;
 }
 
-static bool is_martial_arts_mode(player_type* creature_ptr) {
+static bool is_martial_arts_mode(player_type *creature_ptr)
+{
     return ((creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER) || (creature_ptr->pclass == CLASS_BERSERKER))
         && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_RARM) && !creature_ptr->left_hand_weapon;
+}
+
+static bool is_not_ninja_weapon(player_type *creature_ptr, int i)
+{
+    tval_type tval = creature_ptr->inventory_list[INVEN_RARM + i].tval - TV_WEAPON_BEGIN;
+    OBJECT_SUBTYPE_VALUE sval = creature_ptr->inventory_list[INVEN_RARM + i].sval;
+    return creature_ptr->pclass == CLASS_NINJA
+        && !((s_info[CLASS_NINJA].w_max[tval][sval] > WEAPON_EXP_BEGINNER) && (creature_ptr->inventory_list[INVEN_LARM - i].tval != TV_SHIELD));
+}
+
+static bool is_not_monk_weapon(player_type *creature_ptr, int i)
+{
+    tval_type tval = creature_ptr->inventory_list[INVEN_RARM + i].tval - TV_WEAPON_BEGIN;
+    OBJECT_SUBTYPE_VALUE sval = creature_ptr->inventory_list[INVEN_RARM + i].sval;
+    return (creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER) && (!s_info[creature_ptr->pclass].w_max[tval][sval]);
 }
 
 static void calc_num_blow(player_type *creature_ptr, int i)
@@ -2143,7 +2144,8 @@ static void calc_num_blow(player_type *creature_ptr, int i)
         }
     }
 
-    if (i != 0) return;
+    if (i != 0)
+        return;
     /* Different calculation for monks with empty hands */
     if (is_martial_arts_mode(creature_ptr)) {
         int blow_base = creature_ptr->lev + adj_dex_blow[creature_ptr->stat_ind[A_DEX]];
@@ -2221,6 +2223,12 @@ static void calc_num_blow(player_type *creature_ptr, int i)
         }
 
         creature_ptr->num_blow[i] += 1 + creature_ptr->extra_blows[0];
+    }
+
+    if (is_not_ninja_weapon(creature_ptr, i)) {
+        creature_ptr->num_blow[i] /= 2;
+        if (creature_ptr->num_blow[i] < 1)
+            creature_ptr->num_blow[i] = 1;
     }
 }
 
@@ -3408,6 +3416,8 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
     object_type *o_ptr = &creature_ptr->inventory_list[slot];
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     object_flags(o_ptr, flgs);
+    tval_type tval = creature_ptr->inventory_list[INVEN_RARM + id].tval - TV_WEAPON_BEGIN;
+    OBJECT_SUBTYPE_VALUE sval = creature_ptr->inventory_list[INVEN_RARM + id].sval;
 
     creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
 
@@ -3496,6 +3506,12 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
         }
         creature_ptr->to_h[id] -= (s16b)penalty;
     }
+
+    creature_ptr->to_h[id] += (creature_ptr->weapon_exp[tval][sval] - WEAPON_EXP_BEGINNER) / 200;
+
+    if (is_not_ninja_weapon(creature_ptr, id)) {
+        creature_ptr->to_h[id] -= 40;
+    }
 }
 
 static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
@@ -3505,6 +3521,8 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
     creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     object_flags(o_ptr, flgs);
+    tval_type tval = creature_ptr->inventory_list[INVEN_RARM + id].tval - TV_WEAPON_BEGIN;
+    OBJECT_SUBTYPE_VALUE sval = creature_ptr->inventory_list[INVEN_RARM + id].sval;
 
     creature_ptr->dis_to_h[id] = 0;
 
@@ -3590,6 +3608,12 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
                 penalty = 30;
         }
         creature_ptr->dis_to_h[id] -= (s16b)penalty;
+    }
+
+    creature_ptr->dis_to_h[id] += (creature_ptr->weapon_exp[tval][sval] - WEAPON_EXP_BEGINNER) / 200;
+
+    if (is_not_ninja_weapon(creature_ptr, id)) {
+        creature_ptr->dis_to_h[id] -= 40;
     }
 }
 
