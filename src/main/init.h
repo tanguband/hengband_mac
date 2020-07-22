@@ -20,7 +20,7 @@ void init_angband(player_type *player_ptr, void(*process_autopick_file_command)(
 concptr get_check_sum(void);
 void init_file_paths(concptr libpath, concptr varpath);
 void create_needed_dirs(void);
-errr init_v_info(void);
+errr init_v_info(player_type *player_ptr);
 errr init_buildings(void);
 
 #endif /* INCLUDED_INIT_H */
