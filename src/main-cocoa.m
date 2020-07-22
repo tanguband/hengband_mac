@@ -36,11 +36,11 @@
 #include "gameterm.h"
 #include "term/screen-processor.h"
 #include "term/term-color-types.h"
-#include "view/display-main-window.h"
 #include "view/display-messages.h"
 #include "autopick/autopick-pref-processor.h"
 #include "main/sound-definitions-table.h"
 #include "util/angband-files.h"
+#include "window/main-window-util.h"
 
 #if defined(MACH_O_COCOA)
 
