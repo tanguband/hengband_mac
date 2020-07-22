@@ -20,7 +20,7 @@
 /* This is not included in angband.h in Hengband. */
 #include "grafmode.h"
 
-#include "cmd/cmd-draw.h"
+#include "cmd-visual/cmd-draw.h"
 #include "cmd-io/cmd-save.h"
 #include "core/asking-player.h"
 #include "core/game-play.h"
