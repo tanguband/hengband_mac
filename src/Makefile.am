@@ -862,6 +862,8 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/autopick \
 	-I$(srcdir)/birth \
 	-I$(srcdir)/blue-magic \
+	-I$(srcdir)/cmd-action \
+	-I$(srcdir)/cmd-building \
 	-I$(srcdir)/cmd-io \
 	-I$(srcdir)/cmd-item \
 	-I$(srcdir)/cmd-visual \
