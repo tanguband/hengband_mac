@@ -899,6 +899,7 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/racial \
 	-I$(srcdir)/realm \
 	-I$(srcdir)/room \
+	-I$(srcdir)/save \
 	-I$(srcdir)/specific-object \
 	-I$(srcdir)/spell \
 	-I$(srcdir)/spell-kind \
