@@ -1832,7 +1832,7 @@ static void draw_image_tile(
 @public
 
     /* The Angband term */
-    term *terminal;
+    term_type *terminal;
 
 @private
     /* Is the last time we drew, so we can throttle drawing. */
@@ -1896,7 +1896,7 @@ static void draw_image_tile(
 - (void)drawRect:(NSRect)rect inView:(NSView *)view;
 
 /* Called at initialization to set the term */
-- (void)setTerm:(term *)t;
+- (void)setTerm:(term_type *)t;
 
 /* Called when the context is going down. */
 - (void)dispose;
@@ -2399,22 +2399,22 @@ static int compare_advances(const void *ap, const void *bp)
 {
     if (! self->terminal) return;
     
-    term *old = Term;
+    term_type *old = Term;
     
     /* Activate the term */
-    Term_activate(self->terminal);
+    term_activate(self->terminal);
     
     /* Redraw the contents */
-    Term_redraw();
+    term_redraw();
     
     /* Flush the output */
-    Term_fresh();
+    term_fresh();
     
     /* Restore the old term */
-    Term_activate(old);
+    term_activate(old);
 }
 
-- (void)setTerm:(term *)t
+- (void)setTerm:(term_type *)t
 {
     self->terminal = t;
 }
@@ -3359,7 +3359,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
     NSGraphicsContext *nsctx = nil;
     CGContextRef ctx = 0;
     NSFont* screenFont = nil;
-    term *old = 0;
+    term_type *old = 0;
     int graf_width = 0, graf_height = 0;
     int overdraw_row = 0, overdraw_max = 0;
     wchar_t blank = 0;
@@ -3368,7 +3368,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 	rect.origin.y < bottomY &&
 	rect.origin.y + rect.size.height > self.borderSize.height) {
 	old = Term;
-	Term_activate(self->terminal);
+	term_activate(self->terminal);
 	nsctx = [NSGraphicsContext currentContext];
 	ctx = [nsctx graphicsPort];
 	screenFont = [self.angbandViewFont screenFont];
@@ -3395,7 +3395,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 	sortedRects = malloc(invalidCount * sizeof(NSRect));
 	if (sortedRects == 0) {
 	    if (old != 0) {
-		Term_activate(old);
+		term_activate(old);
 	    }
 	    NSException *exc = [NSException exceptionWithName:@"OutOfMemory"
 					    reason:@"sorted rects in drawRect"
@@ -3744,7 +3744,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 
     free(sortedRects);
     if (old != 0) {
-	Term_activate(old);
+	term_activate(old);
     }
 }
 
@@ -3827,11 +3827,11 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
         }
     }
 
-    term *old = Term;
-    Term_activate( self->terminal );
-    Term_resize( self.cols, self.rows );
-    Term_redraw();
-    Term_activate( old );
+    term_type *old = Term;
+    term_activate( self->terminal );
+    term_resize( self.cols, self.rows );
+    term_redraw();
+    term_activate( old );
 }
 
 - (void)constrainWindowSize:(int)termIdx
@@ -4198,7 +4198,7 @@ static wchar_t convert_two_byte_eucjp_to_utf16_native(const char *cp)
 /**
  * Initialize a new Term
  */
-static void Term_init_cocoa(term *t)
+static void Term_init_cocoa(term_type *t)
 {
     @autoreleasepool {
 	AngbandContext *context = [[AngbandContext alloc] init];
@@ -4412,7 +4412,7 @@ static void Term_init_cocoa(term *t)
 /**
  * Nuke an old Term
  */
-static void Term_nuke_cocoa(term *t)
+static void Term_nuke_cocoa(term_type *t)
 {
     @autoreleasepool {
         AngbandContext *context = (__bridge AngbandContext*) (t->data);
@@ -4619,8 +4619,8 @@ static errr Term_xtra_cocoa_react(void)
 		reset_visuals(p_ptr, process_autopick_file_command);
 	    }
 
-	    Term_activate(angband_term[0]);
-	    Term_resize(angband_term[0]->wid, angband_term[0]->hgt);
+	    term_activate(angband_term[0]);
+	    term_resize(angband_term[0]->wid, angband_term[0]->hgt);
 	}
     }
 
@@ -4724,7 +4724,7 @@ static errr Term_xtra_cocoa(int n, int v)
 		 */
 		int isVisible = 0;
 
-		Term_get_cursor(&isVisible);
+		term_get_cursor(&isVisible);
 		if (! isVisible) {
 		    [angbandContext.contents removeCursor];
 		}
@@ -4978,7 +4978,7 @@ static void AngbandHandleEventMouseDown( NSEvent *event )
 	    [mainAngbandContext.primaryWindow windowNumber])
 	{
 		int cols, rows, x, y;
-		Term_get_size(&cols, &rows);
+		term_get_size(&cols, &rows);
 		NSSize tileSize = angbandContext.tileSize;
 		NSSize border = angbandContext.borderSize;
 		NSPoint windowPoint = [event locationInWindow];
@@ -5106,7 +5106,7 @@ static BOOL send_event(NSEvent *event)
             /* Enqueue it */
             if (ch != '\0')
             {
-                Term_keypress(ch);
+                term_key_push(ch);
             }
 	    else
 	    {
@@ -5120,21 +5120,21 @@ static BOOL send_event(NSEvent *event)
 		};
 
 		/* Begin the macro trigger. */
-		Term_keypress(31);
+		term_key_push(31);
 
 		/* Send the modifiers. */
-		if (mc) Term_keypress('C');
-		if (ms) Term_keypress('S');
-		if (mo) Term_keypress('O');
-		if (kp) Term_keypress('K');
+		if (mc) term_key_push('C');
+		if (ms) term_key_push('S');
+		if (mo) term_key_push('O');
+		if (kp) term_key_push('K');
 
 		do {
-		    Term_keypress(encoded[c & 0xF]);
+		    term_key_push(encoded[c & 0xF]);
 		    c >>= 4;
 		} while (c > 0);
 
 		/* End the macro trigger. */
-		Term_keypress(13);
+		term_key_push(13);
 	    }
             
             break;
@@ -5181,7 +5181,7 @@ static BOOL check_events(int wait)
 	    if (quit_when_ready)
 	    {
 		/* send escape events until we quit */
-		Term_keypress(0x1B);
+		term_key_push(0x1B);
 		result = NO;
 		break;
 	    }
@@ -5231,11 +5231,6 @@ static void hook_plog(const char * str)
  */
 static void hook_quit(const char * str)
 {
-    for (int i = ANGBAND_TERM_MAX - 1; i >= 0; --i) {
-	if (angband_term[i]) {
-	    term_nuke(angband_term[i]);
-	}
-    }
     [AngbandSoundCatalog clearSharedSounds];
     [AngbandContext setDefaultFont:nil];
     plog(str);
@@ -5527,7 +5522,7 @@ static void play_sound(int event)
     }
 
     /* Allocate */
-    term *newterm = ZNEW(term);
+    term_type *newterm = ZNEW(term_type);
 
     /* Initialize the term */
     term_init(newterm, columns, rows, 256 /* keypresses, for some reason? */);
@@ -5571,7 +5566,7 @@ static void play_sound(int event)
 	[self linkTermData:i];
     }
 
-    Term_activate(angband_term[0]);
+    term_activate(angband_term[0]);
 }
 
 /**
@@ -5728,7 +5723,7 @@ static void play_sound(int event)
 	handle_open_when_ready();
 
 	/* Handle pending events (most notably update) and flush input */
-	Term_flush();
+	term_flush();
 
 	/*
 	 * Prompt the user; assume the splash screen is 80 x 23 and position
@@ -5736,7 +5731,7 @@ static void play_sound(int event)
 	 * window.
 	 */
 	int message_row = 23;
-	Term_erase(0, message_row, 255);
+	term_erase(0, message_row, 255);
 	put_str(
 #ifdef JP
 	    "['ファイル' メニューから '新規' または '開く' を選択します]",
@@ -5746,7 +5741,7 @@ static void play_sound(int event)
 	    message_row, (80 - 45) / 2
 #endif
 	);
-	Term_fresh();
+	term_fresh();
     }
 
     while (!game_in_progress) {
@@ -5760,7 +5755,7 @@ static void play_sound(int event)
      * Play a game -- "new_game" is set by "new", "open" or the open document
      * even handler as appropriate
      */
-    Term_fresh();
+    term_fresh();
     play_game(p_ptr, new_game);
 
     quit(NULL);
@@ -5878,8 +5873,8 @@ static void play_sound(int event)
     }
 
     if (arg_bigtile != use_bigtile) {
-	Term_activate(angband_term[0]);
-	Term_resize(angband_term[0]->wid, angband_term[0]->hgt);
+	term_activate(angband_term[0]);
+	term_resize(angband_term[0]->wid, angband_term[0]->hgt);
     }
     redraw_for_tiles_or_term0_font();
 }
@@ -5923,8 +5918,8 @@ static void play_sound(int event)
     if (graphics_are_enabled()) {
 	arg_bigtile = (is_on) ? FALSE : TRUE;
 	if (arg_bigtile != use_bigtile) {
-	    Term_activate(angband_term[0]);
-	    Term_resize(angband_term[0]->wid, angband_term[0]->hgt);
+	    term_activate(angband_term[0]);
+	    term_resize(angband_term[0]->wid, angband_term[0]->hgt);
 	    redraw_for_tiles_or_term0_font();
 	}
     }
