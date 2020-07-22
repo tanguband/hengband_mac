@@ -10,6 +10,7 @@
 #include "floor/cave.h"
 #include "floor/floor.h"
 #include "io/targeting.h"
+#include "mind/mind-blue-mage.h"
 #include "monster-floor/monster-generator.h"
 #include "monster-floor/monster-summon.h"
 #include "monster-floor/place-monster-types.h"
