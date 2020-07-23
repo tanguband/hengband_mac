@@ -1,5 +1,4 @@
-﻿#include "system/angband.h"
-#include "player/player-status.h"
+﻿#include "player/player-status.h"
 #include "art-definition/art-bow-types.h"
 #include "art-definition/art-sword-types.h"
 #include "art-definition/art-weapon-types.h"
@@ -65,11 +64,13 @@
 #include "player/patron.h"
 #include "player/player-class.h"
 #include "player/player-damage.h"
+#include "player/player-status-flags.h"
 #include "player/player-move.h"
 #include "player/player-personalities-types.h"
 #include "player/player-personality.h"
 #include "player/player-race-types.h"
 #include "player/player-skill.h"
+#include "player/player-status-flags.h"
 #include "player/race-info-table.h"
 #include "player/special-defense-types.h"
 #include "realm/realm-hex-numbers.h"
@@ -86,6 +87,7 @@
 #include "status/base-status.h"
 #include "sv-definition/sv-lite-types.h"
 #include "sv-definition/sv-weapon-types.h"
+#include "system/angband.h"
 #include "system/floor-type-definition.h"
 #include "term/screen-processor.h"
 #include "util/bit-flags-calculator.h"
@@ -146,7 +148,7 @@ static void calc_to_weapon_dice_side(player_type *creature_ptr, INVENTORY_IDX sl
 static void calc_timelimit_status(player_type *creature_ptr);
 static void calc_equipment_status(player_type *creature_ptr);
 
-    /*!
+/*!
  * @brief 能力値テーブル / Abbreviations of healthy stats
  */
 const concptr stat_names[6] = {
@@ -562,11 +564,8 @@ static void clear_creature_bonuses(player_type *creature_ptr)
     creature_ptr->tval_ammo = 0;
     creature_ptr->cursed = 0L;
     creature_ptr->bless_blade = FALSE;
-    creature_ptr->xtra_might = FALSE;
     creature_ptr->impact[0] = FALSE;
     creature_ptr->impact[1] = FALSE;
-    creature_ptr->pass_wall = FALSE;
-    creature_ptr->kill_wall = FALSE;
     creature_ptr->dec_mana = FALSE;
     creature_ptr->easy_spell = FALSE;
     creature_ptr->heavy_spell = FALSE;
@@ -707,6 +706,10 @@ void calc_bonuses(player_type *creature_ptr)
     ARMOUR_CLASS old_dis_to_a = creature_ptr->dis_to_a;
 
     clear_creature_bonuses(creature_ptr);
+
+    have_pass_wall(creature_ptr);
+    have_kill_wall(creature_ptr);
+
     calc_race_status(creature_ptr);
 
     if (has_melee_weapon(creature_ptr, INVEN_RARM))
@@ -748,10 +751,6 @@ void calc_bonuses(player_type *creature_ptr)
     calc_class_status(creature_ptr);
     calc_timelimit_status(creature_ptr);
     set_personality_flags(creature_ptr);
-
-    if (music_singing(creature_ptr, MUSIC_WALL)) {
-        creature_ptr->kill_wall = TRUE;
-    }
 
     set_mutation_flags(creature_ptr);
 
@@ -833,13 +832,8 @@ void calc_bonuses(player_type *creature_ptr)
         if (riding_r_ptr->flags7 & (RF7_CAN_SWIM | RF7_AQUATIC))
             creature_ptr->can_swim = TRUE;
 
-        if (!(riding_r_ptr->flags2 & RF2_PASS_WALL))
-            creature_ptr->pass_wall = FALSE;
-        if (riding_r_ptr->flags2 & RF2_KILL_WALL)
-            creature_ptr->kill_wall = TRUE;
-
-        creature_ptr->levitation = (riding_r_ptr->flags7 & RF7_CAN_FLY) ? TRUE : FALSE;	
-	}
+        creature_ptr->levitation = (riding_r_ptr->flags7 & RF7_CAN_FLY) ? TRUE : FALSE;
+    }
 
     creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
     o_ptr = &creature_ptr->inventory_list[INVEN_BOW];
@@ -880,11 +874,9 @@ void calc_bonuses(player_type *creature_ptr)
         if (is_not_monk_weapon(creature_ptr, i) || is_not_ninja_weapon(creature_ptr, i)) {
             creature_ptr->icky_wield[i] = TRUE;
         }
-
-	}
+    }
 
     calc_riding_weapon_penalty(creature_ptr);
-
 
     creature_ptr->monk_armour_aux = heavy_armor(creature_ptr);
 
@@ -983,7 +975,6 @@ void calc_bonuses(player_type *creature_ptr)
             creature_ptr->no_flowed = TRUE;
     }
 }
-
 
 static void calc_alignment(player_type *creature_ptr)
 {
@@ -1726,6 +1717,7 @@ s16b calc_num_fire(player_type *creature_ptr, object_type *o_ptr)
 
     return (s16b)num;
 }
+
 
 /*!
  * @brief プレイヤーの赤外線視力値を計算する
@@ -4598,7 +4590,6 @@ bool is_echizen(player_type *creature_ptr)
     return (creature_ptr->pseikaku == PERSONALITY_COMBAT) || (creature_ptr->inventory_list[INVEN_BOW].name1 == ART_CRIMSON);
 }
 
-
 void calc_timelimit_status(player_type *creature_ptr)
 {
     if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
@@ -4652,14 +4643,7 @@ void calc_timelimit_status(player_type *creature_ptr)
 
     if (creature_ptr->wraith_form) {
         creature_ptr->reflect = TRUE;
-        creature_ptr->pass_wall = TRUE;
     }
-
-	/*
-    if (creature_ptr->kabenuke) {
-        creature_ptr->pass_wall = TRUE;
-    }
-	*/
 
     if (creature_ptr->magicdef) {
         creature_ptr->resist_blind = TRUE;
@@ -4781,8 +4765,6 @@ void calc_equipment_status(player_type *creature_ptr)
             creature_ptr->dec_mana = TRUE;
         if (have_flag(flgs, TR_BLESSED))
             creature_ptr->bless_blade = TRUE;
-        if (have_flag(flgs, TR_XTRA_MIGHT))
-            creature_ptr->xtra_might = TRUE;
         if (have_flag(flgs, TR_SLOW_DIGEST))
             creature_ptr->slow_digest = TRUE;
         if (have_flag(flgs, TR_REGEN))
