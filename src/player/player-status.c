@@ -577,19 +577,6 @@ static void clear_creature_bonuses(player_type *creature_ptr)
     creature_ptr->can_swim = FALSE;
     creature_ptr->levitation = FALSE;
     creature_ptr->hold_exp = FALSE;
-    creature_ptr->telepathy = FALSE;
-    creature_ptr->esp_animal = FALSE;
-    creature_ptr->esp_undead = FALSE;
-    creature_ptr->esp_demon = FALSE;
-    creature_ptr->esp_orc = FALSE;
-    creature_ptr->esp_troll = FALSE;
-    creature_ptr->esp_giant = FALSE;
-    creature_ptr->esp_dragon = FALSE;
-    creature_ptr->esp_human = FALSE;
-    creature_ptr->esp_evil = FALSE;
-    creature_ptr->esp_good = FALSE;
-    creature_ptr->esp_nonliving = FALSE;
-    creature_ptr->esp_unique = FALSE;
     creature_ptr->lite = FALSE;
     creature_ptr->sustain_str = FALSE;
     creature_ptr->sustain_int = FALSE;
@@ -710,6 +697,20 @@ void calc_bonuses(player_type *creature_ptr)
 
     have_pass_wall(creature_ptr);
     have_kill_wall(creature_ptr);
+    have_xtra_might(creature_ptr);
+    have_esp_evil(creature_ptr);
+    have_esp_animal(creature_ptr);
+    have_esp_undead(creature_ptr);
+    have_esp_demon(creature_ptr);
+    have_esp_orc(creature_ptr);
+    have_esp_troll(creature_ptr);
+    have_esp_giant(creature_ptr);
+    have_esp_dragon(creature_ptr);
+    have_esp_human(creature_ptr);
+    have_esp_good(creature_ptr);
+    have_esp_nonliving(creature_ptr);
+    have_esp_unique(creature_ptr);
+    have_esp_telepathy(creature_ptr);
 
     calc_race_status(creature_ptr);
 
@@ -768,8 +769,6 @@ void calc_bonuses(player_type *creature_ptr)
         creature_ptr->lite = TRUE;
 
     if (creature_ptr->realm1 == REALM_HEX) {
-        if (hex_spelling(creature_ptr, HEX_DETECT_EVIL))
-            creature_ptr->esp_evil = TRUE;
 
         if (hex_spelling(creature_ptr, HEX_DEMON_AURA)) {
             creature_ptr->sh_fire = TRUE;
@@ -4533,7 +4532,6 @@ void calc_timelimit_status(player_type *creature_ptr)
         creature_ptr->regenerate = TRUE;
         creature_ptr->levitation = TRUE;
         creature_ptr->hold_exp = TRUE;
-        creature_ptr->telepathy = TRUE;
         creature_ptr->lite = TRUE;
         creature_ptr->sustain_str = TRUE;
         creature_ptr->sustain_int = TRUE;
@@ -4587,9 +4585,6 @@ void calc_timelimit_status(player_type *creature_ptr)
         creature_ptr->levitation = TRUE;
     }
 
-    if (is_time_limit_esp(creature_ptr)) {
-        creature_ptr->telepathy = TRUE;
-    }
 
     if (creature_ptr->ele_immune) {
         if (creature_ptr->special_defense & DEFENSE_ACID)
@@ -4703,32 +4698,6 @@ void calc_equipment_status(player_type *creature_ptr)
             creature_ptr->slow_digest = TRUE;
         if (have_flag(flgs, TR_REGEN))
             creature_ptr->regenerate = TRUE;
-        if (have_flag(flgs, TR_TELEPATHY))
-            creature_ptr->telepathy = TRUE;
-        if (have_flag(flgs, TR_ESP_ANIMAL))
-            creature_ptr->esp_animal = TRUE;
-        if (have_flag(flgs, TR_ESP_UNDEAD))
-            creature_ptr->esp_undead = TRUE;
-        if (have_flag(flgs, TR_ESP_DEMON))
-            creature_ptr->esp_demon = TRUE;
-        if (have_flag(flgs, TR_ESP_ORC))
-            creature_ptr->esp_orc = TRUE;
-        if (have_flag(flgs, TR_ESP_TROLL))
-            creature_ptr->esp_troll = TRUE;
-        if (have_flag(flgs, TR_ESP_GIANT))
-            creature_ptr->esp_giant = TRUE;
-        if (have_flag(flgs, TR_ESP_DRAGON))
-            creature_ptr->esp_dragon = TRUE;
-        if (have_flag(flgs, TR_ESP_HUMAN))
-            creature_ptr->esp_human = TRUE;
-        if (have_flag(flgs, TR_ESP_EVIL))
-            creature_ptr->esp_evil = TRUE;
-        if (have_flag(flgs, TR_ESP_GOOD))
-            creature_ptr->esp_good = TRUE;
-        if (have_flag(flgs, TR_ESP_NONLIVING))
-            creature_ptr->esp_nonliving = TRUE;
-        if (have_flag(flgs, TR_ESP_UNIQUE))
-            creature_ptr->esp_unique = TRUE;
 
         if (have_flag(flgs, TR_SEE_INVIS))
             creature_ptr->see_inv = TRUE;
