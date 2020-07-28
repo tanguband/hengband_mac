@@ -564,7 +564,6 @@ static void clear_creature_bonuses(player_type *creature_ptr)
     creature_ptr->tval_xtra = 0;
     creature_ptr->tval_ammo = 0;
     creature_ptr->cursed = 0L;
-    creature_ptr->bless_blade = FALSE;
     creature_ptr->impact[0] = FALSE;
     creature_ptr->impact[1] = FALSE;
     creature_ptr->dec_mana = FALSE;
@@ -618,10 +617,6 @@ static void clear_creature_bonuses(player_type *creature_ptr)
     creature_ptr->two_handed_weapon = FALSE;
     creature_ptr->right_hand_weapon = FALSE;
     creature_ptr->left_hand_weapon = FALSE;
-    creature_ptr->no_flowed = FALSE;
-    creature_ptr->yoiyami = FALSE;
-    creature_ptr->easy_2weapon = FALSE;
-    creature_ptr->down_saving = FALSE;
 }
 
 /*!
@@ -669,9 +664,6 @@ void calc_bonuses(player_type *creature_ptr)
     bool omoi = FALSE;
     floor_type *floor_ptr = creature_ptr->current_floor_ptr;
 
-    bool have_sw = FALSE, have_kabe = FALSE;
-    OBJECT_IDX this_o_idx, next_o_idx = 0;
-
     /* Save the old vision stuff */
     bool old_telepathy = creature_ptr->telepathy;
     bool old_esp_animal = creature_ptr->esp_animal;
@@ -711,6 +703,10 @@ void calc_bonuses(player_type *creature_ptr)
     have_esp_nonliving(creature_ptr);
     have_esp_unique(creature_ptr);
     have_esp_telepathy(creature_ptr);
+    have_bless_blade(creature_ptr);
+    have_easy2_weapon(creature_ptr);
+    have_down_saving(creature_ptr);
+    have_no_ac(creature_ptr);
 
     calc_race_status(creature_ptr);
 
@@ -943,37 +939,6 @@ void calc_bonuses(player_type *creature_ptr)
 
     put_equipment_warning(creature_ptr);
 
-    for (int i = 0; i < INVEN_PACK; i++) {
-        if ((creature_ptr->inventory_list[i].tval == TV_NATURE_BOOK) && (creature_ptr->inventory_list[i].sval == 2))
-            have_sw = TRUE;
-        if ((creature_ptr->inventory_list[i].tval == TV_CRAFT_BOOK) && (creature_ptr->inventory_list[i].sval == 2))
-            have_kabe = TRUE;
-    }
-
-    for (this_o_idx = floor_ptr->grid_array[creature_ptr->y][creature_ptr->x].o_idx; this_o_idx; this_o_idx = next_o_idx) {
-        o_ptr = &floor_ptr->o_list[this_o_idx];
-        next_o_idx = o_ptr->next_o_idx;
-
-        if ((o_ptr->tval == TV_NATURE_BOOK) && (o_ptr->sval == 2))
-            have_sw = TRUE;
-        if ((o_ptr->tval == TV_CRAFT_BOOK) && (o_ptr->sval == 2))
-            have_kabe = TRUE;
-    }
-
-    if (creature_ptr->pass_wall && !creature_ptr->kill_wall)
-        creature_ptr->no_flowed = TRUE;
-
-    if (have_sw && ((creature_ptr->realm1 == REALM_NATURE) || (creature_ptr->realm2 == REALM_NATURE) || (creature_ptr->pclass == CLASS_SORCERER))) {
-        const magic_type *s_ptr = &mp_ptr->info[REALM_NATURE - 1][SPELL_SW];
-        if (creature_ptr->lev >= s_ptr->slevel)
-            creature_ptr->no_flowed = TRUE;
-    }
-
-    if (have_kabe && ((creature_ptr->realm1 == REALM_CRAFT) || (creature_ptr->realm2 == REALM_CRAFT) || (creature_ptr->pclass == CLASS_SORCERER))) {
-        const magic_type *s_ptr = &mp_ptr->info[REALM_CRAFT - 1][SPELL_WALL];
-        if (creature_ptr->lev >= s_ptr->slevel)
-            creature_ptr->no_flowed = TRUE;
-    }
 }
 
 static void calc_alignment(player_type *creature_ptr)
@@ -4692,8 +4657,6 @@ void calc_equipment_status(player_type *creature_ptr)
             creature_ptr->cursed |= TRC_SLOW_REGEN;
         if (have_flag(flgs, TR_DEC_MANA))
             creature_ptr->dec_mana = TRUE;
-        if (have_flag(flgs, TR_BLESSED))
-            creature_ptr->bless_blade = TRUE;
         if (have_flag(flgs, TR_SLOW_DIGEST))
             creature_ptr->slow_digest = TRUE;
         if (have_flag(flgs, TR_REGEN))
@@ -4794,10 +4757,6 @@ void calc_equipment_status(player_type *creature_ptr)
         if (have_flag(flgs, TR_SUST_CHR))
             creature_ptr->sustain_chr = TRUE;
 
-        if (o_ptr->name2 == EGO_YOIYAMI)
-            creature_ptr->yoiyami = TRUE;
-        if (o_ptr->name2 == EGO_2WEAPON)
-            creature_ptr->easy_2weapon = TRUE;
         if (o_ptr->name2 == EGO_RING_RES_TIME)
             creature_ptr->resist_time = TRUE;
         if (o_ptr->name2 == EGO_RING_THROW)
@@ -4806,8 +4765,6 @@ void calc_equipment_status(player_type *creature_ptr)
             creature_ptr->easy_spell = TRUE;
         if (o_ptr->name2 == EGO_AMU_FOOL)
             creature_ptr->heavy_spell = TRUE;
-        if (o_ptr->name2 == EGO_AMU_NAIVETY)
-            creature_ptr->down_saving = TRUE;
 
         if (o_ptr->tval == TV_CAPTURE)
             continue;

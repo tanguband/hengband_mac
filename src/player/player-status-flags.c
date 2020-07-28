@@ -1,9 +1,12 @@
-﻿#include "inventory/inventory-slot-types.h"
+﻿#include "grid/grid.h"
+#include "inventory/inventory-slot-types.h"
 #include "monster-race/monster-race.h"
 #include "monster-race/race-flags2.h"
 #include "mutation/mutation-flag-types.h"
 #include "object-enchant/tr-types.h"
+#include "object-enchant/object-ego.h"
 #include "object/object-flags.h"
+#include "player/player-class.h"
 #include "player/player-race-types.h"
 #include "player/player-race.h"
 #include "player/player-status.h"
@@ -352,4 +355,121 @@ void have_esp_telepathy(player_type *creature_ptr)
 		if (have_flag(flgs, TR_TELEPATHY))
 			creature_ptr->telepathy = TRUE;
 	}
+}
+
+void have_bless_blade(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+
+    creature_ptr->bless_blade = FALSE;
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_BLESSED))
+            creature_ptr->bless_blade = TRUE;
+    }
+}
+
+void have_easy2_weapon(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+
+	creature_ptr->easy_2weapon = FALSE;
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (o_ptr->name2 == EGO_2WEAPON)
+            creature_ptr->easy_2weapon = TRUE;
+    }
+}
+
+void have_down_saving(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+
+    creature_ptr->down_saving = FALSE;
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (o_ptr->name2 == EGO_AMU_NAIVETY)
+            creature_ptr->down_saving = TRUE;
+    }
+}
+
+void have_no_ac(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+
+    creature_ptr->yoiyami = FALSE;
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (o_ptr->name2 == EGO_YOIYAMI)
+            creature_ptr->yoiyami = TRUE;
+    }
+}
+
+void have_no_flowed(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    bool have_sw = FALSE, have_kabe = FALSE;
+    OBJECT_IDX this_o_idx, next_o_idx = 0;
+
+    creature_ptr->no_flowed = FALSE;
+
+    if (creature_ptr->pass_wall && !creature_ptr->kill_wall)
+        creature_ptr->no_flowed = TRUE;
+
+    for (int i = 0; i < INVEN_PACK; i++) {
+        if ((creature_ptr->inventory_list[i].tval == TV_NATURE_BOOK) && (creature_ptr->inventory_list[i].sval == 2))
+            have_sw = TRUE;
+        if ((creature_ptr->inventory_list[i].tval == TV_CRAFT_BOOK) && (creature_ptr->inventory_list[i].sval == 2))
+            have_kabe = TRUE;
+    }
+
+    for (this_o_idx = creature_ptr->current_floor_ptr->grid_array[creature_ptr->y][creature_ptr->x].o_idx; this_o_idx; this_o_idx = next_o_idx) {
+        o_ptr = &creature_ptr->current_floor_ptr->o_list[this_o_idx];
+        next_o_idx = o_ptr->next_o_idx;
+
+        if ((o_ptr->tval == TV_NATURE_BOOK) && (o_ptr->sval == 2))
+            have_sw = TRUE;
+        if ((o_ptr->tval == TV_CRAFT_BOOK) && (o_ptr->sval == 2))
+            have_kabe = TRUE;
+    }
+
+	if (have_sw && ((creature_ptr->realm1 == REALM_NATURE) || (creature_ptr->realm2 == REALM_NATURE) || (creature_ptr->pclass == CLASS_SORCERER))) {
+        const magic_type *s_ptr = &mp_ptr->info[REALM_NATURE - 1][SPELL_SW];
+        if (creature_ptr->lev >= s_ptr->slevel)
+            creature_ptr->no_flowed = TRUE;
+    }
+
+    if (have_kabe && ((creature_ptr->realm1 == REALM_CRAFT) || (creature_ptr->realm2 == REALM_CRAFT) || (creature_ptr->pclass == CLASS_SORCERER))) {
+        const magic_type *s_ptr = &mp_ptr->info[REALM_CRAFT - 1][SPELL_WALL];
+        if (creature_ptr->lev >= s_ptr->slevel)
+            creature_ptr->no_flowed = TRUE;
+    }
 }
