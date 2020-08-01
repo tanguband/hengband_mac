@@ -22,5 +22,16 @@ void have_down_saving(player_type *creature_ptr);
 void have_no_ac(player_type *creature_ptr);
 void have_no_flowed(player_type *creature_ptr);
 void have_mighty_throw(player_type *creature_ptr);
+void have_dec_mana(player_type *creature_ptr);
+void have_reflect(player_type *creature_ptr);
+void have_see_nocto(player_type *creature_ptr);
+void have_warning(player_type *creature_ptr);
+void have_anti_magic(player_type *creature_ptr);
+void have_anti_tele(player_type *creature_ptr);
+void have_sh_fire(player_type *creature_ptr);
+void have_sh_elec(player_type *creature_ptr);
+void have_sh_cold(player_type *creature_ptr);
+void have_easy_spell(player_type *creature_ptr);
+void have_heavy_spell(player_type *creature_ptr);
 
 

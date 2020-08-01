@@ -566,9 +566,6 @@ static void clear_creature_bonuses(player_type *creature_ptr)
     creature_ptr->cursed = 0L;
     creature_ptr->impact[0] = FALSE;
     creature_ptr->impact[1] = FALSE;
-    creature_ptr->dec_mana = FALSE;
-    creature_ptr->easy_spell = FALSE;
-    creature_ptr->heavy_spell = FALSE;
     creature_ptr->see_inv = FALSE;
     creature_ptr->free_act = FALSE;
     creature_ptr->slow_digest = FALSE;
@@ -601,14 +598,6 @@ static void clear_creature_bonuses(player_type *creature_ptr)
     creature_ptr->resist_time = FALSE;
     creature_ptr->resist_water = FALSE;
     creature_ptr->resist_fear = FALSE;
-    creature_ptr->reflect = FALSE;
-    creature_ptr->sh_fire = FALSE;
-    creature_ptr->sh_elec = FALSE;
-    creature_ptr->sh_cold = FALSE;
-    creature_ptr->anti_magic = FALSE;
-    creature_ptr->anti_tele = FALSE;
-    creature_ptr->warning = FALSE;
-    creature_ptr->see_nocto = FALSE;
     creature_ptr->immune_acid = FALSE;
     creature_ptr->immune_elec = FALSE;
     creature_ptr->immune_fire = FALSE;
@@ -707,6 +696,17 @@ void calc_bonuses(player_type *creature_ptr)
     have_down_saving(creature_ptr);
     have_no_ac(creature_ptr);
     have_mighty_throw(creature_ptr);
+    have_dec_mana(creature_ptr);
+    have_reflect(creature_ptr);
+    have_see_nocto(creature_ptr);
+    have_warning(creature_ptr);
+    have_anti_magic(creature_ptr);
+    have_anti_tele(creature_ptr);
+    have_sh_fire(creature_ptr);
+    have_sh_elec(creature_ptr);
+    have_sh_cold(creature_ptr);
+    have_easy_spell(creature_ptr);
+    have_heavy_spell(creature_ptr);
 
     calc_race_status(creature_ptr);
 
@@ -767,16 +767,7 @@ void calc_bonuses(player_type *creature_ptr)
     if (creature_ptr->realm1 == REALM_HEX) {
 
         if (hex_spelling(creature_ptr, HEX_DEMON_AURA)) {
-            creature_ptr->sh_fire = TRUE;
             creature_ptr->regenerate = TRUE;
-        }
-
-        if (hex_spelling(creature_ptr, HEX_ICE_ARMOR)) {
-            creature_ptr->sh_cold = TRUE;
-        }
-
-        if (hex_spelling(creature_ptr, HEX_SHOCK_CLOAK)) {
-            creature_ptr->sh_elec = TRUE;
         }
     }
 
@@ -2118,14 +2109,10 @@ static void calc_num_blow(player_type *creature_ptr, int i)
             creature_ptr->resist_elec = TRUE;
             creature_ptr->resist_cold = TRUE;
             creature_ptr->resist_pois = TRUE;
-            creature_ptr->sh_fire = TRUE;
-            creature_ptr->sh_elec = TRUE;
-            creature_ptr->sh_cold = TRUE;
             creature_ptr->levitation = TRUE;
         } else if (creature_ptr->special_defense & KAMAE_GENBU) {
             creature_ptr->to_a += (creature_ptr->lev * creature_ptr->lev) / 50;
             creature_ptr->dis_to_a += (creature_ptr->lev * creature_ptr->lev) / 50;
-            creature_ptr->reflect = TRUE;
             creature_ptr->num_blow[i] -= 2;
             if ((creature_ptr->pclass == CLASS_MONK) && (creature_ptr->lev > 42))
                 creature_ptr->num_blow[i]--;
@@ -4520,32 +4507,20 @@ void calc_timelimit_status(player_type *creature_ptr)
         creature_ptr->resist_blind = TRUE;
         creature_ptr->resist_neth = TRUE;
         creature_ptr->resist_fear = TRUE;
-        creature_ptr->reflect = TRUE;
-        creature_ptr->sh_fire = TRUE;
-        creature_ptr->sh_elec = TRUE;
-        creature_ptr->sh_cold = TRUE;
     }
 
     if (creature_ptr->tim_res_nether) {
         creature_ptr->resist_neth = TRUE;
     }
 
-    if (creature_ptr->tim_sh_fire) {
-        creature_ptr->sh_fire = TRUE;
-    }
-
     if (creature_ptr->tim_res_time) {
         creature_ptr->resist_time = TRUE;
     }
 
-    if (creature_ptr->wraith_form) {
-        creature_ptr->reflect = TRUE;
-    }
 
     if (creature_ptr->magicdef) {
         creature_ptr->resist_blind = TRUE;
         creature_ptr->resist_conf = TRUE;
-        creature_ptr->reflect = TRUE;
         creature_ptr->free_act = TRUE;
         creature_ptr->levitation = TRUE;
     }
@@ -4572,10 +4547,6 @@ void calc_timelimit_status(player_type *creature_ptr)
 
     if (creature_ptr->tim_levitation) {
         creature_ptr->levitation = TRUE;
-    }
-
-    if (creature_ptr->tim_reflect) {
-        creature_ptr->reflect = TRUE;
     }
 
     if (is_hero(creature_ptr) || creature_ptr->shero) {
@@ -4655,8 +4626,6 @@ void calc_equipment_status(player_type *creature_ptr)
             creature_ptr->cursed |= TRC_FAST_DIGEST;
         if (have_flag(flgs, TR_SLOW_REGEN))
             creature_ptr->cursed |= TRC_SLOW_REGEN;
-        if (have_flag(flgs, TR_DEC_MANA))
-            creature_ptr->dec_mana = TRUE;
         if (have_flag(flgs, TR_SLOW_DIGEST))
             creature_ptr->slow_digest = TRUE;
         if (have_flag(flgs, TR_REGEN))
@@ -4670,10 +4639,6 @@ void calc_equipment_status(player_type *creature_ptr)
             creature_ptr->free_act = TRUE;
         if (have_flag(flgs, TR_HOLD_EXP))
             creature_ptr->hold_exp = TRUE;
-        if (have_flag(flgs, TR_WARNING)) {
-            if (!o_ptr->inscription || !(angband_strchr(quark_str(o_ptr->inscription), '$')))
-                creature_ptr->warning = TRUE;
-        }
 
         if (have_flag(flgs, TR_TELEPORT)) {
             if (object_is_cursed(o_ptr))
@@ -4731,19 +4696,6 @@ void calc_equipment_status(player_type *creature_ptr)
         if (have_flag(flgs, TR_RES_NETHER))
             creature_ptr->resist_neth = TRUE;
 
-        if (have_flag(flgs, TR_REFLECT))
-            creature_ptr->reflect = TRUE;
-        if (have_flag(flgs, TR_SH_FIRE))
-            creature_ptr->sh_fire = TRUE;
-        if (have_flag(flgs, TR_SH_ELEC))
-            creature_ptr->sh_elec = TRUE;
-        if (have_flag(flgs, TR_SH_COLD))
-            creature_ptr->sh_cold = TRUE;
-        if (have_flag(flgs, TR_NO_MAGIC))
-            creature_ptr->anti_magic = TRUE;
-        if (have_flag(flgs, TR_NO_TELE))
-            creature_ptr->anti_tele = TRUE;
-
         if (have_flag(flgs, TR_SUST_STR))
             creature_ptr->sustain_str = TRUE;
         if (have_flag(flgs, TR_SUST_INT))
@@ -4759,10 +4711,6 @@ void calc_equipment_status(player_type *creature_ptr)
 
         if (o_ptr->name2 == EGO_RING_RES_TIME)
             creature_ptr->resist_time = TRUE;
-        if (have_flag(flgs, TR_EASY_SPELL))
-            creature_ptr->easy_spell = TRUE;
-        if (o_ptr->name2 == EGO_AMU_FOOL)
-            creature_ptr->heavy_spell = TRUE;
 
         if (o_ptr->tval == TV_CAPTURE)
             continue;

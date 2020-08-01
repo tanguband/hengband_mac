@@ -9,8 +9,6 @@
 #include "core/asking-player.h"
 #include "floor/cave.h"
 #include "floor/floor.h"
-#include "io/targeting.h"
-#include "mind/mind-blue-mage.h"
 #include "monster-floor/monster-generator.h"
 #include "monster-floor/monster-summon.h"
 #include "monster-floor/place-monster-types.h"
@@ -19,6 +17,8 @@
 #include "spell-realm/spells-chaos.h"
 #include "spell/spells-status.h"
 #include "system/floor-type-definition.h"
+#include "target/target-checker.h"
+#include "target/grid-selector.h"
 #include "view/display-messages.h"
 
 debug_spell_command debug_spell_commands_list[SPELL_MAX] = {
