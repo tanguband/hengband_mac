@@ -35,5 +35,12 @@ void have_easy_spell(player_type *creature_ptr);
 void have_heavy_spell(player_type *creature_ptr);
 void have_hold_exp(player_type *creature_ptr);
 void have_see_inv(player_type *creature_ptr);
+void have_free_act(player_type *creature_ptr);
+void have_sustain_str(player_type *creature_ptr);
+void have_sustain_int(player_type *creature_ptr);
+void have_sustain_wis(player_type *creature_ptr);
+void have_sustain_dex(player_type *creature_ptr);
+void have_sustain_con(player_type *creature_ptr);
+void have_sustain_chr(player_type *creature_ptr);
 
 

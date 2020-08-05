@@ -166,9 +166,6 @@ void calc_race_status(player_type *creature_ptr)
         case RACE_ELF:
             creature_ptr->resist_lite = TRUE;
             break;
-        case RACE_GNOME:
-            creature_ptr->free_act = TRUE;
-            break;
         case RACE_DWARF:
             creature_ptr->resist_blind = TRUE;
             break;
@@ -176,8 +173,6 @@ void calc_race_status(player_type *creature_ptr)
             creature_ptr->resist_dark = TRUE;
             break;
         case RACE_HALF_TROLL:
-            creature_ptr->sustain_str = TRUE;
-
             if (creature_ptr->lev > 14) {
                 creature_ptr->regenerate = TRUE;
                 if (creature_ptr->pclass == CLASS_WARRIOR || creature_ptr->pclass == CLASS_BERSERKER) {
@@ -191,7 +186,6 @@ void calc_race_status(player_type *creature_ptr)
             }
             break;
         case RACE_AMBERITE:
-            creature_ptr->sustain_con = TRUE;
             creature_ptr->regenerate = TRUE;
             break;
         case RACE_HIGH_ELF:
@@ -202,10 +196,8 @@ void calc_race_status(player_type *creature_ptr)
             break;
         case RACE_HALF_OGRE:
             creature_ptr->resist_dark = TRUE;
-            creature_ptr->sustain_str = TRUE;
             break;
         case RACE_HALF_GIANT:
-            creature_ptr->sustain_str = TRUE;
             creature_ptr->resist_shard = TRUE;
             break;
         case RACE_HALF_TITAN:
@@ -246,16 +238,11 @@ void calc_race_status(player_type *creature_ptr)
             if (creature_ptr->lev > 34)
                 creature_ptr->resist_pois = TRUE;
             break;
-        case RACE_MIND_FLAYER:
-            creature_ptr->sustain_int = TRUE;
-            creature_ptr->sustain_wis = TRUE;
-            break;
         case RACE_IMP:
             creature_ptr->resist_fire = TRUE;
             break;
         case RACE_GOLEM:
             creature_ptr->slow_digest = TRUE;
-            creature_ptr->free_act = TRUE;
             creature_ptr->resist_pois = TRUE;
             break;
         case RACE_SKELETON:
@@ -281,7 +268,6 @@ void calc_race_status(player_type *creature_ptr)
             break;
         case RACE_SPECTRE:
             creature_ptr->levitation = TRUE;
-            creature_ptr->free_act = TRUE;
             creature_ptr->resist_neth = TRUE;
             creature_ptr->resist_pois = TRUE;
             creature_ptr->slow_digest = TRUE;
@@ -308,9 +294,6 @@ void calc_race_status(player_type *creature_ptr)
             }
 
             break;
-        case RACE_DUNADAN:
-            creature_ptr->sustain_con = TRUE;
-            break;
         case RACE_S_FAIRY:
             creature_ptr->levitation = TRUE;
             break;
@@ -319,7 +302,6 @@ void calc_race_status(player_type *creature_ptr)
             break;
         case RACE_ANDROID:
             creature_ptr->slow_digest = TRUE;
-            creature_ptr->free_act = TRUE;
             creature_ptr->resist_pois = TRUE;
             break;
         case RACE_MERFOLK:

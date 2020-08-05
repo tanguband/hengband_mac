@@ -859,3 +859,219 @@ void have_see_inv(player_type *creature_ptr)
             creature_ptr->see_inv = TRUE;
     }
 }
+
+void have_free_act(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->free_act = FALSE;
+	
+	if (creature_ptr->muta3 & MUT3_MOTION)
+        creature_ptr->free_act = TRUE;
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_GNOME) {
+		creature_ptr->free_act = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_GOLEM) {
+        creature_ptr->free_act = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_SPECTRE) {
+        creature_ptr->free_act = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_ANDROID) {
+        creature_ptr->free_act = TRUE;
+    }
+
+    if (heavy_armor(creature_ptr) && (!creature_ptr->inventory_list[INVEN_RARM].k_idx || creature_ptr->right_hand_weapon)
+        && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || creature_ptr->left_hand_weapon)) {
+        if (creature_ptr->lev > 24)
+            creature_ptr->free_act = TRUE;
+    }
+
+    if (creature_ptr->pclass == CLASS_MONK || creature_ptr->pclass == CLASS_FORCETRAINER) {
+        if (!(heavy_armor(creature_ptr))) {
+            if (creature_ptr->lev > 24)
+                creature_ptr->free_act = TRUE;
+        }
+    }
+
+    if (creature_ptr->pclass == CLASS_BERSERKER) {
+        creature_ptr->free_act = TRUE;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->free_act = TRUE;
+    }
+
+    if (creature_ptr->magicdef) {
+        creature_ptr->free_act = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_FREE_ACT))
+            creature_ptr->free_act = TRUE;
+    }
+}
+
+void have_sustain_str(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->sustain_str = FALSE;
+    if (creature_ptr->pclass == CLASS_BERSERKER) {
+        creature_ptr->sustain_str = TRUE;
+	}
+    if (!creature_ptr->mimic_form
+        && (creature_ptr->prace == RACE_HALF_TROLL || creature_ptr->prace == RACE_HALF_OGRE || creature_ptr->prace == RACE_HALF_GIANT)) {
+        creature_ptr->sustain_str = TRUE;
+    }
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->sustain_str = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_SUST_STR))
+            creature_ptr->sustain_str = TRUE;
+    }
+}
+
+void have_sustain_int(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->sustain_int = FALSE;
+    if (!creature_ptr->mimic_form
+        && (creature_ptr->prace == RACE_MIND_FLAYER)) {
+        creature_ptr->sustain_int = TRUE;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->sustain_int = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_SUST_INT))
+            creature_ptr->sustain_int = TRUE;
+    }
+}
+
+void have_sustain_wis(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->sustain_wis = FALSE;
+    if (creature_ptr->pclass == CLASS_MINDCRAFTER && creature_ptr->lev > 19)
+        creature_ptr->sustain_wis = TRUE;
+	
+	if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_MIND_FLAYER)) {
+        creature_ptr->sustain_wis = TRUE;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->sustain_wis = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_SUST_WIS))
+            creature_ptr->sustain_wis = TRUE;
+    }
+}
+
+void have_sustain_dex(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->sustain_dex = FALSE;
+    if (creature_ptr->pclass == CLASS_BERSERKER) {
+        creature_ptr->sustain_dex = TRUE;
+    }
+
+    if (creature_ptr->pclass == CLASS_NINJA && creature_ptr->lev > 24)
+        creature_ptr->sustain_dex = TRUE;
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->sustain_dex = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_SUST_DEX))
+            creature_ptr->sustain_dex = TRUE;
+    }
+}
+
+void have_sustain_con(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->sustain_con = FALSE;
+    if (creature_ptr->pclass == CLASS_BERSERKER) {
+        creature_ptr->sustain_con = TRUE;
+    }
+
+	if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_AMBERITE || creature_ptr->prace == RACE_DUNADAN)) {
+        creature_ptr->sustain_con = TRUE;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->sustain_con = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_SUST_CON))
+            creature_ptr->sustain_con = TRUE;
+    }
+}
+
+void have_sustain_chr(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->sustain_chr = FALSE;
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->sustain_chr = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_SUST_CHR))
+            creature_ptr->sustain_chr = TRUE;
+    }
+}
