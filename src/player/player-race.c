@@ -150,7 +150,6 @@ void calc_race_status(player_type *creature_ptr)
             creature_ptr->resist_disen = TRUE;
             creature_ptr->resist_nexus = TRUE;
             creature_ptr->resist_fear = TRUE;
-            creature_ptr->levitation = TRUE;
             break;
         case MIMIC_VAMPIRE:
             creature_ptr->resist_dark = TRUE;
@@ -175,14 +174,6 @@ void calc_race_status(player_type *creature_ptr)
         case RACE_HALF_TROLL:
             if (creature_ptr->lev > 14) {
                 creature_ptr->regenerate = TRUE;
-                if (creature_ptr->pclass == CLASS_WARRIOR || creature_ptr->pclass == CLASS_BERSERKER) {
-                    creature_ptr->slow_digest = TRUE;
-                    /* Let's not make Regeneration
-                     * a disadvantage for the poor warriors who can
-                     * never learn a spell that satisfies hunger (actually
-                     * neither can rogues, but half-trolls are not
-                     * supposed to play rogues) */
-                }
             }
             break;
         case RACE_AMBERITE:
@@ -226,7 +217,6 @@ void calc_race_status(player_type *creature_ptr)
             creature_ptr->resist_dark = TRUE;
             break;
         case RACE_DRACONIAN:
-            creature_ptr->levitation = TRUE;
             if (creature_ptr->lev > 4)
                 creature_ptr->resist_fire = TRUE;
             if (creature_ptr->lev > 9)
@@ -242,7 +232,6 @@ void calc_race_status(player_type *creature_ptr)
             creature_ptr->resist_fire = TRUE;
             break;
         case RACE_GOLEM:
-            creature_ptr->slow_digest = TRUE;
             creature_ptr->resist_pois = TRUE;
             break;
         case RACE_SKELETON:
@@ -253,7 +242,6 @@ void calc_race_status(player_type *creature_ptr)
             break;
         case RACE_ZOMBIE:
             creature_ptr->resist_neth = TRUE;
-            creature_ptr->resist_pois = TRUE;
             creature_ptr->slow_digest = TRUE;
             if (creature_ptr->lev > 4)
                 creature_ptr->resist_cold = TRUE;
@@ -267,23 +255,17 @@ void calc_race_status(player_type *creature_ptr)
                 creature_ptr->lite = TRUE;
             break;
         case RACE_SPECTRE:
-            creature_ptr->levitation = TRUE;
             creature_ptr->resist_neth = TRUE;
             creature_ptr->resist_pois = TRUE;
-            creature_ptr->slow_digest = TRUE;
             creature_ptr->resist_cold = TRUE;
             creature_ptr->pass_wall = TRUE;
             break;
         case RACE_SPRITE:
-            creature_ptr->levitation = TRUE;
             creature_ptr->resist_lite = TRUE;
             break;
         case RACE_BEASTMAN:
             creature_ptr->resist_conf = TRUE;
             creature_ptr->resist_sound = TRUE;
-            break;
-        case RACE_ARCHON:
-            creature_ptr->levitation = TRUE;
             break;
         case RACE_BALROG:
             creature_ptr->resist_fire = TRUE;
@@ -294,14 +276,10 @@ void calc_race_status(player_type *creature_ptr)
             }
 
             break;
-        case RACE_S_FAIRY:
-            creature_ptr->levitation = TRUE;
-            break;
         case RACE_KUTAR:
             creature_ptr->resist_conf = TRUE;
             break;
         case RACE_ANDROID:
-            creature_ptr->slow_digest = TRUE;
             creature_ptr->resist_pois = TRUE;
             break;
         case RACE_MERFOLK:
