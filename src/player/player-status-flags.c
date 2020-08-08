@@ -1,11 +1,14 @@
-﻿#include "grid/grid.h"
+﻿#include "art-definition/art-sword-types.h"
+#include "grid/grid.h"
 #include "inventory/inventory-slot-types.h"
 #include "monster-race/monster-race.h"
 #include "monster-race/race-flags2.h"
 #include "mutation/mutation-flag-types.h"
+#include "object/object-flags.h"
 #include "object-enchant/object-ego.h"
 #include "object-enchant/tr-types.h"
-#include "object/object-flags.h"
+#include "object-enchant/trc-types.h"
+#include "object-hook/hook-checker.h"
 #include "player/player-class.h"
 #include "player/player-race-types.h"
 #include "player/player-race.h"
@@ -1173,5 +1176,186 @@ void have_slow_digest(player_type *creature_ptr)
         object_flags(creature_ptr, o_ptr, flgs);
         if (have_flag(flgs, TR_SLOW_DIGEST))
             creature_ptr->slow_digest = TRUE;
+    }
+}
+
+void have_regenerate(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->regenerate = FALSE;
+
+    if (!creature_ptr->mimic_form) {
+        switch (creature_ptr->prace) {
+        case RACE_HALF_TROLL:
+            if (creature_ptr->lev > 14) {
+                creature_ptr->regenerate = TRUE;
+            }
+            break;
+        case RACE_AMBERITE:
+            creature_ptr->regenerate = TRUE;
+            break;
+        }
+    }
+
+    switch (creature_ptr->pclass) {
+    case CLASS_WARRIOR:
+        if (creature_ptr->lev > 44)
+            creature_ptr->regenerate = TRUE;
+        break;
+    case CLASS_BERSERKER:
+        creature_ptr->regenerate = TRUE;
+        break;
+    }
+
+    if (creature_ptr->muta3 & MUT3_FLESH_ROT)
+        creature_ptr->regenerate = FALSE;
+
+    if (creature_ptr->muta3 & MUT3_REGEN)
+        creature_ptr->regenerate = TRUE;
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->regenerate = TRUE;
+    }
+
+    if (creature_ptr->realm1 == REALM_HEX) {
+        if (hex_spelling(creature_ptr, HEX_DEMON_AURA)) {
+            creature_ptr->regenerate = TRUE;
+        }
+    }
+
+	if (creature_ptr->tim_regen) {
+        creature_ptr->regenerate = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_REGEN))
+            creature_ptr->regenerate = TRUE;
+    }
+}
+
+void have_curses(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->cursed = 0L;
+
+    if (creature_ptr->pseikaku == PERSONALITY_SEXY)
+        creature_ptr->cursed |= (TRC_AGGRAVATE);
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_AGGRAVATE))
+            creature_ptr->cursed |= TRC_AGGRAVATE;
+        if (have_flag(flgs, TR_DRAIN_EXP))
+            creature_ptr->cursed |= TRC_DRAIN_EXP;
+        if (have_flag(flgs, TR_TY_CURSE))
+            creature_ptr->cursed |= TRC_TY_CURSE;
+        if (have_flag(flgs, TR_ADD_L_CURSE))
+            creature_ptr->cursed |= TRC_ADD_L_CURSE;
+        if (have_flag(flgs, TR_ADD_H_CURSE))
+            creature_ptr->cursed |= TRC_ADD_H_CURSE;
+        if (have_flag(flgs, TR_DRAIN_HP))
+            creature_ptr->cursed |= TRC_DRAIN_HP;
+        if (have_flag(flgs, TR_DRAIN_MANA))
+            creature_ptr->cursed |= TRC_DRAIN_MANA;
+        if (have_flag(flgs, TR_CALL_ANIMAL))
+            creature_ptr->cursed |= TRC_CALL_ANIMAL;
+        if (have_flag(flgs, TR_CALL_DEMON))
+            creature_ptr->cursed |= TRC_CALL_DEMON;
+        if (have_flag(flgs, TR_CALL_DRAGON))
+            creature_ptr->cursed |= TRC_CALL_DRAGON;
+        if (have_flag(flgs, TR_CALL_UNDEAD))
+            creature_ptr->cursed |= TRC_CALL_UNDEAD;
+        if (have_flag(flgs, TR_COWARDICE))
+            creature_ptr->cursed |= TRC_COWARDICE;
+        if (have_flag(flgs, TR_LOW_MELEE))
+            creature_ptr->cursed |= TRC_LOW_MELEE;
+        if (have_flag(flgs, TR_LOW_AC))
+            creature_ptr->cursed |= TRC_LOW_AC;
+        if (have_flag(flgs, TR_LOW_MAGIC))
+            creature_ptr->cursed |= TRC_LOW_MAGIC;
+        if (have_flag(flgs, TR_FAST_DIGEST))
+            creature_ptr->cursed |= TRC_FAST_DIGEST;
+        if (have_flag(flgs, TR_SLOW_REGEN))
+            creature_ptr->cursed |= TRC_SLOW_REGEN;
+
+        creature_ptr->cursed |= (o_ptr->curse_flags & (0xFFFFFFF0L));
+        if (o_ptr->name1 == ART_CHAINSWORD)
+            creature_ptr->cursed |= TRC_CHAINSWORD;
+
+        if (have_flag(flgs, TR_TELEPORT)) {
+            if (object_is_cursed(o_ptr))
+                creature_ptr->cursed |= TRC_TELEPORT;
+            else {
+                concptr insc = quark_str(o_ptr->inscription);
+
+                /* {.} will stop random teleportation. */
+                if (o_ptr->inscription && angband_strchr(insc, '.')) {
+                } else {
+                    creature_ptr->cursed |= TRC_TELEPORT_SELF;
+                }
+            }
+        }
+    }
+
+    if (creature_ptr->cursed & TRC_TELEPORT)
+        creature_ptr->cursed &= ~(TRC_TELEPORT_SELF);
+
+    if ((is_specific_player_race(creature_ptr, RACE_S_FAIRY)) && (creature_ptr->pseikaku != PERSONALITY_SEXY) && (creature_ptr->cursed & TRC_AGGRAVATE)) {
+        creature_ptr->cursed &= ~(TRC_AGGRAVATE);
+    }
+}
+
+void have_impact(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->impact[0] = FALSE;
+    creature_ptr->impact[1] = FALSE;
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_IMPACT))
+            creature_ptr->impact[(i == INVEN_RARM) ? 0 : 1] = TRUE;
+    }
+
+}
+
+void have_extra_blow(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->extra_blows[0] = creature_ptr->extra_blows[1] = 0;
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_INFRA))
+            creature_ptr->see_infra += o_ptr->pval;
+        if (have_flag(flgs, TR_BLOWS)) {
+            if ((i == INVEN_RARM || i == INVEN_RIGHT) && !creature_ptr->two_handed_weapon)
+                creature_ptr->extra_blows[0] += o_ptr->pval;
+            else if ((i == INVEN_LARM || i == INVEN_LEFT) && !creature_ptr->two_handed_weapon)
+                creature_ptr->extra_blows[1] += o_ptr->pval;
+            else {
+                creature_ptr->extra_blows[0] += o_ptr->pval;
+                creature_ptr->extra_blows[1] += o_ptr->pval;
+            }
+        }
     }
 }

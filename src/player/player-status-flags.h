@@ -45,5 +45,9 @@ void have_sustain_chr(player_type *creature_ptr);
 void have_levitation(player_type *creature_ptr);
 void have_can_swim(player_type *creature_ptr);
 void have_slow_digest(player_type *creature_ptr);
+void have_regenerate(player_type *creature_ptr);
+void have_curses(player_type *creature_ptr);
+void have_impact(player_type *creature_ptr);
+void have_extra_blow(player_type *creature_ptr);
 
 

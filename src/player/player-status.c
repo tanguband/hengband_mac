@@ -560,14 +560,6 @@ static void delayed_visual_update(player_type *player_ptr)
  */
 static void clear_creature_bonuses(player_type *creature_ptr)
 {
-    creature_ptr->extra_blows[0] = creature_ptr->extra_blows[1] = 0;
-    creature_ptr->num_fire = 100;
-    creature_ptr->tval_xtra = 0;
-    creature_ptr->tval_ammo = 0;
-    creature_ptr->cursed = 0L;
-    creature_ptr->impact[0] = FALSE;
-    creature_ptr->impact[1] = FALSE;
-    creature_ptr->regenerate = FALSE;
     creature_ptr->resist_acid = FALSE;
     creature_ptr->resist_elec = FALSE;
     creature_ptr->resist_fire = FALSE;
@@ -736,6 +728,10 @@ void calc_bonuses(player_type *creature_ptr)
     have_levitation(creature_ptr);
     have_can_swim(creature_ptr);
     have_slow_digest(creature_ptr);
+    have_regenerate(creature_ptr);
+    have_curses(creature_ptr);
+    have_impact(creature_ptr);
+    have_extra_blow(creature_ptr);
 
     calc_race_status(creature_ptr);
 
@@ -758,18 +754,8 @@ void calc_bonuses(player_type *creature_ptr)
         creature_ptr->window |= PW_INVEN;
     }
 
-    if (creature_ptr->cursed & TRC_TELEPORT)
-        creature_ptr->cursed &= ~(TRC_TELEPORT_SELF);
-
     if (creature_ptr->sh_fire)
         creature_ptr->lite = TRUE;
-
-    if (creature_ptr->realm1 == REALM_HEX) {
-
-        if (hex_spelling(creature_ptr, HEX_DEMON_AURA)) {
-            creature_ptr->regenerate = TRUE;
-        }
-    }
 
     calc_strength_addition(creature_ptr);
     calc_intelligence_addition(creature_ptr);
@@ -1546,6 +1532,7 @@ s16b calc_num_fire(player_type *creature_ptr, object_type *o_ptr)
 {
     int extra_shots = 0;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->num_fire = 100;
     for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *q_ptr;
         q_ptr = &creature_ptr->inventory_list[i];
@@ -1669,7 +1656,6 @@ static void calc_stealth(player_type *creature_ptr)
     creature_ptr->skill_stl += 1;
     creature_ptr->skill_stl += (c_ptr->x_stl * creature_ptr->lev / 10);
     if ((is_specific_player_race(creature_ptr, RACE_S_FAIRY)) && (creature_ptr->pseikaku != PERSONALITY_SEXY) && (creature_ptr->cursed & TRC_AGGRAVATE)) {
-        creature_ptr->cursed &= ~(TRC_AGGRAVATE);
         creature_ptr->skill_stl = MIN(creature_ptr->skill_stl - 3, (creature_ptr->skill_stl + 2) / 2);
     }
 
@@ -4467,7 +4453,6 @@ bool is_echizen(player_type *creature_ptr)
 void calc_timelimit_status(player_type *creature_ptr)
 {
     if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-        creature_ptr->regenerate = TRUE;
         creature_ptr->lite = TRUE;
         creature_ptr->resist_acid = TRUE;
         creature_ptr->resist_elec = TRUE;
@@ -4511,10 +4496,6 @@ void calc_timelimit_status(player_type *creature_ptr)
             creature_ptr->immune_cold = TRUE;
     }
 
-    if (creature_ptr->tim_regen) {
-        creature_ptr->regenerate = TRUE;
-    }
-
     if (is_hero(creature_ptr) || creature_ptr->shero) {
         creature_ptr->resist_fear = TRUE;
     }
@@ -4539,75 +4520,8 @@ void calc_equipment_status(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        creature_ptr->cursed |= (o_ptr->curse_flags & (0xFFFFFFF0L));
-        if (o_ptr->name1 == ART_CHAINSWORD)
-            creature_ptr->cursed |= TRC_CHAINSWORD;
-
         if (have_flag(flgs, TR_INFRA))
             creature_ptr->see_infra += o_ptr->pval;
-        if (have_flag(flgs, TR_BLOWS)) {
-            if ((i == INVEN_RARM || i == INVEN_RIGHT) && !creature_ptr->two_handed_weapon)
-                creature_ptr->extra_blows[0] += o_ptr->pval;
-            else if ((i == INVEN_LARM || i == INVEN_LEFT) && !creature_ptr->two_handed_weapon)
-                creature_ptr->extra_blows[1] += o_ptr->pval;
-            else {
-                creature_ptr->extra_blows[0] += o_ptr->pval;
-                creature_ptr->extra_blows[1] += o_ptr->pval;
-            }
-        }
-
-        if (have_flag(flgs, TR_IMPACT))
-            creature_ptr->impact[(i == INVEN_RARM) ? 0 : 1] = TRUE;
-        if (have_flag(flgs, TR_AGGRAVATE))
-            creature_ptr->cursed |= TRC_AGGRAVATE;
-        if (have_flag(flgs, TR_DRAIN_EXP))
-            creature_ptr->cursed |= TRC_DRAIN_EXP;
-        if (have_flag(flgs, TR_TY_CURSE))
-            creature_ptr->cursed |= TRC_TY_CURSE;
-        if (have_flag(flgs, TR_ADD_L_CURSE))
-            creature_ptr->cursed |= TRC_ADD_L_CURSE;
-        if (have_flag(flgs, TR_ADD_H_CURSE))
-            creature_ptr->cursed |= TRC_ADD_H_CURSE;
-        if (have_flag(flgs, TR_DRAIN_HP))
-            creature_ptr->cursed |= TRC_DRAIN_HP;
-        if (have_flag(flgs, TR_DRAIN_MANA))
-            creature_ptr->cursed |= TRC_DRAIN_MANA;
-        if (have_flag(flgs, TR_CALL_ANIMAL))
-            creature_ptr->cursed |= TRC_CALL_ANIMAL;
-        if (have_flag(flgs, TR_CALL_DEMON))
-            creature_ptr->cursed |= TRC_CALL_DEMON;
-        if (have_flag(flgs, TR_CALL_DRAGON))
-            creature_ptr->cursed |= TRC_CALL_DRAGON;
-        if (have_flag(flgs, TR_CALL_UNDEAD))
-            creature_ptr->cursed |= TRC_CALL_UNDEAD;
-        if (have_flag(flgs, TR_COWARDICE))
-            creature_ptr->cursed |= TRC_COWARDICE;
-        if (have_flag(flgs, TR_LOW_MELEE))
-            creature_ptr->cursed |= TRC_LOW_MELEE;
-        if (have_flag(flgs, TR_LOW_AC))
-            creature_ptr->cursed |= TRC_LOW_AC;
-        if (have_flag(flgs, TR_LOW_MAGIC))
-            creature_ptr->cursed |= TRC_LOW_MAGIC;
-        if (have_flag(flgs, TR_FAST_DIGEST))
-            creature_ptr->cursed |= TRC_FAST_DIGEST;
-        if (have_flag(flgs, TR_SLOW_REGEN))
-            creature_ptr->cursed |= TRC_SLOW_REGEN;
-        if (have_flag(flgs, TR_REGEN))
-            creature_ptr->regenerate = TRUE;
-
-        if (have_flag(flgs, TR_TELEPORT)) {
-            if (object_is_cursed(o_ptr))
-                creature_ptr->cursed |= TRC_TELEPORT;
-            else {
-                concptr insc = quark_str(o_ptr->inscription);
-
-                /* {.} will stop random teleportation. */
-                if (o_ptr->inscription && angband_strchr(insc, '.')) {
-                } else {
-                    creature_ptr->cursed |= TRC_TELEPORT_SELF;
-                }
-            }
-        }
 
         if (have_flag(flgs, TR_IM_FIRE))
             creature_ptr->immune_fire = TRUE;
