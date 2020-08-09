@@ -1454,7 +1454,7 @@ static bool paste_x11_send_text(XSelectionRequestEvent *rq)
 #ifdef JP
 			if (x > max.x) break;
 
-			Term_what(x, y, &a, &c);
+			term_what(x, y, &a, &c);
 			if (1 == kanji) kanji = 2;
 			else if (iskanji(c)) kanji = 1;
 			else kanji = 0;
