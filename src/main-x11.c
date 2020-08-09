@@ -1192,7 +1192,7 @@ static void sort_co_ord(co_ord *min, co_ord *max,
  */
 static void mark_selection_clear(int x1, int y1, int x2, int y2)
 {
-	Term_redraw_section(x1,y1,x2,y2);
+	term_redraw_section(x1,y1,x2,y2);
 }
 
 /*
@@ -1720,7 +1720,7 @@ static errr CheckEvent(bool wait)
 			y2 = (xev->xexpose.y + xev->xexpose.height -
 				 Infowin->oy)/Infofnt->hgt;
 			
-			Term_redraw_section(x1, y1, x2, y2);
+			term_redraw_section(x1, y1, x2, y2);
 			break;
 		}
 		case MapNotify:
