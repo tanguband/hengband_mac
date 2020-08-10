@@ -54,5 +54,25 @@ void have_resist_elec(player_type *creature_ptr);
 void have_resist_fire(player_type *creature_ptr);
 void have_resist_cold(player_type *creature_ptr);
 void have_resist_pois(player_type *creature_ptr);
+void have_resist_conf(player_type *creature_ptr);
+void have_resist_sound(player_type *creature_ptr);
+void have_resist_lite(player_type *creature_ptr);
+void have_resist_dark(player_type *creature_ptr);
+void have_resist_chaos(player_type *creature_ptr);
+void have_resist_disen(player_type *creature_ptr);
+void have_resist_shard(player_type *creature_ptr);
+void have_resist_nexus(player_type *creature_ptr);
+void have_resist_blind(player_type *creature_ptr);
+void have_resist_neth(player_type *creature_ptr);
+void have_resist_time(player_type *creature_ptr);
+void have_resist_water(player_type *creature_ptr);
+void have_resist_fear(player_type *creature_ptr);
+void have_immune_acid(player_type *creature_ptr);
+void have_immune_elec(player_type *creature_ptr);
+void have_immune_fire(player_type *creature_ptr);
+void have_immune_cold(player_type *creature_ptr);
+void have_right_hand_weapon(player_type *creature_ptr);
+void have_left_hand_weapon(player_type *creature_ptr);
+void have_two_handed_weapons(player_type *creature_ptr);
 
 

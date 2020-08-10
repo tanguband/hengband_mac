@@ -147,7 +147,6 @@ static void calc_to_hit_misc(player_type *creature_ptr);
 static void calc_to_weapon_dice_num(player_type *creature_ptr, INVENTORY_IDX slot);
 static void calc_to_weapon_dice_side(player_type *creature_ptr, INVENTORY_IDX slot);
 
-static void calc_timelimit_status(player_type *creature_ptr);
 static void calc_equipment_status(player_type *creature_ptr);
 
 /*!
@@ -556,33 +555,6 @@ static void delayed_visual_update(player_type *player_ptr)
 }
 
 /*!
- * @brief プレイヤー構造体の全ステータスを初期化する
- */
-static void clear_creature_bonuses(player_type *creature_ptr)
-{
-    creature_ptr->resist_conf = FALSE;
-    creature_ptr->resist_sound = FALSE;
-    creature_ptr->resist_lite = FALSE;
-    creature_ptr->resist_dark = FALSE;
-    creature_ptr->resist_chaos = FALSE;
-    creature_ptr->resist_disen = FALSE;
-    creature_ptr->resist_shard = FALSE;
-    creature_ptr->resist_nexus = FALSE;
-    creature_ptr->resist_blind = FALSE;
-    creature_ptr->resist_neth = FALSE;
-    creature_ptr->resist_time = FALSE;
-    creature_ptr->resist_water = FALSE;
-    creature_ptr->resist_fear = FALSE;
-    creature_ptr->immune_acid = FALSE;
-    creature_ptr->immune_elec = FALSE;
-    creature_ptr->immune_fire = FALSE;
-    creature_ptr->immune_cold = FALSE;
-    creature_ptr->two_handed_weapon = FALSE;
-    creature_ptr->right_hand_weapon = FALSE;
-    creature_ptr->left_hand_weapon = FALSE;
-}
-
-/*!
  * @brief 射撃武器がプレイヤーにとって重すぎるかどうかの判定 /
  * @param o_ptr 判定する射撃武器のアイテム情報参照ポインタ
  * @return 重すぎるならばTRUE
@@ -647,12 +619,11 @@ void calc_bonuses(player_type *creature_ptr)
     ARMOUR_CLASS old_dis_ac = creature_ptr->dis_ac;
     ARMOUR_CLASS old_dis_to_a = creature_ptr->dis_to_a;
 
-    clear_creature_bonuses(creature_ptr);
+	have_right_hand_weapon(creature_ptr);
+    have_left_hand_weapon(creature_ptr);
+    have_two_handed_weapons(creature_ptr);
 
-    if (has_melee_weapon(creature_ptr, INVEN_RARM))
-        creature_ptr->right_hand_weapon = TRUE;
     if (has_melee_weapon(creature_ptr, INVEN_LARM)) {
-        creature_ptr->left_hand_weapon = TRUE;
         if (!creature_ptr->right_hand_weapon)
             default_hand = 1;
     }
@@ -660,21 +631,9 @@ void calc_bonuses(player_type *creature_ptr)
     if (can_two_hands_wielding(creature_ptr)) {
         if (creature_ptr->right_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
             && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_RARM])) {
-            creature_ptr->two_handed_weapon = TRUE;
         } else if (creature_ptr->left_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
             && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_LARM])) {
-            creature_ptr->two_handed_weapon = TRUE;
         } else {
-            switch (creature_ptr->pclass) {
-            case CLASS_MONK:
-            case CLASS_FORCETRAINER:
-            case CLASS_BERSERKER:
-                if (empty_hands(creature_ptr, FALSE) == (EMPTY_HAND_RARM | EMPTY_HAND_LARM)) {
-                    creature_ptr->right_hand_weapon = TRUE;
-                    creature_ptr->two_handed_weapon = TRUE;
-                }
-            }
-
             default_hand = 1;
         }
     }
@@ -727,11 +686,29 @@ void calc_bonuses(player_type *creature_ptr)
     have_curses(creature_ptr);
     have_impact(creature_ptr);
     have_extra_blow(creature_ptr);
+    have_immune_acid(creature_ptr);
+    have_immune_elec(creature_ptr);
+    have_immune_fire(creature_ptr);
+    have_immune_cold(creature_ptr);
     have_resist_acid(creature_ptr);
     have_resist_elec(creature_ptr);
     have_resist_fire(creature_ptr);
     have_resist_cold(creature_ptr);
     have_resist_pois(creature_ptr);
+    have_resist_conf(creature_ptr);
+    have_resist_sound(creature_ptr);
+    have_resist_lite(creature_ptr);
+    have_resist_dark(creature_ptr);
+    have_resist_chaos(creature_ptr);
+    have_resist_disen(creature_ptr);
+    have_resist_shard(creature_ptr);
+    have_resist_nexus(creature_ptr);
+    have_resist_blind(creature_ptr);
+    have_resist_neth(creature_ptr);
+    have_resist_time(creature_ptr);
+    have_resist_fear(creature_ptr);
+
+    have_lite(creature_ptr);
 
     calc_race_status(creature_ptr);
 
@@ -743,7 +720,6 @@ void calc_bonuses(player_type *creature_ptr)
     }
 
     calc_class_status(creature_ptr);
-    calc_timelimit_status(creature_ptr);
     set_personality_flags(creature_ptr);
 
     set_mutation_flags(creature_ptr);
@@ -753,9 +729,6 @@ void calc_bonuses(player_type *creature_ptr)
     if (old_mighty_throw != creature_ptr->mighty_throw) {
         creature_ptr->window |= PW_INVEN;
     }
-
-    if (creature_ptr->sh_fire)
-        creature_ptr->lite = TRUE;
 
     calc_strength_addition(creature_ptr);
     calc_intelligence_addition(creature_ptr);
@@ -4435,52 +4408,6 @@ bool is_echizen(player_type *creature_ptr)
     return (creature_ptr->pseikaku == PERSONALITY_COMBAT) || (creature_ptr->inventory_list[INVEN_BOW].name1 == ART_CRIMSON);
 }
 
-void calc_timelimit_status(player_type *creature_ptr)
-{
-    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-        creature_ptr->lite = TRUE;
-        creature_ptr->resist_conf = TRUE;
-        creature_ptr->resist_sound = TRUE;
-        creature_ptr->resist_lite = TRUE;
-        creature_ptr->resist_dark = TRUE;
-        creature_ptr->resist_chaos = TRUE;
-        creature_ptr->resist_disen = TRUE;
-        creature_ptr->resist_shard = TRUE;
-        creature_ptr->resist_nexus = TRUE;
-        creature_ptr->resist_blind = TRUE;
-        creature_ptr->resist_neth = TRUE;
-        creature_ptr->resist_fear = TRUE;
-    }
-
-    if (creature_ptr->tim_res_nether) {
-        creature_ptr->resist_neth = TRUE;
-    }
-
-    if (creature_ptr->tim_res_time) {
-        creature_ptr->resist_time = TRUE;
-    }
-
-    if (creature_ptr->magicdef) {
-        creature_ptr->resist_blind = TRUE;
-        creature_ptr->resist_conf = TRUE;
-    }
-
-    if (creature_ptr->ele_immune) {
-        if (creature_ptr->special_defense & DEFENSE_ACID)
-            creature_ptr->immune_acid = TRUE;
-        else if (creature_ptr->special_defense & DEFENSE_ELEC)
-            creature_ptr->immune_elec = TRUE;
-        else if (creature_ptr->special_defense & DEFENSE_FIRE)
-            creature_ptr->immune_fire = TRUE;
-        else if (creature_ptr->special_defense & DEFENSE_COLD)
-            creature_ptr->immune_cold = TRUE;
-    }
-
-    if (is_hero(creature_ptr) || creature_ptr->shero) {
-        creature_ptr->resist_fear = TRUE;
-    }
-}
-
 void calc_equipment_status(player_type *creature_ptr)
 {
     object_type *o_ptr;
@@ -4503,40 +4430,6 @@ void calc_equipment_status(player_type *creature_ptr)
         if (have_flag(flgs, TR_INFRA))
             creature_ptr->see_infra += o_ptr->pval;
 
-        if (have_flag(flgs, TR_IM_FIRE))
-            creature_ptr->immune_fire = TRUE;
-        if (have_flag(flgs, TR_IM_ACID))
-            creature_ptr->immune_acid = TRUE;
-        if (have_flag(flgs, TR_IM_COLD))
-            creature_ptr->immune_cold = TRUE;
-        if (have_flag(flgs, TR_IM_ELEC))
-            creature_ptr->immune_elec = TRUE;
-
-        if (have_flag(flgs, TR_RES_FEAR))
-            creature_ptr->resist_fear = TRUE;
-        if (have_flag(flgs, TR_RES_CONF))
-            creature_ptr->resist_conf = TRUE;
-        if (have_flag(flgs, TR_RES_SOUND))
-            creature_ptr->resist_sound = TRUE;
-        if (have_flag(flgs, TR_RES_LITE))
-            creature_ptr->resist_lite = TRUE;
-        if (have_flag(flgs, TR_RES_DARK))
-            creature_ptr->resist_dark = TRUE;
-        if (have_flag(flgs, TR_RES_CHAOS))
-            creature_ptr->resist_chaos = TRUE;
-        if (have_flag(flgs, TR_RES_DISEN))
-            creature_ptr->resist_disen = TRUE;
-        if (have_flag(flgs, TR_RES_SHARDS))
-            creature_ptr->resist_shard = TRUE;
-        if (have_flag(flgs, TR_RES_NEXUS))
-            creature_ptr->resist_nexus = TRUE;
-        if (have_flag(flgs, TR_RES_BLIND))
-            creature_ptr->resist_blind = TRUE;
-        if (have_flag(flgs, TR_RES_NETHER))
-            creature_ptr->resist_neth = TRUE;
-
-        if (o_ptr->name2 == EGO_RING_RES_TIME)
-            creature_ptr->resist_time = TRUE;
 
         if (o_ptr->tval == TV_CAPTURE)
             continue;

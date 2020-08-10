@@ -3,12 +3,14 @@
 #include "inventory/inventory-slot-types.h"
 #include "monster-race/monster-race.h"
 #include "monster-race/race-flags2.h"
+#include "monster-race/race-flags7.h"
 #include "mutation/mutation-flag-types.h"
-#include "object/object-flags.h"
 #include "object-enchant/object-ego.h"
 #include "object-enchant/tr-types.h"
 #include "object-enchant/trc-types.h"
+#include "object-hook/hook-weapon.h"
 #include "object-hook/hook-checker.h"
+#include "object/object-flags.h"
 #include "player/player-class.h"
 #include "player/player-race-types.h"
 #include "player/player-race.h"
@@ -24,7 +26,6 @@
 #include "util/bit-flags-calculator.h"
 #include "util/quarks.h"
 #include "util/string-processor.h"
-#include "monster-race/race-flags7.h"
 
 void have_kill_wall(player_type *creature_ptr)
 {
@@ -793,8 +794,8 @@ void have_hold_exp(player_type *creature_ptr)
     if (!creature_ptr->mimic_form
         && (creature_ptr->prace == RACE_SKELETON || creature_ptr->prace == RACE_ZOMBIE || creature_ptr->prace == RACE_VAMPIRE
             || creature_ptr->prace == RACE_SPECTRE || creature_ptr->prace == RACE_BALROG || creature_ptr->prace == RACE_ANDROID)) {
-        creature_ptr->hold_exp = TRUE;    
-	}
+        creature_ptr->hold_exp = TRUE;
+    }
 
     if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
         creature_ptr->hold_exp = TRUE;
@@ -849,7 +850,7 @@ void have_see_inv(player_type *creature_ptr)
         creature_ptr->see_inv = TRUE;
     }
 
-	if (creature_ptr->tim_invis) {
+    if (creature_ptr->tim_invis) {
         creature_ptr->see_inv = TRUE;
     }
 
@@ -869,12 +870,12 @@ void have_free_act(player_type *creature_ptr)
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     creature_ptr->free_act = FALSE;
-	
-	if (creature_ptr->muta3 & MUT3_MOTION)
+
+    if (creature_ptr->muta3 & MUT3_MOTION)
         creature_ptr->free_act = TRUE;
 
     if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_GNOME) {
-		creature_ptr->free_act = TRUE;
+        creature_ptr->free_act = TRUE;
     }
 
     if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_GOLEM) {
@@ -932,7 +933,7 @@ void have_sustain_str(player_type *creature_ptr)
     creature_ptr->sustain_str = FALSE;
     if (creature_ptr->pclass == CLASS_BERSERKER) {
         creature_ptr->sustain_str = TRUE;
-	}
+    }
     if (!creature_ptr->mimic_form
         && (creature_ptr->prace == RACE_HALF_TROLL || creature_ptr->prace == RACE_HALF_OGRE || creature_ptr->prace == RACE_HALF_GIANT)) {
         creature_ptr->sustain_str = TRUE;
@@ -957,8 +958,7 @@ void have_sustain_int(player_type *creature_ptr)
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     creature_ptr->sustain_int = FALSE;
-    if (!creature_ptr->mimic_form
-        && (creature_ptr->prace == RACE_MIND_FLAYER)) {
+    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_MIND_FLAYER)) {
         creature_ptr->sustain_int = TRUE;
     }
 
@@ -984,8 +984,8 @@ void have_sustain_wis(player_type *creature_ptr)
     creature_ptr->sustain_wis = FALSE;
     if (creature_ptr->pclass == CLASS_MINDCRAFTER && creature_ptr->lev > 19)
         creature_ptr->sustain_wis = TRUE;
-	
-	if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_MIND_FLAYER)) {
+
+    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_MIND_FLAYER)) {
         creature_ptr->sustain_wis = TRUE;
     }
 
@@ -1040,7 +1040,7 @@ void have_sustain_con(player_type *creature_ptr)
         creature_ptr->sustain_con = TRUE;
     }
 
-	if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_AMBERITE || creature_ptr->prace == RACE_DUNADAN)) {
+    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_AMBERITE || creature_ptr->prace == RACE_DUNADAN)) {
         creature_ptr->sustain_con = TRUE;
     }
 
@@ -1102,7 +1102,7 @@ void have_levitation(player_type *creature_ptr)
 
     if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
         creature_ptr->levitation = TRUE;
-	}
+    }
 
     if (creature_ptr->magicdef) {
     }
@@ -1129,7 +1129,7 @@ void have_levitation(player_type *creature_ptr)
 
 void have_can_swim(player_type *creature_ptr)
 {
-	creature_ptr->can_swim = FALSE;
+    creature_ptr->can_swim = FALSE;
     if (creature_ptr->riding) {
         monster_type *riding_m_ptr = &creature_ptr->current_floor_ptr->m_list[creature_ptr->riding];
         monster_race *riding_r_ptr = &r_info[riding_m_ptr->r_idx];
@@ -1148,7 +1148,7 @@ void have_slow_digest(player_type *creature_ptr)
         creature_ptr->slow_digest = TRUE;
     }
 
-	if (creature_ptr->lev > 14 && !creature_ptr->mimic_form && creature_ptr->prace == RACE_HALF_TROLL) {
+    if (creature_ptr->lev > 14 && !creature_ptr->mimic_form && creature_ptr->prace == RACE_HALF_TROLL) {
         if (creature_ptr->pclass == CLASS_WARRIOR || creature_ptr->pclass == CLASS_BERSERKER) {
             creature_ptr->slow_digest = TRUE;
             /* Let's not make Regeneration
@@ -1224,7 +1224,7 @@ void have_regenerate(player_type *creature_ptr)
         }
     }
 
-	if (creature_ptr->tim_regen) {
+    if (creature_ptr->tim_regen) {
         creature_ptr->regenerate = TRUE;
     }
 
@@ -1329,7 +1329,6 @@ void have_impact(player_type *creature_ptr)
         if (have_flag(flgs, TR_IMPACT))
             creature_ptr->impact[(i == INVEN_RARM) ? 0 : 1] = TRUE;
     }
-
 }
 
 void have_extra_blow(player_type *creature_ptr)
@@ -1374,13 +1373,13 @@ void have_resist_acid(player_type *creature_ptr)
         creature_ptr->resist_acid = TRUE;
     }
 
-	if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DRACONIAN && creature_ptr->lev > 14) {
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DRACONIAN && creature_ptr->lev > 14) {
         creature_ptr->resist_acid = TRUE;
-	}
+    }
 
-	if (creature_ptr->special_defense & KAMAE_SEIRYU) {
+    if (creature_ptr->special_defense & KAMAE_SEIRYU) {
         creature_ptr->resist_acid = TRUE;
-	}
+    }
 
     if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
         creature_ptr->resist_acid = TRUE;
@@ -1396,7 +1395,7 @@ void have_resist_acid(player_type *creature_ptr)
             creature_ptr->resist_acid = TRUE;
     }
 
-	if (creature_ptr->immune_acid)
+    if (creature_ptr->immune_acid)
         creature_ptr->resist_acid = TRUE;
 }
 
@@ -1450,7 +1449,7 @@ void have_resist_fire(player_type *creature_ptr)
         creature_ptr->resist_fire = TRUE;
     }
 
-	if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_IMP || creature_ptr->prace == RACE_BALROG)) {
+    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_IMP || creature_ptr->prace == RACE_BALROG)) {
         creature_ptr->resist_fire = TRUE;
     }
 
@@ -1483,7 +1482,6 @@ void have_resist_cold(player_type *creature_ptr)
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     creature_ptr->resist_cold = FALSE;
 
-
     if (creature_ptr->mimic_form == MIMIC_DEMON_LORD || creature_ptr->mimic_form == MIMIC_VAMPIRE) {
         creature_ptr->resist_cold = TRUE;
     }
@@ -1492,20 +1490,19 @@ void have_resist_cold(player_type *creature_ptr)
         creature_ptr->resist_cold = TRUE;
     }
 
-    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_DRACONIAN || creature_ptr->prace == RACE_SKELETON)
-                        && creature_ptr->lev > 9) {
+    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_DRACONIAN || creature_ptr->prace == RACE_SKELETON) && creature_ptr->lev > 9) {
         creature_ptr->resist_cold = TRUE;
     }
 
-	if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_VAMPIRE || creature_ptr->prace == RACE_SPECTRE)) {
+    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_VAMPIRE || creature_ptr->prace == RACE_SPECTRE)) {
         creature_ptr->resist_fire = TRUE;
     }
 
-	if (creature_ptr->special_defense & KAMAE_SEIRYU) {
+    if (creature_ptr->special_defense & KAMAE_SEIRYU) {
         creature_ptr->resist_cold = TRUE;
     }
 
-	if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
         creature_ptr->resist_cold = TRUE;
     }
 
@@ -1516,7 +1513,7 @@ void have_resist_cold(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-	    if (have_flag(flgs, TR_RES_COLD))
+        if (have_flag(flgs, TR_RES_COLD))
             creature_ptr->resist_cold = TRUE;
     }
 
@@ -1542,8 +1539,8 @@ void have_resist_pois(player_type *creature_ptr)
     }
 
     if (!creature_ptr->mimic_form
-        && (creature_ptr->prace == RACE_GOLEM || creature_ptr->prace == RACE_SKELETON || creature_ptr->prace == RACE_VAMPIRE
-            || creature_ptr->prace == RACE_SPECTRE || creature_ptr->prace == RACE_ANDROID)) {
+        && (creature_ptr->prace == RACE_KOBOLD || creature_ptr->prace == RACE_GOLEM || creature_ptr->prace == RACE_SKELETON
+            || creature_ptr->prace == RACE_VAMPIRE || creature_ptr->prace == RACE_SPECTRE || creature_ptr->prace == RACE_ANDROID)) {
         creature_ptr->resist_pois = TRUE;
     }
 
@@ -1551,7 +1548,7 @@ void have_resist_pois(player_type *creature_ptr)
         creature_ptr->resist_pois = TRUE;
     }
 
-	if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
         creature_ptr->resist_pois = TRUE;
     }
 
@@ -1562,8 +1559,562 @@ void have_resist_pois(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-	    if (have_flag(flgs, TR_RES_POIS))
+        if (have_flag(flgs, TR_RES_POIS))
             creature_ptr->resist_pois = TRUE;
     }
 }
 
+void have_resist_conf(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_conf = FALSE;
+
+    if (creature_ptr->pclass == CLASS_MINDCRAFTER && creature_ptr->lev > 29)
+        creature_ptr->resist_conf = TRUE;
+
+    if (creature_ptr->pseikaku == PERSONALITY_CHARGEMAN || creature_ptr->pseikaku == PERSONALITY_MUNCHKIN) {
+        creature_ptr->resist_conf = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_KLACKON || creature_ptr->prace == RACE_BEASTMAN || creature_ptr->prace == RACE_KUTAR)) {
+        creature_ptr->resist_conf = TRUE;
+    }
+
+    if (creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
+        creature_ptr->resist_conf = TRUE;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_conf = TRUE;
+    }
+
+    if (creature_ptr->magicdef) {
+        creature_ptr->resist_conf = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_RES_CONF))
+            creature_ptr->resist_conf = TRUE;
+    }
+}
+
+void have_resist_sound(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_sound = FALSE;
+
+    if (creature_ptr->pclass == CLASS_BARD) {
+        creature_ptr->resist_sound = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_CYCLOPS || creature_ptr->prace == RACE_BEASTMAN)) {
+        creature_ptr->resist_sound = TRUE;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_sound = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_RES_SOUND))
+            creature_ptr->resist_sound = TRUE;
+    }
+}
+
+void have_resist_lite(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_lite = FALSE;
+
+    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_ELF || creature_ptr->prace == RACE_HIGH_ELF || creature_ptr->prace == RACE_SPRITE)) {
+        creature_ptr->resist_lite = TRUE;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_lite = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_RES_LITE))
+            creature_ptr->resist_lite = TRUE;
+    }
+}
+
+void have_resist_dark(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_dark = FALSE;
+
+    if (creature_ptr->mimic_form == MIMIC_VAMPIRE) {
+        creature_ptr->resist_dark = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form
+        && (creature_ptr->prace == RACE_HALF_ORC || creature_ptr->prace == RACE_HALF_OGRE || creature_ptr->prace == RACE_NIBELUNG
+            || creature_ptr->prace == RACE_DARK_ELF || creature_ptr->prace == RACE_VAMPIRE)) {
+        creature_ptr->resist_lite = TRUE;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_dark = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_RES_DARK))
+            creature_ptr->resist_dark = TRUE;
+    }
+}
+
+void have_resist_chaos(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_chaos = FALSE;
+
+    if (creature_ptr->pclass == CLASS_CHAOS_WARRIOR && creature_ptr->lev > 29)
+        creature_ptr->resist_chaos = TRUE;
+
+    if (creature_ptr->mimic_form == MIMIC_DEMON || creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
+        creature_ptr->resist_chaos = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_HALF_TITAN)
+        creature_ptr->resist_chaos = TRUE;
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_chaos = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_RES_CHAOS))
+            creature_ptr->resist_chaos = TRUE;
+    }
+}
+
+void have_resist_disen(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_disen = FALSE;
+
+    if (creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
+        creature_ptr->resist_disen = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_NIBELUNG)
+        creature_ptr->resist_disen = TRUE;
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_disen = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_RES_DISEN))
+            creature_ptr->resist_disen = TRUE;
+    }
+}
+
+void have_resist_shard(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_shard = FALSE;
+
+    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_HALF_TITAN || creature_ptr->prace == RACE_SKELETON))
+        creature_ptr->resist_shard = TRUE;
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_shard = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_RES_DISEN))
+            creature_ptr->resist_shard = TRUE;
+    }
+}
+
+void have_resist_nexus(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_nexus = FALSE;
+
+    if (creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
+        creature_ptr->resist_nexus = TRUE;
+    }
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_nexus = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_RES_NEXUS))
+            creature_ptr->resist_nexus = TRUE;
+    }
+}
+
+void have_resist_blind(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_blind = FALSE;
+
+    if (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN) {
+        creature_ptr->resist_blind = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DWARF)
+        creature_ptr->resist_blind = TRUE;
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_blind = TRUE;
+    }
+
+    if (creature_ptr->magicdef) {
+        creature_ptr->resist_blind = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_RES_BLIND))
+            creature_ptr->resist_blind = TRUE;
+    }
+}
+
+void have_resist_neth(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+
+    if (creature_ptr->mimic_form == MIMIC_DEMON_LORD || creature_ptr->mimic_form == MIMIC_DEMON || creature_ptr->mimic_form == MIMIC_VAMPIRE) {
+        creature_ptr->resist_neth = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form
+        && (creature_ptr->prace == RACE_ZOMBIE || creature_ptr->prace == RACE_VAMPIRE || creature_ptr->prace == RACE_SPECTRE
+            || creature_ptr->prace == RACE_BALROG))
+        creature_ptr->resist_neth = TRUE;
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_neth = TRUE;
+    }
+
+    if (creature_ptr->tim_res_nether) {
+        creature_ptr->resist_neth = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, TR_RES_NETHER))
+            creature_ptr->resist_neth = TRUE;
+    }
+}
+
+void have_resist_time(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_time = FALSE;
+
+    if (creature_ptr->tim_res_time) {
+        creature_ptr->resist_time = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (o_ptr->name2 == EGO_RING_RES_TIME)
+            creature_ptr->resist_time = TRUE;
+    }
+}
+
+void have_resist_water(player_type *creature_ptr)
+{
+    creature_ptr->resist_water = FALSE;
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_MERFOLK)
+        creature_ptr->resist_water = TRUE;
+}
+
+void have_resist_fear(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->resist_fear = FALSE;
+
+    switch (creature_ptr->pclass) {
+    case CLASS_WARRIOR:
+        if (creature_ptr->lev > 29)
+            creature_ptr->resist_fear = TRUE;
+        break;
+    case CLASS_PALADIN:
+        if (creature_ptr->lev > 39)
+            creature_ptr->resist_fear = TRUE;
+        break;
+    case CLASS_CHAOS_WARRIOR:
+        if (creature_ptr->lev > 39)
+            creature_ptr->resist_fear = TRUE;
+        break;
+    case CLASS_MINDCRAFTER:
+        if (creature_ptr->lev > 9)
+            creature_ptr->resist_fear = TRUE;
+        break;
+    case CLASS_SAMURAI:
+        if (creature_ptr->lev > 29)
+            creature_ptr->resist_fear = TRUE;
+        break;
+    case CLASS_NINJA:
+        creature_ptr->resist_fear = TRUE;
+        break;
+    }
+
+    if (creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
+        creature_ptr->resist_fear = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_BARBARIAN)
+        creature_ptr->resist_fear = TRUE;
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        creature_ptr->resist_fear = TRUE;
+    }
+
+	if (is_hero(creature_ptr) || creature_ptr->shero) {
+        creature_ptr->resist_fear = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_RES_FEAR))
+            creature_ptr->resist_fear = TRUE;
+    }
+}
+
+void have_immune_acid(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->immune_acid = FALSE;
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_YEEK && creature_ptr->lev > 19)
+        creature_ptr->immune_acid = TRUE;
+
+    if (creature_ptr->ele_immune) {
+        if (creature_ptr->special_defense & DEFENSE_ACID)
+            creature_ptr->immune_acid = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_IM_ACID))
+            creature_ptr->immune_acid = TRUE;
+    }
+}
+
+void have_immune_elec(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->immune_elec = FALSE;
+    if (creature_ptr->ele_immune) {
+        if (creature_ptr->special_defense & DEFENSE_ELEC)
+            creature_ptr->immune_elec = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_IM_ELEC))
+            creature_ptr->immune_elec = TRUE;
+    }
+}
+
+void have_immune_fire(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->immune_fire = FALSE;
+    if (creature_ptr->ele_immune) {
+        if (creature_ptr->special_defense & DEFENSE_FIRE)
+            creature_ptr->immune_fire = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_IM_FIRE))
+            creature_ptr->immune_fire = TRUE;
+    }
+}
+
+void have_immune_cold(player_type *creature_ptr)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    creature_ptr->immune_cold = FALSE;
+    if (creature_ptr->ele_immune) {
+        if (creature_ptr->special_defense & DEFENSE_COLD)
+            creature_ptr->immune_cold = TRUE;
+    }
+
+    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+        if (have_flag(flgs, TR_IM_COLD))
+            creature_ptr->immune_cold = TRUE;
+    }
+}
+
+void have_right_hand_weapon(player_type *creature_ptr)
+{
+	creature_ptr->right_hand_weapon = FALSE;
+    if (has_melee_weapon(creature_ptr, INVEN_RARM))
+        creature_ptr->right_hand_weapon = TRUE;
+
+    if (can_two_hands_wielding(creature_ptr)) {
+        switch (creature_ptr->pclass) {
+            case CLASS_MONK:
+            case CLASS_FORCETRAINER:
+            case CLASS_BERSERKER:
+                if (empty_hands(creature_ptr, FALSE) == (EMPTY_HAND_RARM | EMPTY_HAND_LARM)) {
+                    creature_ptr->right_hand_weapon = TRUE;
+                }
+                break;
+        }
+    }
+
+}
+
+void have_left_hand_weapon(player_type *creature_ptr)
+{
+    creature_ptr->left_hand_weapon = FALSE;
+    if (has_melee_weapon(creature_ptr, INVEN_LARM)) {
+        creature_ptr->left_hand_weapon = TRUE;
+    }
+}
+
+void have_two_handed_weapons(player_type *creature_ptr)
+{ 
+	creature_ptr->two_handed_weapon = FALSE;
+    if (can_two_hands_wielding(creature_ptr)) {
+        if (creature_ptr->right_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
+            && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_RARM])) {
+            creature_ptr->two_handed_weapon = TRUE;
+        } else if (creature_ptr->left_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
+            && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_LARM])) {
+            creature_ptr->two_handed_weapon = TRUE;
+        } else {
+            switch (creature_ptr->pclass) {
+            case CLASS_MONK:
+            case CLASS_FORCETRAINER:
+            case CLASS_BERSERKER:
+                if (empty_hands(creature_ptr, FALSE) == (EMPTY_HAND_RARM | EMPTY_HAND_LARM)) {
+                    creature_ptr->two_handed_weapon = TRUE;
+                }
+            }
+        }
+    }
+}
+
+void have_lite(player_type *creature_ptr)
+{
+    creature_ptr->lite = FALSE;
+    if (creature_ptr->pclass == CLASS_NINJA)
+        return;
+
+	if (creature_ptr->mimic_form == MIMIC_VAMPIRE) {
+		creature_ptr->lite = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_VAMPIRE)
+        creature_ptr->lite = TRUE;
+
+	if (creature_ptr->sh_fire)
+        creature_ptr->lite = TRUE;
+
+    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+		creature_ptr->lite = TRUE;
+    }
+}
