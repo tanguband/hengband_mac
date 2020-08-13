@@ -8,13 +8,15 @@
 #include "object-enchant/object-ego.h"
 #include "object-enchant/tr-types.h"
 #include "object-enchant/trc-types.h"
-#include "object-hook/hook-weapon.h"
 #include "object-hook/hook-checker.h"
+#include "object-hook/hook-weapon.h"
 #include "object/object-flags.h"
 #include "player/player-class.h"
 #include "player/player-race-types.h"
 #include "player/player-race.h"
+#include "player/player-skill.h"
 #include "player/player-status.h"
+#include "player/player-status-flags.h"
 #include "player/special-defense-types.h"
 #include "realm/realm-hex-numbers.h"
 #include "realm/realm-song-numbers.h"
@@ -23,6 +25,7 @@
 #include "system/floor-type-definition.h"
 #include "system/monster-type-definition.h"
 #include "system/object-type-definition.h"
+#include "sv-definition/sv-weapon-types.h"
 #include "util/bit-flags-calculator.h"
 #include "util/quarks.h"
 #include "util/string-processor.h"
@@ -56,6 +59,10 @@ void have_pass_wall(player_type *creature_ptr)
     }
 
     if (creature_ptr->tim_pass_wall) {
+        creature_ptr->pass_wall = TRUE;
+    }
+
+    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_SPECTRE) {
         creature_ptr->pass_wall = TRUE;
     }
 
@@ -1090,6 +1097,9 @@ void have_levitation(player_type *creature_ptr)
         creature_ptr->levitation = TRUE;
     }
 
+    if (creature_ptr->muta3 & MUT3_WINGS)
+        creature_ptr->levitation = TRUE;
+
     if (!creature_ptr->mimic_form
         && (creature_ptr->prace == RACE_DRACONIAN || creature_ptr->prace == RACE_SPECTRE || creature_ptr->prace == RACE_SPRITE
             || creature_ptr->prace == RACE_ARCHON || creature_ptr->prace == RACE_S_FAIRY)) {
@@ -1163,7 +1173,7 @@ void have_slow_digest(player_type *creature_ptr)
         creature_ptr->slow_digest = TRUE;
     }
 
-    if (!creature_ptr->mimic_form
+	if (!creature_ptr->mimic_form
         && (creature_ptr->prace == RACE_GOLEM || creature_ptr->prace == RACE_ZOMBIE || creature_ptr->prace == RACE_SPECTRE
             || creature_ptr->prace == RACE_ANDROID)) {
         creature_ptr->slow_digest = TRUE;
@@ -1907,7 +1917,10 @@ void have_resist_fear(player_type *creature_ptr)
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     creature_ptr->resist_fear = FALSE;
 
-    switch (creature_ptr->pclass) {
+	if (creature_ptr->muta3 & MUT3_FEARLESS)
+        creature_ptr->resist_fear = TRUE;
+
+	switch (creature_ptr->pclass) {
     case CLASS_WARRIOR:
         if (creature_ptr->lev > 29)
             creature_ptr->resist_fear = TRUE;
@@ -1944,7 +1957,7 @@ void have_resist_fear(player_type *creature_ptr)
         creature_ptr->resist_fear = TRUE;
     }
 
-	if (is_hero(creature_ptr) || creature_ptr->shero) {
+    if (is_hero(creature_ptr) || creature_ptr->shero) {
         creature_ptr->resist_fear = TRUE;
     }
 
@@ -2049,22 +2062,21 @@ void have_immune_cold(player_type *creature_ptr)
 
 void have_right_hand_weapon(player_type *creature_ptr)
 {
-	creature_ptr->right_hand_weapon = FALSE;
+    creature_ptr->right_hand_weapon = FALSE;
     if (has_melee_weapon(creature_ptr, INVEN_RARM))
         creature_ptr->right_hand_weapon = TRUE;
 
     if (can_two_hands_wielding(creature_ptr)) {
         switch (creature_ptr->pclass) {
-            case CLASS_MONK:
-            case CLASS_FORCETRAINER:
-            case CLASS_BERSERKER:
-                if (empty_hands(creature_ptr, FALSE) == (EMPTY_HAND_RARM | EMPTY_HAND_LARM)) {
-                    creature_ptr->right_hand_weapon = TRUE;
-                }
-                break;
+        case CLASS_MONK:
+        case CLASS_FORCETRAINER:
+        case CLASS_BERSERKER:
+            if (empty_hands(creature_ptr, FALSE) == (EMPTY_HAND_RARM | EMPTY_HAND_LARM)) {
+                creature_ptr->right_hand_weapon = TRUE;
+            }
+            break;
         }
     }
-
 }
 
 void have_left_hand_weapon(player_type *creature_ptr)
@@ -2076,8 +2088,8 @@ void have_left_hand_weapon(player_type *creature_ptr)
 }
 
 void have_two_handed_weapons(player_type *creature_ptr)
-{ 
-	creature_ptr->two_handed_weapon = FALSE;
+{
+    creature_ptr->two_handed_weapon = FALSE;
     if (can_two_hands_wielding(creature_ptr)) {
         if (creature_ptr->right_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
             && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_RARM])) {
@@ -2085,15 +2097,6 @@ void have_two_handed_weapons(player_type *creature_ptr)
         } else if (creature_ptr->left_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
             && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_LARM])) {
             creature_ptr->two_handed_weapon = TRUE;
-        } else {
-            switch (creature_ptr->pclass) {
-            case CLASS_MONK:
-            case CLASS_FORCETRAINER:
-            case CLASS_BERSERKER:
-                if (empty_hands(creature_ptr, FALSE) == (EMPTY_HAND_RARM | EMPTY_HAND_LARM)) {
-                    creature_ptr->two_handed_weapon = TRUE;
-                }
-            }
         }
     }
 }
@@ -2104,17 +2107,86 @@ void have_lite(player_type *creature_ptr)
     if (creature_ptr->pclass == CLASS_NINJA)
         return;
 
-	if (creature_ptr->mimic_form == MIMIC_VAMPIRE) {
-		creature_ptr->lite = TRUE;
+    if (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN) {
+        creature_ptr->lite = TRUE;
     }
 
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_VAMPIRE)
+	if (creature_ptr->mimic_form == MIMIC_VAMPIRE) {
+        creature_ptr->lite = TRUE;
+    }
+
+    if (creature_ptr->muta3 & MUT3_FIRE_BODY) {
+        creature_ptr->lite = TRUE;
+    }
+
+	if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_VAMPIRE)
         creature_ptr->lite = TRUE;
 
-	if (creature_ptr->sh_fire)
+    if (creature_ptr->sh_fire)
         creature_ptr->lite = TRUE;
 
     if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-		creature_ptr->lite = TRUE;
+        creature_ptr->lite = TRUE;
     }
 }
+
+bool is_disable_two_handed_bonus(player_type *creature_ptr, int i)
+{
+    object_type *o_ptr;
+    o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
+    if (has_melee_weapon(creature_ptr, INVEN_RARM + i)) {
+        if (creature_ptr->hold *= 2 >= o_ptr->weight / 10 && creature_ptr->two_handed_weapon && (creature_ptr->hold *= 2 < o_ptr->weight / 5))
+            return TRUE;
+    }
+    return FALSE;
+}
+
+void is_icky_wield_weapon(player_type* creature_ptr, int i)
+{
+	object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
+    object_flags(creature_ptr, o_ptr, flgs);
+
+	creature_ptr->icky_wield[i] = FALSE;
+    if ((creature_ptr->pclass == CLASS_PRIEST) && (!(have_flag(flgs, TR_BLESSED))) && ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))) {
+        creature_ptr->icky_wield[i] = TRUE;
+    } else if (creature_ptr->pclass == CLASS_SORCERER) {
+        if (!((o_ptr->tval == TV_HAFTED) && ((o_ptr->sval == SV_WIZSTAFF) || (o_ptr->sval == SV_NAMAKE_HAMMER)))) {
+            creature_ptr->icky_wield[i] = TRUE;
+        }
+    }
+    if (is_not_monk_weapon(creature_ptr, i) || is_not_ninja_weapon(creature_ptr, i)) {
+        creature_ptr->icky_wield[i] = TRUE;
+    }
+}
+
+void is_riding_wield_weapon(player_type *creature_ptr, int i)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
+    object_flags(creature_ptr, o_ptr, flgs);
+    creature_ptr->riding_wield[i] = FALSE;
+    if (creature_ptr->riding != 0 && !(o_ptr->tval == TV_POLEARM) && ((o_ptr->sval == SV_LANCE) || (o_ptr->sval == SV_HEAVY_LANCE))
+        && !have_flag(flgs, TR_RIDING)) {
+        creature_ptr->riding_wield[i] = TRUE;
+    }
+}
+
+    bool is_not_ninja_weapon(player_type *creature_ptr, int i)
+{
+    tval_type tval = creature_ptr->inventory_list[INVEN_RARM + i].tval - TV_WEAPON_BEGIN;
+    OBJECT_SUBTYPE_VALUE sval = creature_ptr->inventory_list[INVEN_RARM + i].sval;
+    return creature_ptr->pclass == CLASS_NINJA
+        && !((s_info[CLASS_NINJA].w_max[tval][sval] > WEAPON_EXP_BEGINNER) && (creature_ptr->inventory_list[INVEN_LARM - i].tval != TV_SHIELD));
+}
+
+bool is_not_monk_weapon(player_type *creature_ptr, int i)
+{
+    tval_type tval = creature_ptr->inventory_list[INVEN_RARM + i].tval - TV_WEAPON_BEGIN;
+    OBJECT_SUBTYPE_VALUE sval = creature_ptr->inventory_list[INVEN_RARM + i].sval;
+    return (creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER) && (!s_info[creature_ptr->pclass].w_max[tval][sval]);
+}
+
+bool have_good_luck(player_type *creature_ptr) { return (creature_ptr->pseikaku == PERSONALITY_LUCKY) || (creature_ptr->muta3 |= MUT3_GOOD_LUCK); };

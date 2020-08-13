@@ -1197,34 +1197,3 @@ const concptr player_title[MAX_CLASS][PY_MAX_LEVEL / 5] =
 	},
 };
 #endif
-
-void calc_class_status(player_type *creature_ptr)
-{
-    switch (creature_ptr->pclass) {
-
-    case CLASS_BERSERKER:
-        creature_ptr->shero = 1;
-        creature_ptr->redraw |= PR_STATUS;
-        break;
-    case CLASS_NINJA:
-        if (heavy_armor(creature_ptr)) {
-            creature_ptr->skill_stl -= (creature_ptr->lev) / 10;
-        } else if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || creature_ptr->right_hand_weapon)
-            && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || creature_ptr->left_hand_weapon)) {
-            creature_ptr->skill_stl += (creature_ptr->lev) / 10;
-        }
-
-        if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || creature_ptr->right_hand_weapon)
-            && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || creature_ptr->left_hand_weapon)) {
-            creature_ptr->to_a += creature_ptr->lev / 2 + 5;
-            creature_ptr->dis_to_a += creature_ptr->lev / 2 + 5;
-        }
-
-        if (creature_ptr->lev > 44) {
-            creature_ptr->oppose_pois = 1;
-            creature_ptr->redraw |= PR_STATUS;
-        }
-
-        break;
-    }
-}
