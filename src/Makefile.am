@@ -6,6 +6,7 @@ bin_PROGRAMS = hengband
 
 hengband_SOURCES = \
 	action/action-limited.c action/action-limited.h \
+	action/activation-execution.c action/activation-execution.h \
 	action/movement-execution.c action/movement-execution.h \
 	action/mutation-execution.c action/mutation-execution.h \
 	action/open-util.c action/open-util.h \
@@ -121,7 +122,6 @@ hengband_SOURCES = \
 	cmd-io/feeling-table.c cmd-io/feeling-table.h \
 	cmd-io/macro-util.c cmd-io/macro-util.h \
 	\
-	cmd-item/cmd-activate.c cmd-item/cmd-activate.h \
 	cmd-item/cmd-eat.c cmd-item/cmd-eat.h \
 	cmd-item/cmd-item.c cmd-item/cmd-item.h \
 	cmd-item/cmd-magiceat.c cmd-item/cmd-magiceat.h \
@@ -537,6 +537,9 @@ hengband_SOURCES = \
 	object/warning.c object/warning.h \
 	object/object-mark-types.h \
 	object/item-use-flags.h \
+	\
+	object-activation/activation-breath.c object-activation/activation-breath.h \
+	object-activation/acrivation-switcher.c object-activation/acrivation-switcher.h \
 	\
 	object-enchant/activation-info-table.c object-enchant/activation-info-table.h \
 	object-enchant/apply-magic.c object-enchant/apply-magic.h \
@@ -964,6 +967,7 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/mspell \
 	-I$(srcdir)/mutation \
 	-I$(srcdir)/object \
+	-I$(srcdir)/object-activation \
 	-I$(srcdir)/object-enchant \
 	-I$(srcdir)/object-hook \
 	-I$(srcdir)/object-use \
@@ -981,6 +985,7 @@ DEFAULT_INCLUDES = -I$(srcdir) \
 	-I$(srcdir)/status \
 	-I$(srcdir)/sv-definition \
 	-I$(srcdir)/system \
+	-I$(srcdir)/target \
 	-I$(srcdir)/term \
 	-I$(srcdir)/util \
 	-I$(srcdir)/view \

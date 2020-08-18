@@ -114,7 +114,7 @@ static ACTION_SKILL_POWER calc_to_hit_melee(player_type *creature_ptr);
 static ACTION_SKILL_POWER calc_to_hit_shoot(player_type *creature_ptr);
 static ACTION_SKILL_POWER calc_to_hit_throw(player_type *creature_ptr);
 static ACTION_SKILL_POWER calc_skill_dig(player_type *creature_ptr);
-static void calc_num_blow(player_type *creature_ptr, int i);
+static s16b calc_num_blow(player_type *creature_ptr, int i);
 static s16b calc_strength_addition(player_type *creature_ptr);
 static s16b calc_intelligence_addition(player_type *creature_ptr);
 static s16b calc_wisdom_addition(player_type *creature_ptr);
@@ -139,11 +139,11 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot);
 
 static s16b calc_to_hit_bow(player_type *creature_ptr, bool is_true_value);
 
-static void calc_to_damage_misc(player_type *creature_ptr);
+static s16b calc_to_damage_misc(player_type *creature_ptr);
 static void calc_to_hit_misc(player_type *creature_ptr);
 
-static void calc_to_weapon_dice_num(player_type *creature_ptr, INVENTORY_IDX slot);
-static void calc_to_weapon_dice_side(player_type *creature_ptr, INVENTORY_IDX slot);
+static DICE_NUMBER calc_to_weapon_dice_num(player_type *creature_ptr, INVENTORY_IDX slot);
+static DICE_NUMBER calc_to_weapon_dice_side(player_type *creature_ptr, INVENTORY_IDX slot);
 
 static void calc_weapon_weight_limit(player_type *creature_ptr);
 
@@ -327,8 +327,8 @@ void calc_bonuses(player_type *creature_ptr)
     have_two_handed_weapons(creature_ptr);
     calc_weapon_weight_limit(creature_ptr);
 
-    have_pass_wall(creature_ptr);
-    have_kill_wall(creature_ptr);
+    creature_ptr->pass_wall = have_pass_wall(creature_ptr);
+    creature_ptr->kill_wall = have_kill_wall(creature_ptr);
     have_xtra_might(creature_ptr);
     have_esp_evil(creature_ptr);
     have_esp_animal(creature_ptr);
@@ -476,11 +476,11 @@ void calc_bonuses(player_type *creature_ptr)
     }
 
     for (int i = 0; i < 2; i++) {
-        is_icky_wield_weapon(creature_ptr, i);
-        is_riding_wield_weapon(creature_ptr, i);
-        calc_num_blow(creature_ptr, i);
-        calc_to_weapon_dice_num(creature_ptr, INVEN_RARM + i);
-        calc_to_weapon_dice_side(creature_ptr, INVEN_RARM + i);
+        creature_ptr->icky_wield[i] = is_icky_wield_weapon(creature_ptr, i);
+        creature_ptr->riding_wield[i] = is_riding_wield_weapon(creature_ptr, i);
+        creature_ptr->num_blow[i] = calc_num_blow(creature_ptr, i);
+        creature_ptr->to_dd[i] = calc_to_weapon_dice_num(creature_ptr, INVEN_RARM + i);
+        creature_ptr->to_ds[i] = calc_to_weapon_dice_side(creature_ptr, INVEN_RARM + i);
     }
 
     creature_ptr->monk_armour_aux = heavy_armor(creature_ptr);
@@ -506,7 +506,7 @@ void calc_bonuses(player_type *creature_ptr)
     calc_to_hit_display(creature_ptr, INVEN_LARM);
     creature_ptr->to_h_b = calc_to_hit_bow(creature_ptr, TRUE);
     creature_ptr->dis_to_h_b = calc_to_hit_bow(creature_ptr, FALSE);
-    calc_to_damage_misc(creature_ptr);
+    creature_ptr->to_d_m = calc_to_damage_misc(creature_ptr);
     calc_to_hit_misc(creature_ptr);
     creature_ptr->skill_dig = calc_skill_dig(creature_ptr);
 
@@ -1589,7 +1589,7 @@ static ACTION_SKILL_POWER calc_to_hit_melee(player_type *creature_ptr)
 
     pow = tmp_rp_ptr->r_thn + c_ptr->c_thn + a_ptr->a_thn;
     pow += ((c_ptr->x_thn * creature_ptr->lev / 10) + (a_ptr->a_thn * creature_ptr->lev / 50));
-    return pow;
+	return pow;
 }
 
 /*!
@@ -1712,16 +1712,17 @@ static bool is_martial_arts_mode(player_type *creature_ptr)
         && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_RARM) && !creature_ptr->left_hand_weapon;
 }
 
-static void calc_num_blow(player_type *creature_ptr, int i)
+static s16b calc_num_blow(player_type *creature_ptr, int i)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
+    s16b num_blow = 0;
 
     o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
     object_flags(creature_ptr, o_ptr, flgs);
     creature_ptr->heavy_wield[i] = FALSE;
     if (!has_melee_weapon(creature_ptr, INVEN_RARM + i)) {
-        creature_ptr->num_blow[i] = 1;
+        num_blow = 1;
     } else {
         if (creature_ptr->hold < o_ptr->weight / 10) {
             creature_ptr->heavy_wield[i] = TRUE;
@@ -1761,45 +1762,45 @@ static void calc_num_blow(player_type *creature_ptr, int i)
             if (dex_index > 11)
                 dex_index = 11;
 
-            creature_ptr->num_blow[i] = blows_table[str_index][dex_index];
-            if (creature_ptr->num_blow[i] > num)
-                creature_ptr->num_blow[i] = (s16b)num;
+            num_blow = blows_table[str_index][dex_index];
+            if (num_blow > num)
+                num_blow = (s16b)num;
 
-            creature_ptr->num_blow[i] += (s16b)creature_ptr->extra_blows[i];
+            num_blow += (s16b)creature_ptr->extra_blows[i];
             if (creature_ptr->pclass == CLASS_WARRIOR)
-                creature_ptr->num_blow[i] += (creature_ptr->lev / 40);
+                num_blow += (creature_ptr->lev / 40);
             else if (creature_ptr->pclass == CLASS_BERSERKER)
-                creature_ptr->num_blow[i] += (creature_ptr->lev / 23);
+                num_blow += (creature_ptr->lev / 23);
             else if ((creature_ptr->pclass == CLASS_ROGUE) && (o_ptr->weight < 50) && (creature_ptr->stat_ind[A_DEX] >= 30))
-                creature_ptr->num_blow[i]++;
+                num_blow++;
 
             if (creature_ptr->special_defense & KATA_FUUJIN)
-                creature_ptr->num_blow[i] -= 1;
+                num_blow -= 1;
 
             if ((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_POISON_NEEDLE))
-                creature_ptr->num_blow[i] = 1;
+                num_blow = 1;
 
-            if (creature_ptr->num_blow[i] < 1)
-                creature_ptr->num_blow[i] = 1;
+            if (num_blow < 1)
+                num_blow = 1;
         }
     }
 
     if (i != 0)
-        return;
+        return num_blow;
     /* Different calculation for monks with empty hands */
     if (is_martial_arts_mode(creature_ptr)) {
         int blow_base = creature_ptr->lev + adj_dex_blow[creature_ptr->stat_ind[A_DEX]];
-        creature_ptr->num_blow[i] = 0;
+        num_blow = 0;
 
         if (creature_ptr->pclass == CLASS_FORCETRAINER) {
             if (blow_base > 18)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
             if (blow_base > 31)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
             if (blow_base > 44)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
             if (blow_base > 58)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
 
             MAGIC_NUM1 current_ki = get_current_ki(creature_ptr);
             if (current_ki != i) {
@@ -1808,56 +1809,51 @@ static void calc_num_blow(player_type *creature_ptr, int i)
             }
         } else {
             if (blow_base > 12)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
             if (blow_base > 22)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
             if (blow_base > 31)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
             if (blow_base > 39)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
             if (blow_base > 46)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
             if (blow_base > 53)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
             if (blow_base > 59)
-                creature_ptr->num_blow[i]++;
+                num_blow++;
         }
 
         if (heavy_armor(creature_ptr) && (creature_ptr->pclass != CLASS_BERSERKER))
-            creature_ptr->num_blow[i] /= 2;
-        else {
-            creature_ptr->to_h[i] += (creature_ptr->lev / 3);
-            creature_ptr->dis_to_h[i] += (creature_ptr->lev / 3);
-
-            creature_ptr->to_d[i] += (creature_ptr->lev / 6);
-            creature_ptr->dis_to_d[i] += (creature_ptr->lev / 6);
-        }
+            num_blow /= 2;
 
         if (creature_ptr->special_defense & KAMAE_GENBU) {
             creature_ptr->to_a += (creature_ptr->lev * creature_ptr->lev) / 50;
             creature_ptr->dis_to_a += (creature_ptr->lev * creature_ptr->lev) / 50;
-            creature_ptr->num_blow[i] -= 2;
+            num_blow -= 2;
             if ((creature_ptr->pclass == CLASS_MONK) && (creature_ptr->lev > 42))
-                creature_ptr->num_blow[i]--;
-            if (creature_ptr->num_blow[i] < 0)
-                creature_ptr->num_blow[i] = 0;
+                num_blow--;
+            if (num_blow < 0)
+                num_blow = 0;
         } else if (creature_ptr->special_defense & KAMAE_SUZAKU) {
             creature_ptr->to_h[i] -= (creature_ptr->lev / 3);
             creature_ptr->to_d[i] -= (creature_ptr->lev / 6);
 
             creature_ptr->dis_to_h[i] -= (creature_ptr->lev / 3);
             creature_ptr->dis_to_d[i] -= (creature_ptr->lev / 6);
-            creature_ptr->num_blow[i] /= 2;
+            num_blow /= 2;
         }
 
-        creature_ptr->num_blow[i] += 1 + creature_ptr->extra_blows[0];
+        num_blow += 1 + creature_ptr->extra_blows[0];
     }
 
     if (is_not_ninja_weapon(creature_ptr, i)) {
-        creature_ptr->num_blow[i] /= 2;
-        if (creature_ptr->num_blow[i] < 1)
-            creature_ptr->num_blow[i] = 1;
+        num_blow /= 2;
+        if (num_blow < 1)
+            num_blow = 1;
     }
+
+	return num_blow;
 }
 
 /*!
@@ -3062,6 +3058,10 @@ static void calc_to_damage(player_type *creature_ptr, INVENTORY_IDX slot)
 
         creature_ptr->to_d[default_hand] += (s16b)bonus_to_d;
     }
+
+	if (is_martial_arts_mode(creature_ptr) && (!heavy_armor(creature_ptr) || creature_ptr->pclass != CLASS_BERSERKER)) {
+        creature_ptr->to_d[id] += (creature_ptr->lev / 6);
+    }
 }
 
 static void calc_to_damage_display(player_type *creature_ptr, INVENTORY_IDX slot)
@@ -3149,6 +3149,10 @@ static void calc_to_damage_display(player_type *creature_ptr, INVENTORY_IDX slot
             continue;
 
         creature_ptr->dis_to_d[default_hand] += (s16b)bonus_to_d;
+    }
+
+	if (is_martial_arts_mode(creature_ptr) && (!heavy_armor(creature_ptr) || creature_ptr->pclass != CLASS_BERSERKER)) {
+        creature_ptr->dis_to_d[id] += (creature_ptr->lev / 6);
     }
 }
 
@@ -3299,7 +3303,12 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
             continue;
         }
         creature_ptr->to_h[default_hand] += (s16b)bonus_to_h;
-    }
+
+	}
+
+	if (is_martial_arts_mode(creature_ptr) && (!heavy_armor(creature_ptr) || creature_ptr->pclass != CLASS_BERSERKER)) {
+        creature_ptr->to_h[id] += (creature_ptr->lev / 3);
+	}	
 
     creature_ptr->to_h[id] -= calc_double_weapon_penalty(creature_ptr, slot);
 }
@@ -3452,6 +3461,10 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
         creature_ptr->dis_to_h[default_hand] += (s16b)bonus_to_h;
     }
 
+	if (is_martial_arts_mode(creature_ptr) && (!heavy_armor(creature_ptr) || creature_ptr->pclass != CLASS_BERSERKER)) {
+        creature_ptr->dis_to_h[id] += (creature_ptr->lev / 3);
+    }	
+
     creature_ptr->dis_to_h[id] -= calc_double_weapon_penalty(creature_ptr, slot);
 }
 
@@ -3536,12 +3549,12 @@ static s16b calc_to_hit_bow(player_type *creature_ptr, bool is_true_value)
     return pow;
 }
 
-static void calc_to_damage_misc(player_type *creature_ptr)
+static s16b calc_to_damage_misc(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
 
-    creature_ptr->to_d_m = 0;
+    s16b to_dam = 0;
 
     for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
@@ -3555,20 +3568,21 @@ static void calc_to_damage_misc(player_type *creature_ptr)
             if (o_ptr->to_d > 0)
                 bonus_to_d = (o_ptr->to_d + 1) / 2;
         }
-        creature_ptr->to_d_m += (s16b)bonus_to_d;
+        to_dam += (s16b)bonus_to_d;
     }
 
     if (creature_ptr->shero) {
-        creature_ptr->to_d_m += 3 + (creature_ptr->lev / 5);
+        to_dam += 3 + (creature_ptr->lev / 5);
     }
 
     if (creature_ptr->stun > 50) {
-        creature_ptr->to_d_m -= 20;
+        to_dam -= 20;
     } else if (creature_ptr->stun) {
-        creature_ptr->to_d_m -= 5;
+        to_dam -= 5;
     }
 
-    creature_ptr->to_d_m += ((int)(adj_str_td[creature_ptr->stat_ind[A_STR]]) - 128);
+    to_dam += ((int)(adj_str_td[creature_ptr->stat_ind[A_STR]]) - 128);
+    return to_dam;
 }
 
 static void calc_to_hit_misc(player_type *creature_ptr)
@@ -3615,24 +3629,26 @@ static void calc_to_hit_misc(player_type *creature_ptr)
     creature_ptr->to_h_m += ((int)(adj_str_th[creature_ptr->stat_ind[A_STR]]) - 128);
 }
 
-static void calc_to_weapon_dice_num(player_type *creature_ptr, INVENTORY_IDX slot)
+static DICE_NUMBER calc_to_weapon_dice_num(player_type *creature_ptr, INVENTORY_IDX slot)
 {
     object_type *o_ptr = &creature_ptr->inventory_list[slot];
-    int id = slot - INVEN_RARM;
-    creature_ptr->to_dd[id] = 0;
+    DICE_NUMBER dn = 0;
 
     if (creature_ptr->riding) {
 
         if ((o_ptr->tval == TV_POLEARM) && ((o_ptr->sval == SV_LANCE) || (o_ptr->sval == SV_HEAVY_LANCE))) {
-            creature_ptr->to_dd[id] += 2;
+            dn += 2;
         }
     }
+
+	return dn;
 }
 
-static void calc_to_weapon_dice_side(player_type *creature_ptr, INVENTORY_IDX slot)
+static DICE_NUMBER calc_to_weapon_dice_side(player_type *creature_ptr, INVENTORY_IDX slot)
 {
-    int id = slot - INVEN_RARM;
-    creature_ptr->to_ds[id] = 0;
+    (creature_ptr); // unused
+    (slot); // unused
+    return 0;
 }
 
 /*!

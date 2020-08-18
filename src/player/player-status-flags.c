@@ -30,48 +30,38 @@
 #include "util/quarks.h"
 #include "util/string-processor.h"
 
-void have_kill_wall(player_type *creature_ptr)
+bool have_kill_wall(player_type *creature_ptr)
 {
-    creature_ptr->kill_wall = FALSE;
-
-    if (creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
-        creature_ptr->kill_wall = TRUE;
-    }
-
-    if (music_singing(creature_ptr, MUSIC_WALL)) {
-        creature_ptr->kill_wall = TRUE;
+    if (creature_ptr->mimic_form == MIMIC_DEMON_LORD || music_singing(creature_ptr, MUSIC_WALL)) {
+        return TRUE;
     }
 
     if (creature_ptr->riding) {
         monster_type *riding_m_ptr = &creature_ptr->current_floor_ptr->m_list[creature_ptr->riding];
         monster_race *riding_r_ptr = &r_info[riding_m_ptr->r_idx];
         if (riding_r_ptr->flags2 & RF2_KILL_WALL)
-            creature_ptr->kill_wall = TRUE;
+            return TRUE;
     }
+
+	return FALSE;
 }
 
-void have_pass_wall(player_type *creature_ptr)
+bool have_pass_wall(player_type *creature_ptr)
 {
-    creature_ptr->pass_wall = FALSE;
+    bool pow = FALSE;
 
-    if (creature_ptr->wraith_form) {
-        creature_ptr->pass_wall = TRUE;
-    }
-
-    if (creature_ptr->tim_pass_wall) {
-        creature_ptr->pass_wall = TRUE;
-    }
-
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_SPECTRE) {
-        creature_ptr->pass_wall = TRUE;
+    if (creature_ptr->wraith_form || creature_ptr->tim_pass_wall || (!creature_ptr->mimic_form && creature_ptr->prace == RACE_SPECTRE)) {
+        pow = TRUE;
     }
 
     if (creature_ptr->riding) {
         monster_type *riding_m_ptr = &creature_ptr->current_floor_ptr->m_list[creature_ptr->riding];
         monster_race *riding_r_ptr = &r_info[riding_m_ptr->r_idx];
         if (!(riding_r_ptr->flags2 & RF2_PASS_WALL))
-            creature_ptr->pass_wall = FALSE;
+            pow = FALSE;
     }
+
+	return pow;
 }
 
 void have_xtra_might(player_type *creature_ptr)
@@ -2141,37 +2131,37 @@ bool is_disable_two_handed_bonus(player_type *creature_ptr, int i)
     return FALSE;
 }
 
-void is_icky_wield_weapon(player_type *creature_ptr, int i)
+bool is_icky_wield_weapon(player_type *creature_ptr, int i)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
     object_flags(creature_ptr, o_ptr, flgs);
 
-    creature_ptr->icky_wield[i] = FALSE;
     if ((creature_ptr->pclass == CLASS_PRIEST) && (!(have_flag(flgs, TR_BLESSED))) && ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))) {
-        creature_ptr->icky_wield[i] = TRUE;
+        return TRUE;
     } else if (creature_ptr->pclass == CLASS_SORCERER) {
         if (!((o_ptr->tval == TV_HAFTED) && ((o_ptr->sval == SV_WIZSTAFF) || (o_ptr->sval == SV_NAMAKE_HAMMER)))) {
-            creature_ptr->icky_wield[i] = TRUE;
+            return TRUE;
         }
     }
     if (is_not_monk_weapon(creature_ptr, i) || is_not_ninja_weapon(creature_ptr, i)) {
-        creature_ptr->icky_wield[i] = TRUE;
+        return TRUE;
     }
+    return FALSE;
 }
 
-void is_riding_wield_weapon(player_type *creature_ptr, int i)
+bool is_riding_wield_weapon(player_type *creature_ptr, int i)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
     object_flags(creature_ptr, o_ptr, flgs);
-    creature_ptr->riding_wield[i] = FALSE;
     if (creature_ptr->riding != 0 && !(o_ptr->tval == TV_POLEARM) && ((o_ptr->sval == SV_LANCE) || (o_ptr->sval == SV_HEAVY_LANCE))
         && !have_flag(flgs, TR_RIDING)) {
-        creature_ptr->riding_wield[i] = TRUE;
+        return TRUE;
     }
+    return FALSE;
 }
 
 bool is_not_ninja_weapon(player_type *creature_ptr, int i)

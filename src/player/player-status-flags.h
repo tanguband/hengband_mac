@@ -1,7 +1,7 @@
 ﻿#include "player/player-status.h"
 
-void have_pass_wall(player_type *creature_ptr);
-void have_kill_wall(player_type *creature_ptr);
+bool have_pass_wall(player_type *creature_ptr);
+bool have_kill_wall(player_type *creature_ptr);
 void have_xtra_might(player_type *creature_ptr);
 void have_esp_evil(player_type *creature_ptr);
 void have_esp_animal(player_type *creature_ptr);
@@ -78,6 +78,6 @@ void have_lite(player_type *creature_ptr);
 bool is_disable_two_handed_bonus(player_type *creature_ptr, int i);
 bool is_not_ninja_weapon(player_type *creature_ptr, int i);
 bool is_not_monk_weapon(player_type *creature_ptr, int i);
-void is_icky_wield_weapon(player_type *creature_ptr, int i);
-void is_riding_wield_weapon(player_type *creature_ptr, int i);
+bool is_icky_wield_weapon(player_type *creature_ptr, int i);
+bool is_riding_wield_weapon(player_type *creature_ptr, int i);
 bool have_good_luck(player_type *creature_ptr);
