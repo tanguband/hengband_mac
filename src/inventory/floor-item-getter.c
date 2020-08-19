@@ -23,6 +23,7 @@
 #include "object/item-tester-hooker.h"
 #include "object/item-use-flags.h"
 #include "object/object-info.h"
+#include "player/player-status-flags.h"
 #include "system/floor-type-definition.h"
 #include "term/gameterm.h"
 #include "term/screen-processor.h"
@@ -180,7 +181,7 @@ static void test_equipment_floor(player_type *owner_ptr, fis_type *fis_ptr)
     if (!use_menu)
         return;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++)
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++)
         if (select_ring_slot ? is_ring_slot(i) : item_tester_okay(owner_ptr, &owner_ptr->inventory_list[i], fis_ptr->tval) || (fis_ptr->mode & USE_FULL))
             fis_ptr->max_equip++;
 }
@@ -217,7 +218,7 @@ bool get_item_floor(player_type *owner_ptr, COMMAND_CODE *cp, concptr pmt, concp
     fis_ptr->e1 = INVEN_RARM;
     fis_ptr->e2 = INVEN_TOTAL - 1;
     test_equipment_floor(owner_ptr, fis_ptr);
-    if (owner_ptr->two_handed_weapon && !(fis_ptr->mode & IGNORE_BOTHHAND_SLOT))
+    if (have_two_handed_weapons(owner_ptr) && !(fis_ptr->mode & IGNORE_BOTHHAND_SLOT))
         fis_ptr->max_equip++;
 
     while ((fis_ptr->e1 <= fis_ptr->e2) && (!get_item_okay(owner_ptr, fis_ptr->e1, fis_ptr->tval)))
@@ -226,11 +227,11 @@ bool get_item_floor(player_type *owner_ptr, COMMAND_CODE *cp, concptr pmt, concp
     while ((fis_ptr->e1 <= fis_ptr->e2) && (!get_item_okay(owner_ptr, fis_ptr->e2, fis_ptr->tval)))
         fis_ptr->e2--;
 
-    if (fis_ptr->equip && owner_ptr->two_handed_weapon && !(fis_ptr->mode & IGNORE_BOTHHAND_SLOT)) {
-        if (owner_ptr->right_hand_weapon) {
+    if (fis_ptr->equip && have_two_handed_weapons(owner_ptr) && !(fis_ptr->mode & IGNORE_BOTHHAND_SLOT)) {
+        if (have_right_hand_weapon(owner_ptr)) {
             if (fis_ptr->e2 < INVEN_LARM)
                 fis_ptr->e2 = INVEN_LARM;
-        } else if (owner_ptr->left_hand_weapon)
+        } else if (have_left_hand_weapon(owner_ptr))
             fis_ptr->e1 = INVEN_RARM;
     }
 

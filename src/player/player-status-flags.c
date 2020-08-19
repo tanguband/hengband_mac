@@ -71,7 +71,7 @@ void have_xtra_might(player_type *creature_ptr)
 
     creature_ptr->xtra_might = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -95,7 +95,7 @@ void have_esp_evil(player_type *creature_ptr)
             creature_ptr->esp_evil = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -114,7 +114,7 @@ void have_esp_animal(player_type *creature_ptr)
 
     creature_ptr->esp_animal = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -133,7 +133,7 @@ void have_esp_undead(player_type *creature_ptr)
 
     creature_ptr->esp_undead = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -152,7 +152,7 @@ void have_esp_demon(player_type *creature_ptr)
 
     creature_ptr->esp_demon = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -171,7 +171,7 @@ void have_esp_orc(player_type *creature_ptr)
 
     creature_ptr->esp_orc = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -190,7 +190,7 @@ void have_esp_troll(player_type *creature_ptr)
 
     creature_ptr->esp_troll = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -209,7 +209,7 @@ void have_esp_giant(player_type *creature_ptr)
 
     creature_ptr->esp_giant = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -228,7 +228,7 @@ void have_esp_dragon(player_type *creature_ptr)
 
     creature_ptr->esp_dragon = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -247,7 +247,7 @@ void have_esp_human(player_type *creature_ptr)
 
     creature_ptr->esp_human = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -266,7 +266,7 @@ void have_esp_good(player_type *creature_ptr)
 
     creature_ptr->esp_good = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -285,7 +285,7 @@ void have_esp_nonliving(player_type *creature_ptr)
 
     creature_ptr->esp_nonliving = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -304,7 +304,7 @@ void have_esp_unique(player_type *creature_ptr)
 
     creature_ptr->esp_unique = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -348,7 +348,7 @@ void have_esp_telepathy(player_type *creature_ptr)
         creature_ptr->telepathy = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -367,7 +367,7 @@ void have_bless_blade(player_type *creature_ptr)
 
     creature_ptr->bless_blade = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -386,7 +386,7 @@ void have_easy2_weapon(player_type *creature_ptr)
 
     creature_ptr->easy_2weapon = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -405,7 +405,7 @@ void have_down_saving(player_type *creature_ptr)
 
     creature_ptr->down_saving = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -424,7 +424,7 @@ void have_no_ac(player_type *creature_ptr)
 
     creature_ptr->yoiyami = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -483,7 +483,7 @@ void have_mighty_throw(player_type *creature_ptr)
 
     creature_ptr->mighty_throw = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -500,7 +500,7 @@ void have_dec_mana(player_type *creature_ptr)
 
     creature_ptr->xtra_might = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -545,7 +545,7 @@ void have_reflect(player_type *creature_ptr)
         creature_ptr->reflect = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -572,7 +572,7 @@ void have_warning(player_type *creature_ptr)
 
     creature_ptr->warning = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -593,7 +593,7 @@ void have_anti_magic(player_type *creature_ptr)
 
     creature_ptr->anti_magic = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -612,7 +612,7 @@ void have_anti_tele(player_type *creature_ptr)
 
     creature_ptr->anti_tele = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -656,7 +656,7 @@ void have_sh_fire(player_type *creature_ptr)
         creature_ptr->sh_fire = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -690,7 +690,7 @@ void have_sh_elec(player_type *creature_ptr)
         creature_ptr->sh_elec = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -721,7 +721,7 @@ void have_sh_cold(player_type *creature_ptr)
         creature_ptr->sh_cold = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -737,7 +737,7 @@ void have_easy_spell(player_type *creature_ptr)
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     creature_ptr->easy_spell = FALSE;
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -753,7 +753,7 @@ void have_heavy_spell(player_type *creature_ptr)
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     creature_ptr->heavy_spell = FALSE;
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -779,26 +779,23 @@ void have_hold_exp(player_type *creature_ptr)
         creature_ptr->hold_exp = TRUE;
     }
 
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_HOBBIT) {
+    if (is_specific_player_race(creature_ptr, RACE_HOBBIT) || is_specific_player_race(creature_ptr, RACE_SKELETON) ||
+        is_specific_player_race(creature_ptr, RACE_ZOMBIE) || is_specific_player_race(creature_ptr, RACE_VAMPIRE) ||
+		is_specific_player_race(creature_ptr, RACE_SPECTRE) || is_specific_player_race(creature_ptr, RACE_BALROG) ||
+        is_specific_player_race(creature_ptr, RACE_ANDROID)) {
         creature_ptr->hold_exp = TRUE;
     }
 
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_GOLEM) {
+    if (is_specific_player_race(creature_ptr, RACE_GOLEM)) {
         if (creature_ptr->lev > 34)
             creature_ptr->hold_exp = TRUE;
-    }
-
-    if (!creature_ptr->mimic_form
-        && (creature_ptr->prace == RACE_SKELETON || creature_ptr->prace == RACE_ZOMBIE || creature_ptr->prace == RACE_VAMPIRE
-            || creature_ptr->prace == RACE_SPECTRE || creature_ptr->prace == RACE_BALROG || creature_ptr->prace == RACE_ANDROID)) {
-        creature_ptr->hold_exp = TRUE;
     }
 
     if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
         creature_ptr->hold_exp = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -851,7 +848,7 @@ void have_see_inv(player_type *creature_ptr)
         creature_ptr->see_inv = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -887,8 +884,8 @@ void have_free_act(player_type *creature_ptr)
         creature_ptr->free_act = TRUE;
     }
 
-    if (heavy_armor(creature_ptr) && (!creature_ptr->inventory_list[INVEN_RARM].k_idx || creature_ptr->right_hand_weapon)
-        && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || creature_ptr->left_hand_weapon)) {
+    if (heavy_armor(creature_ptr) && (!creature_ptr->inventory_list[INVEN_RARM].k_idx || have_right_hand_weapon(creature_ptr))
+        && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || have_left_hand_weapon(creature_ptr))) {
         if (creature_ptr->lev > 24)
             creature_ptr->free_act = TRUE;
     }
@@ -912,7 +909,7 @@ void have_free_act(player_type *creature_ptr)
         creature_ptr->free_act = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -939,7 +936,7 @@ void have_sustain_str(player_type *creature_ptr)
         creature_ptr->sustain_str = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -963,7 +960,7 @@ void have_sustain_int(player_type *creature_ptr)
         creature_ptr->sustain_int = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -990,7 +987,7 @@ void have_sustain_wis(player_type *creature_ptr)
         creature_ptr->sustain_wis = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1017,7 +1014,7 @@ void have_sustain_dex(player_type *creature_ptr)
         creature_ptr->sustain_dex = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1045,7 +1042,7 @@ void have_sustain_con(player_type *creature_ptr)
         creature_ptr->sustain_con = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1066,7 +1063,7 @@ void have_sustain_chr(player_type *creature_ptr)
         creature_ptr->sustain_chr = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1117,7 +1114,7 @@ void have_levitation(player_type *creature_ptr)
         creature_ptr->levitation = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1169,7 +1166,7 @@ void have_slow_digest(player_type *creature_ptr)
         creature_ptr->slow_digest = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1228,7 +1225,7 @@ void have_regenerate(player_type *creature_ptr)
         creature_ptr->regenerate = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1247,7 +1244,7 @@ void have_curses(player_type *creature_ptr)
     if (creature_ptr->pseikaku == PERSONALITY_SEXY)
         creature_ptr->cursed |= (TRC_AGGRAVATE);
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1321,7 +1318,7 @@ void have_impact(player_type *creature_ptr)
     creature_ptr->impact[0] = FALSE;
     creature_ptr->impact[1] = FALSE;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1337,7 +1334,7 @@ void have_extra_blow(player_type *creature_ptr)
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     creature_ptr->extra_blows[0] = creature_ptr->extra_blows[1] = 0;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1347,9 +1344,9 @@ void have_extra_blow(player_type *creature_ptr)
         if (have_flag(flgs, TR_INFRA))
             creature_ptr->see_infra += o_ptr->pval;
         if (have_flag(flgs, TR_BLOWS)) {
-            if ((i == INVEN_RARM || i == INVEN_RIGHT) && !creature_ptr->two_handed_weapon)
+            if ((i == INVEN_RARM || i == INVEN_RIGHT) && !have_two_handed_weapons(creature_ptr))
                 creature_ptr->extra_blows[0] += o_ptr->pval;
-            else if ((i == INVEN_LARM || i == INVEN_LEFT) && !creature_ptr->two_handed_weapon)
+            else if ((i == INVEN_LARM || i == INVEN_LEFT) && !have_two_handed_weapons(creature_ptr))
                 creature_ptr->extra_blows[1] += o_ptr->pval;
             else {
                 creature_ptr->extra_blows[0] += o_ptr->pval;
@@ -1385,7 +1382,7 @@ void have_resist_acid(player_type *creature_ptr)
         creature_ptr->resist_acid = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1421,7 +1418,7 @@ void have_resist_elec(player_type *creature_ptr)
         creature_ptr->resist_elec = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1461,7 +1458,7 @@ void have_resist_fire(player_type *creature_ptr)
         creature_ptr->resist_fire = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1506,7 +1503,7 @@ void have_resist_cold(player_type *creature_ptr)
         creature_ptr->resist_cold = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1552,7 +1549,7 @@ void have_resist_pois(player_type *creature_ptr)
         creature_ptr->resist_pois = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1593,7 +1590,7 @@ void have_resist_conf(player_type *creature_ptr)
         creature_ptr->resist_conf = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1623,7 +1620,7 @@ void have_resist_sound(player_type *creature_ptr)
         creature_ptr->resist_sound = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1649,7 +1646,7 @@ void have_resist_lite(player_type *creature_ptr)
         creature_ptr->resist_lite = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1681,7 +1678,7 @@ void have_resist_dark(player_type *creature_ptr)
         creature_ptr->resist_dark = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1713,7 +1710,7 @@ void have_resist_chaos(player_type *creature_ptr)
         creature_ptr->resist_chaos = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1742,7 +1739,7 @@ void have_resist_disen(player_type *creature_ptr)
         creature_ptr->resist_disen = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1767,7 +1764,7 @@ void have_resist_shard(player_type *creature_ptr)
         creature_ptr->resist_shard = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1793,7 +1790,7 @@ void have_resist_nexus(player_type *creature_ptr)
         creature_ptr->resist_nexus = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1826,7 +1823,7 @@ void have_resist_blind(player_type *creature_ptr)
         creature_ptr->resist_blind = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1860,7 +1857,7 @@ void have_resist_neth(player_type *creature_ptr)
         creature_ptr->resist_neth = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1882,7 +1879,7 @@ void have_resist_time(player_type *creature_ptr)
         creature_ptr->resist_time = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1951,7 +1948,7 @@ void have_resist_fear(player_type *creature_ptr)
         creature_ptr->resist_fear = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1976,7 +1973,7 @@ void have_immune_acid(player_type *creature_ptr)
             creature_ptr->immune_acid = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1997,7 +1994,7 @@ void have_immune_elec(player_type *creature_ptr)
             creature_ptr->immune_elec = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -2018,7 +2015,7 @@ void have_immune_fire(player_type *creature_ptr)
             creature_ptr->immune_fire = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -2039,7 +2036,7 @@ void have_immune_cold(player_type *creature_ptr)
             creature_ptr->immune_cold = TRUE;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -2050,11 +2047,10 @@ void have_immune_cold(player_type *creature_ptr)
     }
 }
 
-void have_right_hand_weapon(player_type *creature_ptr)
+bool have_right_hand_weapon(player_type *creature_ptr)
 {
-    creature_ptr->right_hand_weapon = FALSE;
     if (has_melee_weapon(creature_ptr, INVEN_RARM))
-        creature_ptr->right_hand_weapon = TRUE;
+        return TRUE;
 
     if (can_two_hands_wielding(creature_ptr)) {
         switch (creature_ptr->pclass) {
@@ -2062,33 +2058,32 @@ void have_right_hand_weapon(player_type *creature_ptr)
         case CLASS_FORCETRAINER:
         case CLASS_BERSERKER:
             if (empty_hands(creature_ptr, FALSE) == (EMPTY_HAND_RARM | EMPTY_HAND_LARM)) {
-                creature_ptr->right_hand_weapon = TRUE;
+                return TRUE;
             }
             break;
         }
     }
+
+	return FALSE;
 }
 
-void have_left_hand_weapon(player_type *creature_ptr)
+bool have_left_hand_weapon(player_type *creature_ptr)
 {
-    creature_ptr->left_hand_weapon = FALSE;
-    if (has_melee_weapon(creature_ptr, INVEN_LARM)) {
-        creature_ptr->left_hand_weapon = TRUE;
-    }
+    return has_melee_weapon(creature_ptr, INVEN_LARM);
 }
 
-void have_two_handed_weapons(player_type *creature_ptr)
+bool have_two_handed_weapons(player_type *creature_ptr)
 {
-    creature_ptr->two_handed_weapon = FALSE;
     if (can_two_hands_wielding(creature_ptr)) {
-        if (creature_ptr->right_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
+        if (have_right_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
             && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_RARM])) {
-            creature_ptr->two_handed_weapon = TRUE;
-        } else if (creature_ptr->left_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
+            return TRUE;
+        } else if (have_left_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
             && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_LARM])) {
-            creature_ptr->two_handed_weapon = TRUE;
+            return TRUE;
         }
     }
+    return FALSE;
 }
 
 void have_lite(player_type *creature_ptr)
@@ -2125,7 +2120,7 @@ bool is_disable_two_handed_bonus(player_type *creature_ptr, int i)
     object_type *o_ptr;
     o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
     if (has_melee_weapon(creature_ptr, INVEN_RARM + i)) {
-        if (creature_ptr->hold *= 2 >= o_ptr->weight / 10 && creature_ptr->two_handed_weapon && (creature_ptr->hold *= 2 < o_ptr->weight / 5))
+        if (calc_weapon_weight_limit(creature_ptr) * 2 >= o_ptr->weight / 10 && have_two_handed_weapons(creature_ptr) && (calc_weapon_weight_limit(creature_ptr) * 2 < o_ptr->weight / 5))
             return TRUE;
     }
     return FALSE;

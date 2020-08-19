@@ -318,7 +318,6 @@ typedef struct player_type {
     bool playing; /* True if player is playing */
     bool leaving; /* True if player is leaving */
 
-    bool monk_armour_aux;
     bool monk_notify_aux;
 
     byte leave_bldg;
@@ -354,7 +353,6 @@ typedef struct player_type {
     bool cumber_armor; /* Mana draining armor */
     bool cumber_glove; /* Mana draining gloves */
     bool heavy_wield[2]; /* Heavy weapon */
-    bool heavy_shoot; /* Heavy shooter */
     bool icky_wield[2]; /* Icky weapon */
     bool riding_wield[2]; /* Riding weapon */
     bool riding_ryoute; /* Riding weapon */
@@ -492,9 +490,6 @@ typedef struct player_type {
 
     s16b to_m_chance; /* Minusses to cast chance */
 
-    bool two_handed_weapon;
-    bool right_hand_weapon;
-    bool left_hand_weapon;
     bool no_flowed;
 
     ARMOUR_CLASS ac; /*!< 装備無しの基本AC / Base ac */
@@ -534,7 +529,6 @@ typedef struct player_type {
     GAME_TEXT name[32]; /*!< 現在のプレイヤー名 / Current player's character name */
     char base_name[32]; /*!< Stripped version of "player_name" */
 
-    int hold; /*!< 現在装備可能な武器重量 / Weapon weight limit */
 } player_type;
 
 extern player_type *p_ptr;
@@ -543,6 +537,9 @@ extern concptr your_alignment(player_type *creature_ptr);
 extern int weapon_exp_level(int weapon_exp);
 extern int riding_exp_level(int riding_exp);
 extern int spell_exp_level(int spell_exp);
+
+extern int calc_weapon_weight_limit(player_type *creature_ptr);
+
 
 extern s16b calc_num_fire(player_type *creature_ptr, object_type *o_ptr);
 extern void calc_bonuses(player_type *creature_ptr);

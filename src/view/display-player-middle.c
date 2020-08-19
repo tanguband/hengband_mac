@@ -10,6 +10,7 @@
 #include "player/attack-defense-types.h"
 #include "player/player-race-types.h"
 #include "player/player-skill.h"
+#include "player/player-status-flags.h"
 #include "sv-definition/sv-bow-types.h"
 #include "system/floor-type-definition.h"
 #include "system/object-type-definition.h"
@@ -43,7 +44,7 @@ static void display_player_melee_bonus(player_type *creature_ptr, int hand, int 
 
     if (!has_melee_weapon(creature_ptr, INVEN_RARM) && !has_melee_weapon(creature_ptr, INVEN_LARM))
         display_player_one_line(ENTRY_BARE_HAND, buf, TERM_L_BLUE);
-    else if (creature_ptr->two_handed_weapon)
+    else if (have_two_handed_weapons(creature_ptr))
         display_player_one_line(ENTRY_TWO_HANDS, buf, TERM_L_BLUE);
     else
         display_player_one_line(hand_entry, buf, TERM_L_BLUE);
@@ -56,7 +57,7 @@ static void display_player_melee_bonus(player_type *creature_ptr, int hand, int 
  */
 static void display_left_hand(player_type *creature_ptr)
 {
-    if (creature_ptr->left_hand_weapon) {
+    if (have_left_hand_weapon(creature_ptr)) {
         display_player_melee_bonus(creature_ptr, 1, left_hander ? ENTRY_RIGHT_HAND2 : ENTRY_LEFT_HAND2);
         return;
     }
@@ -289,7 +290,7 @@ static void display_real_playtime(void)
  */
 void display_player_middle(player_type *creature_ptr)
 {
-    if (creature_ptr->right_hand_weapon)
+    if (have_right_hand_weapon(creature_ptr))
         display_player_melee_bonus(creature_ptr, 0, left_hander ? ENTRY_LEFT_HAND1 : ENTRY_RIGHT_HAND1);
 
     display_left_hand(creature_ptr);

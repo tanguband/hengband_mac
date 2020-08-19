@@ -140,12 +140,10 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot);
 static s16b calc_to_hit_bow(player_type *creature_ptr, bool is_true_value);
 
 static s16b calc_to_damage_misc(player_type *creature_ptr);
-static void calc_to_hit_misc(player_type *creature_ptr);
+static s16b calc_to_hit_misc(player_type *creature_ptr);
 
 static DICE_NUMBER calc_to_weapon_dice_num(player_type *creature_ptr, INVENTORY_IDX slot);
 static DICE_NUMBER calc_to_weapon_dice_side(player_type *creature_ptr, INVENTORY_IDX slot);
-
-static void calc_weapon_weight_limit(player_type *creature_ptr);
 
 static int get_default_hand(player_type *creature_ptr);
 
@@ -322,11 +320,6 @@ void calc_bonuses(player_type *creature_ptr)
     ARMOUR_CLASS old_dis_ac = creature_ptr->dis_ac;
     ARMOUR_CLASS old_dis_to_a = creature_ptr->dis_to_a;
 
-    have_right_hand_weapon(creature_ptr);
-    have_left_hand_weapon(creature_ptr);
-    have_two_handed_weapons(creature_ptr);
-    calc_weapon_weight_limit(creature_ptr);
-
     creature_ptr->pass_wall = have_pass_wall(creature_ptr);
     creature_ptr->kill_wall = have_kill_wall(creature_ptr);
     have_xtra_might(creature_ptr);
@@ -458,19 +451,17 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->to_a = calc_to_ac(creature_ptr, TRUE);
     creature_ptr->dis_ac = calc_base_ac(creature_ptr);
     creature_ptr->dis_to_a = calc_to_ac(creature_ptr, FALSE);
-
+	
     for (int i = 0; i < A_MAX; i++) {
         calc_top_status(creature_ptr, i);
         calc_use_status(creature_ptr, i);
         calc_ind_status(creature_ptr, i);
     }
 
-    o_ptr = &creature_ptr->inventory_list[INVEN_BOW];
-    creature_ptr->heavy_shoot = is_heavy_shoot(creature_ptr, o_ptr);
-
+	o_ptr = &creature_ptr->inventory_list[INVEN_BOW];
     if (o_ptr->k_idx) {
         creature_ptr->tval_ammo = (byte)bow_tval_ammo(o_ptr);
-        if (o_ptr->k_idx && !creature_ptr->heavy_shoot) {
+        if (o_ptr->k_idx && !is_heavy_shoot(creature_ptr, &creature_ptr->inventory_list[INVEN_BOW])) {
             creature_ptr->num_fire = calc_num_fire(creature_ptr, o_ptr);
         }
     }
@@ -482,8 +473,6 @@ void calc_bonuses(player_type *creature_ptr)
         creature_ptr->to_dd[i] = calc_to_weapon_dice_num(creature_ptr, INVEN_RARM + i);
         creature_ptr->to_ds[i] = calc_to_weapon_dice_side(creature_ptr, INVEN_RARM + i);
     }
-
-    creature_ptr->monk_armour_aux = heavy_armor(creature_ptr);
 
     creature_ptr->pspeed = calc_speed(creature_ptr);
     creature_ptr->see_infra = calc_intra_vision(creature_ptr);
@@ -507,7 +496,7 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->to_h_b = calc_to_hit_bow(creature_ptr, TRUE);
     creature_ptr->dis_to_h_b = calc_to_hit_bow(creature_ptr, FALSE);
     creature_ptr->to_d_m = calc_to_damage_misc(creature_ptr);
-    calc_to_hit_misc(creature_ptr);
+    creature_ptr->to_h_m = calc_to_hit_misc(creature_ptr);
     creature_ptr->skill_dig = calc_skill_dig(creature_ptr);
 
     if (old_mighty_throw != creature_ptr->mighty_throw) {
@@ -1168,7 +1157,7 @@ s16b calc_num_fire(player_type *creature_ptr, object_type *o_ptr)
     int extra_shots = 0;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     creature_ptr->num_fire = 100;
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *q_ptr;
         q_ptr = &creature_ptr->inventory_list[i];
         if (!q_ptr->k_idx)
@@ -1250,7 +1239,7 @@ static ACTION_SKILL_POWER calc_intra_vision(player_type *creature_ptr)
         pow += 3;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -1298,7 +1287,7 @@ static ACTION_SKILL_POWER calc_stealth(player_type *creature_ptr)
     pow = 1 + tmp_rp_ptr->r_stl + c_ptr->c_stl + a_ptr->a_stl;
     pow += (c_ptr->x_stl * creature_ptr->lev / 10);
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -1329,8 +1318,8 @@ static ACTION_SKILL_POWER calc_stealth(player_type *creature_ptr)
 
     if (creature_ptr->pclass == CLASS_NINJA && heavy_armor(creature_ptr)) {
         pow -= (creature_ptr->lev) / 10;
-    } else if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || creature_ptr->right_hand_weapon)
-        && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || creature_ptr->left_hand_weapon)) {
+    } else if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || have_right_hand_weapon(creature_ptr))
+        && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || have_left_hand_weapon(creature_ptr))) {
         pow += (creature_ptr->lev) / 10;
     }
 
@@ -1400,7 +1389,7 @@ static ACTION_SKILL_POWER calc_device_ability(player_type *creature_ptr)
     pow = tmp_rp_ptr->r_dev + c_ptr->c_dev + a_ptr->a_dev;
     pow += ((c_ptr->x_dev * creature_ptr->lev / 10) + (ap_ptr->a_dev * creature_ptr->lev / 50));
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -1498,7 +1487,7 @@ static ACTION_SKILL_POWER calc_search(player_type *creature_ptr)
     pow = tmp_rp_ptr->r_srh + c_ptr->c_srh + a_ptr->a_srh;
     pow += (c_ptr->x_srh * creature_ptr->lev / 10);
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -1546,7 +1535,7 @@ static ACTION_SKILL_POWER calc_search_freq(player_type *creature_ptr)
     pow = tmp_rp_ptr->r_fos + c_ptr->c_fos + a_ptr->a_fos;
     pow += (c_ptr->x_fos * creature_ptr->lev / 10);
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -1680,7 +1669,7 @@ static ACTION_SKILL_POWER calc_skill_dig(player_type *creature_ptr)
     if (creature_ptr->pclass == CLASS_BERSERKER)
         pow += (100 + creature_ptr->lev * 8);
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -1709,7 +1698,7 @@ static ACTION_SKILL_POWER calc_skill_dig(player_type *creature_ptr)
 static bool is_martial_arts_mode(player_type *creature_ptr)
 {
     return ((creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER) || (creature_ptr->pclass == CLASS_BERSERKER))
-        && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_RARM) && !creature_ptr->left_hand_weapon;
+        && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_RARM) && !have_left_hand_weapon(creature_ptr);
 }
 
 static s16b calc_num_blow(player_type *creature_ptr, int i)
@@ -1724,7 +1713,7 @@ static s16b calc_num_blow(player_type *creature_ptr, int i)
     if (!has_melee_weapon(creature_ptr, INVEN_RARM + i)) {
         num_blow = 1;
     } else {
-        if (creature_ptr->hold < o_ptr->weight / 10) {
+        if (calc_weapon_weight_limit(creature_ptr) < o_ptr->weight / 10) {
             creature_ptr->heavy_wield[i] = TRUE;
         }
 
@@ -1751,7 +1740,7 @@ static s16b calc_num_blow(player_type *creature_ptr, int i)
             div = ((o_ptr->weight < wgt) ? wgt : o_ptr->weight);
             str_index = (adj_str_blow[creature_ptr->stat_ind[A_STR]] * mul / div);
 
-            if (creature_ptr->two_handed_weapon && !is_disable_two_handed_bonus(creature_ptr, 0))
+            if (have_two_handed_weapons(creature_ptr) && !is_disable_two_handed_bonus(creature_ptr, 0))
                 str_index++;
             if (creature_ptr->pclass == CLASS_NINJA)
                 str_index = MAX(0, str_index - 1);
@@ -1894,7 +1883,7 @@ static s16b calc_strength_addition(player_type *creature_ptr)
             pow++;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -1969,7 +1958,7 @@ s16b calc_intelligence_addition(player_type *creature_ptr)
     const player_personality *a_ptr = &personality_info[creature_ptr->pseikaku];
     pow = tmp_rp_ptr->r_adj[A_INT] + c_ptr->c_adj[A_INT] + a_ptr->a_adj[A_INT];
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -2031,7 +2020,7 @@ static s16b calc_wisdom_addition(player_type *creature_ptr)
     const player_personality *a_ptr = &personality_info[creature_ptr->pseikaku];
     pow = tmp_rp_ptr->r_adj[A_WIS] + c_ptr->c_adj[A_WIS] + a_ptr->a_adj[A_WIS];
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -2105,7 +2094,7 @@ static s16b calc_dexterity_addition(player_type *creature_ptr)
             pow--;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -2190,7 +2179,7 @@ static s16b calc_constitution_addition(player_type *creature_ptr)
             pow++;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -2272,7 +2261,7 @@ static s16b calc_charisma_addition(player_type *creature_ptr)
     const player_personality *a_ptr = &personality_info[creature_ptr->pseikaku];
     pow = tmp_rp_ptr->r_adj[A_CHR] + c_ptr->c_adj[A_CHR] + a_ptr->a_adj[A_CHR];
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -2335,7 +2324,7 @@ static s16b calc_to_magic_chance(player_type *creature_ptr)
     if (creature_ptr->pseikaku == PERSONALITY_CHARGEMAN)
         chance += 5;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         BIT_FLAGS flgs[TR_FLAG_SIZE];
         o_ptr = &creature_ptr->inventory_list[i];
@@ -2359,7 +2348,7 @@ static ARMOUR_CLASS calc_base_ac(player_type *creature_ptr)
     if (creature_ptr->yoiyami)
         return 0;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
@@ -2403,7 +2392,7 @@ static ARMOUR_CLASS calc_to_ac(player_type *creature_ptr, bool is_true_value)
         ac -= 50;
     }
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
@@ -2476,7 +2465,7 @@ static ARMOUR_CLASS calc_to_ac(player_type *creature_ptr, bool is_true_value)
             ac += 30;
         }
 
-        for (int i = INVEN_RARM; i <= INVEN_FEET; i++) {
+        for (inventory_slot_type i = INVEN_RARM; i <= INVEN_FEET; i++) {
             object_type *o_ptr = &creature_ptr->inventory_list[i];
             if (!o_ptr->k_idx)
                 continue;
@@ -2516,8 +2505,8 @@ static ARMOUR_CLASS calc_to_ac(player_type *creature_ptr, bool is_true_value)
     }
 
     if (creature_ptr->pclass == CLASS_NINJA) {
-        if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || creature_ptr->right_hand_weapon)
-            && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || creature_ptr->left_hand_weapon)) {
+        if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || have_right_hand_weapon(creature_ptr))
+            && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || have_left_hand_weapon(creature_ptr))) {
             ac += creature_ptr->lev / 2 + 5;
         }
     }
@@ -2593,7 +2582,7 @@ static s16b calc_speed(player_type *creature_ptr)
             }
         }
 
-        for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
             object_type *o_ptr = &creature_ptr->inventory_list[i];
             BIT_FLAGS flgs[TR_FLAG_SIZE];
             object_flags(creature_ptr, o_ptr, flgs);
@@ -2607,8 +2596,8 @@ static s16b calc_speed(player_type *creature_ptr)
         if (creature_ptr->pclass == CLASS_NINJA) {
             if (heavy_armor(creature_ptr)) {
                 pow -= (creature_ptr->lev) / 10;
-            } else if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || creature_ptr->right_hand_weapon)
-                && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || creature_ptr->left_hand_weapon)) {
+            } else if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || have_right_hand_weapon(creature_ptr))
+                && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || have_left_hand_weapon(creature_ptr))) {
                 pow += 3;
                 if (!(is_specific_player_race(creature_ptr, RACE_KLACKON) || is_specific_player_race(creature_ptr, RACE_SPRITE)
                         || (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)))
@@ -2847,7 +2836,7 @@ static s16b calc_riding_bow_penalty(player_type *creature_ptr)
 
     creature_ptr->riding_ryoute = FALSE;
 
-    if (creature_ptr->two_handed_weapon || (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_NONE))
+    if (have_two_handed_weapons(creature_ptr) || (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_NONE))
         creature_ptr->riding_ryoute = TRUE;
     else if (creature_ptr->pet_extra_flags & PF_TWO_HANDS) {
         switch (creature_ptr->pclass) {
@@ -2879,16 +2868,16 @@ static s16b calc_riding_bow_penalty(player_type *creature_ptr)
 
 void put_equipment_warning(player_type *creature_ptr)
 {
-    if (creature_ptr->old_heavy_shoot != creature_ptr->heavy_shoot) {
-        if (creature_ptr->heavy_shoot) {
+    bool heavy_shoot = is_heavy_shoot(creature_ptr, &creature_ptr->inventory_list[INVEN_BOW]);
+    if (creature_ptr->old_heavy_shoot != heavy_shoot) {
+        if (heavy_shoot) {
             msg_print(_("こんな重い弓を装備しているのは大変だ。", "You have trouble wielding such a heavy bow."));
         } else if (creature_ptr->inventory_list[INVEN_BOW].k_idx) {
             msg_print(_("この弓なら装備していても辛くない。", "You have no trouble wielding your bow."));
         } else {
             msg_print(_("重い弓を装備からはずして体が楽になった。", "You feel relieved to put down your heavy bow."));
         }
-
-        creature_ptr->old_heavy_shoot = creature_ptr->heavy_shoot;
+        creature_ptr->old_heavy_shoot = heavy_shoot;
     }
 
     for (int i = 0; i < 2; i++) {
@@ -2954,7 +2943,7 @@ void put_equipment_warning(player_type *creature_ptr)
     }
 
     if (((creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER) || (creature_ptr->pclass == CLASS_NINJA))
-        && (creature_ptr->monk_armour_aux != creature_ptr->monk_notify_aux)) {
+        && (heavy_armor(creature_ptr) != creature_ptr->monk_notify_aux)) {
         if (heavy_armor(creature_ptr)) {
             msg_print(_("装備が重くてバランスを取れない。", "The weight of your armor disrupts your balance."));
             if (current_world_ptr->is_loading_now) {
@@ -2964,7 +2953,7 @@ void put_equipment_warning(player_type *creature_ptr)
             msg_print(_("バランスがとれるようになった。", "You regain your balance."));
         }
 
-        creature_ptr->monk_notify_aux = creature_ptr->monk_armour_aux;
+        creature_ptr->monk_notify_aux = heavy_armor(creature_ptr);
     }
 }
 
@@ -2992,7 +2981,7 @@ static void calc_to_damage(player_type *creature_ptr, INVENTORY_IDX slot)
         creature_ptr->to_d[id] -= 2;
     } else if (creature_ptr->pclass == CLASS_BERSERKER) {
         creature_ptr->to_d[id] += creature_ptr->lev / 6;
-        if (((id == 0) && !creature_ptr->left_hand_weapon) || creature_ptr->two_handed_weapon) {
+        if (((id == 0) && !have_left_hand_weapon(creature_ptr)) || have_two_handed_weapons(creature_ptr)) {
             creature_ptr->to_d[id] += creature_ptr->lev / 6;
         }
     } else if (creature_ptr->pclass == CLASS_SORCERER) {
@@ -3028,7 +3017,7 @@ static void calc_to_damage(player_type *creature_ptr, INVENTORY_IDX slot)
 
     // 武器以外の装備による修正
     int default_hand = get_default_hand(creature_ptr);
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         int bonus_to_d;
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx || o_ptr->tval == TV_CAPTURE || (i == INVEN_RARM && has_melee_weapon(creature_ptr, i))
@@ -3042,7 +3031,7 @@ static void calc_to_damage(player_type *creature_ptr, INVENTORY_IDX slot)
                 bonus_to_d = (o_ptr->to_d + 1) / 2;
         }
 
-        if ((i == INVEN_LEFT || i == INVEN_RIGHT) && !creature_ptr->two_handed_weapon) {
+        if ((i == INVEN_LEFT || i == INVEN_RIGHT) && !have_two_handed_weapons(creature_ptr)) {
             creature_ptr->to_d[i - INVEN_RIGHT] += (s16b)bonus_to_d;
             if (object_is_known(o_ptr)) {
                 creature_ptr->dis_to_d[i - INVEN_RIGHT] += (s16b)bonus_to_d;
@@ -3050,7 +3039,7 @@ static void calc_to_damage(player_type *creature_ptr, INVENTORY_IDX slot)
             continue;
         }
 
-        if (creature_ptr->right_hand_weapon && creature_ptr->left_hand_weapon) {
+        if (have_right_hand_weapon(creature_ptr) && have_left_hand_weapon(creature_ptr)) {
             creature_ptr->to_d[0] += (bonus_to_d > 0) ? (bonus_to_d + 1) / 2 : bonus_to_d;
             creature_ptr->to_d[1] += (bonus_to_d > 0) ? bonus_to_d / 2 : bonus_to_d;
             continue;
@@ -3088,7 +3077,7 @@ static void calc_to_damage_display(player_type *creature_ptr, INVENTORY_IDX slot
         creature_ptr->dis_to_d[id] -= 2;
     } else if (creature_ptr->pclass == CLASS_BERSERKER) {
         creature_ptr->dis_to_d[id] += creature_ptr->lev / 6;
-        if (((id == 0) && !creature_ptr->left_hand_weapon) || creature_ptr->two_handed_weapon) {
+        if (((id == 0) && !have_left_hand_weapon(creature_ptr)) || have_two_handed_weapons(creature_ptr)) {
             creature_ptr->dis_to_d[id] += creature_ptr->lev / 6;
         }
     } else if (creature_ptr->pclass == CLASS_SORCERER) {
@@ -3115,7 +3104,7 @@ static void calc_to_damage_display(player_type *creature_ptr, INVENTORY_IDX slot
 
     // 武器以外の装備による修正
     int default_hand = get_default_hand(creature_ptr);
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         int bonus_to_d;
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx || o_ptr->tval == TV_CAPTURE || (i == INVEN_RARM && has_melee_weapon(creature_ptr, i))
@@ -3129,14 +3118,14 @@ static void calc_to_damage_display(player_type *creature_ptr, INVENTORY_IDX slot
                 bonus_to_d = (o_ptr->to_d + 1) / 2;
         }
 
-        if ((i == INVEN_LEFT || i == INVEN_RIGHT) && !creature_ptr->two_handed_weapon) {
+        if ((i == INVEN_LEFT || i == INVEN_RIGHT) && !have_two_handed_weapons(creature_ptr)) {
             if (object_is_known(o_ptr)) {
                 creature_ptr->dis_to_d[i - INVEN_RIGHT] += (s16b)bonus_to_d;
             }
             continue;
         }
 
-        if (creature_ptr->right_hand_weapon && creature_ptr->left_hand_weapon) {
+        if (have_right_hand_weapon(creature_ptr) && have_left_hand_weapon(creature_ptr)) {
             if (!object_is_known(o_ptr))
                 continue;
 
@@ -3165,8 +3154,6 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
     tval_type tval = creature_ptr->inventory_list[INVEN_RARM + id].tval - TV_WEAPON_BEGIN;
     OBJECT_SUBTYPE_VALUE sval = creature_ptr->inventory_list[INVEN_RARM + id].sval;
 
-    creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
-
     creature_ptr->to_h[id] = 0;
 
     creature_ptr->to_h[id] += ((int)(adj_dex_th[creature_ptr->stat_ind[A_DEX]]) - 128);
@@ -3176,7 +3163,7 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
         creature_ptr->to_h[id] -= 2;
     } else if (creature_ptr->pclass == CLASS_BERSERKER) {
         creature_ptr->to_h[id] += creature_ptr->lev / 5;
-        if (((id == 0) && !creature_ptr->left_hand_weapon) || creature_ptr->two_handed_weapon) {
+        if (((id == 0) && !have_left_hand_weapon(creature_ptr)) || have_two_handed_weapons(creature_ptr)) {
             creature_ptr->to_h[id] += creature_ptr->lev / 5;
         }
     } else if (creature_ptr->pclass == CLASS_SORCERER) {
@@ -3210,8 +3197,8 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
         }
     }
 
-    if (creature_ptr->hold < o_ptr->weight / 10) {
-        creature_ptr->to_h[id] += 2 * (creature_ptr->hold - o_ptr->weight / 10);
+    if (calc_weapon_weight_limit(creature_ptr) < o_ptr->weight / 10) {
+        creature_ptr->to_h[id] += 2 * (calc_weapon_weight_limit(creature_ptr) - o_ptr->weight / 10);
     }
 
     if (is_blessed(creature_ptr)) {
@@ -3260,8 +3247,8 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
     }
 
     if (get_default_hand(creature_ptr) == id) {
-        if ((creature_ptr->right_hand_weapon && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_RARM))
-            || (creature_ptr->left_hand_weapon && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_LARM))) {
+        if ((have_right_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_RARM))
+            || (have_left_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_LARM))) {
             creature_ptr->to_h[id] += (creature_ptr->skill_exp[GINOU_SUDE] - WEAPON_EXP_BEGINNER) / 200;
         }
 
@@ -3275,7 +3262,7 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
 
     // 武器以外の装備による修正
     int default_hand = get_default_hand(creature_ptr);
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         int bonus_to_h;
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx || o_ptr->tval == TV_CAPTURE || (i == INVEN_RARM && has_melee_weapon(creature_ptr, i))
@@ -3292,12 +3279,12 @@ static void calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot)
         if (object_is_known(o_ptr))
             creature_ptr->dis_to_h_b += (s16b)bonus_to_h;
 
-        if ((i == INVEN_LEFT || i == INVEN_RIGHT) && !creature_ptr->two_handed_weapon) {
+        if ((i == INVEN_LEFT || i == INVEN_RIGHT) && !have_two_handed_weapons(creature_ptr)) {
             creature_ptr->to_h[i - INVEN_RIGHT] += (s16b)bonus_to_h;
             continue;
         }
 
-        if (creature_ptr->right_hand_weapon && creature_ptr->left_hand_weapon) {
+        if (have_right_hand_weapon(creature_ptr) && have_left_hand_weapon(creature_ptr)) {
             creature_ptr->to_h[0] += (bonus_to_h > 0) ? (bonus_to_h + 1) / 2 : bonus_to_h;
             creature_ptr->to_h[1] += (bonus_to_h > 0) ? bonus_to_h / 2 : bonus_to_h;
             continue;
@@ -3317,7 +3304,6 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
 {
     int id = slot - INVEN_RARM;
     object_type *o_ptr = &creature_ptr->inventory_list[slot];
-    creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
     BIT_FLAGS flgs[TR_FLAG_SIZE];
     object_flags(creature_ptr, o_ptr, flgs);
     tval_type tval = creature_ptr->inventory_list[INVEN_RARM + id].tval - TV_WEAPON_BEGIN;
@@ -3332,7 +3318,7 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
         creature_ptr->dis_to_h[id] -= 2;
     } else if (creature_ptr->pclass == CLASS_BERSERKER) {
         creature_ptr->dis_to_h[id] += creature_ptr->lev / 5;
-        if (((id == 0) && !creature_ptr->left_hand_weapon) || creature_ptr->two_handed_weapon) {
+        if (((id == 0) && !have_left_hand_weapon(creature_ptr)) || have_two_handed_weapons(creature_ptr)) {
             creature_ptr->dis_to_h[id] += creature_ptr->lev / 5;
         }
     } else if (creature_ptr->pclass == CLASS_SORCERER) {
@@ -3366,8 +3352,8 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
         }
     }
 
-    if (creature_ptr->hold < o_ptr->weight / 10) {
-        creature_ptr->dis_to_h[id] += 2 * (creature_ptr->hold - o_ptr->weight / 10);
+    if (calc_weapon_weight_limit(creature_ptr) < o_ptr->weight / 10) {
+        creature_ptr->dis_to_h[id] += 2 * (calc_weapon_weight_limit(creature_ptr) - o_ptr->weight / 10);
     }
 
     if (is_blessed(creature_ptr)) {
@@ -3416,15 +3402,15 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
     }
 
     if (get_default_hand(creature_ptr) == id) {
-        if ((creature_ptr->right_hand_weapon && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_RARM))
-            || (creature_ptr->left_hand_weapon && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_LARM))) {
+        if ((have_right_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_RARM))
+            || (have_left_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, TRUE) & EMPTY_HAND_LARM))) {
             creature_ptr->dis_to_h[id] += (creature_ptr->skill_exp[GINOU_SUDE] - WEAPON_EXP_BEGINNER) / 200;
         }
     }
 
     // 武器以外の装備による修正
     int default_hand = get_default_hand(creature_ptr);
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         int bonus_to_h;
         o_ptr = &creature_ptr->inventory_list[i];
 
@@ -3439,14 +3425,14 @@ static void calc_to_hit_display(player_type *creature_ptr, INVENTORY_IDX slot)
                 bonus_to_h = (o_ptr->to_h + 1) / 2;
         }
 
-        if ((i == INVEN_LEFT || i == INVEN_RIGHT) && !creature_ptr->two_handed_weapon) {
+        if ((i == INVEN_LEFT || i == INVEN_RIGHT) && !have_two_handed_weapons(creature_ptr)) {
             if (object_is_known(o_ptr)) {
                 creature_ptr->dis_to_h[i - INVEN_RIGHT] += (s16b)bonus_to_h;
             }
             continue;
         }
 
-        if (creature_ptr->right_hand_weapon && creature_ptr->left_hand_weapon) {
+        if (have_right_hand_weapon(creature_ptr) && have_left_hand_weapon(creature_ptr)) {
             if (!object_is_known(o_ptr))
                 continue;
 
@@ -3510,15 +3496,14 @@ static s16b calc_to_hit_bow(player_type *creature_ptr, bool is_true_value)
         pow -= 12;
     }
 
-    creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
     object_type *o_ptr = &creature_ptr->inventory_list[INVEN_BOW];
 
     if (is_heavy_shoot(creature_ptr, o_ptr)) {
-        pow += 2 * (creature_ptr->hold - o_ptr->weight / 10);
+        pow += 2 * (calc_weapon_weight_limit(creature_ptr) - o_ptr->weight / 10);
     }
 
     if (o_ptr->k_idx) {
-        if (o_ptr->k_idx && !creature_ptr->heavy_shoot) {
+        if (o_ptr->k_idx && !is_heavy_shoot(creature_ptr, &creature_ptr->inventory_list[INVEN_BOW])) {
             if ((creature_ptr->pclass == CLASS_SNIPER) && (creature_ptr->tval_ammo == TV_BOLT)) {
                 pow += (10 + (creature_ptr->lev / 5));
             }
@@ -3556,7 +3541,7 @@ static s16b calc_to_damage_misc(player_type *creature_ptr)
 
     s16b to_dam = 0;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -3585,14 +3570,14 @@ static s16b calc_to_damage_misc(player_type *creature_ptr)
     return to_dam;
 }
 
-static void calc_to_hit_misc(player_type *creature_ptr)
+static s16b calc_to_hit_misc(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
 
-    creature_ptr->to_h_m = 0;
+    s16b to_hit = 0;
 
-    for (int i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
@@ -3604,29 +3589,31 @@ static void calc_to_hit_misc(player_type *creature_ptr)
             if (o_ptr->to_h > 0)
                 bonus_to_h = (o_ptr->to_h + 1) / 2;
         }
-        creature_ptr->to_h_m += (s16b)o_ptr->to_h;
+        to_hit += (s16b)o_ptr->to_h;
     }
 
     if (is_blessed(creature_ptr)) {
-        creature_ptr->to_h_m += 10;
+        to_hit += 10;
     }
 
     if (is_hero(creature_ptr)) {
-        creature_ptr->to_h_m += 12;
+        to_hit += 12;
     }
 
     if (creature_ptr->shero) {
-        creature_ptr->to_h_m += 12;
+        to_hit += 12;
     }
 
     if (creature_ptr->stun > 50) {
-        creature_ptr->to_h_m -= 20;
+        to_hit -= 20;
     } else if (creature_ptr->stun) {
-        creature_ptr->to_h_m -= 5;
+        to_hit -= 5;
     }
 
-    creature_ptr->to_h_m += ((int)(adj_dex_th[creature_ptr->stat_ind[A_DEX]]) - 128);
-    creature_ptr->to_h_m += ((int)(adj_str_th[creature_ptr->stat_ind[A_STR]]) - 128);
+    to_hit += ((int)(adj_dex_th[creature_ptr->stat_ind[A_DEX]]) - 128);
+    to_hit += ((int)(adj_str_th[creature_ptr->stat_ind[A_STR]]) - 128);
+
+	return to_hit;
 }
 
 static DICE_NUMBER calc_to_weapon_dice_num(player_type *creature_ptr, INVENTORY_IDX slot)
@@ -4366,13 +4353,14 @@ bool is_echizen(player_type *creature_ptr)
     return (creature_ptr->pseikaku == PERSONALITY_COMBAT) || (creature_ptr->inventory_list[INVEN_BOW].name1 == ART_CRIMSON);
 }
 
-void calc_weapon_weight_limit(player_type *creature_ptr)
+int calc_weapon_weight_limit(player_type *creature_ptr)
 {
-    creature_ptr->hold = 0;
-    creature_ptr->hold = adj_str_hold[creature_ptr->stat_ind[A_STR]];
+    int weight = adj_str_hold[creature_ptr->stat_ind[A_STR]];
 
-    if (creature_ptr->two_handed_weapon)
-        creature_ptr->hold *= 2;
+    if (have_two_handed_weapons(creature_ptr))
+        weight *= 2;
+
+	return weight;
 }
 
 static int get_default_hand(player_type *creature_ptr)
@@ -4380,14 +4368,14 @@ static int get_default_hand(player_type *creature_ptr)
     int default_hand = 0;
 
     if (has_melee_weapon(creature_ptr, INVEN_LARM)) {
-        if (!creature_ptr->right_hand_weapon)
+        if (!have_right_hand_weapon(creature_ptr))
             default_hand = 1;
     }
 
     if (can_two_hands_wielding(creature_ptr)) {
-        if (creature_ptr->right_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
+        if (have_right_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
             && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_RARM])) {
-        } else if (creature_ptr->left_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
+        } else if (have_left_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
             && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_LARM])) {
         } else {
             default_hand = 1;

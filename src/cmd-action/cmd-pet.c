@@ -41,6 +41,7 @@
 #include "player/player-skill.h"
 #include "player/player-status.h"
 #include "player/special-defense-types.h"
+#include "player/player-status-flags.h"
 #include "status/action-setter.h"
 #include "system/floor-type-definition.h"
 #include "target/target-checker.h"
@@ -494,9 +495,9 @@ void do_cmd_pet(player_type *creature_ptr)
     powers[num++] = PET_NAME;
 
     if (creature_ptr->riding) {
-        if ((creature_ptr->right_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
+        if ((have_right_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
                 && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_RARM]))
-            || (creature_ptr->left_hand_weapon && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
+            || (have_left_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
                 && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_LARM]))) {
             if (creature_ptr->pet_extra_flags & PF_TWO_HANDS) {
                 power_desc[num] = _("武器を片手で持つ", "use one hand to control the pet you are riding");
