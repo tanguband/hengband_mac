@@ -13,7 +13,7 @@
 #include "dungeon/dungeon.h"
 #include "effect/effect-characteristics.h"
 #include "floor/cave.h"
-#include "floor/floor.h"
+#include "floor/line-of-sight.h"
 #include "grid/grid.h"
 #include "main/sound-definitions-table.h"
 #include "monster-race/monster-race.h"
@@ -28,6 +28,7 @@
 #include "spell/range-calc.h"
 #include "spell/spell-types.h"
 #include "system/floor-type-definition.h"
+#include "target/projection-path-calculator.h"
 
 /*!
  * @brief モンスターが敵対モンスターにビームを当てること可能かを判定する /
@@ -44,7 +45,7 @@ bool direct_beam(player_type *target_ptr, POSITION y1, POSITION x1, POSITION y2,
 {
     floor_type *floor_ptr = target_ptr->current_floor_ptr;
     u16b grid_g[512];
-    int grid_n = project_path(target_ptr, grid_g, get_max_range(target_ptr), y1, x1, y2, x2, PROJECT_THRU);
+    int grid_n = projection_path(target_ptr, grid_g, get_max_range(target_ptr), y1, x1, y2, x2, PROJECT_THRU);
     if (!grid_n)
         return FALSE;
 
@@ -52,8 +53,8 @@ bool direct_beam(player_type *target_ptr, POSITION y1, POSITION x1, POSITION y2,
     POSITION y, x;
     bool is_friend = is_pet(m_ptr);
     for (int i = 0; i < grid_n; i++) {
-        y = GRID_Y(grid_g[i]);
-        x = GRID_X(grid_g[i]);
+        y = get_grid_y(grid_g[i]);
+        x = get_grid_x(grid_g[i]);
 
         if (y == y2 && x == x2)
             hit2 = TRUE;
@@ -99,13 +100,13 @@ bool breath_direct(player_type *master_ptr, POSITION y1, POSITION x1, POSITION y
     }
 
     u16b grid_g[512];
-    int grid_n = project_path(master_ptr, grid_g, get_max_range(master_ptr), y1, x1, y2, x2, flg);
+    int grid_n = projection_path(master_ptr, grid_g, get_max_range(master_ptr), y1, x1, y2, x2, flg);
     int i;
     POSITION y = y1;
     POSITION x = x1;
     for (i = 0; i < grid_n; ++i) {
-        int ny = GRID_Y(grid_g[i]);
-        int nx = GRID_X(grid_g[i]);
+        int ny = get_grid_y(grid_g[i]);
+        int nx = get_grid_x(grid_g[i]);
 
         if (flg & PROJECT_DISI) {
             if (cave_stop_disintegration(master_ptr->current_floor_ptr, ny, nx))
@@ -181,12 +182,12 @@ bool breath_direct(player_type *master_ptr, POSITION y1, POSITION x1, POSITION y
 void get_project_point(player_type *target_ptr, POSITION sy, POSITION sx, POSITION *ty, POSITION *tx, BIT_FLAGS flg)
 {
     u16b path_g[128];
-    int path_n = project_path(target_ptr, path_g, get_max_range(target_ptr), sy, sx, *ty, *tx, flg);
+    int path_n = projection_path(target_ptr, path_g, get_max_range(target_ptr), sy, sx, *ty, *tx, flg);
     *ty = sy;
     *tx = sx;
     for (int i = 0; i < path_n; i++) {
-        sy = GRID_Y(path_g[i]);
-        sx = GRID_X(path_g[i]);
+        sy = get_grid_y(path_g[i]);
+        sx = get_grid_x(path_g[i]);
         if (!cave_have_flag_bold(target_ptr->current_floor_ptr, sy, sx, FF_PROJECT))
             break;
 

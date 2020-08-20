@@ -296,9 +296,6 @@
     <ClCompile Include="..\..\src\effect\effect-player-spirit.c">
       <Filter>effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\spell\process-effect.c">
-      <Filter>spell</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\core\stuff-handler.c">
       <Filter>core</Filter>
     </ClCompile>
@@ -373,9 +370,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\core\game-play.c">
       <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\floor\floor.c">
-      <Filter>floor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\floor\floor-events.c">
       <Filter>floor</Filter>
@@ -2078,6 +2072,45 @@
     <ClCompile Include="..\..\src\specific-object\toragoroshi.c">
       <Filter>specific-object</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\object-activation\activation-genocide.c">
+      <Filter>object-activation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\effect\effect-processor.c">
+      <Filter>effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-io\cmd-floor.c">
+      <Filter>cmd-io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-equipment.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-refill.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cmd-item\cmd-destroy.c">
+      <Filter>cmd-item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\target\projection-path-calculator.c">
+      <Filter>target</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\grid\door.c">
+      <Filter>grid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\floor\line-of-sight.c">
+      <Filter>floor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\room\vault-builder.c">
+      <Filter>room</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\grid\object-placer.c">
+      <Filter>grid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\grid\stair.c">
+      <Filter>grid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\object-compressor.c">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\combat\shoot.h">
@@ -2401,9 +2434,6 @@
     <ClInclude Include="..\..\src\effect\effect-player-spirit.h">
       <Filter>effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\spell\process-effect.h">
-      <Filter>spell</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\effect\effect-characteristics.h">
       <Filter>effect</Filter>
     </ClInclude>
@@ -2484,9 +2514,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\core\game-play.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\floor\floor.h">
-      <Filter>floor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\floor\floor-events.h">
       <Filter>floor</Filter>
@@ -4506,6 +4533,45 @@
     </ClInclude>
     <ClInclude Include="..\..\src\specific-object\toragoroshi.h">
       <Filter>specific-object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\object-activation\activation-genocide.h">
+      <Filter>object-activation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\effect\effect-processor.h">
+      <Filter>effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-io\cmd-floor.h">
+      <Filter>cmd-io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-equipment.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-refill.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cmd-item\cmd-destroy.h">
+      <Filter>cmd-item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\target\projection-path-calculator.h">
+      <Filter>target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\grid\door.h">
+      <Filter>grid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\floor\line-of-sight.h">
+      <Filter>floor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\room\vault-builder.h">
+      <Filter>room</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\grid\object-placer.h">
+      <Filter>grid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\grid\stair.h">
+      <Filter>grid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\core\object-compressor.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,10 +5,11 @@
 #include "core/disturbance.h"
 #include "core/player-redraw-types.h"
 #include "effect/effect-characteristics.h"
+#include "effect/effect-processor.h"
 #include "effect/spells-effect-util.h"
 #include "floor/cave.h"
 #include "floor/floor-object.h"
-#include "floor/floor.h"
+#include "floor/floor-util.h"
 #include "game-option/disturbance-options.h"
 #include "grid/feature.h"
 #include "inventory/inventory-slot-types.h"
@@ -33,15 +34,15 @@
 #include "spell-kind/spells-launcher.h"
 #include "spell-kind/spells-lite.h"
 #include "spell-kind/spells-perception.h"
-#include "spell/spells-status.h"
 #include "spell-kind/spells-teleport.h"
-#include "spell/process-effect.h"
 #include "spell/spell-types.h"
+#include "spell/spells-status.h"
 #include "status/action-setter.h"
 #include "status/body-improvement.h"
 #include "status/element-resistance.h"
 #include "status/temporary-resistance.h"
 #include "system/floor-type-definition.h"
+#include "target/projection-path-calculator.h"
 #include "target/target-checker.h"
 #include "target/target-getter.h"
 #include "util/bit-flags-calculator.h"
@@ -123,7 +124,7 @@ bool rush_attack(player_type *attacker_ptr, bool *mdeath)
         tm_idx = floor_ptr->grid_array[ty][tx].m_idx;
 
     u16b path_g[32];
-    int path_n = project_path(attacker_ptr, path_g, project_length, attacker_ptr->y, attacker_ptr->x, ty, tx, PROJECT_STOP | PROJECT_KILL);
+    int path_n = projection_path(attacker_ptr, path_g, project_length, attacker_ptr->y, attacker_ptr->x, ty, tx, PROJECT_STOP | PROJECT_KILL);
     project_length = 0;
     if (!path_n)
         return TRUE;
@@ -135,8 +136,8 @@ bool rush_attack(player_type *attacker_ptr, bool *mdeath)
     for (int i = 0; i < path_n; i++) {
         monster_type *m_ptr;
 
-        int ny = GRID_Y(path_g[i]);
-        int nx = GRID_X(path_g[i]);
+        int ny = get_grid_y(path_g[i]);
+        int nx = get_grid_x(path_g[i]);
 
         if (is_cave_empty_bold(attacker_ptr, ny, nx) && player_can_enter(attacker_ptr, floor_ptr->grid_array[ny][nx].feat, 0)) {
             ty = ny;

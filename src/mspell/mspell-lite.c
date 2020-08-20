@@ -8,7 +8,7 @@
 #include "dungeon/dungeon-flag-types.h"
 #include "dungeon/dungeon.h"
 #include "floor/cave.h"
-#include "floor/floor.h"
+#include "floor/line-of-sight.h"
 #include "grid/feature.h"
 #include "grid/grid.h"
 #include "monster-race/monster-race.h"
@@ -24,6 +24,7 @@
 #include "spell/range-calc.h"
 #include "system/floor-type-definition.h"
 #include "system/monster-type-definition.h"
+#include "target/projection-path-calculator.h"
 #include "util/bit-flags-calculator.h"
 
 /*!

@@ -5,7 +5,6 @@
 #include "flavor/flavor-describer.h"
 #include "flavor/object-flavor-types.h"
 #include "floor/cave.h"
-#include "floor/floor.h"
 #include "grid/feature-flag-types.h"
 #include "grid/grid.h"
 #include "monster-race/monster-race.h"
@@ -15,6 +14,7 @@
 #include "monster/monster-update.h"
 #include "system/floor-type-definition.h"
 #include "system/object-type-definition.h"
+#include "target/projection-path-calculator.h"
 #include "target/target-checker.h"
 #include "target/target-setter.h"
 #include "target/target-types.h"
@@ -135,11 +135,11 @@ bool fetch_monster(player_type *caster_ptr)
     m_ptr = &caster_ptr->current_floor_ptr->m_list[m_idx];
     monster_desc(caster_ptr, m_name, m_ptr, 0);
     msg_format(_("%sを引き戻した。", "You pull back %s."), m_name);
-    path_n = project_path(caster_ptr, path_g, get_max_range(caster_ptr), target_row, target_col, caster_ptr->y, caster_ptr->x, 0);
+    path_n = projection_path(caster_ptr, path_g, get_max_range(caster_ptr), target_row, target_col, caster_ptr->y, caster_ptr->x, 0);
     ty = target_row, tx = target_col;
     for (i = 1; i < path_n; i++) {
-        POSITION ny = GRID_Y(path_g[i]);
-        POSITION nx = GRID_X(path_g[i]);
+        POSITION ny = get_grid_y(path_g[i]);
+        POSITION nx = get_grid_x(path_g[i]);
         grid_type *g_ptr = &caster_ptr->current_floor_ptr->grid_array[ny][nx];
 
         if (in_bounds(caster_ptr->current_floor_ptr, ny, nx) && is_cave_empty_bold(caster_ptr, ny, nx) && !(g_ptr->info & CAVE_OBJECT)

@@ -5,13 +5,13 @@
 #include "effect/effect-characteristics.h"
 #include "effect/spells-effect-util.h"
 #include "floor/cave.h"
-#include "floor/floor.h"
 #include "game-option/map-screen-options.h"
 #include "game-option/special-options.h"
 #include "grid/feature.h"
 #include "grid/grid.h"
 #include "io/screen-util.h"
 #include "system/floor-type-definition.h"
+#include "target/projection-path-calculator.h"
 #include "term/term-color-types.h"
 #include "view/display-map.h"
 #include "window/main-window-util.h"
@@ -42,13 +42,13 @@ void print_path(player_type *player_ptr, POSITION y, POSITION x)
         return;
 
     floor_type *floor_ptr = player_ptr->current_floor_ptr;
-    int path_n = project_path(
+    int path_n = projection_path(
         player_ptr, path_g, (project_length ? project_length : get_max_range(player_ptr)), player_ptr->y, player_ptr->x, y, x, PROJECT_PATH | PROJECT_THRU);
     player_ptr->redraw |= (PR_MAP);
     handle_stuff(player_ptr);
     for (int i = 0; i < path_n; i++) {
-        POSITION ny = GRID_Y(path_g[i]);
-        POSITION nx = GRID_X(path_g[i]);
+        POSITION ny = get_grid_y(path_g[i]);
+        POSITION nx = get_grid_x(path_g[i]);
         grid_type *g_ptr = &floor_ptr->grid_array[ny][nx];
         if (panel_contains(ny, nx)) {
             TERM_COLOR a = default_color;

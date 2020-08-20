@@ -26,6 +26,14 @@
 /*
  * Player constants
  */
+#define A_STR 0
+#define A_INT 1
+#define A_WIS 2
+#define A_DEX 3
+#define A_CON 4
+#define A_CHR 5
+#define A_MAX 6
+
 #define PY_MAX_EXP 99999999L /*!< プレイヤー経験値の最大値 / Maximum exp */
 #define PY_MAX_GOLD 999999999L /*!< プレイヤー所持金の最大値 / Maximum gold */
 #define PY_MAX_LEVEL 50 /*!< プレイヤーレベルの最大値 / Maximum level */
@@ -76,8 +84,8 @@ extern const byte adj_con_fix[];
 extern const byte adj_con_mhp[];
 extern const byte adj_chr_chm[];
 
-extern const concptr stat_names[6];
-extern const concptr stat_names_reduced[6];
+extern const concptr stat_names[A_MAX];
+extern const concptr stat_names_reduced[A_MAX];
 
 typedef struct floor_type floor_type;
 typedef struct object_type object_type;
@@ -138,16 +146,9 @@ typedef struct player_type {
 
     s16b max_plv; /* Max Player Level */
 
-#define A_STR 0
-#define A_INT 1
-#define A_WIS 2
-#define A_DEX 3
-#define A_CON 4
-#define A_CHR 5
-#define A_MAX 6
-    BASE_STATUS stat_max[6]; /* Current "maximal" stat values */
-    BASE_STATUS stat_max_max[6]; /* Maximal "maximal" stat values */
-    BASE_STATUS stat_cur[6]; /* Current "natural" stat values */
+    BASE_STATUS stat_max[A_MAX]; /* Current "maximal" stat values */
+    BASE_STATUS stat_max_max[A_MAX]; /* Maximal "maximal" stat values */
+    BASE_STATUS stat_cur[A_MAX]; /* Current "natural" stat values */
 
     s16b learned_spells;
     s16b add_spells;
@@ -520,12 +521,12 @@ typedef struct player_type {
     byte tval_xtra; /* (Unused)Correct xtra tval */
     byte tval_ammo; /* Correct ammo tval */
 
-    s16b pspeed; /* Current speed */
+    s16b pspeed; /*!< 現在の速度 / Current speed */
 
-    ENERGY energy_use; /* Energy use this turn */
+    ENERGY energy_use; /*!< 直近のターンに消費したエネルギー / Energy use this turn */
 
-    POSITION y; /* Player location in dungeon */
-    POSITION x; /* Player location in dungeon */
+    POSITION y; /*!< ダンジョンの現在Y座標 / Player location in dungeon */
+    POSITION x; /*!< ダンジョンの現在X座標 / Player location in dungeon */
     GAME_TEXT name[32]; /*!< 現在のプレイヤー名 / Current player's character name */
     char base_name[32]; /*!< Stripped version of "player_name" */
 

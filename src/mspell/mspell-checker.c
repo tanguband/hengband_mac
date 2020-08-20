@@ -17,8 +17,9 @@
 #include "dungeon/dungeon.h"
 #include "dungeon/quest.h"
 #include "effect/effect-characteristics.h"
+#include "effect/effect-processor.h"
 #include "floor/cave.h"
-#include "floor/floor.h"
+#include "floor/line-of-sight.h"
 #include "grid/grid.h"
 #include "monster-floor/monster-move.h"
 #include "monster-race/monster-race.h"
@@ -36,21 +37,21 @@
 #include "monster/monster-status.h"
 #include "mspell/assign-monster-spell.h"
 #include "mspell/improper-mspell-remover.h"
+#include "mspell/mspell-judgement.h"
 #include "mspell/mspell-learn-checker.h"
 #include "mspell/mspell-mask-definitions.h"
 #include "mspell/mspell-selector.h"
 #include "mspell/mspell-util.h"
-#include "mspell/mspell-judgement.h"
 #include "object-enchant/object-curse.h"
 #include "player/attack-defense-types.h"
 #include "player/player-class.h"
 #include "player/player-race-types.h"
 #include "spell-kind/spells-world.h"
 #include "spell-realm/spells-hex.h"
-#include "spell/process-effect.h"
 #include "spell/range-calc.h"
 #include "spell/spell-types.h"
 #include "system/floor-type-definition.h"
+#include "target/projection-path-calculator.h"
 #include "util/bit-flags-calculator.h"
 #include "view/display-messages.h"
 #include "world/world.h"
@@ -147,18 +148,18 @@ bool clean_shot(player_type *target_ptr, POSITION y1, POSITION x1, POSITION y2, 
 {
     floor_type *floor_ptr = target_ptr->current_floor_ptr;
     u16b grid_g[512];
-    int grid_n = project_path(target_ptr, grid_g, get_max_range(target_ptr), y1, x1, y2, x2, 0);
+    int grid_n = projection_path(target_ptr, grid_g, get_max_range(target_ptr), y1, x1, y2, x2, 0);
     if (!grid_n)
         return FALSE;
 
-    POSITION y = GRID_Y(grid_g[grid_n - 1]);
-    POSITION x = GRID_X(grid_g[grid_n - 1]);
+    POSITION y = get_grid_y(grid_g[grid_n - 1]);
+    POSITION x = get_grid_x(grid_g[grid_n - 1]);
     if ((y != y2) || (x != x2))
         return FALSE;
 
     for (int i = 0; i < grid_n; i++) {
-        y = GRID_Y(grid_g[i]);
-        x = GRID_X(grid_g[i]);
+        y = get_grid_y(grid_g[i]);
+        x = get_grid_x(grid_g[i]);
 
         if ((floor_ptr->grid_array[y][x].m_idx > 0) && !((y == y2) && (x == x2))) {
             monster_type *m_ptr = &floor_ptr->m_list[floor_ptr->grid_array[y][x].m_idx];

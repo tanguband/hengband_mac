@@ -1,12 +1,15 @@
 ﻿#include "room/rooms-normal.h"
 #include "dungeon/dungeon-flag-types.h"
 #include "dungeon/dungeon.h"
-#include "floor/floor.h"
+#include "grid/door.h"
 #include "grid/grid.h"
+#include "grid/stair.h"
+#include "grid/object-placer.h"
 #include "grid/trap.h"
 #include "room/door-definition.h"
 #include "room/rooms-builder.h"
 #include "room/space-finder.h"
+#include "room/vault-builder.h"
 #include "system/floor-type-definition.h"
 
 /*!

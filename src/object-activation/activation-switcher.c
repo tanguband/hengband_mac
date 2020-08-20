@@ -11,11 +11,11 @@
 #include "object-activation/activation-bolt-ball.h"
 #include "object-activation/activation-breath.h"
 #include "object-activation/activation-charm.h"
+#include "object-activation/activation-genocide.h"
 #include "object-activation/activation-others.h"
 #include "object-activation/activation-resistance.h"
 #include "object-activation/activation-teleport.h"
 #include "object-enchant/activation-info-table.h"
-#include "player-attack/player-attack.h"
 #include "player/digestion-processor.h"
 #include "player/player-damage.h"
 #include "specific-object/blade-turner.h"
@@ -24,18 +24,7 @@
 #include "specific-object/muramasa.h"
 #include "specific-object/ring-of-power.h"
 #include "specific-object/toragoroshi.h"
-#include "spell-kind/earthquake.h"
-#include "spell-kind/magic-item-recharger.h"
-#include "spell-kind/spells-floor.h"
-#include "spell-kind/spells-genocide.h"
-#include "spell-kind/spells-grid.h"
-#include "spell-kind/spells-launcher.h"
-#include "spell-kind/spells-lite.h"
-#include "spell-kind/spells-neighbor.h"
-#include "spell-kind/spells-sight.h"
-#include "spell-kind/spells-world.h"
 #include "spell-realm/spells-sorcery.h"
-#include "spell/spell-types.h"
 #include "spell/spells-object.h"
 #include "spell/spells-status.h"
 #include "spell/spells-summon.h"
@@ -96,8 +85,7 @@ bool switch_activation(player_type *user_ptr, object_type *o_ptr, const activati
     case ACT_BO_MISS_2:
         return activate_missile_2(user_ptr);
     case ACT_WHIRLWIND:
-        massacre(user_ptr);
-        return TRUE;
+        return activate_whirlwind(user_ptr);
     case ACT_DRAIN_2:
         return activate_bolt_drain_2(user_ptr);
     case ACT_CALL_CHAOS:
@@ -121,10 +109,7 @@ bool switch_activation(player_type *user_ptr, object_type *o_ptr, const activati
     case ACT_PESTICIDE:
         return activate_pesticide(user_ptr);
     case ACT_BLINDING_LIGHT:
-        msg_format(_("%sが眩しい光で輝いた...", "The %s gleams with blinding light..."), name);
-        (void)fire_ball(user_ptr, GF_LITE, 0, 300, 6);
-        confuse_monsters(user_ptr, 3 * user_ptr->lev / 2);
-        return TRUE;
+        return activate_blinding_light(user_ptr, name);
     case ACT_BIZARRE:
         return activate_ring_of_power(user_ptr, name);
     case ACT_CAST_BA_STAR:
@@ -140,27 +125,19 @@ bool switch_activation(player_type *user_ptr, object_type *o_ptr, const activati
     case ACT_CONFUSE:
         return activate_confusion(user_ptr);
     case ACT_SLEEP:
-        msg_print(_("深青色に輝いている...", "It glows deep blue..."));
-        sleep_monsters_touch(user_ptr);
-        return TRUE;
+        return activate_sleep(user_ptr);
     case ACT_QUAKE:
-        earthquake(user_ptr, user_ptr->y, user_ptr->x, 5, 0);
-        return TRUE;
+        return activate_earthquake(user_ptr);
     case ACT_TERROR:
-        turn_monsters(user_ptr, 40 + user_ptr->lev);
-        return TRUE;
+        return activate_terror(user_ptr);
     case ACT_TELE_AWAY:
         return activate_teleport_away(user_ptr);
     case ACT_BANISH_EVIL:
         return activate_banish_evil(user_ptr);
     case ACT_GENOCIDE:
-        msg_print(_("深青色に輝いている...", "It glows deep blue..."));
-        (void)symbol_genocide(user_ptr, 200, TRUE);
-        return TRUE;
+        return activate_genocide(user_ptr);
     case ACT_MASS_GENO:
-        msg_print(_("ひどく鋭い音が流れ出た...", "It lets out a long, shrill note..."));
-        (void)mass_genocide(user_ptr, 200, TRUE);
-        return TRUE;
+        return activate_mass_genocide(user_ptr);
     case ACT_SCARE_AREA:
         return activate_scare(user_ptr);
     case ACT_AGGRAVATE:
@@ -284,14 +261,9 @@ bool switch_activation(player_type *user_ptr, object_type *o_ptr, const activati
     case ACT_RESIST_POIS:
         return activate_resistance_pois(user_ptr, name);
     case ACT_LIGHT:
-        msg_format(_("%sから澄んだ光があふれ出た...", "The %s wells with clear light..."), name);
-        lite_area(user_ptr, damroll(2, 15), 3);
-        return TRUE;
+        return activate_light(user_ptr, name);
     case ACT_MAP_LIGHT:
-        msg_print(_("眩しく輝いた...", "It shines brightly..."));
-        map_area(user_ptr, DETECT_RAD_MAP);
-        lite_area(user_ptr, damroll(2, 15), 3);
-        return TRUE;
+        return activate_map_light(user_ptr);
     case ACT_DETECT_ALL:
         return activate_all_detection(user_ptr);
     case ACT_DETECT_XTRA:
@@ -301,25 +273,18 @@ bool switch_activation(player_type *user_ptr, object_type *o_ptr, const activati
     case ACT_ID_PLAIN:
         return activate_identification(user_ptr);
     case ACT_RUNE_EXPLO:
-        msg_print(_("明るい赤色に輝いている...", "It glows bright red..."));
-        explosive_rune(user_ptr, user_ptr->y, user_ptr->x);
-        return TRUE;
+        return activate_exploding_rune(user_ptr);
     case ACT_RUNE_PROT:
-        msg_print(_("ブルーに明るく輝いている...", "It glows light blue..."));
-        warding_glyph(user_ptr);
-        return TRUE;
+        return activate_protection_rune(user_ptr);
     case ACT_SATIATE:
         (void)set_food(user_ptr, PY_FOOD_MAX - 1);
         return TRUE;
     case ACT_DEST_DOOR:
-        msg_print(_("明るい赤色に輝いている...", "It glows bright red..."));
-        destroy_doors_touch(user_ptr);
-        return TRUE;
+        return activate_door_destroy(user_ptr);
     case ACT_STONE_MUD:
         return activate_stone_mud(user_ptr);
     case ACT_RECHARGE:
-        recharge(user_ptr, 130);
-        return TRUE;
+        return activate_recharge(user_ptr);
     case ACT_ALCHEMY:
         msg_print(_("明るい黄色に輝いている...", "It glows bright yellow..."));
         (void)alchemy(user_ptr);
@@ -329,8 +294,7 @@ bool switch_activation(player_type *user_ptr, object_type *o_ptr, const activati
     case ACT_TELEPORT:
         return activate_teleport(user_ptr);
     case ACT_RECALL:
-        msg_print(_("やわらかな白色に輝いている...", "It glows soft white..."));
-        return recall_player(user_ptr, randint0(21) + 15);
+        return activate_recall(user_ptr);
     case ACT_JUDGE:
         return activate_judgement(user_ptr, name);
     case ACT_TELEKINESIS:
@@ -346,17 +310,12 @@ bool switch_activation(player_type *user_ptr, object_type *o_ptr, const activati
         brand_bolts(user_ptr);
         return TRUE;
     case ACT_RECHARGE_XTRA:
-        msg_format(_("%sが白く輝いた．．．", "The %s gleams with blinding light..."), name);
-        return recharge(user_ptr, 1000);
+        return activate_recharge_extra(user_ptr, name);
     case ACT_LORE:
         msg_print(_("石が隠された秘密を写し出した．．．", "The stone reveals hidden mysteries..."));
         return perilous_secrets(user_ptr);
     case ACT_SHIKOFUMI:
-        msg_print(_("力強く四股を踏んだ。", "You stamp. (as if you are in a ring.)"));
-        (void)set_afraid(user_ptr, 0);
-        (void)set_hero(user_ptr, randint1(20) + 20, FALSE);
-        (void)dispel_evil(user_ptr, user_ptr->lev * 3);
-        return TRUE;
+        return activate_shikofumi(user_ptr);
     case ACT_PHASE_DOOR:
         return activate_phase_door(user_ptr);
     case ACT_DETECT_ALL_MONS:

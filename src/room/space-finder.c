@@ -1,9 +1,48 @@
 ﻿#include "room/space-finder.h"
 #include "dungeon/dungeon-flag-types.h"
 #include "dungeon/dungeon.h"
-#include "floor/floor.h"
+#include "floor/cave.h"
+#include "grid/grid.h"
 #include "system/dungeon-data-definition.h"
 #include "system/floor-type-definition.h"
+
+/*!
+ * @brief 指定のマスが床系地形であるかを返す / Function that sees if a square is a floor.  (Includes range checking.)
+ * @param x チェックするマスのX座標
+ * @param y チェックするマスのY座標
+ * @return 床系地形ならばTRUE
+ */
+static bool get_is_floor(floor_type *floor_ptr, POSITION x, POSITION y)
+{
+    if (!in_bounds(floor_ptr, y, x)) {
+        return FALSE;
+    }
+
+    if (is_floor_bold(floor_ptr, y, x))
+        return TRUE;
+
+    return FALSE;
+}
+
+/*!
+ * @brief 指定のマスを床地形に変える / Set a square to be floor.  (Includes range checking.)
+ * @param player_ptr プレーヤーへの参照ポインタ
+ * @param x 地形を変えたいマスのX座標
+ * @param y 地形を変えたいマスのY座標
+ * @return なし
+ */
+static void set_floor(player_type *player_ptr, POSITION x, POSITION y)
+{
+    floor_type *floor_ptr = player_ptr->current_floor_ptr;
+    if (!in_bounds(floor_ptr, y, x))
+        return;
+
+    if (floor_ptr->grid_array[y][x].info & CAVE_ROOM)
+        return;
+
+    if (is_extra_bold(floor_ptr, y, x))
+        place_bold(player_ptr, y, x, GB_FLOOR);
+}
 
 /*!
  * @brief

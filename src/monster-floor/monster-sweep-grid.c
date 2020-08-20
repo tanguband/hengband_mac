@@ -6,7 +6,7 @@
 
 #include "monster-floor/monster-sweep-grid.h"
 #include "floor/cave.h"
-#include "floor/floor.h"
+#include "floor/line-of-sight.h"
 #include "grid/feature.h"
 #include "grid/grid.h"
 #include "monster-race/monster-race.h"
@@ -22,6 +22,7 @@
 #include "monster/monster-status.h"
 #include "mspell/mspell-mask-definitions.h"
 #include "system/floor-type-definition.h"
+#include "target/projection-path-calculator.h"
 
  /*!
   * @brief モンスターがプレイヤーから逃走するかどうかを返す /

@@ -4,16 +4,16 @@
 #include "core/player-update-types.h"
 #include "core/stuff-handler.h"
 #include "effect/effect-characteristics.h"
+#include "effect/effect-processor.h"
 #include "effect/spells-effect-util.h"
 #include "flavor/flavor-describer.h"
 #include "flavor/object-flavor-types.h"
 #include "floor/cave.h"
 #include "floor/floor-object.h"
-#include "floor/floor.h"
 #include "game-option/cheat-types.h"
 #include "game-option/special-options.h"
-#include "grid/feature.h"
 #include "grid/feature-flag-types.h"
+#include "grid/feature.h"
 #include "grid/grid.h"
 #include "inventory/inventory-object.h"
 #include "inventory/inventory-slot-types.h"
@@ -50,11 +50,11 @@
 #include "player/player-personalities-types.h"
 #include "player/player-skill.h"
 #include "player/player-status.h"
-#include "spell/process-effect.h"
 #include "spell/spell-types.h"
 #include "sv-definition/sv-bow-types.h"
 #include "system/artifact-type-definition.h"
 #include "system/floor-type-definition.h"
+#include "target/projection-path-calculator.h"
 #include "target/target-checker.h"
 #include "target/target-getter.h"
 #include "util/bit-flags-calculator.h"
@@ -452,7 +452,7 @@ void exe_fire(player_type *shooter_ptr, INVENTORY_IDX item, object_type *j_ptr, 
     }
 
     /* Get projection path length */
-    tdis = project_path(shooter_ptr, path_g, project_length, shooter_ptr->y, shooter_ptr->x, ty, tx, PROJECT_PATH | PROJECT_THRU) - 1;
+    tdis = projection_path(shooter_ptr, path_g, project_length, shooter_ptr->y, shooter_ptr->x, ty, tx, PROJECT_PATH | PROJECT_THRU) - 1;
 
     project_length = 0; /* reset to default */
 

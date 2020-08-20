@@ -1,4 +1,4 @@
-﻿#include "spell/process-effect.h"
+﻿#include "effect/effect-processor.h"
 #include "core/stuff-handler.h"
 #include "effect/effect-characteristics.h"
 #include "effect/effect-feature.h"
@@ -7,7 +7,7 @@
 #include "effect/effect-player.h"
 #include "effect/spells-effect-util.h"
 #include "floor/cave.h"
-#include "floor/floor.h"
+#include "floor/line-of-sight.h"
 #include "game-option/special-options.h"
 #include "grid/feature-flag-types.h"
 #include "io/cursor.h"
@@ -24,6 +24,7 @@
 #include "spell/range-calc.h"
 #include "spell/spell-types.h"
 #include "system/floor-type-definition.h"
+#include "target/projection-path-calculator.h"
 #include "term/gameterm.h"
 #include "util/bit-flags-calculator.h"
 #include "view/display-messages.h"
@@ -80,13 +81,14 @@ static void next_mirror(player_type *creature_ptr, POSITION *next_y, POSITION *n
  * @return 何か一つでも効力があればTRUEを返す / TRUE if any "effects" of the
  * projection were observed, else FALSE
  */
-bool project(player_type *caster_ptr, MONSTER_IDX who, POSITION rad, POSITION y, POSITION x, HIT_POINT dam, EFFECT_ID typ, BIT_FLAGS flag, int monspell)
+bool project(player_type *caster_ptr, const MONSTER_IDX who, POSITION rad, POSITION y, POSITION x, const HIT_POINT dam, const EFFECT_ID typ, BIT_FLAGS flag,
+    const int monspell)
 {
     int dist;
-    POSITION y1, x1;
-    POSITION y2, x2;
-
-    /* For reflecting monsters */
+    POSITION y1;
+    POSITION x1;
+    POSITION y2;
+    POSITION x2;
     POSITION y_saver;
     POSITION x_saver;
     int msec = delay_factor * delay_factor * delay_factor;
@@ -174,7 +176,7 @@ bool project(player_type *caster_ptr, MONSTER_IDX who, POSITION rad, POSITION y,
     }
 
     /* Calculate the projection path */
-    path_n = project_path(caster_ptr, path_g, (project_length ? project_length : get_max_range(caster_ptr)), y1, x1, y2, x2, flag);
+    path_n = projection_path(caster_ptr, path_g, (project_length ? project_length : get_max_range(caster_ptr)), y1, x1, y2, x2, flag);
     handle_stuff(caster_ptr);
 
     if (typ == GF_SEEKER) {
@@ -186,8 +188,8 @@ bool project(player_type *caster_ptr, MONSTER_IDX who, POSITION rad, POSITION y,
         for (int i = 0; i < path_n; ++i) {
             POSITION oy = y;
             POSITION ox = x;
-            POSITION ny = GRID_Y(path_g[i]);
-            POSITION nx = GRID_X(path_g[i]);
+            POSITION ny = get_grid_y(path_g[i]);
+            POSITION nx = get_grid_x(path_g[i]);
             y = ny;
             x = nx;
             gy[grids] = y;
@@ -227,10 +229,10 @@ bool project(player_type *caster_ptr, MONSTER_IDX who, POSITION rad, POSITION y,
             monster_target_x = x;
             remove_mirror(caster_ptr, y, x);
             next_mirror(caster_ptr, &oy, &ox, y, x);
-            path_n = i + project_path(caster_ptr, &(path_g[i + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, oy, ox, flag);
+            path_n = i + projection_path(caster_ptr, &(path_g[i + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, oy, ox, flag);
             for (j = last_i; j <= i; j++) {
-                y = GRID_Y(path_g[j]);
-                x = GRID_X(path_g[j]);
+                y = get_grid_y(path_g[j]);
+                x = get_grid_x(path_g[j]);
                 if (affect_monster(caster_ptr, 0, 0, y, x, dam, GF_SEEKER, flag, TRUE))
                     notice = TRUE;
                 if (!who && (project_m_n == 1) && !jump && (caster_ptr->current_floor_ptr->grid_array[project_m_y][project_m_x].m_idx > 0)) {
@@ -250,8 +252,8 @@ bool project(player_type *caster_ptr, MONSTER_IDX who, POSITION rad, POSITION y,
 
         for (int i = last_i; i < path_n; i++) {
             POSITION py, px;
-            py = GRID_Y(path_g[i]);
-            px = GRID_X(path_g[i]);
+            py = get_grid_y(path_g[i]);
+            px = get_grid_x(path_g[i]);
             if (affect_monster(caster_ptr, 0, 0, py, px, dam, GF_SEEKER, flag, TRUE))
                 notice = TRUE;
             if (!who && (project_m_n == 1) && !jump) {
@@ -279,8 +281,8 @@ bool project(player_type *caster_ptr, MONSTER_IDX who, POSITION rad, POSITION y,
         for (int i = 0; i < path_n; ++i) {
             POSITION oy = y;
             POSITION ox = x;
-            POSITION ny = GRID_Y(path_g[i]);
-            POSITION nx = GRID_X(path_g[i]);
+            POSITION ny = get_grid_y(path_g[i]);
+            POSITION nx = get_grid_x(path_g[i]);
             y = ny;
             x = nx;
             gy[grids] = y;
@@ -326,31 +328,31 @@ bool project(player_type *caster_ptr, MONSTER_IDX who, POSITION rad, POSITION y,
                 monster_target_x = x;
                 remove_mirror(caster_ptr, y, x);
                 for (j = 0; j <= i; j++) {
-                    y = GRID_Y(path_g[j]);
-                    x = GRID_X(path_g[j]);
+                    y = get_grid_y(path_g[j]);
+                    x = get_grid_x(path_g[j]);
                     (void)affect_feature(caster_ptr, 0, 0, y, x, dam, GF_SUPER_RAY);
                 }
 
                 path_n = i;
                 second_step = i + 1;
                 path_n
-                    += project_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y - 1, x - 1, flag);
-                path_n += project_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y - 1, x, flag);
+                    += projection_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y - 1, x - 1, flag);
+                path_n += projection_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y - 1, x, flag);
                 path_n
-                    += project_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y - 1, x + 1, flag);
-                path_n += project_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y, x - 1, flag);
-                path_n += project_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y, x + 1, flag);
+                    += projection_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y - 1, x + 1, flag);
+                path_n += projection_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y, x - 1, flag);
+                path_n += projection_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y, x + 1, flag);
                 path_n
-                    += project_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y + 1, x - 1, flag);
-                path_n += project_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y + 1, x, flag);
+                    += projection_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y + 1, x - 1, flag);
+                path_n += projection_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y + 1, x, flag);
                 path_n
-                    += project_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y + 1, x + 1, flag);
+                    += projection_path(caster_ptr, &(path_g[path_n + 1]), (project_length ? project_length : get_max_range(caster_ptr)), y, x, y + 1, x + 1, flag);
             }
         }
 
         for (int i = 0; i < path_n; i++) {
-            POSITION py = GRID_Y(path_g[i]);
-            POSITION px = GRID_X(path_g[i]);
+            POSITION py = get_grid_y(path_g[i]);
+            POSITION px = get_grid_x(path_g[i]);
             (void)affect_monster(caster_ptr, 0, 0, py, px, dam, GF_SUPER_RAY, flag, TRUE);
             if (!who && (project_m_n == 1) && !jump) {
                 if (caster_ptr->current_floor_ptr->grid_array[project_m_y][project_m_x].m_idx > 0) {
@@ -374,8 +376,8 @@ bool project(player_type *caster_ptr, MONSTER_IDX who, POSITION rad, POSITION y,
     for (k = 0; k < path_n; ++k) {
         POSITION oy = y;
         POSITION ox = x;
-        POSITION ny = GRID_Y(path_g[k]);
-        POSITION nx = GRID_X(path_g[k]);
+        POSITION ny = get_grid_y(path_g[k]);
+        POSITION nx = get_grid_x(path_g[k]);
         if (flag & PROJECT_DISI) {
             if (cave_stop_disintegration(caster_ptr->current_floor_ptr, ny, nx) && (rad > 0))
                 break;

@@ -10,13 +10,16 @@
 #include "core/asking-player.h"
 #include "core/hp-mp-processor.h"
 #include "effect/effect-characteristics.h"
+#include "effect/effect-processor.h"
 #include "game-option/special-options.h"
 #include "monster-race/monster-race.h"
 #include "monster-race/race-flags1.h"
 #include "monster/monster-status.h"
+#include "player-attack/player-attack.h"
 #include "player/avatar.h"
 #include "player/player-damage.h"
-#include "spell/spell-types.h"
+#include "spell-kind/earthquake.h"
+#include "spell-kind/magic-item-recharger.h"
 #include "spell-kind/spells-beam.h"
 #include "spell-kind/spells-curse-removal.h"
 #include "spell-kind/spells-detection.h"
@@ -25,13 +28,14 @@
 #include "spell-kind/spells-grid.h"
 #include "spell-kind/spells-launcher.h"
 #include "spell-kind/spells-lite.h"
+#include "spell-kind/spells-neighbor.h"
 #include "spell-kind/spells-perception.h"
 #include "spell-kind/spells-random.h"
 #include "spell-kind/spells-sight.h"
 #include "spell-kind/spells-teleport.h"
 #include "spell-kind/spells-world.h"
 #include "spell-realm/spells-hex.h"
-#include "spell/process-effect.h"
+#include "spell/spell-types.h"
 #include "spell/spells-status.h"
 #include "status/bad-status-setter.h"
 #include "status/buff-setter.h"
@@ -240,4 +244,105 @@ bool activate_pesticide(player_type *user_ptr)
     msg_print(_("あなたは害虫を一掃した。", "You exterminate small life."));
     (void)dispel_monsters(user_ptr, 4);
     return TRUE;
+}
+
+/*!
+ * @brief switch_activation() から個々のスペルへの依存性をなくすためのシンタックスシュガー
+ * @param user_ptr プレーヤーへの参照ポインタ
+ * @return 発動に成功したらTRUE
+ */
+bool activate_whirlwind(player_type *user_ptr)
+{
+    massacre(user_ptr);
+    return TRUE;
+}
+
+bool activate_blinding_light(player_type *user_ptr, concptr name)
+{
+    msg_format(_("%sが眩しい光で輝いた...", "The %s gleams with blinding light..."), name);
+    (void)fire_ball(user_ptr, GF_LITE, 0, 300, 6);
+    confuse_monsters(user_ptr, 3 * user_ptr->lev / 2);
+    return TRUE;
+}
+
+bool activate_sleep(player_type *user_ptr)
+{
+    msg_print(_("深青色に輝いている...", "It glows deep blue..."));
+    sleep_monsters_touch(user_ptr);
+    return TRUE;
+}
+
+bool activate_door_destroy(player_type *user_ptr)
+{
+    msg_print(_("明るい赤色に輝いている...", "It glows bright red..."));
+    destroy_doors_touch(user_ptr);
+    return TRUE;
+}
+
+bool activate_earthquake(player_type *user_ptr)
+{
+    earthquake(user_ptr, user_ptr->y, user_ptr->x, 5, 0);
+    return TRUE;
+}
+
+bool activate_recharge(player_type *user_ptr)
+{
+    recharge(user_ptr, 130);
+    return TRUE;
+}
+
+bool activate_recharge_extra(player_type *user_ptr, concptr name)
+{
+    msg_format(_("%sが白く輝いた．．．", "The %s gleams with blinding light..."), name);
+    return recharge(user_ptr, 1000);
+}
+
+bool activate_shikofumi(player_type *user_ptr)
+{
+    msg_print(_("力強く四股を踏んだ。", "You stamp. (as if you are in a ring.)"));
+    (void)set_afraid(user_ptr, 0);
+    (void)set_hero(user_ptr, randint1(20) + 20, FALSE);
+    (void)dispel_evil(user_ptr, user_ptr->lev * 3);
+    return TRUE;
+}
+
+bool activate_terror(player_type *user_ptr)
+{
+    turn_monsters(user_ptr, 40 + user_ptr->lev);
+    return TRUE;
+}
+
+bool activate_map_light(player_type *user_ptr)
+{
+    msg_print(_("眩しく輝いた...", "It shines brightly..."));
+    map_area(user_ptr, DETECT_RAD_MAP);
+    lite_area(user_ptr, damroll(2, 15), 3);
+    return TRUE;
+}
+
+bool activate_exploding_rune(player_type *user_ptr)
+{
+    msg_print(_("明るい赤色に輝いている...", "It glows bright red..."));
+    explosive_rune(user_ptr, user_ptr->y, user_ptr->x);
+    return TRUE;
+}
+
+bool activate_protection_rune(player_type *user_ptr)
+{
+    msg_print(_("ブルーに明るく輝いている...", "It glows light blue..."));
+    warding_glyph(user_ptr);
+    return TRUE;
+}
+
+bool activate_light(player_type *user_ptr, concptr name)
+{
+    msg_format(_("%sから澄んだ光があふれ出た...", "The %s wells with clear light..."), name);
+    lite_area(user_ptr, damroll(2, 15), 3);
+    return TRUE;
+}
+
+bool activate_recall(player_type *user_ptr)
+{
+    msg_print(_("やわらかな白色に輝いている...", "It glows soft white..."));
+    return recall_player(user_ptr, randint0(21) + 15);
 }

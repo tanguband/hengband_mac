@@ -8,7 +8,7 @@
 #include "monster-floor/monster-generator.h"
 #include "dungeon/dungeon.h"
 #include "floor/cave.h"
-#include "floor/floor.h"
+#include "floor/floor-util.h"
 #include "game-option/cheat-options.h"
 #include "grid/grid.h"
 #include "monster-floor/one-monster-placer.h"
@@ -26,6 +26,7 @@
 #include "mspell/summon-checker.h"
 #include "spell/spells-summon.h"
 #include "system/floor-type-definition.h"
+#include "target/projection-path-calculator.h"
 #include "util/string-processor.h"
 #include "view/display-messages.h"
 

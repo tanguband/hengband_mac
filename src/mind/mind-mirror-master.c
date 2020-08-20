@@ -8,9 +8,9 @@
 #include "effect/effect-feature.h"
 #include "effect/effect-item.h"
 #include "effect/effect-monster.h"
+#include "effect/effect-processor.h"
 #include "effect/spells-effect-util.h"
 #include "floor/cave.h"
-#include "floor/floor.h"
 #include "game-option/disturbance-options.h"
 #include "game-option/special-options.h"
 #include "grid/feature.h"
@@ -25,13 +25,13 @@
 #include "spell-kind/spells-sight.h"
 #include "spell-kind/spells-teleport.h"
 #include "spell-kind/spells-world.h"
-#include "spell/process-effect.h"
 #include "spell/spell-types.h"
 #include "status/body-improvement.h"
 #include "status/buff-setter.h"
 #include "status/sight-setter.h"
 #include "system/floor-type-definition.h"
 #include "target/grid-selector.h"
+#include "target/projection-path-calculator.h"
 #include "target/target-getter.h"
 #include "term/gameterm.h"
 #include "util/bit-flags-calculator.h"
@@ -475,7 +475,7 @@ bool cast_mirror_spell(player_type *caster_ptr, mind_mirror_master_type spell)
                     project(caster_ptr, 0, 2, y, x, (HIT_POINT)plev, GF_OLD_SLEEP,
                         (PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP | PROJECT_NO_HANGEKI), -1);
 
-        break;        
+        break;
     case SEEKER_RAY:
         if (!get_aim_dir(caster_ptr, &dir))
             return FALSE;

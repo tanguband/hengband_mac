@@ -110,6 +110,7 @@ hengband_SOURCES = \
 	cmd-io/cmd-autopick.c cmd-io/cmd-autopick.h \
 	cmd-io/cmd-diary.c cmd-io/cmd-diary.h \
 	cmd-io/cmd-dump.c cmd-io/cmd-dump.h \
+	cmd-io/cmd-floor.c cmd-io/cmd-floor.h \
 	cmd-io/cmd-gameoption.c cmd-io/cmd-gameoption.h \
 	cmd-io/cmd-help.c cmd-io/cmd-help.h \
 	cmd-io/cmd-knowledge.c cmd-io/cmd-knowledge.h \
@@ -122,11 +123,14 @@ hengband_SOURCES = \
 	cmd-io/feeling-table.c cmd-io/feeling-table.h \
 	cmd-io/macro-util.c cmd-io/macro-util.h \
 	\
+	cmd-item/cmd-destroy.c cmd-item/cmd-destroy.h \
 	cmd-item/cmd-eat.c cmd-item/cmd-eat.h \
+	cmd-item/cmd-equipment.c cmd-item/cmd-equipment.h \
 	cmd-item/cmd-item.c cmd-item/cmd-item.h \
 	cmd-item/cmd-magiceat.c cmd-item/cmd-magiceat.h \
 	cmd-item/cmd-quaff.c cmd-item/cmd-quaff.h \
 	cmd-item/cmd-read.c cmd-item/cmd-read.h \
+	cmd-item/cmd-refill.c cmd-item/cmd-refill.h \
 	cmd-item/cmd-smith.c cmd-item/cmd-smith.h \
 	cmd-item/cmd-throw.c cmd-item/cmd-throw.h \
 	cmd-item/cmd-usestaff.c cmd-item/cmd-usestaff.h \
@@ -154,6 +158,7 @@ hengband_SOURCES = \
 	core/hp-mp-processor.c core/hp-mp-processor.h \
 	core/hp-mp-regenerator.c core/hp-mp-regenerator.h \
 	core/magic-effects-timeout-reducer.c core/magic-effects-timeout-reducer.h \
+	core/object-compressor.c core/object-compressor.h \
 	core/output-updater.c core/output-updater.h \
 	core/player-processor.c core/player-processor.h \
 	core/player-redraw-types.h \
@@ -196,6 +201,7 @@ hengband_SOURCES = \
 	effect/effect-player-curse.c effect/effect-player-curse.h \
 	effect/effect-player-spirit.c effect/effect-player-spirit.h \
 	effect/effect-player-switcher.c effect/effect-player-switcher.h \
+	effect/effect-processor.c effect/effect-processor.h \
 	effect/effect-characteristics.h \
 	\
 	flavor/flag-inscriptions-table.c flavor/flag-inscriptions-table.h \
@@ -210,7 +216,6 @@ hengband_SOURCES = \
 	floor/cave-generator.c floor/cave-generator.h \
 	floor/dungeon-tunnel-util.c floor/dungeon-tunnel-util.h \
 	floor/fixed-map-generator.c floor/fixed-map-generator.h \
-	floor/floor.c floor/floor.h \
 	floor/floor-allocation-types.h \
 	floor/floor-base-definitions.h \
 	floor/floor-changer.c floor/floor-changer.h \
@@ -226,6 +231,7 @@ hengband_SOURCES = \
 	floor/floor-town.h floor/floor-town.c \
 	floor/floor-util.c floor/floor-util.h \
 	floor/geometry.c floor/geometry.h \
+	floor/line-of-sight.c floor/line-of-sight.h \
 	floor/object-allocator.c floor/object-allocator.h \
 	floor/object-scanner.c floor/object-scanner.h \
 	floor/pattern-walk.c floor/pattern-walk.h \
@@ -249,11 +255,14 @@ hengband_SOURCES = \
 	game-option/special-options.c game-option/special-options.h \
 	game-option/text-display-options.c game-option/text-display-options.h \
 	\
+	grid/door.c grid/door.h \
 	grid/feature-flag-types.h \
 	grid/feature-generator.c grid/feature-generator.h \
 	grid/feature.c grid/feature.h \
 	grid/grid.c grid/grid.h \
 	grid/lighting-colors-table.c grid/lighting-colors-table.h \
+	grid/object-placer.c grid/object-placer.h \
+	grid/stair.c grid/stair.h \
 	grid/trap.c grid/trap.h \
 	\
 	info-reader/artifact-reader.c info-reader/artifact-reader.h \
@@ -541,6 +550,7 @@ hengband_SOURCES = \
 	object-activation/activation-bolt-ball.c object-activation/activation-bolt-ball.h \
 	object-activation/activation-breath.c object-activation/activation-breath.h \
 	object-activation/activation-charm.c object-activation/activation-charm.h \
+	object-activation/activation-genocide.c object-activation/activation-genocide.h \
 	object-activation/activation-others.c object-activation/activation-others.h \
 	object-activation/activation-resistance.c object-activation/activation-resistance.h \
 	object-activation/activation-switcher.c object-activation/activation-switcher.h \
@@ -664,6 +674,7 @@ hengband_SOURCES = \
 	room/space-finder.c room/space-finder.h \
 	room/pit-nest-kinds-table.c room/pit-nest-kinds-table.h \
 	room/treasure-deployment.c room/treasure-deployment.h \
+	room/vault-builder.c room/vault-builder.h \
 	\
 	save/floor-writer.c save/floor-writer.h \
 	save/info-writer.c save/info-writer.h \
@@ -685,7 +696,6 @@ hengband_SOURCES = \
 	specific-object/toragoroshi.c specific-object/toragoroshi.h \
 	specific-object/torch.c specific-object/torch.h \
 	\
-	spell/process-effect.c spell/process-effect.h \
 	spell/range-calc.c spell/range-calc.h \
 	spell/spells-describer.c spell/spells-describer.h \
 	spell/spells-diceroll.c spell/spells-diceroll.h \
@@ -784,6 +794,7 @@ hengband_SOURCES = \
 	system/gamevalue.h \
 	\
 	target/grid-selector.c target/grid-selector.h \
+	target/projection-path-calculator.c target/projection-path-calculator.h
 	target/target-checker.c target/target-checker.h \
 	target/target-describer.c target/target-describer.h \
 	target/target-getter.c target/target-getter.h \
