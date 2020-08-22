@@ -1,16 +1,35 @@
 ﻿#include "player/player-status.h"
 
+enum flag_cause {
+    FLAG_CAUSE_INVEN_RARM = 0, /*!< アイテムスロット…右手 */
+    FLAG_CAUSE_INVEN_LARM = 1, /*!< アイテムスロット…左手 */
+    FLAG_CAUSE_INVEN_BOW = 2, /*!< アイテムスロット…射撃 */
+    FLAG_CAUSE_INVEN_RIGHT = 3, /*!< アイテムスロット…右手指 */
+    FLAG_CAUSE_INVEN_LEFT = 4, /*!< アイテムスロット…左手指 */
+    FLAG_CAUSE_INVEN_NECK = 5, /*!< アイテムスロット…首 */
+    FLAG_CAUSE_INVEN_LITE = 6, /*!< アイテムスロット…光源 */
+    FLAG_CAUSE_INVEN_BODY = 7, /*!< アイテムスロット…体 */
+    FLAG_CAUSE_INVEN_OUTER = 8, /*!< アイテムスロット…体の上 */
+    FLAG_CAUSE_INVEN_HEAD = 9, /*!< アイテムスロット…頭部 */
+    FLAG_CAUSE_INVEN_HANDS = 10, /*!< アイテムスロット…腕部 */
+    FLAG_CAUSE_INVEN_FEET = 11, /*!< アイテムスロット…脚部 */
+    FLAG_CAUSE_RACE = 12, /*!< 種族上の体得 */
+    FLAG_CAUSE_CLASS = 13, /*!< 職業上の体得 */
+    FLAG_CAUSE_PERSONALITY = 14, /*!< 性格上の体得 */
+    FLAG_CAUSE_MAGIC_TIME_EFFECT = 15 /*!< 魔法による時限効果 */
+};
+
 bool have_pass_wall(player_type *creature_ptr);
 bool have_kill_wall(player_type *creature_ptr);
-void have_xtra_might(player_type *creature_ptr);
-void have_esp_evil(player_type *creature_ptr);
-void have_esp_animal(player_type *creature_ptr);
-void have_esp_undead(player_type *creature_ptr);
-void have_esp_demon(player_type *creature_ptr);
-void have_esp_orc(player_type *creature_ptr);
-void have_esp_troll(player_type *creature_ptr);
-void have_esp_giant(player_type *creature_ptr);
-void have_esp_dragon(player_type *creature_ptr);
+BIT_FLAGS have_xtra_might(player_type *creature_ptr);
+BIT_FLAGS have_esp_evil(player_type *creature_ptr);
+BIT_FLAGS have_esp_animal(player_type *creature_ptr);
+BIT_FLAGS have_esp_undead(player_type *creature_ptr);
+BIT_FLAGS have_esp_demon(player_type *creature_ptr);
+BIT_FLAGS have_esp_orc(player_type *creature_ptr);
+BIT_FLAGS have_esp_troll(player_type *creature_ptr);
+BIT_FLAGS have_esp_giant(player_type *creature_ptr);
+BIT_FLAGS have_esp_dragon(player_type *creature_ptr);
 void have_esp_human(player_type *creature_ptr);
 void have_esp_good(player_type *creature_ptr);
 void have_esp_nonliving(player_type *creature_ptr);

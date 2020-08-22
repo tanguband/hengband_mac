@@ -300,15 +300,15 @@ void calc_bonuses(player_type *creature_ptr)
 
     /* Save the old vision stuff */
     bool old_telepathy = creature_ptr->telepathy;
-    bool old_esp_animal = creature_ptr->esp_animal;
-    bool old_esp_undead = creature_ptr->esp_undead;
-    bool old_esp_demon = creature_ptr->esp_demon;
-    bool old_esp_orc = creature_ptr->esp_orc;
-    bool old_esp_troll = creature_ptr->esp_troll;
-    bool old_esp_giant = creature_ptr->esp_giant;
-    bool old_esp_dragon = creature_ptr->esp_dragon;
+    BIT_FLAGS old_esp_animal = creature_ptr->esp_animal;
+    BIT_FLAGS old_esp_undead = creature_ptr->esp_undead;
+    BIT_FLAGS old_esp_demon = creature_ptr->esp_demon;
+    BIT_FLAGS old_esp_orc = creature_ptr->esp_orc;
+    BIT_FLAGS old_esp_troll = creature_ptr->esp_troll;
+    BIT_FLAGS old_esp_giant = creature_ptr->esp_giant;
+    BIT_FLAGS old_esp_dragon = creature_ptr->esp_dragon;
     bool old_esp_human = creature_ptr->esp_human;
-    bool old_esp_evil = creature_ptr->esp_evil;
+    BIT_FLAGS old_esp_evil = creature_ptr->esp_evil;
     bool old_esp_good = creature_ptr->esp_good;
     bool old_esp_nonliving = creature_ptr->esp_nonliving;
     bool old_esp_unique = creature_ptr->esp_unique;
@@ -321,15 +321,15 @@ void calc_bonuses(player_type *creature_ptr)
 
     creature_ptr->pass_wall = have_pass_wall(creature_ptr);
     creature_ptr->kill_wall = have_kill_wall(creature_ptr);
-    have_xtra_might(creature_ptr);
-    have_esp_evil(creature_ptr);
-    have_esp_animal(creature_ptr);
-    have_esp_undead(creature_ptr);
-    have_esp_demon(creature_ptr);
-    have_esp_orc(creature_ptr);
-    have_esp_troll(creature_ptr);
-    have_esp_giant(creature_ptr);
-    have_esp_dragon(creature_ptr);
+    creature_ptr->xtra_might = have_xtra_might(creature_ptr);
+    creature_ptr->esp_evil = have_esp_evil(creature_ptr);
+    creature_ptr->esp_animal = have_esp_animal(creature_ptr);
+    creature_ptr->esp_undead = have_esp_undead(creature_ptr);
+    creature_ptr->esp_demon = have_esp_demon(creature_ptr);
+    creature_ptr->esp_orc = have_esp_orc(creature_ptr);
+    creature_ptr->esp_troll = have_esp_troll(creature_ptr);
+    creature_ptr->esp_giant = have_esp_giant(creature_ptr);
+    creature_ptr->esp_dragon = have_esp_dragon(creature_ptr);
     have_esp_human(creature_ptr);
     have_esp_good(creature_ptr);
     have_esp_nonliving(creature_ptr);

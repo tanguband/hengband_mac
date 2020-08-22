@@ -64,12 +64,11 @@ bool have_pass_wall(player_type *creature_ptr)
 	return pow;
 }
 
-void have_xtra_might(player_type *creature_ptr)
+BIT_FLAGS have_xtra_might(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->xtra_might = FALSE;
+    BIT_FLAGS result = 0L;
 
     for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
@@ -79,20 +78,21 @@ void have_xtra_might(player_type *creature_ptr)
         object_flags(creature_ptr, o_ptr, flgs);
 
         if (have_flag(flgs, TR_XTRA_MIGHT))
-            creature_ptr->xtra_might = TRUE;
+            result |= 0x01 << (i - INVEN_RARM);
     }
+
+	return result;
 }
 
-void have_esp_evil(player_type *creature_ptr)
+BIT_FLAGS have_esp_evil(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_evil = FALSE;
+    BIT_FLAGS result = 0L;
 
     if (creature_ptr->realm1 == REALM_HEX) {
         if (hex_spelling(creature_ptr, HEX_DETECT_EVIL))
-            creature_ptr->esp_evil = TRUE;
+            result |= 0x01 << FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
     for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
@@ -103,16 +103,17 @@ void have_esp_evil(player_type *creature_ptr)
         object_flags(creature_ptr, o_ptr, flgs);
 
         if (have_flag(flgs, TR_ESP_EVIL))
-            creature_ptr->esp_evil = TRUE;
+            result |= 0x01 << (i - INVEN_RARM);
     }
+
+	return result;
 }
 
-void have_esp_animal(player_type *creature_ptr)
+BIT_FLAGS have_esp_animal(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_animal = FALSE;
+    BIT_FLAGS result = 0L;
 
     for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
@@ -122,16 +123,17 @@ void have_esp_animal(player_type *creature_ptr)
         object_flags(creature_ptr, o_ptr, flgs);
 
         if (have_flag(flgs, TR_ESP_ANIMAL))
-            creature_ptr->esp_animal = TRUE;
+            result |= 0x01 << (i - INVEN_RARM);
     }
+
+	return result;
 }
 
-void have_esp_undead(player_type *creature_ptr)
+BIT_FLAGS have_esp_undead(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_undead = FALSE;
+    BIT_FLAGS result = 0L;
 
     for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
@@ -141,16 +143,17 @@ void have_esp_undead(player_type *creature_ptr)
         object_flags(creature_ptr, o_ptr, flgs);
 
         if (have_flag(flgs, TR_ESP_UNDEAD))
-            creature_ptr->esp_undead = TRUE;
+            result |= 0x01 << (i - INVEN_RARM);
     }
+
+	return result;
 }
 
-void have_esp_demon(player_type *creature_ptr)
+BIT_FLAGS have_esp_demon(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_demon = FALSE;
+    BIT_FLAGS result = 0L;
 
     for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
@@ -160,16 +163,17 @@ void have_esp_demon(player_type *creature_ptr)
         object_flags(creature_ptr, o_ptr, flgs);
 
         if (have_flag(flgs, TR_ESP_DEMON))
-            creature_ptr->esp_demon = TRUE;
+            result |= 0x01 << (i - INVEN_RARM);
     }
+
+	return result;
 }
 
-void have_esp_orc(player_type *creature_ptr)
+BIT_FLAGS have_esp_orc(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_orc = FALSE;
+    BIT_FLAGS result = 0L;
 
     for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
@@ -179,16 +183,17 @@ void have_esp_orc(player_type *creature_ptr)
         object_flags(creature_ptr, o_ptr, flgs);
 
         if (have_flag(flgs, TR_ESP_ORC))
-            creature_ptr->esp_orc = TRUE;
+            result |= 0x01 << (i - INVEN_RARM);
     }
+
+	return result;
 }
 
-void have_esp_troll(player_type *creature_ptr)
+BIT_FLAGS have_esp_troll(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_troll = FALSE;
+    BIT_FLAGS result = 0L;
 
     for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
@@ -198,16 +203,17 @@ void have_esp_troll(player_type *creature_ptr)
         object_flags(creature_ptr, o_ptr, flgs);
 
         if (have_flag(flgs, TR_ESP_TROLL))
-            creature_ptr->esp_troll = TRUE;
+            result |= 0x01 << (i - INVEN_RARM);
     }
+
+	return result;
 }
 
-void have_esp_giant(player_type *creature_ptr)
+BIT_FLAGS have_esp_giant(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_giant = FALSE;
+    BIT_FLAGS result = 0L;
 
     for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
@@ -217,16 +223,17 @@ void have_esp_giant(player_type *creature_ptr)
         object_flags(creature_ptr, o_ptr, flgs);
 
         if (have_flag(flgs, TR_ESP_GIANT))
-            creature_ptr->esp_giant = TRUE;
+            result |= 0x01 << (i - INVEN_RARM);
     }
+
+	return result;
 }
 
-void have_esp_dragon(player_type *creature_ptr)
+BIT_FLAGS have_esp_dragon(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_dragon = FALSE;
+    BIT_FLAGS result = 0L;
 
     for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
         o_ptr = &creature_ptr->inventory_list[i];
@@ -236,8 +243,10 @@ void have_esp_dragon(player_type *creature_ptr)
         object_flags(creature_ptr, o_ptr, flgs);
 
         if (have_flag(flgs, TR_ESP_DRAGON))
-            creature_ptr->esp_dragon = TRUE;
+            result |= 0x01 << (i - INVEN_RARM);
     }
+
+	return result;
 }
 
 void have_esp_human(player_type *creature_ptr)

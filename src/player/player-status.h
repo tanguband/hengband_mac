@@ -417,22 +417,22 @@ typedef struct player_type {
     bool hold_exp; /* Resist exp draining */
 
     bool telepathy; /* Telepathy */
-    bool esp_animal;
-    bool esp_undead;
-    bool esp_demon;
-    bool esp_orc;
-    bool esp_troll;
-    bool esp_giant;
-    bool esp_dragon;
+    BIT_FLAGS esp_animal;
+    BIT_FLAGS esp_undead;
+    BIT_FLAGS esp_demon;
+    BIT_FLAGS esp_orc;
+    BIT_FLAGS esp_troll;
+    BIT_FLAGS esp_giant;
+    BIT_FLAGS esp_dragon;
     bool esp_human;
-    bool esp_evil;
+    BIT_FLAGS esp_evil;
     bool esp_good;
     bool esp_nonliving;
     bool esp_unique;
 
     bool slow_digest; /* Slower digestion */
     bool bless_blade; /* Blessed blade */
-    bool xtra_might; /* Extra might bow */
+    BIT_FLAGS xtra_might; /* Extra might bow */
     bool impact[2]; /* Earthquake blows */
     bool pass_wall; /* Permanent wraithform */
     bool kill_wall;
