@@ -29,7 +29,7 @@
 #include "game-option/runtime-arguments.h"
 #include "game-option/special-options.h"
 #include "system/system-variables.h"
-#include "main/init.h"
+#include "main/angband-initializer.h"
 #include "io/files-util.h"
 #include "io/input-key-acceptor.h"
 #include "world.h"
