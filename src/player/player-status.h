@@ -3,6 +3,7 @@
 #include "system/angband.h"
 
 /* 人畜無害なenumヘッダを先に読み込む */
+#include "player-info/base-status-types.h"
 #include "player/player-classes-types.h"
 #include "player/player-personalities-types.h"
 #include "player/player-race-types.h"
@@ -26,14 +27,6 @@
 /*
  * Player constants
  */
-#define A_STR 0
-#define A_INT 1
-#define A_WIS 2
-#define A_DEX 3
-#define A_CON 4
-#define A_CHR 5
-#define A_MAX 6
-
 #define PY_MAX_EXP 99999999L /*!< プレイヤー経験値の最大値 / Maximum exp */
 #define PY_MAX_GOLD 999999999L /*!< プレイヤー所持金の最大値 / Maximum gold */
 #define PY_MAX_LEVEL 50 /*!< プレイヤーレベルの最大値 / Maximum level */
@@ -51,10 +44,12 @@
 #define SPELL_SW 22
 #define SPELL_WALL 20
 
-/* Empty hand status */
-#define EMPTY_HAND_NONE 0x0000 /* Both hands are used */
-#define EMPTY_HAND_LARM 0x0001 /* Left hand is empty */
-#define EMPTY_HAND_RARM 0x0002 /* Right hand is empty */
+/*!< Empty hand status */
+enum empty_hand_status {
+    EMPTY_HAND_NONE = 0x0000, /*!<Both hands are used */
+    EMPTY_HAND_LARM = 0x0001, /*!<Left hand is empty */
+    EMPTY_HAND_RARM = 0x0002 /*!<Right hand is empty */
+};
 
 /*
  * Player sex constants (hard-coded by save-files, arrays, etc)
@@ -62,30 +57,6 @@
 #define SEX_FEMALE 0
 #define SEX_MALE 1
 #define MAX_SEXES 2 /*!< 性別の定義最大数 / Maximum number of player "sex" types (see "table.c", etc) */
-
-extern const byte adj_mag_study[];
-extern const byte adj_mag_mana[];
-extern const byte adj_mag_fail[];
-extern const byte adj_mag_stat[];
-extern const byte adj_chr_gold[];
-extern const byte adj_int_dev[];
-extern const byte adj_wis_sav[];
-extern const byte adj_dex_dis[];
-extern const byte adj_int_dis[];
-extern const byte adj_dex_ta[];
-extern const byte adj_str_td[];
-extern const byte adj_dex_th[];
-extern const byte adj_str_th[];
-extern const byte adj_str_wgt[];
-extern const byte adj_str_hold[];
-extern const byte adj_str_dig[];
-extern const byte adj_dex_safe[];
-extern const byte adj_con_fix[];
-extern const byte adj_con_mhp[];
-extern const byte adj_chr_chm[];
-
-extern const concptr stat_names[A_MAX];
-extern const concptr stat_names_reduced[A_MAX];
 
 typedef struct floor_type floor_type;
 typedef struct object_type object_type;
@@ -127,7 +98,7 @@ typedef struct player_type {
     PLAYER_LEVEL lev; /* Level */
 
     TOWN_IDX town_num; /* Current town number */
-    s16b arena_number; /* monster number in arena -KMW- */
+    s16b arena_number; /* monster number in on_defeat_arena_monster -KMW- */
     bool phase_out; /*!< フェイズアウト状態(闘技場観戦状態などに利用、NPCの処理の対象にならず自身もほとんどの行動ができない) */
 
     DUNGEON_IDX dungeon_idx; /* current dungeon index */
@@ -322,7 +293,7 @@ typedef struct player_type {
     bool monk_notify_aux;
 
     byte leave_bldg;
-    byte exit_bldg; /* Goal obtained in arena? -KMW- */
+    byte exit_bldg; /* Goal obtained in on_defeat_arena_monster? -KMW- */
 
     bool leaving_dungeon; /* True if player is leaving the dungeon */
     bool teleport_town;
@@ -541,7 +512,6 @@ extern int spell_exp_level(int spell_exp);
 
 extern int calc_weapon_weight_limit(player_type *creature_ptr);
 
-
 extern s16b calc_num_fire(player_type *creature_ptr, object_type *o_ptr);
 extern void calc_bonuses(player_type *creature_ptr);
 extern WEIGHT weight_limit(player_type *creature_ptr);
@@ -562,9 +532,6 @@ extern void wreck_the_pattern(player_type *creature_ptr);
 extern void cnv_stat(int val, char *out_val);
 extern s16b modify_stat_value(int value, int amount);
 extern long calc_score(player_type *creature_ptr);
-
-extern const s32b player_exp[PY_MAX_LEVEL];
-extern const s32b player_exp_a[PY_MAX_LEVEL];
 
 extern bool is_blessed(player_type *creature_ptr);
 extern bool is_time_limit_esp(player_type *creature_ptr);
