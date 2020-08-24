@@ -396,8 +396,8 @@ typedef struct player_type {
     bool sh_elec; /* Electric 'immolation' effect */
     bool sh_cold; /* Cold 'immolation' effect */
 
-    bool anti_magic; /* Anti-magic */
-    bool anti_tele; /* Prevent teleportation */
+    BIT_FLAGS anti_magic; /* Anti-magic */
+    BIT_FLAGS anti_tele; /* Prevent teleportation */
 
     bool sustain_str; /* Keep strength */
     bool sustain_int; /* Keep intelligence */
@@ -424,20 +424,20 @@ typedef struct player_type {
     BIT_FLAGS esp_troll;
     BIT_FLAGS esp_giant;
     BIT_FLAGS esp_dragon;
-    bool esp_human;
+    BIT_FLAGS esp_human;
     BIT_FLAGS esp_evil;
-    bool esp_good;
-    bool esp_nonliving;
-    bool esp_unique;
+    BIT_FLAGS esp_good;
+    BIT_FLAGS esp_nonliving;
+    BIT_FLAGS esp_unique;
 
     bool slow_digest; /* Slower digestion */
-    bool bless_blade; /* Blessed blade */
+    BIT_FLAGS bless_blade; /* Blessed blade */
     BIT_FLAGS xtra_might; /* Extra might bow */
     bool impact[2]; /* Earthquake blows */
     bool pass_wall; /* Permanent wraithform */
     bool kill_wall;
-    bool dec_mana;
-    bool easy_spell;
+    BIT_FLAGS dec_mana;
+    BIT_FLAGS easy_spell;
     bool heavy_spell;
     bool warning;
     bool mighty_throw;

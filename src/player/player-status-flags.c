@@ -30,6 +30,26 @@
 #include "util/quarks.h"
 #include "util/string-processor.h"
 
+static BIT_FLAGS check_equipment_flags(player_type *creature_ptr, tr_type tr_flag);
+
+static BIT_FLAGS check_equipment_flags(player_type *creature_ptr, tr_type tr_flag)
+{
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    BIT_FLAGS result = 0L;
+    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+
+        object_flags(creature_ptr, o_ptr, flgs);
+
+        if (have_flag(flgs, tr_flag))
+            result |= 0x01 << (i - INVEN_RARM);
+    }
+    return result;
+}
+
 bool have_kill_wall(player_type *creature_ptr)
 {
     if (creature_ptr->mimic_form == MIMIC_DEMON_LORD || music_singing(creature_ptr, MUSIC_WALL)) {
@@ -66,263 +86,97 @@ bool have_pass_wall(player_type *creature_ptr)
 
 BIT_FLAGS have_xtra_might(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    BIT_FLAGS result = 0L;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_XTRA_MIGHT))
-            result |= 0x01 << (i - INVEN_RARM);
-    }
-
+	BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_XTRA_MIGHT);
 	return result;
 }
 
 BIT_FLAGS have_esp_evil(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
     BIT_FLAGS result = 0L;
-
     if (creature_ptr->realm1 == REALM_HEX) {
         if (hex_spelling(creature_ptr, HEX_DETECT_EVIL))
             result |= 0x01 << FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_EVIL))
-            result |= 0x01 << (i - INVEN_RARM);
-    }
-
+    result |= check_equipment_flags(creature_ptr, TR_ESP_EVIL);
 	return result;
 }
 
 BIT_FLAGS have_esp_animal(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
     BIT_FLAGS result = 0L;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_ANIMAL))
-            result |= 0x01 << (i - INVEN_RARM);
-    }
-
+    result |= check_equipment_flags(creature_ptr, TR_ESP_ANIMAL);
 	return result;
 }
 
 BIT_FLAGS have_esp_undead(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
     BIT_FLAGS result = 0L;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_UNDEAD))
-            result |= 0x01 << (i - INVEN_RARM);
-    }
-
+    result |= check_equipment_flags(creature_ptr, TR_ESP_UNDEAD);
 	return result;
 }
 
 BIT_FLAGS have_esp_demon(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
     BIT_FLAGS result = 0L;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_DEMON))
-            result |= 0x01 << (i - INVEN_RARM);
-    }
-
+    result |= check_equipment_flags(creature_ptr, TR_ESP_DEMON);
 	return result;
 }
 
 BIT_FLAGS have_esp_orc(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
     BIT_FLAGS result = 0L;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_ORC))
-            result |= 0x01 << (i - INVEN_RARM);
-    }
-
+    result |= check_equipment_flags(creature_ptr, TR_ESP_ORC);
 	return result;
 }
 
 BIT_FLAGS have_esp_troll(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
     BIT_FLAGS result = 0L;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_TROLL))
-            result |= 0x01 << (i - INVEN_RARM);
-    }
-
+    result |= check_equipment_flags(creature_ptr, TR_ESP_TROLL);
 	return result;
 }
 
 BIT_FLAGS have_esp_giant(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
     BIT_FLAGS result = 0L;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_GIANT))
-            result |= 0x01 << (i - INVEN_RARM);
-    }
-
+    result |= check_equipment_flags(creature_ptr, TR_ESP_GIANT);
 	return result;
 }
 
 BIT_FLAGS have_esp_dragon(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
     BIT_FLAGS result = 0L;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_DRAGON))
-            result |= 0x01 << (i - INVEN_RARM);
-    }
-
+    result |= check_equipment_flags(creature_ptr, TR_ESP_DRAGON);
 	return result;
 }
 
-void have_esp_human(player_type *creature_ptr)
+BIT_FLAGS have_esp_human(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_human = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_HUMAN))
-            creature_ptr->esp_human = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_ESP_HUMAN);
+    return result;
 }
 
-void have_esp_good(player_type *creature_ptr)
+BIT_FLAGS have_esp_good(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_good = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_GOOD))
-            creature_ptr->esp_good = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_ESP_GOOD);
+    return result;
 }
 
-void have_esp_nonliving(player_type *creature_ptr)
+BIT_FLAGS have_esp_nonliving(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_nonliving = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_NONLIVING))
-            creature_ptr->esp_nonliving = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_ESP_GOOD);
+    return result;
 }
 
-void have_esp_unique(player_type *creature_ptr)
+BIT_FLAGS have_esp_unique(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->esp_unique = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_ESP_UNIQUE))
-            creature_ptr->esp_unique = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_ESP_UNIQUE);
+    return result;
 }
 
 void have_esp_telepathy(player_type *creature_ptr)
@@ -369,23 +223,11 @@ void have_esp_telepathy(player_type *creature_ptr)
     }
 }
 
-void have_bless_blade(player_type *creature_ptr)
+BIT_FLAGS have_bless_blade(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->bless_blade = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_BLESSED))
-            creature_ptr->bless_blade = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_BLESSED);
+    return result;
 }
 
 void have_easy2_weapon(player_type *creature_ptr)
@@ -502,23 +344,11 @@ void have_mighty_throw(player_type *creature_ptr)
     }
 }
 
-void have_dec_mana(player_type *creature_ptr)
+BIT_FLAGS have_dec_mana(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->xtra_might = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_DEC_MANA))
-            creature_ptr->dec_mana = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_DEC_MANA);
+    return result;
 }
 
 void have_reflect(player_type *creature_ptr)
@@ -595,42 +425,18 @@ void have_warning(player_type *creature_ptr)
     }
 }
 
-void have_anti_magic(player_type *creature_ptr)
+BIT_FLAGS have_anti_magic(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->anti_magic = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_NO_MAGIC))
-            creature_ptr->anti_magic = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_NO_MAGIC);
+    return result;
 }
 
-void have_anti_tele(player_type *creature_ptr)
+BIT_FLAGS have_anti_tele(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->anti_tele = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_NO_TELE))
-            creature_ptr->anti_tele = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_NO_TELE);
+    return result;
 }
 
 void have_sh_fire(player_type *creature_ptr)
@@ -741,20 +547,11 @@ void have_sh_cold(player_type *creature_ptr)
     }
 }
 
-void have_easy_spell(player_type *creature_ptr)
+BIT_FLAGS have_easy_spell(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->easy_spell = FALSE;
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_EASY_SPELL))
-            creature_ptr->easy_spell = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_EASY_SPELL);
+    return result;
 }
 
 void have_heavy_spell(player_type *creature_ptr)
