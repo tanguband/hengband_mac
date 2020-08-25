@@ -179,48 +179,33 @@ BIT_FLAGS have_esp_unique(player_type *creature_ptr)
     return result;
 }
 
-void have_esp_telepathy(player_type *creature_ptr)
+BIT_FLAGS have_esp_telepathy(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    BIT_FLAGS result = 0L;
 
-    creature_ptr->telepathy = FALSE;
-
-    if (is_time_limit_esp(creature_ptr)) {
-        creature_ptr->telepathy = TRUE;
+    if (is_time_limit_esp(creature_ptr) || creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
+        result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
     if (creature_ptr->muta3 & MUT3_ESP) {
-        creature_ptr->telepathy = TRUE;
+        result |= FLAG_CAUSE_MUTATION;
     }
 
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_MIND_FLAYER && creature_ptr->lev > 29)
-        creature_ptr->telepathy = TRUE;
+    if (is_specific_player_race(creature_ptr, RACE_MIND_FLAYER) && creature_ptr->lev > 29)
+        result |= FLAG_CAUSE_RACE;
 
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_SPECTRE && creature_ptr->lev > 34)
-        creature_ptr->telepathy = TRUE;
+    if (is_specific_player_race(creature_ptr, RACE_SPECTRE) && creature_ptr->lev > 34)
+        result |= FLAG_CAUSE_RACE;
 
     if (creature_ptr->pclass == CLASS_MINDCRAFTER && creature_ptr->lev > 39)
-        creature_ptr->telepathy = TRUE;
+        result |= FLAG_CAUSE_CLASS;
 
     if (creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
-        creature_ptr->telepathy = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
-    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-        creature_ptr->telepathy = TRUE;
-    }
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_TELEPATHY))
-            creature_ptr->telepathy = TRUE;
-    }
+    result |= check_equipment_flags(creature_ptr, TR_TELEPATHY);
+    return result;
 }
 
 BIT_FLAGS have_bless_blade(player_type *creature_ptr)
@@ -230,61 +215,25 @@ BIT_FLAGS have_bless_blade(player_type *creature_ptr)
     return result;
 }
 
-void have_easy2_weapon(player_type *creature_ptr)
+BIT_FLAGS have_easy2_weapon(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->easy_2weapon = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (o_ptr->name2 == EGO_2WEAPON)
-            creature_ptr->easy_2weapon = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_EASY2_WEAPON);
+    return result;
 }
 
-void have_down_saving(player_type *creature_ptr)
+BIT_FLAGS have_down_saving(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->down_saving = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (o_ptr->name2 == EGO_AMU_NAIVETY)
-            creature_ptr->down_saving = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_DOWN_SAVING);
+    return result;
 }
 
-void have_no_ac(player_type *creature_ptr)
+BIT_FLAGS have_no_ac(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->yoiyami = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (o_ptr->name2 == EGO_YOIYAMI)
-            creature_ptr->yoiyami = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_NO_AC);
+    return result;
 }
 
 void have_no_flowed(player_type *creature_ptr)
@@ -328,20 +277,11 @@ void have_no_flowed(player_type *creature_ptr)
     }
 }
 
-void have_mighty_throw(player_type *creature_ptr)
+BIT_FLAGS have_mighty_throw(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-
-    creature_ptr->mighty_throw = FALSE;
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        if (o_ptr->name2 == EGO_RING_THROW)
-            creature_ptr->mighty_throw = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_MIGHTY_THROW);
+    return result;
 }
 
 BIT_FLAGS have_dec_mana(player_type *creature_ptr)
@@ -351,49 +291,26 @@ BIT_FLAGS have_dec_mana(player_type *creature_ptr)
     return result;
 }
 
-void have_reflect(player_type *creature_ptr)
+BIT_FLAGS have_reflect(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->reflect = FALSE;
+    BIT_FLAGS result = 0L;
 
     if (creature_ptr->pclass == CLASS_BERSERKER && creature_ptr->lev > 39)
-        creature_ptr->reflect = TRUE;
+        result |= FLAG_CAUSE_CLASS;
 
     if (creature_ptr->pclass == CLASS_MIRROR_MASTER && creature_ptr->lev > 39)
-        creature_ptr->reflect = TRUE;
+        result |= FLAG_CAUSE_CLASS;
 
-    if (creature_ptr->special_defense & KAMAE_GENBU) {
-        creature_ptr->reflect = TRUE;
+    if (creature_ptr->special_defense & KAMAE_GENBU || creature_ptr->special_defense & KATA_MUSOU) {
+        result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
-    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-        creature_ptr->reflect = TRUE;
+    if (creature_ptr->ult_res || creature_ptr->wraith_form || creature_ptr->magicdef || creature_ptr->tim_reflect) {
+        result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-    if (creature_ptr->wraith_form) {
-        creature_ptr->reflect = TRUE;
-    }
-
-    if (creature_ptr->magicdef) {
-        creature_ptr->reflect = TRUE;
-    }
-
-    if (creature_ptr->tim_reflect) {
-        creature_ptr->reflect = TRUE;
-    }
-
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (have_flag(flgs, TR_REFLECT))
-            creature_ptr->reflect = TRUE;
-    }
+    result |= check_equipment_flags(creature_ptr, TR_REFLECT);
+    return result;
 }
 
 void have_see_nocto(player_type *creature_ptr)

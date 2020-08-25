@@ -299,7 +299,7 @@ void calc_bonuses(player_type *creature_ptr)
     object_type *o_ptr;
 
     /* Save the old vision stuff */
-    bool old_telepathy = creature_ptr->telepathy;
+    BIT_FLAGS old_telepathy = creature_ptr->telepathy;
     BIT_FLAGS old_esp_animal = creature_ptr->esp_animal;
     BIT_FLAGS old_esp_undead = creature_ptr->esp_undead;
     BIT_FLAGS old_esp_demon = creature_ptr->esp_demon;
@@ -313,7 +313,7 @@ void calc_bonuses(player_type *creature_ptr)
     BIT_FLAGS old_esp_nonliving = creature_ptr->esp_nonliving;
     BIT_FLAGS old_esp_unique = creature_ptr->esp_unique;
     bool old_see_inv = creature_ptr->see_inv;
-    bool old_mighty_throw = creature_ptr->mighty_throw;
+    BIT_FLAGS old_mighty_throw = creature_ptr->mighty_throw;
     s16b old_speed = creature_ptr->pspeed;
 
     ARMOUR_CLASS old_dis_ac = creature_ptr->dis_ac;
@@ -334,14 +334,14 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->esp_good = have_esp_good(creature_ptr);
     creature_ptr->esp_nonliving = have_esp_nonliving(creature_ptr);
     creature_ptr->esp_unique = have_esp_unique(creature_ptr);
-    have_esp_telepathy(creature_ptr);
+    creature_ptr->telepathy = have_esp_telepathy(creature_ptr);
     creature_ptr->bless_blade = have_bless_blade(creature_ptr);
-    have_easy2_weapon(creature_ptr);
-    have_down_saving(creature_ptr);
-    have_no_ac(creature_ptr);
-    have_mighty_throw(creature_ptr);
+    creature_ptr->easy_2weapon = have_easy2_weapon(creature_ptr);
+    creature_ptr->down_saving = have_down_saving(creature_ptr);
+    creature_ptr->yoiyami = have_no_ac(creature_ptr);
+    creature_ptr->mighty_throw = have_mighty_throw(creature_ptr);
     creature_ptr->dec_mana = have_dec_mana(creature_ptr);
-    have_reflect(creature_ptr);
+    creature_ptr->reflect = have_reflect(creature_ptr);
     have_see_nocto(creature_ptr);
     have_warning(creature_ptr);
     creature_ptr->anti_magic = have_anti_magic(creature_ptr);

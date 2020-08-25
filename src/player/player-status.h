@@ -329,9 +329,9 @@ typedef struct player_type {
     bool riding_wield[2]; /* Riding weapon */
     bool riding_ryoute; /* Riding weapon */
     bool monlite;
-    bool yoiyami;
-    bool easy_2weapon;
-    bool down_saving;
+    BIT_FLAGS yoiyami;
+    BIT_FLAGS easy_2weapon;
+    BIT_FLAGS down_saving;
 
     POSITION cur_lite; /* Radius of lite (if any) */
 
@@ -391,7 +391,7 @@ typedef struct player_type {
     bool resist_time; /* Resist time */
     bool resist_water; /* Resist water */
 
-    bool reflect; /* Reflect 'bolt' attacks */
+    BIT_FLAGS reflect; /* Reflect 'bolt' attacks */
     bool sh_fire; /* Fiery 'immolation' effect */
     bool sh_elec; /* Electric 'immolation' effect */
     bool sh_cold; /* Cold 'immolation' effect */
@@ -416,7 +416,7 @@ typedef struct player_type {
     bool regenerate; /* Regenerate hit pts */
     bool hold_exp; /* Resist exp draining */
 
-    bool telepathy; /* Telepathy */
+    BIT_FLAGS telepathy; /* Telepathy */
     BIT_FLAGS esp_animal;
     BIT_FLAGS esp_undead;
     BIT_FLAGS esp_demon;
@@ -440,7 +440,7 @@ typedef struct player_type {
     BIT_FLAGS easy_spell;
     bool heavy_spell;
     bool warning;
-    bool mighty_throw;
+    BIT_FLAGS mighty_throw;
     bool see_nocto; /* Noctovision */
     bool invoking_midnight_curse;
 
