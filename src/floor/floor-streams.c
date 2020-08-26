@@ -120,7 +120,7 @@ static void recursive_river(floor_type *floor_ptr, POSITION x1, POSITION y1, POS
                             continue;
 
                         /* Do not convert permanent features */
-                        if (cave_have_flag_grid(g_ptr, FF_PERMANENT))
+                        if (cave_has_flag_grid(g_ptr, FF_PERMANENT))
                             continue;
 
                         /*
@@ -284,7 +284,7 @@ void build_streamer(player_type *player_ptr, FEAT_IDX feat, int chance)
 
     feature_type *streamer_ptr = &f_info[feat];
     bool streamer_is_wall = has_flag(streamer_ptr->flags, FF_WALL) && !has_flag(streamer_ptr->flags, FF_PERMANENT);
-    bool streamer_may_have_gold = has_flag(streamer_ptr->flags, FF_MAY_HAVE_GOLD);
+    bool streamer_may_has_gold = has_flag(streamer_ptr->flags, FF_MAY_HAVE_GOLD);
 
     /* Hack -- Choose starting point */
     floor_type *floor_ptr = player_ptr->current_floor_ptr;
@@ -367,7 +367,7 @@ void build_streamer(player_type *player_ptr, FEAT_IDX feat, int chance)
             /* Paranoia: Clear mimic field */
             g_ptr->mimic = 0;
 
-            if (streamer_may_have_gold) {
+            if (streamer_may_has_gold) {
                 /* Hack -- Add some known treasure */
                 if (one_in_(chance)) {
                     cave_alter_feat(player_ptr, ty, tx, FF_MAY_HAVE_GOLD);
@@ -434,7 +434,7 @@ void place_trees(player_type *player_ptr, POSITION x, POSITION y)
                 continue;
 
             /* Want square to be in the circle and accessable. */
-            if ((distance(j, i, y, x) < 4) && !cave_have_flag_grid(g_ptr, FF_PERMANENT)) {
+            if ((distance(j, i, y, x) < 4) && !cave_has_flag_grid(g_ptr, FF_PERMANENT)) {
                 /*
                  * Clear previous contents, add feature
                  * The border mainly gets trees, while the center gets rubble

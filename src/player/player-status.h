@@ -392,14 +392,14 @@ typedef struct player_type {
     bool resist_water; /* Resist water */
 
     BIT_FLAGS reflect; /* Reflect 'bolt' attacks */
-    bool sh_fire; /* Fiery 'immolation' effect */
-    bool sh_elec; /* Electric 'immolation' effect */
-    bool sh_cold; /* Cold 'immolation' effect */
+    BIT_FLAGS sh_fire; /* Fiery 'immolation' effect */
+    BIT_FLAGS sh_elec; /* Electric 'immolation' effect */
+    BIT_FLAGS sh_cold; /* Cold 'immolation' effect */
 
     BIT_FLAGS anti_magic; /* Anti-magic */
     BIT_FLAGS anti_tele; /* Prevent teleportation */
 
-    bool sustain_str; /* Keep strength */
+    BIT_FLAGS sustain_str; /* Keep strength */
     bool sustain_int; /* Keep intelligence */
     bool sustain_wis; /* Keep wisdom */
     bool sustain_dex; /* Keep dexterity */
@@ -411,7 +411,7 @@ typedef struct player_type {
     bool can_swim; /* No damage falling */
     bool levitation; /* No damage falling */
     bool lite; /* Permanent light */
-    bool free_act; /* Never paralyzed */
+    BIT_FLAGS free_act; /* Never paralyzed */
     bool see_inv; /* Can see invisible */
     bool regenerate; /* Regenerate hit pts */
     bool hold_exp; /* Resist exp draining */
@@ -433,7 +433,7 @@ typedef struct player_type {
     bool slow_digest; /* Slower digestion */
     BIT_FLAGS bless_blade; /* Blessed blade */
     BIT_FLAGS xtra_might; /* Extra might bow */
-    bool impact[2]; /* Earthquake blows */
+    BIT_FLAGS impact; /* Earthquake blows */
     bool pass_wall; /* Permanent wraithform */
     bool kill_wall;
     BIT_FLAGS dec_mana;

@@ -234,7 +234,7 @@ static void process_weapon_attack(player_type *attacker_ptr, player_attack_type 
     pa_ptr->attack_damage = calc_attack_damage_with_slay(attacker_ptr, o_ptr, pa_ptr->attack_damage, pa_ptr->m_ptr, pa_ptr->mode, FALSE);
     calc_surprise_attack_damage(attacker_ptr, pa_ptr);
 
-    if ((attacker_ptr->impact[pa_ptr->hand] && ((pa_ptr->attack_damage > 50) || one_in_(7))) || (pa_ptr->chaos_effect == CE_QUAKE)
+    if (((attacker_ptr->impact & FLAG_CAUSE_INVEN_RARM) && ((pa_ptr->attack_damage > 50) || one_in_(7))) || (pa_ptr->chaos_effect == CE_QUAKE)
         || (pa_ptr->mode == HISSATSU_QUAKE))
         *do_quake = TRUE;
 
@@ -497,7 +497,7 @@ void massacre(player_type *caster_ptr)
         POSITION x = caster_ptr->x + ddx_ddd[dir];
         g_ptr = &caster_ptr->current_floor_ptr->grid_array[y][x];
         m_ptr = &caster_ptr->current_floor_ptr->m_list[g_ptr->m_idx];
-        if (g_ptr->m_idx && (m_ptr->ml || cave_have_flag_bold(caster_ptr->current_floor_ptr, y, x, FF_PROJECT)))
+        if (g_ptr->m_idx && (m_ptr->ml || cave_has_flag_bold(caster_ptr->current_floor_ptr, y, x, FF_PROJECT)))
             do_cmd_attack(caster_ptr, y, x, 0);
     }
 }
