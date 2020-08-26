@@ -201,7 +201,7 @@ static void calc_num_blow(player_type *attacker_ptr, player_attack_type *pa_ptr)
  */
 static chaotic_effect select_chaotic_effect(player_type *attacker_ptr, player_attack_type *pa_ptr)
 {
-    if (!(have_flag(pa_ptr->flags, TR_CHAOTIC)) || one_in_(2))
+    if (!(has_flag(pa_ptr->flags, TR_CHAOTIC)) || one_in_(2))
         return CE_NONE;
 
     if (one_in_(10))
@@ -337,7 +337,7 @@ static bool check_fear_death(player_type *attacker_ptr, player_attack_type *pa_p
 
     *(pa_ptr->mdeath) = TRUE;
     if ((attacker_ptr->pclass == CLASS_BERSERKER) && attacker_ptr->energy_use) {
-        if (have_right_hand_weapon(attacker_ptr) && have_left_hand_weapon(attacker_ptr)) {
+        if (has_right_hand_weapon(attacker_ptr) && has_left_hand_weapon(attacker_ptr)) {
             if (pa_ptr->hand)
                 attacker_ptr->energy_use = attacker_ptr->energy_use * 3 / 5 + attacker_ptr->energy_use * num * 2 / (attacker_ptr->num_blow[pa_ptr->hand] * 5);
             else
@@ -377,7 +377,7 @@ static void apply_actual_attack(
     decide_blood_sucking(attacker_ptr, pa_ptr);
 
     // process_monk_attackの中でplayer_type->magic_num1[0] を書き換えているので、ここでhex_spelling() の判定をしないとダメ.
-    bool vorpal_cut = (have_flag(pa_ptr->flags, TR_VORPAL) || hex_spelling(attacker_ptr, HEX_RUNESWORD)) && (randint1(vorpal_chance * 3 / 2) == 1)
+    bool vorpal_cut = (has_flag(pa_ptr->flags, TR_VORPAL) || hex_spelling(attacker_ptr, HEX_RUNESWORD)) && (randint1(vorpal_chance * 3 / 2) == 1)
         && !is_zantetsu_nullified;
 
     calc_attack_damage(attacker_ptr, pa_ptr, do_quake, vorpal_cut, vorpal_chance);

@@ -44,13 +44,13 @@ static BIT_FLAGS check_equipment_flags(player_type *creature_ptr, tr_type tr_fla
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, tr_flag))
+        if (has_flag(flgs, tr_flag))
             result |= 0x01 << (i - INVEN_RARM);
     }
     return result;
 }
 
-bool have_kill_wall(player_type *creature_ptr)
+bool has_kill_wall(player_type *creature_ptr)
 {
     if (creature_ptr->mimic_form == MIMIC_DEMON_LORD || music_singing(creature_ptr, MUSIC_WALL)) {
         return TRUE;
@@ -66,7 +66,7 @@ bool have_kill_wall(player_type *creature_ptr)
 	return FALSE;
 }
 
-bool have_pass_wall(player_type *creature_ptr)
+bool has_pass_wall(player_type *creature_ptr)
 {
     bool pow = FALSE;
 
@@ -84,14 +84,14 @@ bool have_pass_wall(player_type *creature_ptr)
 	return pow;
 }
 
-BIT_FLAGS have_xtra_might(player_type *creature_ptr)
+BIT_FLAGS has_xtra_might(player_type *creature_ptr)
 {
 	BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_XTRA_MIGHT);
 	return result;
 }
 
-BIT_FLAGS have_esp_evil(player_type *creature_ptr)
+BIT_FLAGS has_esp_evil(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     if (creature_ptr->realm1 == REALM_HEX) {
@@ -102,84 +102,84 @@ BIT_FLAGS have_esp_evil(player_type *creature_ptr)
 	return result;
 }
 
-BIT_FLAGS have_esp_animal(player_type *creature_ptr)
+BIT_FLAGS has_esp_animal(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_ANIMAL);
 	return result;
 }
 
-BIT_FLAGS have_esp_undead(player_type *creature_ptr)
+BIT_FLAGS has_esp_undead(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_UNDEAD);
 	return result;
 }
 
-BIT_FLAGS have_esp_demon(player_type *creature_ptr)
+BIT_FLAGS has_esp_demon(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_DEMON);
 	return result;
 }
 
-BIT_FLAGS have_esp_orc(player_type *creature_ptr)
+BIT_FLAGS has_esp_orc(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_ORC);
 	return result;
 }
 
-BIT_FLAGS have_esp_troll(player_type *creature_ptr)
+BIT_FLAGS has_esp_troll(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_TROLL);
 	return result;
 }
 
-BIT_FLAGS have_esp_giant(player_type *creature_ptr)
+BIT_FLAGS has_esp_giant(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_GIANT);
 	return result;
 }
 
-BIT_FLAGS have_esp_dragon(player_type *creature_ptr)
+BIT_FLAGS has_esp_dragon(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_DRAGON);
 	return result;
 }
 
-BIT_FLAGS have_esp_human(player_type *creature_ptr)
+BIT_FLAGS has_esp_human(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_HUMAN);
     return result;
 }
 
-BIT_FLAGS have_esp_good(player_type *creature_ptr)
+BIT_FLAGS has_esp_good(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_GOOD);
     return result;
 }
 
-BIT_FLAGS have_esp_nonliving(player_type *creature_ptr)
+BIT_FLAGS has_esp_nonliving(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_GOOD);
     return result;
 }
 
-BIT_FLAGS have_esp_unique(player_type *creature_ptr)
+BIT_FLAGS has_esp_unique(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_ESP_UNIQUE);
     return result;
 }
 
-BIT_FLAGS have_esp_telepathy(player_type *creature_ptr)
+BIT_FLAGS has_esp_telepathy(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
 
@@ -208,38 +208,38 @@ BIT_FLAGS have_esp_telepathy(player_type *creature_ptr)
     return result;
 }
 
-BIT_FLAGS have_bless_blade(player_type *creature_ptr)
+BIT_FLAGS has_bless_blade(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_BLESSED);
     return result;
 }
 
-BIT_FLAGS have_easy2_weapon(player_type *creature_ptr)
+BIT_FLAGS has_easy2_weapon(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_EASY2_WEAPON);
     return result;
 }
 
-BIT_FLAGS have_down_saving(player_type *creature_ptr)
+BIT_FLAGS has_down_saving(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_DOWN_SAVING);
     return result;
 }
 
-BIT_FLAGS have_no_ac(player_type *creature_ptr)
+BIT_FLAGS has_no_ac(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_NO_AC);
     return result;
 }
 
-void have_no_flowed(player_type *creature_ptr)
+void has_no_flowed(player_type *creature_ptr)
 {
     object_type *o_ptr;
-    bool have_sw = FALSE, have_kabe = FALSE;
+    bool has_sw = FALSE, has_kabe = FALSE;
     OBJECT_IDX this_o_idx, next_o_idx = 0;
 
     creature_ptr->no_flowed = FALSE;
@@ -249,9 +249,9 @@ void have_no_flowed(player_type *creature_ptr)
 
     for (int i = 0; i < INVEN_PACK; i++) {
         if ((creature_ptr->inventory_list[i].tval == TV_NATURE_BOOK) && (creature_ptr->inventory_list[i].sval == 2))
-            have_sw = TRUE;
+            has_sw = TRUE;
         if ((creature_ptr->inventory_list[i].tval == TV_CRAFT_BOOK) && (creature_ptr->inventory_list[i].sval == 2))
-            have_kabe = TRUE;
+            has_kabe = TRUE;
     }
 
     for (this_o_idx = creature_ptr->current_floor_ptr->grid_array[creature_ptr->y][creature_ptr->x].o_idx; this_o_idx; this_o_idx = next_o_idx) {
@@ -259,39 +259,39 @@ void have_no_flowed(player_type *creature_ptr)
         next_o_idx = o_ptr->next_o_idx;
 
         if ((o_ptr->tval == TV_NATURE_BOOK) && (o_ptr->sval == 2))
-            have_sw = TRUE;
+            has_sw = TRUE;
         if ((o_ptr->tval == TV_CRAFT_BOOK) && (o_ptr->sval == 2))
-            have_kabe = TRUE;
+            has_kabe = TRUE;
     }
 
-    if (have_sw && ((creature_ptr->realm1 == REALM_NATURE) || (creature_ptr->realm2 == REALM_NATURE) || (creature_ptr->pclass == CLASS_SORCERER))) {
+    if (has_sw && ((creature_ptr->realm1 == REALM_NATURE) || (creature_ptr->realm2 == REALM_NATURE) || (creature_ptr->pclass == CLASS_SORCERER))) {
         const magic_type *s_ptr = &mp_ptr->info[REALM_NATURE - 1][SPELL_SW];
         if (creature_ptr->lev >= s_ptr->slevel)
             creature_ptr->no_flowed = TRUE;
     }
 
-    if (have_kabe && ((creature_ptr->realm1 == REALM_CRAFT) || (creature_ptr->realm2 == REALM_CRAFT) || (creature_ptr->pclass == CLASS_SORCERER))) {
+    if (has_kabe && ((creature_ptr->realm1 == REALM_CRAFT) || (creature_ptr->realm2 == REALM_CRAFT) || (creature_ptr->pclass == CLASS_SORCERER))) {
         const magic_type *s_ptr = &mp_ptr->info[REALM_CRAFT - 1][SPELL_WALL];
         if (creature_ptr->lev >= s_ptr->slevel)
             creature_ptr->no_flowed = TRUE;
     }
 }
 
-BIT_FLAGS have_mighty_throw(player_type *creature_ptr)
+BIT_FLAGS has_mighty_throw(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_MIGHTY_THROW);
     return result;
 }
 
-BIT_FLAGS have_dec_mana(player_type *creature_ptr)
+BIT_FLAGS has_dec_mana(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_DEC_MANA);
     return result;
 }
 
-BIT_FLAGS have_reflect(player_type *creature_ptr)
+BIT_FLAGS has_reflect(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
 
@@ -313,7 +313,7 @@ BIT_FLAGS have_reflect(player_type *creature_ptr)
     return result;
 }
 
-void have_see_nocto(player_type *creature_ptr)
+void has_see_nocto(player_type *creature_ptr)
 {
     creature_ptr->see_nocto = FALSE;
 
@@ -321,7 +321,7 @@ void have_see_nocto(player_type *creature_ptr)
         creature_ptr->see_nocto = TRUE;
 }
 
-void have_warning(player_type *creature_ptr)
+void has_warning(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -335,28 +335,28 @@ void have_warning(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_WARNING)) {
+        if (has_flag(flgs, TR_WARNING)) {
             if (!o_ptr->inscription || !(angband_strchr(quark_str(o_ptr->inscription), '$')))
                 creature_ptr->warning = TRUE;
         }
     }
 }
 
-BIT_FLAGS have_anti_magic(player_type *creature_ptr)
+BIT_FLAGS has_anti_magic(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_NO_MAGIC);
     return result;
 }
 
-BIT_FLAGS have_anti_tele(player_type *creature_ptr)
+BIT_FLAGS has_anti_tele(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_NO_TELE);
     return result;
 }
 
-void have_sh_fire(player_type *creature_ptr)
+void has_sh_fire(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -394,12 +394,12 @@ void have_sh_fire(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SH_FIRE))
+        if (has_flag(flgs, TR_SH_FIRE))
             creature_ptr->sh_fire = TRUE;
     }
 }
 
-void have_sh_elec(player_type *creature_ptr)
+void has_sh_elec(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -428,12 +428,12 @@ void have_sh_elec(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SH_ELEC))
+        if (has_flag(flgs, TR_SH_ELEC))
             creature_ptr->sh_elec = TRUE;
     }
 }
 
-void have_sh_cold(player_type *creature_ptr)
+void has_sh_cold(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -459,35 +459,26 @@ void have_sh_cold(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SH_COLD))
+        if (has_flag(flgs, TR_SH_COLD))
             creature_ptr->sh_cold = TRUE;
     }
 }
 
-BIT_FLAGS have_easy_spell(player_type *creature_ptr)
+BIT_FLAGS has_easy_spell(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
     result |= check_equipment_flags(creature_ptr, TR_EASY_SPELL);
     return result;
 }
 
-void have_heavy_spell(player_type *creature_ptr)
+BIT_FLAGS has_heavy_spell(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->heavy_spell = FALSE;
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (o_ptr->name2 == EGO_AMU_FOOL)
-            creature_ptr->heavy_spell = TRUE;
-    }
+    BIT_FLAGS result = 0L;
+    result |= check_equipment_flags(creature_ptr, TR_HEAVY_SPELL);
+    return result;
 }
 
-void have_hold_exp(player_type *creature_ptr)
+void has_hold_exp(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -524,12 +515,12 @@ void have_hold_exp(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_HOLD_EXP))
+        if (has_flag(flgs, TR_HOLD_EXP))
             creature_ptr->hold_exp = TRUE;
     }
 }
 
-void have_see_inv(player_type *creature_ptr)
+void has_see_inv(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -577,12 +568,12 @@ void have_see_inv(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SEE_INVIS))
+        if (has_flag(flgs, TR_SEE_INVIS))
             creature_ptr->see_inv = TRUE;
     }
 }
 
-void have_free_act(player_type *creature_ptr)
+void has_free_act(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -607,8 +598,8 @@ void have_free_act(player_type *creature_ptr)
         creature_ptr->free_act = TRUE;
     }
 
-    if (heavy_armor(creature_ptr) && (!creature_ptr->inventory_list[INVEN_RARM].k_idx || have_right_hand_weapon(creature_ptr))
-        && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || have_left_hand_weapon(creature_ptr))) {
+    if (heavy_armor(creature_ptr) && (!creature_ptr->inventory_list[INVEN_RARM].k_idx || has_right_hand_weapon(creature_ptr))
+        && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || has_left_hand_weapon(creature_ptr))) {
         if (creature_ptr->lev > 24)
             creature_ptr->free_act = TRUE;
     }
@@ -638,12 +629,12 @@ void have_free_act(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_FREE_ACT))
+        if (has_flag(flgs, TR_FREE_ACT))
             creature_ptr->free_act = TRUE;
     }
 }
 
-void have_sustain_str(player_type *creature_ptr)
+void has_sustain_str(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -665,12 +656,12 @@ void have_sustain_str(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SUST_STR))
+        if (has_flag(flgs, TR_SUST_STR))
             creature_ptr->sustain_str = TRUE;
     }
 }
 
-void have_sustain_int(player_type *creature_ptr)
+void has_sustain_int(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -689,12 +680,12 @@ void have_sustain_int(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SUST_INT))
+        if (has_flag(flgs, TR_SUST_INT))
             creature_ptr->sustain_int = TRUE;
     }
 }
 
-void have_sustain_wis(player_type *creature_ptr)
+void has_sustain_wis(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -716,12 +707,12 @@ void have_sustain_wis(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SUST_WIS))
+        if (has_flag(flgs, TR_SUST_WIS))
             creature_ptr->sustain_wis = TRUE;
     }
 }
 
-void have_sustain_dex(player_type *creature_ptr)
+void has_sustain_dex(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -743,12 +734,12 @@ void have_sustain_dex(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SUST_DEX))
+        if (has_flag(flgs, TR_SUST_DEX))
             creature_ptr->sustain_dex = TRUE;
     }
 }
 
-void have_sustain_con(player_type *creature_ptr)
+void has_sustain_con(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -771,12 +762,12 @@ void have_sustain_con(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SUST_CON))
+        if (has_flag(flgs, TR_SUST_CON))
             creature_ptr->sustain_con = TRUE;
     }
 }
 
-void have_sustain_chr(player_type *creature_ptr)
+void has_sustain_chr(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -792,12 +783,12 @@ void have_sustain_chr(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SUST_CHR))
+        if (has_flag(flgs, TR_SUST_CHR))
             creature_ptr->sustain_chr = TRUE;
     }
 }
 
-void have_levitation(player_type *creature_ptr)
+void has_levitation(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -842,12 +833,12 @@ void have_levitation(player_type *creature_ptr)
         if (!o_ptr->k_idx)
             continue;
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_LEVITATION))
+        if (has_flag(flgs, TR_LEVITATION))
             creature_ptr->levitation = TRUE;
     }
 }
 
-void have_can_swim(player_type *creature_ptr)
+void has_can_swim(player_type *creature_ptr)
 {
     creature_ptr->can_swim = FALSE;
     if (creature_ptr->riding) {
@@ -858,7 +849,7 @@ void have_can_swim(player_type *creature_ptr)
     }
 }
 
-void have_slow_digest(player_type *creature_ptr)
+void has_slow_digest(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -894,12 +885,12 @@ void have_slow_digest(player_type *creature_ptr)
         if (!o_ptr->k_idx)
             continue;
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_SLOW_DIGEST))
+        if (has_flag(flgs, TR_SLOW_DIGEST))
             creature_ptr->slow_digest = TRUE;
     }
 }
 
-void have_regenerate(player_type *creature_ptr)
+void has_regenerate(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -953,12 +944,12 @@ void have_regenerate(player_type *creature_ptr)
         if (!o_ptr->k_idx)
             continue;
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_REGEN))
+        if (has_flag(flgs, TR_REGEN))
             creature_ptr->regenerate = TRUE;
     }
 }
 
-void have_curses(player_type *creature_ptr)
+void has_curses(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -972,46 +963,46 @@ void have_curses(player_type *creature_ptr)
         if (!o_ptr->k_idx)
             continue;
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_AGGRAVATE))
+        if (has_flag(flgs, TR_AGGRAVATE))
             creature_ptr->cursed |= TRC_AGGRAVATE;
-        if (have_flag(flgs, TR_DRAIN_EXP))
+        if (has_flag(flgs, TR_DRAIN_EXP))
             creature_ptr->cursed |= TRC_DRAIN_EXP;
-        if (have_flag(flgs, TR_TY_CURSE))
+        if (has_flag(flgs, TR_TY_CURSE))
             creature_ptr->cursed |= TRC_TY_CURSE;
-        if (have_flag(flgs, TR_ADD_L_CURSE))
+        if (has_flag(flgs, TR_ADD_L_CURSE))
             creature_ptr->cursed |= TRC_ADD_L_CURSE;
-        if (have_flag(flgs, TR_ADD_H_CURSE))
+        if (has_flag(flgs, TR_ADD_H_CURSE))
             creature_ptr->cursed |= TRC_ADD_H_CURSE;
-        if (have_flag(flgs, TR_DRAIN_HP))
+        if (has_flag(flgs, TR_DRAIN_HP))
             creature_ptr->cursed |= TRC_DRAIN_HP;
-        if (have_flag(flgs, TR_DRAIN_MANA))
+        if (has_flag(flgs, TR_DRAIN_MANA))
             creature_ptr->cursed |= TRC_DRAIN_MANA;
-        if (have_flag(flgs, TR_CALL_ANIMAL))
+        if (has_flag(flgs, TR_CALL_ANIMAL))
             creature_ptr->cursed |= TRC_CALL_ANIMAL;
-        if (have_flag(flgs, TR_CALL_DEMON))
+        if (has_flag(flgs, TR_CALL_DEMON))
             creature_ptr->cursed |= TRC_CALL_DEMON;
-        if (have_flag(flgs, TR_CALL_DRAGON))
+        if (has_flag(flgs, TR_CALL_DRAGON))
             creature_ptr->cursed |= TRC_CALL_DRAGON;
-        if (have_flag(flgs, TR_CALL_UNDEAD))
+        if (has_flag(flgs, TR_CALL_UNDEAD))
             creature_ptr->cursed |= TRC_CALL_UNDEAD;
-        if (have_flag(flgs, TR_COWARDICE))
+        if (has_flag(flgs, TR_COWARDICE))
             creature_ptr->cursed |= TRC_COWARDICE;
-        if (have_flag(flgs, TR_LOW_MELEE))
+        if (has_flag(flgs, TR_LOW_MELEE))
             creature_ptr->cursed |= TRC_LOW_MELEE;
-        if (have_flag(flgs, TR_LOW_AC))
+        if (has_flag(flgs, TR_LOW_AC))
             creature_ptr->cursed |= TRC_LOW_AC;
-        if (have_flag(flgs, TR_LOW_MAGIC))
+        if (has_flag(flgs, TR_LOW_MAGIC))
             creature_ptr->cursed |= TRC_LOW_MAGIC;
-        if (have_flag(flgs, TR_FAST_DIGEST))
+        if (has_flag(flgs, TR_FAST_DIGEST))
             creature_ptr->cursed |= TRC_FAST_DIGEST;
-        if (have_flag(flgs, TR_SLOW_REGEN))
+        if (has_flag(flgs, TR_SLOW_REGEN))
             creature_ptr->cursed |= TRC_SLOW_REGEN;
 
         creature_ptr->cursed |= (o_ptr->curse_flags & (0xFFFFFFF0L));
         if (o_ptr->name1 == ART_CHAINSWORD)
             creature_ptr->cursed |= TRC_CHAINSWORD;
 
-        if (have_flag(flgs, TR_TELEPORT)) {
+        if (has_flag(flgs, TR_TELEPORT)) {
             if (object_is_cursed(o_ptr))
                 creature_ptr->cursed |= TRC_TELEPORT;
             else {
@@ -1034,7 +1025,7 @@ void have_curses(player_type *creature_ptr)
     }
 }
 
-void have_impact(player_type *creature_ptr)
+void has_impact(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1046,12 +1037,12 @@ void have_impact(player_type *creature_ptr)
         if (!o_ptr->k_idx)
             continue;
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_IMPACT))
+        if (has_flag(flgs, TR_IMPACT))
             creature_ptr->impact[(i == INVEN_RARM) ? 0 : 1] = TRUE;
     }
 }
 
-void have_extra_blow(player_type *creature_ptr)
+void has_extra_blow(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1064,12 +1055,12 @@ void have_extra_blow(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_INFRA))
+        if (has_flag(flgs, TR_INFRA))
             creature_ptr->see_infra += o_ptr->pval;
-        if (have_flag(flgs, TR_BLOWS)) {
-            if ((i == INVEN_RARM || i == INVEN_RIGHT) && !have_two_handed_weapons(creature_ptr))
+        if (has_flag(flgs, TR_BLOWS)) {
+            if ((i == INVEN_RARM || i == INVEN_RIGHT) && !has_two_handed_weapons(creature_ptr))
                 creature_ptr->extra_blows[0] += o_ptr->pval;
-            else if ((i == INVEN_LARM || i == INVEN_LEFT) && !have_two_handed_weapons(creature_ptr))
+            else if ((i == INVEN_LARM || i == INVEN_LEFT) && !has_two_handed_weapons(creature_ptr))
                 creature_ptr->extra_blows[1] += o_ptr->pval;
             else {
                 creature_ptr->extra_blows[0] += o_ptr->pval;
@@ -1079,7 +1070,7 @@ void have_extra_blow(player_type *creature_ptr)
     }
 }
 
-void have_resist_acid(player_type *creature_ptr)
+void has_resist_acid(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1111,7 +1102,7 @@ void have_resist_acid(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_RES_ACID))
+        if (has_flag(flgs, TR_RES_ACID))
             creature_ptr->resist_acid = TRUE;
     }
 
@@ -1119,7 +1110,7 @@ void have_resist_acid(player_type *creature_ptr)
         creature_ptr->resist_acid = TRUE;
 }
 
-void have_resist_elec(player_type *creature_ptr)
+void has_resist_elec(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1147,7 +1138,7 @@ void have_resist_elec(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_RES_ELEC))
+        if (has_flag(flgs, TR_RES_ELEC))
             creature_ptr->resist_elec = TRUE;
     }
 
@@ -1155,7 +1146,7 @@ void have_resist_elec(player_type *creature_ptr)
         creature_ptr->resist_elec = TRUE;
 }
 
-void have_resist_fire(player_type *creature_ptr)
+void has_resist_fire(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1188,7 +1179,7 @@ void have_resist_fire(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_FIRE))
+        if (has_flag(flgs, TR_RES_FIRE))
             creature_ptr->resist_fire = TRUE;
     }
 
@@ -1196,7 +1187,7 @@ void have_resist_fire(player_type *creature_ptr)
         creature_ptr->resist_fire = TRUE;
 }
 
-void have_resist_cold(player_type *creature_ptr)
+void has_resist_cold(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1233,7 +1224,7 @@ void have_resist_cold(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_COLD))
+        if (has_flag(flgs, TR_RES_COLD))
             creature_ptr->resist_cold = TRUE;
     }
 
@@ -1241,7 +1232,7 @@ void have_resist_cold(player_type *creature_ptr)
         creature_ptr->resist_cold = TRUE;
 }
 
-void have_resist_pois(player_type *creature_ptr)
+void has_resist_pois(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1279,12 +1270,12 @@ void have_resist_pois(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_POIS))
+        if (has_flag(flgs, TR_RES_POIS))
             creature_ptr->resist_pois = TRUE;
     }
 }
 
-void have_resist_conf(player_type *creature_ptr)
+void has_resist_conf(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1320,12 +1311,12 @@ void have_resist_conf(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_CONF))
+        if (has_flag(flgs, TR_RES_CONF))
             creature_ptr->resist_conf = TRUE;
     }
 }
 
-void have_resist_sound(player_type *creature_ptr)
+void has_resist_sound(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1350,12 +1341,12 @@ void have_resist_sound(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_SOUND))
+        if (has_flag(flgs, TR_RES_SOUND))
             creature_ptr->resist_sound = TRUE;
     }
 }
 
-void have_resist_lite(player_type *creature_ptr)
+void has_resist_lite(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1376,12 +1367,12 @@ void have_resist_lite(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_LITE))
+        if (has_flag(flgs, TR_RES_LITE))
             creature_ptr->resist_lite = TRUE;
     }
 }
 
-void have_resist_dark(player_type *creature_ptr)
+void has_resist_dark(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1408,12 +1399,12 @@ void have_resist_dark(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_DARK))
+        if (has_flag(flgs, TR_RES_DARK))
             creature_ptr->resist_dark = TRUE;
     }
 }
 
-void have_resist_chaos(player_type *creature_ptr)
+void has_resist_chaos(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1440,12 +1431,12 @@ void have_resist_chaos(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_CHAOS))
+        if (has_flag(flgs, TR_RES_CHAOS))
             creature_ptr->resist_chaos = TRUE;
     }
 }
 
-void have_resist_disen(player_type *creature_ptr)
+void has_resist_disen(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1469,12 +1460,12 @@ void have_resist_disen(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_DISEN))
+        if (has_flag(flgs, TR_RES_DISEN))
             creature_ptr->resist_disen = TRUE;
     }
 }
 
-void have_resist_shard(player_type *creature_ptr)
+void has_resist_shard(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1494,12 +1485,12 @@ void have_resist_shard(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_DISEN))
+        if (has_flag(flgs, TR_RES_DISEN))
             creature_ptr->resist_shard = TRUE;
     }
 }
 
-void have_resist_nexus(player_type *creature_ptr)
+void has_resist_nexus(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1520,12 +1511,12 @@ void have_resist_nexus(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_NEXUS))
+        if (has_flag(flgs, TR_RES_NEXUS))
             creature_ptr->resist_nexus = TRUE;
     }
 }
 
-void have_resist_blind(player_type *creature_ptr)
+void has_resist_blind(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1553,12 +1544,12 @@ void have_resist_blind(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_BLIND))
+        if (has_flag(flgs, TR_RES_BLIND))
             creature_ptr->resist_blind = TRUE;
     }
 }
 
-void have_resist_neth(player_type *creature_ptr)
+void has_resist_neth(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1587,12 +1578,12 @@ void have_resist_neth(player_type *creature_ptr)
 
         object_flags(creature_ptr, o_ptr, flgs);
 
-        if (have_flag(flgs, TR_RES_NETHER))
+        if (has_flag(flgs, TR_RES_NETHER))
             creature_ptr->resist_neth = TRUE;
     }
 }
 
-void have_resist_time(player_type *creature_ptr)
+void has_resist_time(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1613,7 +1604,7 @@ void have_resist_time(player_type *creature_ptr)
     }
 }
 
-void have_resist_water(player_type *creature_ptr)
+void has_resist_water(player_type *creature_ptr)
 {
     creature_ptr->resist_water = FALSE;
 
@@ -1621,7 +1612,7 @@ void have_resist_water(player_type *creature_ptr)
         creature_ptr->resist_water = TRUE;
 }
 
-void have_resist_fear(player_type *creature_ptr)
+void has_resist_fear(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1677,12 +1668,12 @@ void have_resist_fear(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_RES_FEAR))
+        if (has_flag(flgs, TR_RES_FEAR))
             creature_ptr->resist_fear = TRUE;
     }
 }
 
-void have_immune_acid(player_type *creature_ptr)
+void has_immune_acid(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1702,12 +1693,12 @@ void have_immune_acid(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_IM_ACID))
+        if (has_flag(flgs, TR_IM_ACID))
             creature_ptr->immune_acid = TRUE;
     }
 }
 
-void have_immune_elec(player_type *creature_ptr)
+void has_immune_elec(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1723,12 +1714,12 @@ void have_immune_elec(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_IM_ELEC))
+        if (has_flag(flgs, TR_IM_ELEC))
             creature_ptr->immune_elec = TRUE;
     }
 }
 
-void have_immune_fire(player_type *creature_ptr)
+void has_immune_fire(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1744,12 +1735,12 @@ void have_immune_fire(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_IM_FIRE))
+        if (has_flag(flgs, TR_IM_FIRE))
             creature_ptr->immune_fire = TRUE;
     }
 }
 
-void have_immune_cold(player_type *creature_ptr)
+void has_immune_cold(player_type *creature_ptr)
 {
     object_type *o_ptr;
     BIT_FLAGS flgs[TR_FLAG_SIZE];
@@ -1765,12 +1756,12 @@ void have_immune_cold(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-        if (have_flag(flgs, TR_IM_COLD))
+        if (has_flag(flgs, TR_IM_COLD))
             creature_ptr->immune_cold = TRUE;
     }
 }
 
-bool have_right_hand_weapon(player_type *creature_ptr)
+bool has_right_hand_weapon(player_type *creature_ptr)
 {
     if (has_melee_weapon(creature_ptr, INVEN_RARM))
         return TRUE;
@@ -1790,18 +1781,18 @@ bool have_right_hand_weapon(player_type *creature_ptr)
 	return FALSE;
 }
 
-bool have_left_hand_weapon(player_type *creature_ptr)
+bool has_left_hand_weapon(player_type *creature_ptr)
 {
     return has_melee_weapon(creature_ptr, INVEN_LARM);
 }
 
-bool have_two_handed_weapons(player_type *creature_ptr)
+bool has_two_handed_weapons(player_type *creature_ptr)
 {
     if (can_two_hands_wielding(creature_ptr)) {
-        if (have_right_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
+        if (has_right_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_LARM)
             && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_RARM])) {
             return TRUE;
-        } else if (have_left_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
+        } else if (has_left_hand_weapon(creature_ptr) && (empty_hands(creature_ptr, FALSE) == EMPTY_HAND_RARM)
             && object_allow_two_hands_wielding(&creature_ptr->inventory_list[INVEN_LARM])) {
             return TRUE;
         }
@@ -1809,7 +1800,7 @@ bool have_two_handed_weapons(player_type *creature_ptr)
     return FALSE;
 }
 
-void have_lite(player_type *creature_ptr)
+void has_lite(player_type *creature_ptr)
 {
     creature_ptr->lite = FALSE;
     if (creature_ptr->pclass == CLASS_NINJA)
@@ -1843,7 +1834,7 @@ bool is_disable_two_handed_bonus(player_type *creature_ptr, int i)
     object_type *o_ptr;
     o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
     if (has_melee_weapon(creature_ptr, INVEN_RARM + i)) {
-        if (calc_weapon_weight_limit(creature_ptr) * 2 >= o_ptr->weight / 10 && have_two_handed_weapons(creature_ptr) && (calc_weapon_weight_limit(creature_ptr) * 2 < o_ptr->weight / 5))
+        if (calc_weapon_weight_limit(creature_ptr) * 2 >= o_ptr->weight / 10 && has_two_handed_weapons(creature_ptr) && (calc_weapon_weight_limit(creature_ptr) * 2 < o_ptr->weight / 5))
             return TRUE;
     }
     return FALSE;
@@ -1856,7 +1847,7 @@ bool is_icky_wield_weapon(player_type *creature_ptr, int i)
     o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
     object_flags(creature_ptr, o_ptr, flgs);
 
-    if ((creature_ptr->pclass == CLASS_PRIEST) && (!(have_flag(flgs, TR_BLESSED))) && ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))) {
+    if ((creature_ptr->pclass == CLASS_PRIEST) && (!(has_flag(flgs, TR_BLESSED))) && ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM))) {
         return TRUE;
     } else if (creature_ptr->pclass == CLASS_SORCERER) {
         if (!((o_ptr->tval == TV_HAFTED) && ((o_ptr->sval == SV_WIZSTAFF) || (o_ptr->sval == SV_NAMAKE_HAMMER)))) {
@@ -1876,7 +1867,7 @@ bool is_riding_wield_weapon(player_type *creature_ptr, int i)
     o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
     object_flags(creature_ptr, o_ptr, flgs);
     if (creature_ptr->riding != 0 && !(o_ptr->tval == TV_POLEARM) && ((o_ptr->sval == SV_LANCE) || (o_ptr->sval == SV_HEAVY_LANCE))
-        && !have_flag(flgs, TR_RIDING)) {
+        && !has_flag(flgs, TR_RIDING)) {
         return TRUE;
     }
     return FALSE;
@@ -1897,4 +1888,4 @@ bool is_not_monk_weapon(player_type *creature_ptr, int i)
     return (creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER) && (!s_info[creature_ptr->pclass].w_max[tval][sval]);
 }
 
-bool have_good_luck(player_type *creature_ptr) { return (creature_ptr->pseikaku == PERSONALITY_LUCKY) || (creature_ptr->muta3 |= MUT3_GOOD_LUCK); };
+bool has_good_luck(player_type *creature_ptr) { return (creature_ptr->pseikaku == PERSONALITY_LUCKY) || (creature_ptr->muta3 |= MUT3_GOOD_LUCK); };
