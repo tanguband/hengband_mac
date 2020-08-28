@@ -401,15 +401,15 @@ typedef struct player_type {
 
     BIT_FLAGS sustain_str; /* Keep strength */
     BIT_FLAGS sustain_int; /* Keep intelligence */
-    bool sustain_wis; /* Keep wisdom */
-    bool sustain_dex; /* Keep dexterity */
-    bool sustain_con; /* Keep constitution */
-    bool sustain_chr; /* Keep charisma */
+    BIT_FLAGS sustain_wis; /* Keep wisdom */
+    BIT_FLAGS sustain_dex; /* Keep dexterity */
+    BIT_FLAGS sustain_con; /* Keep constitution */
+    BIT_FLAGS sustain_chr; /* Keep charisma */
 
     BIT_FLAGS cursed; /* Player is cursed */
 
     bool can_swim; /* No damage falling */
-    bool levitation; /* No damage falling */
+    BIT_FLAGS levitation; /* No damage falling */
     bool lite; /* Permanent light */
     BIT_FLAGS free_act; /* Never paralyzed */
     bool see_inv; /* Can see invisible */
