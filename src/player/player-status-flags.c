@@ -313,8 +313,7 @@ BIT_FLAGS has_reflect(player_type *creature_ptr)
     return result;
 }
 
-BIT_FLAGS has_see_nocto(player_type *creature_ptr)
-{ return creature_ptr->pclass == CLASS_NINJA ? FLAG_CAUSE_CLASS : 0L; }
+BIT_FLAGS has_see_nocto(player_type *creature_ptr) { return creature_ptr->pclass == CLASS_NINJA ? FLAG_CAUSE_CLASS : 0L; }
 
 void has_warning(player_type *creature_ptr)
 {
@@ -424,99 +423,85 @@ BIT_FLAGS has_heavy_spell(player_type *creature_ptr)
     return result;
 }
 
-void has_hold_exp(player_type *creature_ptr)
+BIT_FLAGS has_hold_exp(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-
-    creature_ptr->hold_exp = FALSE;
+    BIT_FLAGS result = 0L;
 
     if (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN) {
-        creature_ptr->hold_exp = TRUE;
+        result |= FLAG_CAUSE_PERSONALITY;
     }
 
     if (creature_ptr->mimic_form == MIMIC_DEMON || creature_ptr->mimic_form == MIMIC_DEMON_LORD || creature_ptr->mimic_form == MIMIC_VAMPIRE) {
-        creature_ptr->hold_exp = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
     if (is_specific_player_race(creature_ptr, RACE_HOBBIT) || is_specific_player_race(creature_ptr, RACE_SKELETON)
         || is_specific_player_race(creature_ptr, RACE_ZOMBIE) || is_specific_player_race(creature_ptr, RACE_VAMPIRE)
         || is_specific_player_race(creature_ptr, RACE_SPECTRE) || is_specific_player_race(creature_ptr, RACE_BALROG)
         || is_specific_player_race(creature_ptr, RACE_ANDROID)) {
-        creature_ptr->hold_exp = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
     if (is_specific_player_race(creature_ptr, RACE_GOLEM)) {
         if (creature_ptr->lev > 34)
-            creature_ptr->hold_exp = TRUE;
+            result |= FLAG_CAUSE_RACE;
     }
 
-    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-        creature_ptr->hold_exp = TRUE;
+    if (creature_ptr->special_defense & KATA_MUSOU) {
+        result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (has_flag(flgs, TR_HOLD_EXP))
-            creature_ptr->hold_exp = TRUE;
+    if (creature_ptr->ult_res) {
+        result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
+
+    result |= check_equipment_flags(creature_ptr, TR_HOLD_EXP);
+    return result;
 }
 
-void has_see_inv(player_type *creature_ptr)
+BIT_FLAGS has_see_inv(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->see_inv = FALSE;
+    BIT_FLAGS result = 0L;
 
     if (creature_ptr->pclass == CLASS_NINJA || creature_ptr->lev > 29)
-        creature_ptr->see_inv = TRUE;
+        result |= FLAG_CAUSE_CLASS;
 
     if (creature_ptr->mimic_form == MIMIC_DEMON || creature_ptr->mimic_form == MIMIC_DEMON_LORD || creature_ptr->mimic_form == MIMIC_VAMPIRE) {
-        creature_ptr->see_inv = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
     if (!creature_ptr->mimic_form
         && (creature_ptr->prace == RACE_HIGH_ELF || creature_ptr->prace == RACE_GOLEM || creature_ptr->prace == RACE_SKELETON
             || creature_ptr->prace == RACE_ZOMBIE || creature_ptr->prace == RACE_SPECTRE || creature_ptr->prace == RACE_ARCHON)) {
-        creature_ptr->see_inv = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
     if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DARK_ELF) {
         if (creature_ptr->lev > 19)
-            creature_ptr->see_inv = TRUE;
+            result |= FLAG_CAUSE_RACE;
     }
 
     if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_MIND_FLAYER) {
         if (creature_ptr->lev > 14)
-            creature_ptr->see_inv = TRUE;
+            result |= FLAG_CAUSE_RACE;
     }
 
     if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_IMP || creature_ptr->prace == RACE_BALROG)) {
         if (creature_ptr->lev > 9)
-            creature_ptr->see_inv = TRUE;
+            result |= FLAG_CAUSE_RACE;
     }
 
-    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-        creature_ptr->see_inv = TRUE;
+    if (creature_ptr->special_defense & KATA_MUSOU) {
+        result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
-    if (creature_ptr->tim_invis) {
-        creature_ptr->see_inv = TRUE;
+    if (creature_ptr->ult_res || creature_ptr->tim_invis) {
+        result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
+	result |= check_equipment_flags(creature_ptr, TR_SEE_INVIS);
+    return result;
 
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (has_flag(flgs, TR_SEE_INVIS))
-            creature_ptr->see_inv = TRUE;
-    }
 }
 
 BIT_FLAGS has_free_act(player_type *creature_ptr)
@@ -564,19 +549,19 @@ BIT_FLAGS has_sustain_str(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
 
-	if (creature_ptr->pclass == CLASS_BERSERKER) {
+    if (creature_ptr->pclass == CLASS_BERSERKER) {
         result |= FLAG_CAUSE_CLASS;
     }
     if (is_specific_player_race(creature_ptr, RACE_HALF_TROLL) || is_specific_player_race(creature_ptr, RACE_HALF_OGRE)
         || is_specific_player_race(creature_ptr, RACE_HALF_GIANT)) {
-		result |= FLAG_CAUSE_RACE;
+        result |= FLAG_CAUSE_RACE;
     }
 
-	if (creature_ptr->ult_res) {
+    if (creature_ptr->ult_res) {
         result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-	if (creature_ptr->special_defense & KATA_MUSOU) {
+    if (creature_ptr->special_defense & KATA_MUSOU) {
         result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
@@ -596,7 +581,7 @@ BIT_FLAGS has_sustain_int(player_type *creature_ptr)
         result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-	if (creature_ptr->special_defense & KATA_MUSOU) {
+    if (creature_ptr->special_defense & KATA_MUSOU) {
         result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
@@ -780,63 +765,43 @@ void has_slow_digest(player_type *creature_ptr)
     }
 }
 
-void has_regenerate(player_type *creature_ptr)
+BIT_FLAGS has_regenerate(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->regenerate = FALSE;
+    BIT_FLAGS result = 0L;
 
-    if (!creature_ptr->mimic_form) {
-        switch (creature_ptr->prace) {
-        case RACE_HALF_TROLL:
-            if (creature_ptr->lev > 14) {
-                creature_ptr->regenerate = TRUE;
-            }
-            break;
-        case RACE_AMBERITE:
-            creature_ptr->regenerate = TRUE;
-            break;
-        }
+    if (is_specific_player_race(creature_ptr, RACE_HALF_TROLL) && creature_ptr->lev > 14) {
+        result |= FLAG_CAUSE_RACE;
     }
 
-    switch (creature_ptr->pclass) {
-    case CLASS_WARRIOR:
-        if (creature_ptr->lev > 44)
-            creature_ptr->regenerate = TRUE;
-        break;
-    case CLASS_BERSERKER:
-        creature_ptr->regenerate = TRUE;
-        break;
+    if (is_specific_player_race(creature_ptr, RACE_AMBERITE)) {
+        result |= FLAG_CAUSE_RACE;
     }
 
-    if (creature_ptr->muta3 & MUT3_FLESH_ROT)
-        creature_ptr->regenerate = FALSE;
+    if (creature_ptr->pclass == CLASS_WARRIOR && creature_ptr->lev > 44) {
+        result |= FLAG_CAUSE_RACE;    
+	}
+
+	if (creature_ptr->pclass == CLASS_BERSERKER) {
+        result |= FLAG_CAUSE_RACE;
+    }
 
     if (creature_ptr->muta3 & MUT3_REGEN)
-        creature_ptr->regenerate = TRUE;
+        result |= FLAG_CAUSE_MUTATION;
 
-    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-        creature_ptr->regenerate = TRUE;
+    if (creature_ptr->special_defense & KATA_MUSOU) {
+        result |= FLAG_CAUSE_MUTATION;
     }
 
-    if (creature_ptr->realm1 == REALM_HEX) {
-        if (hex_spelling(creature_ptr, HEX_DEMON_AURA)) {
-            creature_ptr->regenerate = TRUE;
-        }
+    if (hex_spelling(creature_ptr, HEX_DEMON_AURA) || creature_ptr->ult_res || creature_ptr->tim_regen) {
+        result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-    if (creature_ptr->tim_regen) {
-        creature_ptr->regenerate = TRUE;
-    }
+    result |= check_equipment_flags(creature_ptr, TR_REGEN);
 
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (has_flag(flgs, TR_REGEN))
-            creature_ptr->regenerate = TRUE;
-    }
+    if (creature_ptr->muta3 & MUT3_FLESH_ROT)
+        result = 0L;
+
+    return result;
 }
 
 void has_curses(player_type *creature_ptr)
@@ -950,121 +915,89 @@ void has_extra_blow(player_type *creature_ptr)
     }
 }
 
-void has_resist_acid(player_type *creature_ptr)
+BIT_FLAGS has_resist_acid(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->resist_acid = FALSE;
+    BIT_FLAGS result = 0L;
 
     if (creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
-        creature_ptr->resist_acid = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
     if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_YEEK || creature_ptr->prace == RACE_KLACKON)) {
-        creature_ptr->resist_acid = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
     if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DRACONIAN && creature_ptr->lev > 14) {
-        creature_ptr->resist_acid = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
-    if (creature_ptr->special_defense & KAMAE_SEIRYU) {
-        creature_ptr->resist_acid = TRUE;
+    if (creature_ptr->special_defense & KAMAE_SEIRYU || creature_ptr->special_defense & KATA_MUSOU) {
+        result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
-    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-        creature_ptr->resist_acid = TRUE;
+    if (creature_ptr->ult_res) {
+        result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
+    result |= has_immune_acid(creature_ptr);
 
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (has_flag(flgs, TR_RES_ACID))
-            creature_ptr->resist_acid = TRUE;
-    }
+    result |= check_equipment_flags(creature_ptr, TR_RES_ACID);
+    return result;
 
-    if (creature_ptr->immune_acid)
-        creature_ptr->resist_acid = TRUE;
 }
 
-void has_resist_elec(player_type *creature_ptr)
+BIT_FLAGS has_resist_elec(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->resist_elec = FALSE;
+    BIT_FLAGS result = 0L;
 
     if (creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
-        creature_ptr->resist_elec = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
     if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DRACONIAN && creature_ptr->lev > 19) {
-        creature_ptr->resist_elec = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
-    if (creature_ptr->special_defense & KAMAE_SEIRYU) {
-        creature_ptr->resist_elec = TRUE;
+    if (creature_ptr->special_defense & KAMAE_SEIRYU || creature_ptr->special_defense & KATA_MUSOU) {
+        result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
-    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-        creature_ptr->resist_elec = TRUE;
+    if (creature_ptr->ult_res) {
+        result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (has_flag(flgs, TR_RES_ELEC))
-            creature_ptr->resist_elec = TRUE;
-    }
-
-    if (creature_ptr->immune_elec)
-        creature_ptr->resist_elec = TRUE;
+    result |= check_equipment_flags(creature_ptr, TR_RES_ELEC);
+    result |= has_immune_elec(creature_ptr);
+    return result;
 }
 
-void has_resist_fire(player_type *creature_ptr)
+BIT_FLAGS has_resist_fire(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->resist_fire = FALSE;
+    BIT_FLAGS result = 0L;
 
     if (creature_ptr->mimic_form == MIMIC_DEMON || creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
-        creature_ptr->resist_fire = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
     if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DRACONIAN && creature_ptr->lev > 4) {
-        creature_ptr->resist_fire = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
     if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_IMP || creature_ptr->prace == RACE_BALROG)) {
-        creature_ptr->resist_fire = TRUE;
+        result |= FLAG_CAUSE_RACE;
     }
 
-    if (creature_ptr->special_defense & KAMAE_SEIRYU) {
-        creature_ptr->resist_fire = TRUE;
+    if (creature_ptr->special_defense & KAMAE_SEIRYU || creature_ptr->special_defense & KATA_MUSOU) {
+        result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
-    if (creature_ptr->ult_res || (creature_ptr->special_defense & KATA_MUSOU)) {
-        creature_ptr->resist_fire = TRUE;
-    }
+    if (creature_ptr->ult_res) {
+        result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
+	}
 
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-
-        if (has_flag(flgs, TR_RES_FIRE))
-            creature_ptr->resist_fire = TRUE;
-    }
-
-    if (creature_ptr->immune_fire)
-        creature_ptr->resist_fire = TRUE;
+    result |= check_equipment_flags(creature_ptr, TR_RES_FIRE);
+    result |= has_immune_fire(creature_ptr);
+    return result;
 }
 
 void has_resist_cold(player_type *creature_ptr)
@@ -1553,92 +1486,58 @@ void has_resist_fear(player_type *creature_ptr)
     }
 }
 
-void has_immune_acid(player_type *creature_ptr)
+BIT_FLAGS has_immune_acid(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->immune_acid = FALSE;
-
+    BIT_FLAGS result = 0L;
     if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_YEEK && creature_ptr->lev > 19)
-        creature_ptr->immune_acid = TRUE;
+        result |= FLAG_CAUSE_RACE;
 
     if (creature_ptr->ele_immune) {
         if (creature_ptr->special_defense & DEFENSE_ACID)
-            creature_ptr->immune_acid = TRUE;
+            result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (has_flag(flgs, TR_IM_ACID))
-            creature_ptr->immune_acid = TRUE;
-    }
+    result |= check_equipment_flags(creature_ptr, TR_IM_ACID);
+    return result;
 }
 
-void has_immune_elec(player_type *creature_ptr)
+BIT_FLAGS has_immune_elec(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->immune_elec = FALSE;
-    if (creature_ptr->ele_immune) {
+    BIT_FLAGS result = 0L;
+
+	if (creature_ptr->ele_immune) {
         if (creature_ptr->special_defense & DEFENSE_ELEC)
-            creature_ptr->immune_elec = TRUE;
+            result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (has_flag(flgs, TR_IM_ELEC))
-            creature_ptr->immune_elec = TRUE;
-    }
+    result |= check_equipment_flags(creature_ptr, TR_IM_ELEC);
+    return result;
 }
 
-void has_immune_fire(player_type *creature_ptr)
+BIT_FLAGS has_immune_fire(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->immune_fire = FALSE;
-    if (creature_ptr->ele_immune) {
+    BIT_FLAGS result = 0L;
+
+	if (creature_ptr->ele_immune) {
         if (creature_ptr->special_defense & DEFENSE_FIRE)
-            creature_ptr->immune_fire = TRUE;
+            result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (has_flag(flgs, TR_IM_FIRE))
-            creature_ptr->immune_fire = TRUE;
-    }
+    result |= check_equipment_flags(creature_ptr, TR_IM_FIRE);
+    return result;
 }
 
-void has_immune_cold(player_type *creature_ptr)
+BIT_FLAGS has_immune_cold(player_type *creature_ptr)
 {
-    object_type *o_ptr;
-    BIT_FLAGS flgs[TR_FLAG_SIZE];
-    creature_ptr->immune_cold = FALSE;
-    if (creature_ptr->ele_immune) {
+    BIT_FLAGS result = 0L;
+
+	if (creature_ptr->ele_immune) {
         if (creature_ptr->special_defense & DEFENSE_COLD)
-            creature_ptr->immune_cold = TRUE;
+           result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
-    for (inventory_slot_type i = INVEN_RARM; i < INVEN_TOTAL; i++) {
-        o_ptr = &creature_ptr->inventory_list[i];
-        if (!o_ptr->k_idx)
-            continue;
-
-        object_flags(creature_ptr, o_ptr, flgs);
-        if (has_flag(flgs, TR_IM_COLD))
-            creature_ptr->immune_cold = TRUE;
-    }
+    result |= check_equipment_flags(creature_ptr, TR_IM_COLD);
+    return result;
 }
 
 bool has_right_hand_weapon(player_type *creature_ptr)

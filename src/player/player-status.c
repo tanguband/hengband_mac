@@ -312,7 +312,7 @@ void calc_bonuses(player_type *creature_ptr)
     BIT_FLAGS old_esp_good = creature_ptr->esp_good;
     BIT_FLAGS old_esp_nonliving = creature_ptr->esp_nonliving;
     BIT_FLAGS old_esp_unique = creature_ptr->esp_unique;
-    bool old_see_inv = creature_ptr->see_inv;
+    BIT_FLAGS old_see_inv = creature_ptr->see_inv;
     BIT_FLAGS old_mighty_throw = creature_ptr->mighty_throw;
     s16b old_speed = creature_ptr->pspeed;
 
@@ -351,8 +351,8 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->sh_cold = has_sh_cold(creature_ptr);
     creature_ptr->easy_spell = has_easy_spell(creature_ptr);
     creature_ptr->heavy_spell = has_heavy_spell(creature_ptr);
-    has_hold_exp(creature_ptr);
-    has_see_inv(creature_ptr);
+    creature_ptr->hold_exp = has_hold_exp(creature_ptr);
+    creature_ptr->see_inv = has_see_inv(creature_ptr);
     creature_ptr->free_act = has_free_act(creature_ptr);
     creature_ptr->sustain_str = has_sustain_str(creature_ptr);
     creature_ptr->sustain_int = has_sustain_int(creature_ptr);
@@ -363,17 +363,17 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->levitation = has_levitation(creature_ptr);
     has_can_swim(creature_ptr);
     has_slow_digest(creature_ptr);
-    has_regenerate(creature_ptr);
+    creature_ptr->regenerate = has_regenerate(creature_ptr);
     has_curses(creature_ptr);
     creature_ptr->impact = has_impact(creature_ptr);
     has_extra_blow(creature_ptr);
-    has_immune_acid(creature_ptr);
-    has_immune_elec(creature_ptr);
-    has_immune_fire(creature_ptr);
-    has_immune_cold(creature_ptr);
-    has_resist_acid(creature_ptr);
-    has_resist_elec(creature_ptr);
-    has_resist_fire(creature_ptr);
+    creature_ptr->immune_acid = has_immune_acid(creature_ptr);
+    creature_ptr->immune_elec = has_immune_elec(creature_ptr);
+    creature_ptr->immune_fire = has_immune_fire(creature_ptr);
+    creature_ptr->immune_cold = has_immune_cold(creature_ptr);
+    creature_ptr->resist_acid = has_resist_acid(creature_ptr);
+    creature_ptr->resist_elec = has_resist_elec(creature_ptr);
+    creature_ptr->resist_fire = has_resist_fire(creature_ptr);
     has_resist_cold(creature_ptr);
     has_resist_pois(creature_ptr);
     has_resist_conf(creature_ptr);

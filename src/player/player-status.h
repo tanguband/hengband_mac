@@ -366,14 +366,14 @@ typedef struct player_type {
     bool is_fired;
     bool level_up_message;
 
-    bool immune_acid; /* Immunity to acid */
-    bool immune_elec; /* Immunity to lightning */
-    bool immune_fire; /* Immunity to fire */
-    bool immune_cold; /* Immunity to cold */
+    BIT_FLAGS immune_acid; /* Immunity to acid */
+    BIT_FLAGS immune_elec; /* Immunity to lightning */
+    BIT_FLAGS immune_fire; /* Immunity to fire */
+    BIT_FLAGS immune_cold; /* Immunity to cold */
 
-    bool resist_acid; /* Resist acid */
-    bool resist_elec; /* Resist lightning */
-    bool resist_fire; /* Resist fire */
+    BIT_FLAGS resist_acid; /* Resist acid */
+    BIT_FLAGS resist_elec; /* Resist lightning */
+    BIT_FLAGS resist_fire; /* Resist fire */
     bool resist_cold; /* Resist cold */
     bool resist_pois; /* Resist poison */
 
@@ -412,9 +412,9 @@ typedef struct player_type {
     BIT_FLAGS levitation; /* No damage falling */
     bool lite; /* Permanent light */
     BIT_FLAGS free_act; /* Never paralyzed */
-    bool see_inv; /* Can see invisible */
-    bool regenerate; /* Regenerate hit pts */
-    bool hold_exp; /* Resist exp draining */
+    BIT_FLAGS see_inv; /* Can see invisible */
+    BIT_FLAGS regenerate; /* Regenerate hit pts */
+    BIT_FLAGS hold_exp; /* Resist exp draining */
 
     BIT_FLAGS telepathy; /* Telepathy */
     BIT_FLAGS esp_animal;
