@@ -383,13 +383,13 @@ typedef struct player_type {
     BIT_FLAGS resist_dark; /* Resist darkness */
     BIT_FLAGS resist_chaos; /* Resist chaos */
     BIT_FLAGS resist_disen; /* Resist disenchant */
-    bool resist_shard; /* Resist shards */
-    bool resist_nexus; /* Resist nexus */
-    bool resist_blind; /* Resist blindness */
-    bool resist_neth; /* Resist nether */
-    bool resist_fear; /* Resist fear */
-    bool resist_time; /* Resist time */
-    bool resist_water; /* Resist water */
+    BIT_FLAGS resist_shard; /* Resist shards */
+    BIT_FLAGS resist_nexus; /* Resist nexus */
+    BIT_FLAGS resist_blind; /* Resist blindness */
+    BIT_FLAGS resist_neth; /* Resist nether */
+    BIT_FLAGS resist_fear; /* Resist fear */
+    BIT_FLAGS resist_time; /* Resist time */
+    BIT_FLAGS resist_water; /* Resist water */
 
     BIT_FLAGS reflect; /* Reflect 'bolt' attacks */
     BIT_FLAGS sh_fire; /* Fiery 'immolation' effect */
@@ -430,7 +430,7 @@ typedef struct player_type {
     BIT_FLAGS esp_nonliving;
     BIT_FLAGS esp_unique;
 
-    bool slow_digest; /* Slower digestion */
+    BIT_FLAGS slow_digest; /* Slower digestion */
     BIT_FLAGS bless_blade; /* Blessed blade */
     BIT_FLAGS xtra_might; /* Extra might bow */
     BIT_FLAGS impact; /* Earthquake blows */

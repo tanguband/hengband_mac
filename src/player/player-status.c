@@ -362,7 +362,7 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->sustain_chr = has_sustain_chr(creature_ptr);
     creature_ptr->levitation = has_levitation(creature_ptr);
     has_can_swim(creature_ptr);
-    has_slow_digest(creature_ptr);
+    creature_ptr->slow_digest = has_slow_digest(creature_ptr);
     creature_ptr->regenerate = has_regenerate(creature_ptr);
     has_curses(creature_ptr);
     creature_ptr->impact = has_impact(creature_ptr);
@@ -382,12 +382,14 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->resist_dark = has_resist_dark(creature_ptr);
     creature_ptr->resist_chaos = has_resist_chaos(creature_ptr);
     creature_ptr->resist_disen = has_resist_disen(creature_ptr);
-    has_resist_shard(creature_ptr);
-    has_resist_nexus(creature_ptr);
-    has_resist_blind(creature_ptr);
-    has_resist_neth(creature_ptr);
-    has_resist_time(creature_ptr);
-    has_resist_fear(creature_ptr);
+    creature_ptr->resist_shard = has_resist_shard(creature_ptr);
+    creature_ptr->resist_nexus = has_resist_nexus(creature_ptr);
+    creature_ptr->resist_blind = has_resist_blind(creature_ptr);
+    creature_ptr->resist_neth = has_resist_neth(creature_ptr);
+    creature_ptr->resist_time = has_resist_time(creature_ptr);
+    creature_ptr->resist_fear = has_resist_fear(creature_ptr);
+    creature_ptr->resist_time = has_resist_time(creature_ptr);
+    creature_ptr->resist_water = has_resist_water(creature_ptr);
 
     has_lite(creature_ptr);
 
