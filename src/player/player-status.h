@@ -374,15 +374,15 @@ typedef struct player_type {
     BIT_FLAGS resist_acid; /* Resist acid */
     BIT_FLAGS resist_elec; /* Resist lightning */
     BIT_FLAGS resist_fire; /* Resist fire */
-    bool resist_cold; /* Resist cold */
-    bool resist_pois; /* Resist poison */
+    BIT_FLAGS resist_cold; /* Resist cold */
+    BIT_FLAGS resist_pois; /* Resist poison */
 
-    bool resist_conf; /* Resist confusion */
-    bool resist_sound; /* Resist sound */
-    bool resist_lite; /* Resist light */
-    bool resist_dark; /* Resist darkness */
-    bool resist_chaos; /* Resist chaos */
-    bool resist_disen; /* Resist disenchant */
+    BIT_FLAGS resist_conf; /* Resist confusion */
+    BIT_FLAGS resist_sound; /* Resist sound */
+    BIT_FLAGS resist_lite; /* Resist light */
+    BIT_FLAGS resist_dark; /* Resist darkness */
+    BIT_FLAGS resist_chaos; /* Resist chaos */
+    BIT_FLAGS resist_disen; /* Resist disenchant */
     bool resist_shard; /* Resist shards */
     bool resist_nexus; /* Resist nexus */
     bool resist_blind; /* Resist blindness */
