@@ -463,31 +463,29 @@ BIT_FLAGS has_see_inv(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
 
-    if (creature_ptr->pclass == CLASS_NINJA || creature_ptr->lev > 29)
+    if (creature_ptr->pclass == CLASS_NINJA && creature_ptr->lev > 29)
         result |= FLAG_CAUSE_CLASS;
 
     if (creature_ptr->mimic_form == MIMIC_DEMON || creature_ptr->mimic_form == MIMIC_DEMON_LORD || creature_ptr->mimic_form == MIMIC_VAMPIRE) {
         result |= FLAG_CAUSE_RACE;
     }
-
-    if (!creature_ptr->mimic_form
-        && (creature_ptr->prace == RACE_HIGH_ELF || creature_ptr->prace == RACE_GOLEM || creature_ptr->prace == RACE_SKELETON
-            || creature_ptr->prace == RACE_ZOMBIE || creature_ptr->prace == RACE_SPECTRE || creature_ptr->prace == RACE_ARCHON)) {
+    else if (is_specific_player_race(creature_ptr, RACE_HIGH_ELF)
+        || is_specific_player_race(creature_ptr, RACE_GOLEM)
+        || is_specific_player_race(creature_ptr, RACE_SKELETON)
+        || is_specific_player_race(creature_ptr, RACE_ZOMBIE)
+        || is_specific_player_race(creature_ptr, RACE_SPECTRE)
+        || is_specific_player_race(creature_ptr, RACE_ARCHON))
+    {
         result |= FLAG_CAUSE_RACE;
     }
-
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DARK_ELF) {
-        if (creature_ptr->lev > 19)
+    else if (is_specific_player_race(creature_ptr, RACE_DARK_ELF) && creature_ptr->lev > 19) {
+        result |= FLAG_CAUSE_RACE;
+    }
+    else if (is_specific_player_race(creature_ptr, RACE_MIND_FLAYER) && creature_ptr->lev > 14) {
             result |= FLAG_CAUSE_RACE;
     }
-
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_MIND_FLAYER) {
-        if (creature_ptr->lev > 14)
-            result |= FLAG_CAUSE_RACE;
-    }
-
-    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_IMP || creature_ptr->prace == RACE_BALROG)) {
-        if (creature_ptr->lev > 9)
+    else if ((is_specific_player_race(creature_ptr, RACE_IMP) || is_specific_player_race(creature_ptr, RACE_BALROG))
+        && creature_ptr->lev > 9) {
             result |= FLAG_CAUSE_RACE;
     }
 
@@ -895,9 +893,6 @@ void has_extra_blow(player_type *creature_ptr)
             continue;
 
         object_flags(creature_ptr, o_ptr, flgs);
-
-        if (has_flag(flgs, TR_INFRA))
-            creature_ptr->see_infra += o_ptr->pval;
         if (has_flag(flgs, TR_BLOWS)) {
             if ((i == INVEN_RARM || i == INVEN_RIGHT) && !has_two_handed_weapons(creature_ptr))
                 creature_ptr->extra_blows[0] += o_ptr->pval;
@@ -918,12 +913,10 @@ BIT_FLAGS has_resist_acid(player_type *creature_ptr)
     if (creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
         result |= FLAG_CAUSE_RACE;
     }
-
-    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_YEEK || creature_ptr->prace == RACE_KLACKON)) {
+    else if (is_specific_player_race(creature_ptr, RACE_YEEK) || is_specific_player_race(creature_ptr, RACE_KLACKON)) {
         result |= FLAG_CAUSE_RACE;
     }
-
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DRACONIAN && creature_ptr->lev > 14) {
+    else if (is_specific_player_race(creature_ptr, RACE_DRACONIAN) && creature_ptr->lev > 14) {
         result |= FLAG_CAUSE_RACE;
     }
 
@@ -949,8 +942,7 @@ BIT_FLAGS has_resist_elec(player_type *creature_ptr)
     if (creature_ptr->mimic_form == MIMIC_DEMON_LORD) {
         result |= FLAG_CAUSE_RACE;
     }
-
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DRACONIAN && creature_ptr->lev > 19) {
+    else if (is_specific_player_race(creature_ptr, RACE_DRACONIAN) && creature_ptr->lev > 19) {
         result |= FLAG_CAUSE_RACE;
     }
 
@@ -975,7 +967,7 @@ BIT_FLAGS has_resist_fire(player_type *creature_ptr)
         result |= FLAG_CAUSE_RACE;
     }
 
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DRACONIAN && creature_ptr->lev > 4) {
+    if (is_specific_player_race(creature_ptr, RACE_DRACONIAN) && creature_ptr->lev > 4) {
         result |= FLAG_CAUSE_RACE;
     }
 
@@ -1008,7 +1000,7 @@ BIT_FLAGS has_resist_cold(player_type *creature_ptr)
         result |= FLAG_CAUSE_RACE;
     }
 
-    if (!creature_ptr->mimic_form && (creature_ptr->prace == RACE_DRACONIAN || creature_ptr->prace == RACE_SKELETON) && creature_ptr->lev > 9) {
+    if ((is_specific_player_race(creature_ptr, RACE_DRACONIAN) || is_specific_player_race(creature_ptr, RACE_SKELETON)) && creature_ptr->lev > 9) {
         result |= FLAG_CAUSE_RACE;
     }
 
@@ -1040,7 +1032,7 @@ BIT_FLAGS has_resist_pois(player_type *creature_ptr)
         result |= FLAG_CAUSE_RACE;
     }
 
-    if (!creature_ptr->mimic_form && creature_ptr->prace == RACE_DRACONIAN && creature_ptr->lev > 34) {
+    if (is_specific_player_race(creature_ptr, RACE_DRACONIAN) && creature_ptr->lev > 34) {
         result |= FLAG_CAUSE_RACE;
     }
 
