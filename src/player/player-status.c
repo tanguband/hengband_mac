@@ -343,7 +343,7 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->dec_mana = has_dec_mana(creature_ptr);
     creature_ptr->reflect = has_reflect(creature_ptr);
     creature_ptr->see_nocto = has_see_nocto(creature_ptr);
-    has_warning(creature_ptr);
+    creature_ptr->warning = has_warning(creature_ptr);
     creature_ptr->anti_magic = has_anti_magic(creature_ptr);
     creature_ptr->anti_tele = has_anti_tele(creature_ptr);
     creature_ptr->sh_fire = has_sh_fire(creature_ptr);
@@ -391,7 +391,7 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->resist_time = has_resist_time(creature_ptr);
     creature_ptr->resist_water = has_resist_water(creature_ptr);
 
-    has_lite(creature_ptr);
+    creature_ptr->lite = has_lite(creature_ptr);
 
     const player_race *tmp_rp_ptr;
     if (creature_ptr->mimic_form)
