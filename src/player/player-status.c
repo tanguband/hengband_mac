@@ -319,22 +319,22 @@ void calc_bonuses(player_type *creature_ptr)
     ARMOUR_CLASS old_dis_ac = creature_ptr->dis_ac;
     ARMOUR_CLASS old_dis_to_a = creature_ptr->dis_to_a;
 
-    creature_ptr->pass_wall = has_pass_wall(creature_ptr);
-    creature_ptr->kill_wall = has_kill_wall(creature_ptr);
-    creature_ptr->xtra_might = has_xtra_might(creature_ptr);
-    creature_ptr->esp_evil = has_esp_evil(creature_ptr);
-    creature_ptr->esp_animal = has_esp_animal(creature_ptr);
-    creature_ptr->esp_undead = has_esp_undead(creature_ptr);
-    creature_ptr->esp_demon = has_esp_demon(creature_ptr);
-    creature_ptr->esp_orc = has_esp_orc(creature_ptr);
-    creature_ptr->esp_troll = has_esp_troll(creature_ptr);
-    creature_ptr->esp_giant = has_esp_giant(creature_ptr);
-    creature_ptr->esp_dragon = has_esp_dragon(creature_ptr);
-    creature_ptr->esp_human = has_esp_human(creature_ptr);
-    creature_ptr->esp_good = has_esp_good(creature_ptr);
-    creature_ptr->esp_nonliving = has_esp_nonliving(creature_ptr);
-    creature_ptr->esp_unique = has_esp_unique(creature_ptr);
-    creature_ptr->telepathy = has_esp_telepathy(creature_ptr);
+    creature_ptr->pass_wall = is_pass_wall(creature_ptr);
+    creature_ptr->kill_wall = is_kill_wall(creature_ptr);
+    creature_ptr->xtra_might = is_xtra_might(creature_ptr);
+    creature_ptr->esp_evil = is_esp_evil(creature_ptr);
+    creature_ptr->esp_animal = is_esp_animal(creature_ptr);
+    creature_ptr->esp_undead = is_esp_undead(creature_ptr);
+    creature_ptr->esp_demon = is_esp_demon(creature_ptr);
+    creature_ptr->esp_orc = is_esp_orc(creature_ptr);
+    creature_ptr->esp_troll = is_esp_troll(creature_ptr);
+    creature_ptr->esp_giant = is_esp_giant(creature_ptr);
+    creature_ptr->esp_dragon = is_esp_dragon(creature_ptr);
+    creature_ptr->esp_human = is_esp_human(creature_ptr);
+    creature_ptr->esp_good = is_esp_good(creature_ptr);
+    creature_ptr->esp_nonliving = is_esp_nonliving(creature_ptr);
+    creature_ptr->esp_unique = is_esp_unique(creature_ptr);
+    creature_ptr->telepathy = is_esp_telepathy(creature_ptr);
     creature_ptr->bless_blade = has_bless_blade(creature_ptr);
     creature_ptr->easy_2weapon = has_easy2_weapon(creature_ptr);
     creature_ptr->down_saving = has_down_saving(creature_ptr);
@@ -354,12 +354,12 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->hold_exp = has_hold_exp(creature_ptr);
     creature_ptr->see_inv = has_see_inv(creature_ptr);
     creature_ptr->free_act = has_free_act(creature_ptr);
-    creature_ptr->sustain_str = has_sustain_str(creature_ptr);
-    creature_ptr->sustain_int = has_sustain_int(creature_ptr);
-    creature_ptr->sustain_wis = has_sustain_wis(creature_ptr);
-    creature_ptr->sustain_dex = has_sustain_dex(creature_ptr);
-    creature_ptr->sustain_con = has_sustain_con(creature_ptr);
-    creature_ptr->sustain_chr = has_sustain_chr(creature_ptr);
+    creature_ptr->sustain_str = is_sustain_str(creature_ptr);
+    creature_ptr->sustain_int = is_sustain_int(creature_ptr);
+    creature_ptr->sustain_wis = is_sustain_wis(creature_ptr);
+    creature_ptr->sustain_dex = is_sustain_dex(creature_ptr);
+    creature_ptr->sustain_con = is_sustain_con(creature_ptr);
+    creature_ptr->sustain_chr = is_sustain_chr(creature_ptr);
     creature_ptr->levitation = has_levitation(creature_ptr);
     has_can_swim(creature_ptr);
     creature_ptr->slow_digest = has_slow_digest(creature_ptr);
@@ -367,29 +367,25 @@ void calc_bonuses(player_type *creature_ptr)
     has_curses(creature_ptr);
     creature_ptr->impact = has_impact(creature_ptr);
     has_extra_blow(creature_ptr);
-    creature_ptr->immune_acid = has_immune_acid(creature_ptr);
-    creature_ptr->immune_elec = has_immune_elec(creature_ptr);
-    creature_ptr->immune_fire = has_immune_fire(creature_ptr);
-    creature_ptr->immune_cold = has_immune_cold(creature_ptr);
-    creature_ptr->resist_acid = has_resist_acid(creature_ptr);
-    creature_ptr->resist_elec = has_resist_elec(creature_ptr);
-    creature_ptr->resist_fire = has_resist_fire(creature_ptr);
-    creature_ptr->resist_cold = has_resist_cold(creature_ptr);
-    creature_ptr->resist_pois = has_resist_pois(creature_ptr);
-    creature_ptr->resist_conf = has_resist_conf(creature_ptr);
-    creature_ptr->resist_sound = has_resist_sound(creature_ptr);
-    creature_ptr->resist_lite = has_resist_lite(creature_ptr);
-    creature_ptr->resist_dark = has_resist_dark(creature_ptr);
-    creature_ptr->resist_chaos = has_resist_chaos(creature_ptr);
-    creature_ptr->resist_disen = has_resist_disen(creature_ptr);
-    creature_ptr->resist_shard = has_resist_shard(creature_ptr);
-    creature_ptr->resist_nexus = has_resist_nexus(creature_ptr);
-    creature_ptr->resist_blind = has_resist_blind(creature_ptr);
-    creature_ptr->resist_neth = has_resist_neth(creature_ptr);
-    creature_ptr->resist_time = has_resist_time(creature_ptr);
-    creature_ptr->resist_fear = has_resist_fear(creature_ptr);
-    creature_ptr->resist_time = has_resist_time(creature_ptr);
-    creature_ptr->resist_water = has_resist_water(creature_ptr);
+    creature_ptr->resist_acid = is_resist_acid(creature_ptr);
+    creature_ptr->resist_elec = is_resist_elec(creature_ptr);
+    creature_ptr->resist_fire = is_resist_fire(creature_ptr);
+    creature_ptr->resist_cold = is_resist_cold(creature_ptr);
+    creature_ptr->resist_pois = is_resist_pois(creature_ptr);
+    creature_ptr->resist_conf = is_resist_conf(creature_ptr);
+    creature_ptr->resist_sound = is_resist_sound(creature_ptr);
+    creature_ptr->resist_lite = is_resist_lite(creature_ptr);
+    creature_ptr->resist_dark = is_resist_dark(creature_ptr);
+    creature_ptr->resist_chaos = is_resist_chaos(creature_ptr);
+    creature_ptr->resist_disen = is_resist_disen(creature_ptr);
+    creature_ptr->resist_shard = is_resist_shard(creature_ptr);
+    creature_ptr->resist_nexus = is_resist_nexus(creature_ptr);
+    creature_ptr->resist_blind = is_resist_blind(creature_ptr);
+    creature_ptr->resist_neth = is_resist_neth(creature_ptr);
+    creature_ptr->resist_time = is_resist_time(creature_ptr);
+    creature_ptr->resist_fear = is_resist_fear(creature_ptr);
+    creature_ptr->resist_time = is_resist_time(creature_ptr);
+    creature_ptr->resist_water = is_resist_water(creature_ptr);
 
     creature_ptr->lite = has_lite(creature_ptr);
 
@@ -398,42 +394,6 @@ void calc_bonuses(player_type *creature_ptr)
         tmp_rp_ptr = &mimic_info[creature_ptr->mimic_form];
     else
         tmp_rp_ptr = &race_info[creature_ptr->prace];
-
-    if (creature_ptr->mimic_form) {
-        switch (creature_ptr->mimic_form) {
-        case MIMIC_DEMON:
-            creature_ptr->oppose_fire = 1;
-            creature_ptr->redraw |= PR_STATUS;
-            break;
-        }
-    } else {
-        switch (creature_ptr->prace) {
-
-        case RACE_BALROG:
-            if (creature_ptr->lev > 44) {
-                creature_ptr->oppose_fire = 1;
-                creature_ptr->redraw |= PR_STATUS;
-            }
-            break;
-
-        default:
-            break;
-        }
-    }
-
-    switch (creature_ptr->pclass) {
-
-    case CLASS_BERSERKER:
-        creature_ptr->shero = 1;
-        creature_ptr->redraw |= PR_STATUS;
-        break;
-    case CLASS_NINJA:
-        if (creature_ptr->lev > 44) {
-            creature_ptr->oppose_pois = 1;
-            creature_ptr->redraw |= PR_STATUS;
-        }
-        break;
-    }
 
     if (creature_ptr->special_defense & KAMAE_MASK) {
         if (!(empty_hands_status & EMPTY_HAND_RARM)) {
@@ -657,7 +617,7 @@ static void calc_hitpoints(player_type *creature_ptr)
         mhp = creature_ptr->lev + 1;
     if (is_hero(creature_ptr))
         mhp += 10;
-    if (creature_ptr->shero && (creature_ptr->pclass != CLASS_BERSERKER))
+    if (is_shero(creature_ptr))
         mhp += 30;
     if (creature_ptr->tsuyoshi)
         mhp += 50;
@@ -1313,7 +1273,7 @@ static ACTION_SKILL_POWER calc_stealth(player_type *creature_ptr)
         pow = MIN(pow - 3, (pow + 2) / 2);
     }
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         pow -= 7;
     }
 
@@ -1403,7 +1363,7 @@ static ACTION_SKILL_POWER calc_device_ability(player_type *creature_ptr)
 
     pow += adj_int_dev[creature_ptr->stat_ind[A_INT]];
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         pow -= 20;
     }
     return pow;
@@ -1444,7 +1404,7 @@ static ACTION_SKILL_POWER calc_saving_throw(player_type *creature_ptr)
 
     pow += adj_wis_sav[creature_ptr->stat_ind[A_WIS]];
 
-    if (creature_ptr->shero)
+    if (is_shero(creature_ptr))
         pow -= 30;
 
     if (creature_ptr->anti_magic && (pow < (90 + creature_ptr->lev)))
@@ -1503,7 +1463,7 @@ static ACTION_SKILL_POWER calc_search(player_type *creature_ptr)
         pow += 15;
     }
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         pow -= 15;
     }
 
@@ -1547,7 +1507,7 @@ static ACTION_SKILL_POWER calc_search_freq(player_type *creature_ptr)
             pow += (o_ptr->pval * 5);
     }
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         pow -= 15;
     }
 
@@ -1629,7 +1589,7 @@ static ACTION_SKILL_POWER calc_to_hit_throw(player_type *creature_ptr)
     pow = tmp_rp_ptr->r_thb + c_ptr->c_thb + a_ptr->a_thb;
     pow += ((c_ptr->x_thb * creature_ptr->lev / 10) + (a_ptr->a_thb * creature_ptr->lev / 50));
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         pow -= 20;
     }
 
@@ -1662,7 +1622,7 @@ static ACTION_SKILL_POWER calc_skill_dig(player_type *creature_ptr)
         pow += creature_ptr->lev * 10;
     }
 
-    if (creature_ptr->shero)
+    if (is_shero(creature_ptr))
         pow += 30;
 
     pow += adj_str_dig[creature_ptr->stat_ind[A_STR]];
@@ -1686,7 +1646,7 @@ static ACTION_SKILL_POWER calc_skill_dig(player_type *creature_ptr)
         }
     }
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         pow += 30;
     }
 
@@ -2501,7 +2461,7 @@ static ARMOUR_CLASS calc_to_ac(player_type *creature_ptr, bool is_true_value)
         ac += 5;
     }
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         ac -= 10;
     }
 
@@ -2967,7 +2927,7 @@ static s16b calc_to_damage(player_type *creature_ptr, INVENTORY_IDX slot, bool i
     s16b damage = 0;
     damage += ((int)(adj_str_td[creature_ptr->stat_ind[A_STR]]) - 128);
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         damage += 3 + (creature_ptr->lev / 5);
     }
 
@@ -3114,7 +3074,7 @@ static s16b calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot, bool is_t
         hit += 12;
     }
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         hit += 12;
     }
 
@@ -3245,7 +3205,7 @@ static s16b calc_to_hit_bow(player_type *creature_ptr, bool is_true_value)
         pow += 12;
     }
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         pow -= 12;
     }
 
@@ -3309,7 +3269,7 @@ static s16b calc_to_damage_misc(player_type *creature_ptr)
         to_dam += (s16b)bonus_to_d;
     }
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         to_dam += 3 + (creature_ptr->lev / 5);
     }
 
@@ -3353,7 +3313,7 @@ static s16b calc_to_hit_misc(player_type *creature_ptr)
         to_hit += 12;
     }
 
-    if (creature_ptr->shero) {
+    if (is_shero(creature_ptr)) {
         to_hit += 12;
     }
 
@@ -4036,6 +3996,8 @@ bool is_fast(player_type *creature_ptr) { return creature_ptr->fast || music_sin
 bool is_invuln(player_type *creature_ptr) { return creature_ptr->invuln || music_singing(creature_ptr, MUSIC_INVULN); }
 
 bool is_hero(player_type *creature_ptr) { return creature_ptr->hero || music_singing(creature_ptr, MUSIC_HERO) || music_singing(creature_ptr, MUSIC_SHERO); }
+
+bool is_shero(player_type *creature_ptr) { return creature_ptr->shero || creature_ptr->pclass == CLASS_BERSERKER; }
 
 bool is_echizen(player_type *creature_ptr)
 {

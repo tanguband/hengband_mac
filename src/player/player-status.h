@@ -366,11 +366,6 @@ typedef struct player_type {
     bool is_fired;
     bool level_up_message;
 
-    BIT_FLAGS immune_acid; /* Immunity to acid */
-    BIT_FLAGS immune_elec; /* Immunity to lightning */
-    BIT_FLAGS immune_fire; /* Immunity to fire */
-    BIT_FLAGS immune_cold; /* Immunity to cold */
-
     BIT_FLAGS resist_acid; /* Resist acid */
     BIT_FLAGS resist_elec; /* Resist lightning */
     BIT_FLAGS resist_fire; /* Resist fire */
@@ -540,6 +535,7 @@ extern bool can_two_hands_wielding(player_type *creature_ptr);
 bool is_fast(player_type *creature_ptr);
 bool is_invuln(player_type *creature_ptr);
 bool is_hero(player_type *creature_ptr);
+bool is_shero(player_type *creature_ptr);
 bool is_echizen(player_type *creature_ptr);
 
 /*
