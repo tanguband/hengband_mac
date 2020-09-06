@@ -922,6 +922,19 @@ BIT_FLAGS is_resist_acid(player_type *creature_ptr)
     return result;
 }
 
+BIT_FLAGS is_vuln_acid(player_type *creature_ptr)
+{
+    BIT_FLAGS result = 0L;
+    if (creature_ptr->muta3 & MUT3_VULN_ELEM) {
+        result |= FLAG_CAUSE_MUTATION;
+    }
+
+    if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+        result |= FLAG_CAUSE_BATTLE_FORM;
+    }
+    return result;
+}
+
 BIT_FLAGS is_resist_elec(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -942,6 +955,23 @@ BIT_FLAGS is_resist_elec(player_type *creature_ptr)
 
     result |= check_equipment_flags(creature_ptr, TR_RES_ELEC);
     result |= is_immune_elec(creature_ptr);
+    return result;
+}
+
+BIT_FLAGS is_vuln_elec(player_type *creature_ptr)
+{
+    BIT_FLAGS result = 0L;
+    if (creature_ptr->muta3 & MUT3_VULN_ELEM) {
+        result |= FLAG_CAUSE_MUTATION;
+    }
+
+    if (is_specific_player_race(creature_ptr, RACE_ANDROID)) {
+        result |= FLAG_CAUSE_RACE;
+    }
+
+    if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+        result |= FLAG_CAUSE_BATTLE_FORM;
+    }
     return result;
 }
 
@@ -971,6 +1001,23 @@ BIT_FLAGS is_resist_fire(player_type *creature_ptr)
 
     result |= check_equipment_flags(creature_ptr, TR_RES_FIRE);
     result |= is_immune_fire(creature_ptr);
+    return result;
+}
+
+BIT_FLAGS is_vuln_fire(player_type *creature_ptr)
+{
+    BIT_FLAGS result = 0L;
+    if (creature_ptr->muta3 & MUT3_VULN_ELEM) {
+        result |= FLAG_CAUSE_MUTATION;
+    }
+
+    if (is_specific_player_race(creature_ptr, RACE_ENT)) {
+        result |= FLAG_CAUSE_RACE;
+    }
+
+    if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+        result |= FLAG_CAUSE_BATTLE_FORM;
+    }
     return result;
 }
 
@@ -1004,6 +1051,19 @@ BIT_FLAGS is_resist_cold(player_type *creature_ptr)
 
     result |= check_equipment_flags(creature_ptr, TR_RES_COLD);
     result |= is_immune_cold(creature_ptr);
+    return result;
+}
+
+BIT_FLAGS is_vuln_cold(player_type *creature_ptr)
+{
+    BIT_FLAGS result = 0L;
+    if (creature_ptr->muta3 & MUT3_VULN_ELEM) {
+        result |= FLAG_CAUSE_MUTATION;
+    }
+
+    if (creature_ptr->special_defense & KATA_KOUKIJIN) {
+        result |= FLAG_CAUSE_BATTLE_FORM;
+    }
     return result;
 }
 
@@ -1112,6 +1172,16 @@ BIT_FLAGS is_resist_lite(player_type *creature_ptr)
     }
 
     result |= check_equipment_flags(creature_ptr, TR_RES_LITE);
+    return result;
+}
+
+BIT_FLAGS is_vuln_lite(player_type *creature_ptr)
+{
+    BIT_FLAGS result = 0L;
+    if (is_specific_player_race(creature_ptr, RACE_VAMPIRE) || is_specific_player_race(creature_ptr, RACE_S_FAIRY)
+        || (creature_ptr->mimic_form == MIMIC_VAMPIRE)) {
+        result |= FLAG_CAUSE_RACE;
+    }
     return result;
 }
 
@@ -1526,4 +1596,4 @@ bool is_not_monk_weapon(player_type *creature_ptr, int i)
     return (creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER) && (!s_info[creature_ptr->pclass].w_max[tval][sval]);
 }
 
-bool has_good_luck(player_type *creature_ptr) { return (creature_ptr->pseikaku == PERSONALITY_LUCKY) || (creature_ptr->muta3 |= MUT3_GOOD_LUCK); };
+bool has_good_luck(player_type *creature_ptr) { return (creature_ptr->pseikaku == PERSONALITY_LUCKY) || (creature_ptr->muta3 & MUT3_GOOD_LUCK); }
