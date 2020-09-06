@@ -92,13 +92,7 @@ static void spell_damcalc(player_type *target_ptr, monster_type *m_ptr, EFFECT_I
             ignore_wraith_form = TRUE;
             break;
         }
-
-        if (target_ptr->muta3 & MUT3_VULN_ELEM)
-            dam *= 2;
-        if (target_ptr->special_defense & KATA_KOUKIJIN)
-            dam += dam / 3;
-        if (is_specific_player_race(target_ptr, RACE_ANDROID))
-            dam += dam / 3;
+        dam = dam * calc_vuln_elec_rate(target_ptr) / 100;
         if (target_ptr->resist_elec)
             dam = (dam + 2) / 3;
         if (is_oppose_elec(target_ptr))
@@ -119,10 +113,7 @@ static void spell_damcalc(player_type *target_ptr, monster_type *m_ptr, EFFECT_I
             break;
         }
 
-        if (target_ptr->muta3 & MUT3_VULN_ELEM)
-            dam *= 2;
-        if (target_ptr->special_defense & KATA_KOUKIJIN)
-            dam += dam / 3;
+        dam = dam * calc_vuln_acid_rate(target_ptr) / 100;
         if (target_ptr->resist_acid)
             dam = (dam + 2) / 3;
         if (is_oppose_acid(target_ptr))
@@ -136,11 +127,7 @@ static void spell_damcalc(player_type *target_ptr, monster_type *m_ptr, EFFECT_I
             ignore_wraith_form = TRUE;
             break;
         }
-
-        if (target_ptr->muta3 & MUT3_VULN_ELEM)
-            dam *= 2;
-        if (target_ptr->special_defense & KATA_KOUKIJIN)
-            dam += dam / 3;
+        dam = dam * calc_vuln_cold_rate(target_ptr) / 100;
         if (target_ptr->resist_cold)
             dam = (dam + 2) / 3;
         if (is_oppose_cold(target_ptr))
@@ -153,13 +140,7 @@ static void spell_damcalc(player_type *target_ptr, monster_type *m_ptr, EFFECT_I
             ignore_wraith_form = TRUE;
             break;
         }
-
-        if (target_ptr->muta3 & MUT3_VULN_ELEM)
-            dam *= 2;
-        if (is_specific_player_race(target_ptr, RACE_ENT))
-            dam += dam / 3;
-        if (target_ptr->special_defense & KATA_KOUKIJIN)
-            dam += dam / 3;
+        dam = dam * calc_vuln_fire_rate(target_ptr) / 100;
         if (target_ptr->resist_fire)
             dam = (dam + 2) / 3;
         if (is_oppose_fire(target_ptr))
@@ -183,13 +164,7 @@ static void spell_damcalc(player_type *target_ptr, monster_type *m_ptr, EFFECT_I
     case GF_LITE:
         if (target_ptr->resist_lite)
             dam /= 2; /* Worst case of 4 / (d4 + 7) */
-        if (is_specific_player_race(target_ptr, RACE_VAMPIRE) || (target_ptr->mimic_form == MIMIC_VAMPIRE))
-            dam *= 2;
-        else if (is_specific_player_race(target_ptr, RACE_S_FAIRY))
-            dam = dam * 4 / 3;
-
-        if (target_ptr->wraith_form)
-            dam *= 2;
+        dam = dam * calc_vuln_lite_rate(target_ptr) / 100;
         break;
 
     case GF_DARK:
