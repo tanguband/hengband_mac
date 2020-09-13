@@ -58,6 +58,10 @@ PERCENTAGE calc_acid_damage_rate(player_type *creature_ptr)
     PERCENTAGE per = 100;
     int i;
 
+    if (is_immune_acid(creature_ptr)) {
+        return 0;
+    }
+
     BIT_FLAGS flgs = is_vuln_acid(creature_ptr);
     for (i = 0; i < FLAG_CAUSE_MAX; i++) {
         if (flgs & (0x01 << i)) {
@@ -81,6 +85,11 @@ PERCENTAGE calc_elec_damage_rate(player_type *creature_ptr)
 {
     PERCENTAGE per = 100;
     int i;
+
+    if (is_immune_elec(creature_ptr)) {
+        return 0;
+    }
+
     BIT_FLAGS flgs = is_vuln_elec(creature_ptr);
     for (i = 0; i < FLAG_CAUSE_MAX; i++) {
         if (flgs & (0x01 << i)) {
@@ -158,6 +167,17 @@ PERCENTAGE calc_pois_damage_rate(player_type *creature_ptr)
     return per;
 }
 
+PERCENTAGE calc_nuke_damage_rate(player_type *creature_ptr)
+{
+    PERCENTAGE per = 100;
+    if (creature_ptr->resist_pois)
+        per = (per + 2) / 3;
+    if (is_oppose_pois(creature_ptr))
+        per = (per + 2) / 3;
+
+    return per;
+}
+
 PERCENTAGE calc_lite_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
 {
     PERCENTAGE per = 100;
@@ -191,5 +211,137 @@ PERCENTAGE calc_dark_damage_rate(player_type *creature_ptr, rate_calc_type_mode 
         per /= randrate(4, 7, mode);
     }
 
+    return per;
+}
+
+PERCENTAGE calc_shards_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    PERCENTAGE per = 100;
+
+    if (creature_ptr->resist_shard) {
+        per *= 600;
+        per /= randrate(4, 7, mode);
+    }
+
+    return per;
+}
+
+PERCENTAGE calc_sound_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    PERCENTAGE per = 100;
+
+    if (creature_ptr->resist_sound) {
+        per *= 500;
+        per /= randrate(4, 7, mode);
+    }
+
+    return per;
+}
+
+PERCENTAGE calc_conf_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    PERCENTAGE per = 100;
+
+    if (creature_ptr->resist_conf) {
+        per *= 500;
+        per /= randrate(4, 7, mode);
+    }
+
+    return per;
+}
+
+PERCENTAGE calc_chaos_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    PERCENTAGE per = 100;
+
+    if (creature_ptr->resist_chaos) {
+        per *= 600;
+        per /= randrate(4, 7, mode);
+    }
+
+    return per;
+}
+
+PERCENTAGE calc_disenchant_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    PERCENTAGE per = 100;
+
+    if (creature_ptr->resist_disen) {
+        per *= 600;
+        per /= randrate(4, 7, mode);
+    }
+
+    return per;
+}
+
+PERCENTAGE calc_nexus_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    PERCENTAGE per = 100;
+
+    if (creature_ptr->resist_disen) {
+        per *= 600;
+        per /= randrate(4, 7, mode);
+    }
+
+    return per;
+}
+
+PERCENTAGE calc_rocket_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    (mode); // unused
+    PERCENTAGE per = 100;
+
+    if (creature_ptr->resist_shard) {
+        per /= 2;
+    }
+
+    return per;
+}
+
+PERCENTAGE calc_nether_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    PERCENTAGE per = 100;
+
+    if (creature_ptr->resist_neth) {
+        if (!is_specific_player_race(creature_ptr, RACE_SPECTRE))
+            per *= 6;
+        per *= 100;
+        per /= randrate(4, 7, mode);
+    }
+
+    return per;
+}
+
+PERCENTAGE calc_time_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    (mode); // unused
+    PERCENTAGE per = 100;
+
+    if (creature_ptr->resist_time) {
+        per *= 400;
+        per /= randrate(4, 7, mode);
+        return;
+    }
+
+    return per;
+}
+
+PERCENTAGE calc_holy_fire_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    (mode); // unused
+    PERCENTAGE per = 100;
+    if (creature_ptr->align > 10)
+        per /= 2;
+    else if (creature_ptr->align < -10)
+        per *= 2;
+    return per;
+}
+
+PERCENTAGE calc_hell_fire_damage_rate(player_type *creature_ptr, rate_calc_type_mode mode)
+{
+    (mode); // unused
+    PERCENTAGE per = 100;
+    if (creature_ptr->align > 10)
+        per *= 2;
     return per;
 }
