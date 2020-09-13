@@ -44,10 +44,7 @@ void effect_player_poison(player_type *target_ptr, effect_player_type *ep_ptr)
     if (target_ptr->blind)
         msg_print(_("毒で攻撃された！", "You are hit by poison!"));
 
-    if (target_ptr->resist_pois)
-        ep_ptr->dam = (ep_ptr->dam + 2) / 3;
-    if (double_resist)
-        ep_ptr->dam = (ep_ptr->dam + 2) / 3;
+    ep_ptr->dam = ep_ptr->dam * calc_elec_damage_rate(target_ptr) / 100;
 
     if ((!(double_resist || target_ptr->resist_pois)) && one_in_(HURT_CHANCE) && !check_multishadow(target_ptr)) {
         do_dec_stat(target_ptr, A_CON);
@@ -359,22 +356,17 @@ void effect_player_lite(player_type *target_ptr, effect_player_type *ep_ptr)
 {
     if (target_ptr->blind)
         msg_print(_("何かで攻撃された！", "You are hit by something!"));
-    if (target_ptr->resist_lite) {
-        ep_ptr->dam *= 4;
-        ep_ptr->dam /= (randint1(4) + 7);
-    } else if (!target_ptr->blind && !target_ptr->resist_blind && !check_multishadow(target_ptr)) {
+    if (!target_ptr->blind && !target_ptr->resist_blind && !check_multishadow(target_ptr)) {
         (void)set_blind(target_ptr, target_ptr->blind + randint1(5) + 2);
     }
 
-    ep_ptr->dam = ep_ptr->dam * calc_vuln_fire_rate(target_ptr) / 100;
+    ep_ptr->dam = ep_ptr->dam * calc_lite_damage_rate(target_ptr, CALC_RAND) / 100;
 
     if (is_specific_player_race(target_ptr, RACE_VAMPIRE) || (target_ptr->mimic_form == MIMIC_VAMPIRE)) {
         if (!check_multishadow(target_ptr))
             msg_print(_("光で肉体が焦がされた！", "The light scorches your flesh!"));
     }
 
-    if (target_ptr->wraith_form)
-        ep_ptr->dam *= 2;
     ep_ptr->get_damage = take_hit(target_ptr, DAMAGE_ATTACK, ep_ptr->dam, ep_ptr->killer, ep_ptr->monspell);
 
     if (!target_ptr->wraith_form || check_multishadow(target_ptr))
@@ -392,13 +384,10 @@ void effect_player_dark(player_type *target_ptr, effect_player_type *ep_ptr)
 {
     if (target_ptr->blind)
         msg_print(_("何かで攻撃された！", "You are hit by something!"));
-    if (target_ptr->resist_dark) {
-        ep_ptr->dam *= 4;
-        ep_ptr->dam /= (randint1(4) + 7);
 
-        if (is_specific_player_race(target_ptr, RACE_VAMPIRE) || (target_ptr->mimic_form == MIMIC_VAMPIRE) || target_ptr->wraith_form)
-            ep_ptr->dam = 0;
-    } else if (!target_ptr->blind && !target_ptr->resist_blind && !check_multishadow(target_ptr)) {
+    ep_ptr->dam = ep_ptr->dam * calc_dark_damage_rate(target_ptr, CALC_RAND) / 100;
+
+    if (!target_ptr->blind && !target_ptr->resist_blind && !check_multishadow(target_ptr)) {
         (void)set_blind(target_ptr, target_ptr->blind + randint1(5) + 2);
     }
 
