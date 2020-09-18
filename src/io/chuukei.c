@@ -13,6 +13,7 @@
 #include "io/files-util.h"
 #include "io/inet.h"
 #include "io/signal-handlers.h"
+#include "system/h-basic.h"
 #include "term/gameterm.h"
 #include "util/angband-files.h"
 #include "view/display-messages.h"
@@ -25,6 +26,10 @@
 #include <stdio.h>
 #ifdef WINDOWS
 #include <windows.h>
+#else
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
 #endif
 
 #ifdef CHUUKEI
@@ -35,7 +40,6 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include <sys/time.h>
 #include <sys/types.h>
 
 #include <setjmp.h>
