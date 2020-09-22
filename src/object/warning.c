@@ -79,7 +79,7 @@ object_type *choose_warning_item(player_type *creature_ptr)
  * @param max 算出した最大ダメージを返すポインタ
  * @return なし
  */
-static void spell_damcalc(player_type *target_ptr, monster_type *m_ptr, EFFECT_ID typ, HIT_POINT dam, int *max)
+static void spell_damcalc(player_type *target_ptr, monster_type *m_ptr, spell_type typ, HIT_POINT dam, int *max)
 {
     monster_race *r_ptr = &r_info[m_ptr->r_idx];
     int rlev = r_ptr->level;
@@ -192,27 +192,8 @@ static void spell_damcalc(player_type *target_ptr, monster_type *m_ptr, EFFECT_I
         break;
 
     case GF_DEATH_RAY:
-        if (target_ptr->mimic_form) {
-            if (mimic_info[target_ptr->mimic_form].MIMIC_FLAGS & MIMIC_IS_NONLIVING) {
-                dam = 0;
-                ignore_wraith_form = TRUE;
-            }
-
-            break;
-        }
-
-        switch (target_ptr->prace) {
-        case RACE_GOLEM:
-        case RACE_SKELETON:
-        case RACE_ZOMBIE:
-        case RACE_VAMPIRE:
-        case RACE_BALROG:
-        case RACE_SPECTRE:
-            dam = 0;
-            ignore_wraith_form = TRUE;
-            break;
-        }
-
+        dam = dam * calc_deathray_damage_rate(target_ptr, CALC_MAX) / 100;
+        if (dam == 0) ignore_wraith_form = TRUE;
         break;
 
     case GF_HOLY_FIRE:
@@ -271,7 +252,7 @@ static void spell_damcalc(player_type *target_ptr, monster_type *m_ptr, EFFECT_I
  * @param max 算出した最大ダメージを返すポインタ
  * @return なし
  */
-void spell_damcalc_by_spellnum(player_type *creature_ptr, monster_spell_type ms_type, EFFECT_ID typ, MONSTER_IDX m_idx, int *max)
+void spell_damcalc_by_spellnum(player_type *creature_ptr, monster_spell_type ms_type, spell_type typ, MONSTER_IDX m_idx, int *max)
 {
     monster_type *m_ptr = &creature_ptr->current_floor_ptr->m_list[m_idx];
     HIT_POINT dam = monspell_damage(creature_ptr, ms_type, m_idx, DAM_MAX);
