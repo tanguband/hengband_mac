@@ -2197,9 +2197,6 @@ static bool initialized = FALSE;
 
 @implementation AngbandContext
 
-@synthesize hasSubwindowFlags=_hasSubwindowFlags;
-@synthesize windowVisibilityChecked=_windowVisibilityChecked;
-
 - (NSSize)baseSize
 {
     /*
