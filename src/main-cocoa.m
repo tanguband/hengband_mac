@@ -5774,7 +5774,7 @@ static void init_windows(void)
      * even handler as appropriate
      */
     term_fresh();
-    play_game(p_ptr, new_game);
+    play_game(p_ptr, new_game, FALSE);
 
     quit(NULL);
 }
