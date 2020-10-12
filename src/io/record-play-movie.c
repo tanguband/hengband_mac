@@ -11,7 +11,6 @@
 #include "io/files-util.h"
 #include "io/inet.h"
 #include "io/signal-handlers.h"
-#include "system/h-basic.h"
 #include "term/gameterm.h"
 #include "util/angband-files.h"
 #include "view/display-messages.h"
@@ -22,6 +21,7 @@
 #ifdef WINDOWS
 #include <windows.h>
 #else
+#include "system/h-basic.h"
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
