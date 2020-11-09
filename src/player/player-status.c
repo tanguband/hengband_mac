@@ -148,18 +148,20 @@ static int get_default_hand(player_type *creature_ptr);
 
 /*** Player information ***/
 
-/*
- * Static player info record
+/*!
+ * @brief プレイヤー用のクリーチャー構造体実体 / Static player info record
  */
 player_type p_body;
 
-/*
- * Pointer to the player info
+/*!
+ * @brief プレイヤー用のクリーチャー構造体参照ポインタ / Pointer to the player info
  */
 player_type *p_ptr = &p_body;
 
-/*
- * Return alignment title
+/*!
+ * @brief クリーチャーの抽象的善悪アライメントの表記を返す。 / Return alignment title
+ * @param creature_ptr 算出するクリーチャーの参照ポインタ。
+ * @return アライメントの表記を返す。
  */
 concptr your_alignment(player_type *creature_ptr)
 {
@@ -179,8 +181,10 @@ concptr your_alignment(player_type *creature_ptr)
         return _("大悪", "Chaotic");
 }
 
-/*
- * Return proficiency level of weapons and misc. skills (except riding)
+/*!
+ * @brief 武器や各種スキル（騎乗以外）の抽象的表現ランクを返す。 /  Return proficiency level of weapons and misc. skills (except riding)
+ * @param weapon_exp 経験値
+ * @return ランク値
  */
 int weapon_exp_level(int weapon_exp)
 {
@@ -196,8 +200,10 @@ int weapon_exp_level(int weapon_exp)
         return EXP_LEVEL_MASTER;
 }
 
-/*
- * Return proficiency level of riding
+/*!
+ * @brief 騎乗スキルの抽象的ランクを返す。 / Return proficiency level of riding
+ * @param weapon_exp 経験値
+ * @return ランク値
  */
 int riding_exp_level(int riding_exp)
 {
@@ -213,8 +219,10 @@ int riding_exp_level(int riding_exp)
         return EXP_LEVEL_MASTER;
 }
 
-/*
- * Return proficiency level of spells
+/*!
+ * @brief クリーチャーの呪文レベルの抽象的ランクを返す。 / Return proficiency level of spells
+ * @param spell_exp 経験値
+ * @return ランク値
  */
 int spell_exp_level(int spell_exp)
 {
@@ -269,6 +277,25 @@ static bool is_heavy_shoot(player_type *creature_ptr, object_type *o_ptr)
     return (hold < o_ptr->weight / 10);
 }
 
+/*!
+ * @brief 所持品総重量を計算する
+ * @param creature_ptr 計算対象となるクリーチャーの参照ポインタ
+ * @return 総重量
+ */
+WEIGHT calc_inventory_weight(player_type *creature_ptr)
+{
+    WEIGHT weight = 0;
+
+    object_type *o_ptr;
+    BIT_FLAGS flgs[TR_FLAG_SIZE];
+    for (inventory_slot_type i = 0; i < INVEN_TOTAL; i++) {
+        o_ptr = &creature_ptr->inventory_list[i];
+        if (!o_ptr->k_idx)
+            continue;
+        weight += o_ptr->weight * o_ptr->number;
+    }
+    return weight;
+}
 /*!
  * @brief プレイヤーの全ステータスを更新する /
  * Calculate the players current "state", taking into account
@@ -2514,7 +2541,7 @@ static s16b calc_speed(player_type *creature_ptr)
 
     s16b pow = 110;
 
-    int j = creature_ptr->total_weight;
+    int j = calc_inventory_weight(creature_ptr);
     int count;
 
     if (!creature_ptr->riding) {
@@ -2635,7 +2662,7 @@ static s16b calc_speed(player_type *creature_ptr)
             }
         }
 
-        count = (int)weight_limit(creature_ptr);
+        count = (int)calc_weight_limit(creature_ptr);
         if (j > count)
             pow -= ((j - count) / (count / 5));
 
@@ -3358,7 +3385,7 @@ static DICE_NUMBER calc_to_weapon_dice_side(player_type *creature_ptr, INVENTORY
  * Computes current weight limit.
  * @return 制限重量(ポンド)
  */
-WEIGHT weight_limit(player_type *creature_ptr)
+WEIGHT calc_weight_limit(player_type *creature_ptr)
 {
     WEIGHT i = (WEIGHT)adj_str_wgt[creature_ptr->stat_ind[A_STR]] * 50;
     if (creature_ptr->pclass == CLASS_BERSERKER)

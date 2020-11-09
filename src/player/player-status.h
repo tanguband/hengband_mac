@@ -357,8 +357,6 @@ typedef struct player_type {
     s16b running; /* Current counter for running, if any */
     bool suppress_multi_reward; /*!< 複数レベルアップ時のパトロンからの報酬多重受け取りを防止 */
 
-    WEIGHT total_weight; /*!< 所持品と装備品の計算総重量 / Total weight being carried */
-
     s16b stat_add[A_MAX]; /* Modifiers to stat values */
     s16b stat_ind[A_MAX]; /* Indexes into stat tables */
 
@@ -506,10 +504,11 @@ extern int riding_exp_level(int riding_exp);
 extern int spell_exp_level(int spell_exp);
 
 extern int calc_weapon_weight_limit(player_type *creature_ptr);
+extern WEIGHT calc_inventory_weight(player_type *creature_ptr);
 
 extern s16b calc_num_fire(player_type *creature_ptr, object_type *o_ptr);
 extern void calc_bonuses(player_type *creature_ptr);
-extern WEIGHT weight_limit(player_type *creature_ptr);
+extern WEIGHT calc_weight_limit(player_type *creature_ptr);
 extern bool has_melee_weapon(player_type *creature_ptr, int i);
 
 extern bool heavy_armor(player_type *creature_ptr);
