@@ -2,6 +2,7 @@
 
 /* summon_specificで取り扱われる、召喚の種別定義 / Legal restrictions for "summon_specific()" */
 typedef enum summon_type {
+    SUMMON_NONE = 0,
 	SUMMON_ANT = 11,  /*!< 召喚タイプ: アリ */
     SUMMON_SPIDER = 12, /*!< 召喚タイプ: 蜘蛛 */
     SUMMON_HOUND = 13, /*!< 召喚タイプ: ハウンド */
@@ -26,6 +27,7 @@ typedef enum summon_type {
     SUMMON_DAWN = 41, /*!< 召喚タイプ: 暁の戦士 */
     SUMMON_ANIMAL = 42, /*!< 召喚タイプ: 自然界の動物 */
     SUMMON_ANIMAL_RANGER = 43, /*!< 召喚タイプ: レンジャー向け自然界の動物 */
+    SUMMON_SMALL_MOAI = 44, /*!< 召喚タイプ: プチモアイ */
     SUMMON_PHANTOM = 47, /*!< 召喚タイプ: ゴースト */
     SUMMON_TOTEM_MOAI = 48, /*!< 召喚タイプ: トーテムモアイ */
     SUMMON_BLUE_HORROR = 49, /*!< 召喚タイプ: ブルー・ホラー */
