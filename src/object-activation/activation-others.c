@@ -14,6 +14,7 @@
 #include "game-option/special-options.h"
 #include "monster-race/monster-race.h"
 #include "monster-race/race-flags1.h"
+#include "monster-race/race-indice-types.h"
 #include "monster/monster-status.h"
 #include "player-attack/player-attack.h"
 #include "player-info/avatar.h"
@@ -42,6 +43,7 @@
 #include "system/floor-type-definition.h"
 #include "system/object-type-definition.h"
 #include "target/target-getter.h"
+#include "util/quarks.h"
 #include "view/display-messages.h"
 
 bool activate_sunlight(player_type *user_ptr)
@@ -153,6 +155,9 @@ bool activate_unique_detection(player_type *user_ptr)
         r_ptr = &r_info[m_ptr->r_idx];
         if (r_ptr->flags1 & RF1_UNIQUE)
             msg_format(_("%s． ", "%s. "), r_name + r_ptr->name);
+
+        if (m_ptr->r_idx == MON_DIO)
+            msg_print(_("きさま！　見ているなッ！", "You bastard!, You're watching me, well watch this!"));
     }
 
     return TRUE;
@@ -337,7 +342,7 @@ bool activate_protection_rune(player_type *user_ptr)
 bool activate_light(player_type *user_ptr, concptr name)
 {
     msg_format(_("%sから澄んだ光があふれ出た...", "The %s wells with clear light..."), name);
-    lite_area(user_ptr, damroll(2, 15), 3);
+    (void)lite_area(user_ptr, damroll(2, 15), 3);
     return TRUE;
 }
 
@@ -345,4 +350,19 @@ bool activate_recall(player_type *user_ptr)
 {
     msg_print(_("やわらかな白色に輝いている...", "It glows soft white..."));
     return recall_player(user_ptr, randint0(21) + 15);
+}
+
+bool activate_tree_creation(player_type *user_ptr, object_type *o_ptr, concptr name)
+{
+    msg_format(_("%s%sから明るい緑の光があふれ出た...", "The %s%s wells with clear light..."), name, quark_str(o_ptr->art_name));
+    return tree_creation(user_ptr, user_ptr->y, user_ptr->x);
+}
+
+bool activate_animate_dead(player_type *user_ptr, object_type *o_ptr)
+{
+    msg_print(_("黄金色の光が溢れ出た...", "It emitted a golden light..."));
+    if (o_ptr->name1 > 0)
+        msg_print(_("ぴぴるぴるぴるぴぴるぴ～♪", "Pipiru piru piru pipiru pii"));
+
+    return animate_dead(user_ptr, 0, user_ptr->y, user_ptr->x);
 }
