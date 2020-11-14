@@ -74,6 +74,11 @@ bool has_kill_wall(player_type *creature_ptr)
 
 /*!
  * @brief クリーチャーが壁通過を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたらTRUE
+ * @details
+ * * 時限で幽体化、壁抜けをもつか種族幽霊ならばひとまずTRUE。
+ * * 但し騎乗中は乗騎が壁抜けを持っていなければ不能になる。
  */
 bool has_pass_wall(player_type *creature_ptr)
 {
@@ -95,6 +100,8 @@ bool has_pass_wall(player_type *creature_ptr)
 
 /*!
  * @brief クリーチャーが強力射を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
  */
 BIT_FLAGS has_xtra_might(player_type *creature_ptr)
 {
@@ -105,6 +112,8 @@ BIT_FLAGS has_xtra_might(player_type *creature_ptr)
 
 /*!
  * @brief クリーチャーが邪悪感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
  */
 BIT_FLAGS has_esp_evil(player_type *creature_ptr)
 {
@@ -119,6 +128,8 @@ BIT_FLAGS has_esp_evil(player_type *creature_ptr)
 
 /*!
  * @brief クリーチャーが自然界の動物感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
  */
 BIT_FLAGS has_esp_animal(player_type *creature_ptr)
 {
@@ -129,6 +140,8 @@ BIT_FLAGS has_esp_animal(player_type *creature_ptr)
 
 /*!
  * @brief クリーチャーがアンデッド感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
  */
 BIT_FLAGS has_esp_undead(player_type *creature_ptr)
 {
@@ -137,6 +150,11 @@ BIT_FLAGS has_esp_undead(player_type *creature_ptr)
     return result;
 }
 
+/*!
+ * @brief クリーチャーが悪魔感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
+ */
 BIT_FLAGS has_esp_demon(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -144,6 +162,11 @@ BIT_FLAGS has_esp_demon(player_type *creature_ptr)
     return result;
 }
 
+/*!
+ * @brief クリーチャーがオーク感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
+ */
 BIT_FLAGS has_esp_orc(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -151,6 +174,11 @@ BIT_FLAGS has_esp_orc(player_type *creature_ptr)
     return result;
 }
 
+/*!
+ * @brief クリーチャーがトロル感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
+ */
 BIT_FLAGS has_esp_troll(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -158,6 +186,11 @@ BIT_FLAGS has_esp_troll(player_type *creature_ptr)
     return result;
 }
 
+/*!
+ * @brief クリーチャーが巨人感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
+ */
 BIT_FLAGS has_esp_giant(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -165,6 +198,11 @@ BIT_FLAGS has_esp_giant(player_type *creature_ptr)
     return result;
 }
 
+/*!
+ * @brief クリーチャーがドラゴン感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
+ */
 BIT_FLAGS has_esp_dragon(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -172,6 +210,11 @@ BIT_FLAGS has_esp_dragon(player_type *creature_ptr)
     return result;
 }
 
+/*!
+ * @brief クリーチャーが人間感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
+ */
 BIT_FLAGS has_esp_human(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -179,6 +222,11 @@ BIT_FLAGS has_esp_human(player_type *creature_ptr)
     return result;
 }
 
+/*!
+ * @brief クリーチャーが善良感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
+ */
 BIT_FLAGS has_esp_good(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -186,6 +234,11 @@ BIT_FLAGS has_esp_good(player_type *creature_ptr)
     return result;
 }
 
+/*!
+ * @brief クリーチャーが無生物感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
+ */
 BIT_FLAGS has_esp_nonliving(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -193,6 +246,11 @@ BIT_FLAGS has_esp_nonliving(player_type *creature_ptr)
     return result;
 }
 
+/*!
+ * @brief クリーチャーがユニーク感知を持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
+ */
 BIT_FLAGS has_esp_unique(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -200,6 +258,11 @@ BIT_FLAGS has_esp_unique(player_type *creature_ptr)
     return result;
 }
 
+/*!
+ * @brief クリーチャーがテレパシーを持っているかを返す。
+ * @param cretature_ptr 判定対象のクリーチャー参照ポインタ
+ * @return 持っていたら所持前提ビットフラグを返す。
+ */
 BIT_FLAGS has_esp_telepathy(player_type *creature_ptr)
 {
     BIT_FLAGS result = 0L;
@@ -1594,16 +1657,25 @@ BIT_FLAGS has_lite(player_type *creature_ptr)
     return result;
 }
 
+/*
+ * @brief 両手持ちボーナスがもらえないかどうかを判定する。 / Does *not * get two hand wielding bonus.
+ * @detail
+ *  Only can get hit bonuses when wieids an enough light weapon which is lighter than 5 times of weight limit.
+ *  If its weight is 10 times heavier or more than weight limit, gets hit penalty in calc_to_hit().
+ */
 bool has_disable_two_handed_bonus(player_type *creature_ptr, int i)
 {
-    object_type *o_ptr;
-    o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
-    if (has_melee_weapon(creature_ptr, INVEN_RARM + i)) {
-        if (calc_weapon_weight_limit(creature_ptr) * 2 >= o_ptr->weight / 10 && has_two_handed_weapons(creature_ptr)
-            && (calc_weapon_weight_limit(creature_ptr) * 2 < o_ptr->weight / 5))
-            return TRUE;
+    if (has_melee_weapon(creature_ptr, INVEN_RARM + i) && has_two_handed_weapons(creature_ptr)) {
+        object_type *o_ptr = &creature_ptr->inventory_list[INVEN_RARM + i];
+        int limit = calc_weapon_weight_limit(creature_ptr) * 2;
+
+        /* Enable when two hand wields an enough light weapon */
+        if (limit >= o_ptr->weight / 5)
+            return FALSE;
     }
-    return FALSE;
+
+    /* Disable when empty hands, one hand wieldings and heavy weapons */
+    return TRUE;
 }
 
 bool has_icky_wield_weapon(player_type *creature_ptr, int i)
@@ -1651,7 +1723,8 @@ bool has_not_monk_weapon(player_type *creature_ptr, int i)
 {
     tval_type tval = creature_ptr->inventory_list[INVEN_RARM + i].tval - TV_WEAPON_BEGIN;
     OBJECT_SUBTYPE_VALUE sval = creature_ptr->inventory_list[INVEN_RARM + i].sval;
-    return (creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER) && (!s_info[creature_ptr->pclass].w_max[tval][sval]);
+    return ((creature_ptr->pclass == CLASS_MONK) || (creature_ptr->pclass == CLASS_FORCETRAINER))
+        && !(s_info[creature_ptr->pclass].w_max[tval][sval]);
 }
 
 bool has_good_luck(player_type *creature_ptr) { return (creature_ptr->pseikaku == PERSONALITY_LUCKY) || (creature_ptr->muta3 & MUT3_GOOD_LUCK); }
