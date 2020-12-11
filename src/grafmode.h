@@ -19,7 +19,7 @@
 #ifndef INCLUDED_GRAFMODE_H
 #define INCLUDED_GRAFMODE_H
 
-#include "h-basic.h"
+#include "system/h-basic.h"
 
 /**
  * Default graphic modes

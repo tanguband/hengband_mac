@@ -16,7 +16,7 @@
  *    are included in all such copies.  Other copyrights may also apply.
  */
 
-#include "angband.h"
+#include "system/angband.h"
 /* This is not included in angband.h in Hengband. */
 #include "grafmode.h"
 
@@ -33,8 +33,8 @@
 #include "main/angband-initializer.h"
 #include "io/files-util.h"
 #include "io/input-key-acceptor.h"
-#include "world.h"
-#include "gameterm.h"
+#include "world/world.h"
+#include "term/gameterm.h"
 #include "term/screen-processor.h"
 #include "term/term-color-types.h"
 #include "view/display-messages.h"

@@ -20,7 +20,7 @@
  * bring over the datafile parsing (datafile.h and datafile.c) so the
  * implementation here is different from that in Angband.
  */
-#include "angband.h"
+#include "system/angband.h"
 #include "grafmode.h"
 #include "io/files-util.h"
 #include "util/angband-files.h"
