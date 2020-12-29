@@ -54,17 +54,19 @@ void init_saved_floors(player_type *creature_ptr, bool force)
     char floor_savefile[1024];
     int fd = -1;
     BIT_FLAGS mode = 0644;
-    for (int i = 0; i < MAX_SAVED_FLOORS; i++) {
-        saved_floor_type *sf_ptr = &saved_floors[i];
-        sprintf(floor_savefile, "%s.F%02d", savefile, i);
-        safe_setuid_grab(creature_ptr);
-        fd = fd_make(floor_savefile, mode);
-        safe_setuid_drop();
-        check_saved_tmp_files(fd, &force);
-        safe_setuid_grab(creature_ptr);
-        (void)fd_kill(floor_savefile);
-        safe_setuid_drop();
-        sf_ptr->floor_id = 0;
+    if (savefile[0]) {
+        for (int i = 0; i < MAX_SAVED_FLOORS; i++) {
+            saved_floor_type *sf_ptr = &saved_floors[i];
+            sprintf(floor_savefile, "%s.F%02d", savefile, i);
+            safe_setuid_grab(creature_ptr);
+            fd = fd_make(floor_savefile, mode);
+            safe_setuid_drop();
+            check_saved_tmp_files(fd, &force);
+            safe_setuid_grab(creature_ptr);
+            (void)fd_kill(floor_savefile);
+            safe_setuid_drop();
+            sf_ptr->floor_id = 0;
+        }
     }
 
     max_floor_id = 1;
