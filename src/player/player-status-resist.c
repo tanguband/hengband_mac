@@ -79,7 +79,7 @@ PERCENTAGE calc_acid_damage_rate(player_type *creature_ptr)
         }
     }
 
-    if (creature_ptr->resist_acid)
+    if (has_resist_acid(creature_ptr))
         per = (per + 2) / 3;
     if (is_oppose_acid(creature_ptr))
         per = (per + 2) / 3;
@@ -109,7 +109,7 @@ PERCENTAGE calc_elec_damage_rate(player_type *creature_ptr)
         }
     }
 
-    if (creature_ptr->resist_elec)
+    if (has_resist_elec(creature_ptr))
         per = (per + 2) / 3;
     if (is_oppose_elec(creature_ptr))
         per = (per + 2) / 3;
@@ -135,7 +135,7 @@ PERCENTAGE calc_fire_damage_rate(player_type *creature_ptr)
     }
 
     /* Resist the damage */
-    if (creature_ptr->resist_fire)
+    if (has_resist_fire(creature_ptr))
         per = (per + 2) / 3;
     if (is_oppose_fire(creature_ptr))
         per = (per + 2) / 3;
@@ -160,7 +160,7 @@ PERCENTAGE calc_cold_damage_rate(player_type *creature_ptr)
         }
     }
 
-    if (creature_ptr->resist_cold)
+    if (has_resist_cold(creature_ptr))
         per = (per + 2) / 3;
     if (is_oppose_cold(creature_ptr))
         per = (per + 2) / 3;
@@ -174,7 +174,7 @@ PERCENTAGE calc_cold_damage_rate(player_type *creature_ptr)
 PERCENTAGE calc_pois_damage_rate(player_type *creature_ptr)
 {
     PERCENTAGE per = 100;
-    if (creature_ptr->resist_pois)
+    if (has_resist_pois(creature_ptr))
         per = (per + 2) / 3;
     if (is_oppose_pois(creature_ptr))
         per = (per + 2) / 3;
@@ -189,7 +189,7 @@ PERCENTAGE calc_nuke_damage_rate(player_type *creature_ptr)
 {
 
     PERCENTAGE per = 100;
-    if (creature_ptr->resist_pois)
+    if (has_resist_pois(creature_ptr))
         per = (2 * per + 2) / 5;
     if (is_oppose_pois(creature_ptr))
         per = (2 * per + 2) / 5;
@@ -235,7 +235,7 @@ PERCENTAGE calc_lite_damage_rate(player_type *creature_ptr, rate_calc_type_mode 
         per = per * 4 / 3;
     }
 
-    if (creature_ptr->resist_lite) {
+    if (has_resist_lite(creature_ptr)) {
         per *= 400;
         per /= randrate(4, 7, mode);
     }
@@ -257,7 +257,7 @@ PERCENTAGE calc_dark_damage_rate(player_type *creature_ptr, rate_calc_type_mode 
         return 0;
     }
 
-    if (creature_ptr->resist_dark) {
+    if (has_resist_dark(creature_ptr)) {
         per *= 400;
         per /= randrate(4, 7, mode);
     }
@@ -272,7 +272,7 @@ PERCENTAGE calc_shards_damage_rate(player_type *creature_ptr, rate_calc_type_mod
 {
     PERCENTAGE per = 100;
 
-    if (creature_ptr->resist_shard) {
+    if (has_resist_shard(creature_ptr)) {
         per *= 600;
         per /= randrate(4, 7, mode);
     }
@@ -287,7 +287,7 @@ PERCENTAGE calc_sound_damage_rate(player_type *creature_ptr, rate_calc_type_mode
 {
     PERCENTAGE per = 100;
 
-    if (creature_ptr->resist_sound) {
+    if (has_resist_sound(creature_ptr)) {
         per *= 500;
         per /= randrate(4, 7, mode);
     }
@@ -302,7 +302,7 @@ PERCENTAGE calc_conf_damage_rate(player_type *creature_ptr, rate_calc_type_mode 
 {
     PERCENTAGE per = 100;
 
-    if (creature_ptr->resist_conf) {
+    if (has_resist_conf(creature_ptr)) {
         per *= 500;
         per /= randrate(4, 7, mode);
     }
@@ -317,7 +317,7 @@ PERCENTAGE calc_chaos_damage_rate(player_type *creature_ptr, rate_calc_type_mode
 {
     PERCENTAGE per = 100;
 
-    if (creature_ptr->resist_chaos) {
+    if (has_resist_chaos(creature_ptr)) {
         per *= 600;
         per /= randrate(4, 7, mode);
     }
@@ -332,7 +332,7 @@ PERCENTAGE calc_disenchant_damage_rate(player_type *creature_ptr, rate_calc_type
 {
     PERCENTAGE per = 100;
 
-    if (creature_ptr->resist_disen) {
+    if (has_resist_disen(creature_ptr)) {
         per *= 600;
         per /= randrate(4, 7, mode);
     }
@@ -347,7 +347,7 @@ PERCENTAGE calc_nexus_damage_rate(player_type *creature_ptr, rate_calc_type_mode
 {
     PERCENTAGE per = 100;
 
-    if (creature_ptr->resist_disen) {
+    if (has_resist_disen(creature_ptr)) {
         per *= 600;
         per /= randrate(4, 7, mode);
     }
@@ -363,7 +363,7 @@ PERCENTAGE calc_rocket_damage_rate(player_type *creature_ptr, rate_calc_type_mod
     (void)mode; // unused
     PERCENTAGE per = 100;
 
-    if (creature_ptr->resist_shard) {
+    if (has_resist_shard(creature_ptr)) {
         per /= 2;
     }
 
@@ -377,7 +377,7 @@ PERCENTAGE calc_nether_damage_rate(player_type *creature_ptr, rate_calc_type_mod
 {
     PERCENTAGE per = 100;
 
-    if (creature_ptr->resist_neth) {
+    if (has_resist_neth(creature_ptr)) {
         if (!is_specific_player_race(creature_ptr, RACE_SPECTRE))
             per *= 6;
         per *= 100;
@@ -395,7 +395,7 @@ PERCENTAGE calc_time_damage_rate(player_type *creature_ptr, rate_calc_type_mode 
     (void)mode; // unused
     PERCENTAGE per = 100;
 
-    if (creature_ptr->resist_time) {
+    if (has_resist_time(creature_ptr)) {
         per *= 400;
         per /= randrate(4, 7, mode);
     }

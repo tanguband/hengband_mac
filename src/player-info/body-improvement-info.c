@@ -1,5 +1,6 @@
 ﻿#include "player-info/body-improvement-info.h"
 #include "player-info/self-info-util.h"
+#include "player/player-status-flags.h"
 
 /* todo 並び順の都合で連番を付ける。まとめても良いならまとめてしまう予定 */
 void set_body_improvement_info_1(player_type *creature_ptr, self_info_type *self_ptr)
@@ -63,16 +64,16 @@ void set_body_improvement_info_3(player_type *creature_ptr, self_info_type *self
     if (creature_ptr->hold_exp)
         self_ptr->info[self_ptr->line++] = _("あなたは自己の経験値をしっかりと維持する。", "You have a firm hold on your experience.");
 
-    if (creature_ptr->reflect)
+    if (has_reflect(creature_ptr))
         self_ptr->info[self_ptr->line++] = _("あなたは矢の呪文を反射する。", "You reflect bolt spells.");
 
-    if (creature_ptr->sh_fire)
+    if (has_sh_fire(creature_ptr))
         self_ptr->info[self_ptr->line++] = _("あなたは炎のオーラに包まれている。", "You are surrounded with a fiery aura.");
 
-    if (creature_ptr->sh_elec)
+    if (has_sh_elec(creature_ptr))
         self_ptr->info[self_ptr->line++] = _("あなたは電気に包まれている。", "You are surrounded with electricity.");
 
-    if (creature_ptr->sh_cold)
+    if (has_sh_cold(creature_ptr))
         self_ptr->info[self_ptr->line++] = _("あなたは冷気のオーラに包まれている。", "You are surrounded with an aura of coldness.");
 
     if (creature_ptr->tim_sh_holy)
@@ -109,12 +110,12 @@ void set_body_improvement_info_3(player_type *creature_ptr, self_info_type *self
 /* todo 並び順の都合で連番を付ける。まとめても良いならまとめてしまう予定 */
 void set_body_improvement_info_4(player_type *creature_ptr, self_info_type *self_ptr)
 {
-    if (creature_ptr->resist_fear)
+    if (has_resist_fear(creature_ptr))
         self_ptr->info[self_ptr->line++] = _("あなたは全く恐怖を感じない。", "You are completely fearless.");
     
-    if (creature_ptr->resist_blind)
+    if (has_resist_blind(creature_ptr))
         self_ptr->info[self_ptr->line++] = _("あなたの目は盲目への耐性を持っている。", "Your eyes are resistant to blindness.");
     
-    if (creature_ptr->resist_time)
+    if (has_resist_time(creature_ptr))
         self_ptr->info[self_ptr->line++] = _("あなたは時間逆転への耐性を持っている。", "You are resistant to time.");
 }

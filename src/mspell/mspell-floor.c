@@ -25,6 +25,7 @@
 #include "mspell/mspell-type.h"
 #include "mspell/mspell-util.h"
 #include "player/player-personalities-types.h"
+#include "player/player-status-flags.h"
 #include "spell-kind/spells-lite.h"
 #include "spell-kind/spells-neighbor.h"
 #include "spell-kind/spells-sight.h"
@@ -281,7 +282,7 @@ void spell_RF6_TELE_LEVEL(player_type *target_ptr, MONSTER_IDX m_idx, MONSTER_ID
     bool resist, saving_throw;
 
     if (TARGET_TYPE == MONSTER_TO_PLAYER) {
-        resist = (target_ptr->resist_nexus != 0);
+        resist = (has_resist_nexus(target_ptr) != 0);
         saving_throw = (randint0(100 + rlev / 2) < target_ptr->skill_sav);
         spell_badstatus_message(target_ptr, m_idx, t_idx, _("%^sが何か奇妙な言葉をつぶやいた。", "%^s mumbles strangely."),
             _("%^sがあなたの足を指さした。", "%^s gestures at your feet."), _("しかし効果がなかった！", "You are unaffected!"),

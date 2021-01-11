@@ -346,8 +346,6 @@ void calc_bonuses(player_type *creature_ptr)
     ARMOUR_CLASS old_dis_ac = creature_ptr->dis_ac;
     ARMOUR_CLASS old_dis_to_a = creature_ptr->dis_to_a;
 
-    creature_ptr->pass_wall = has_pass_wall(creature_ptr);
-    creature_ptr->kill_wall = has_kill_wall(creature_ptr);
     creature_ptr->xtra_might = has_xtra_might(creature_ptr);
     creature_ptr->esp_evil = has_esp_evil(creature_ptr);
     creature_ptr->esp_animal = has_esp_animal(creature_ptr);
@@ -368,25 +366,15 @@ void calc_bonuses(player_type *creature_ptr)
     creature_ptr->yoiyami = has_no_ac(creature_ptr);
     creature_ptr->mighty_throw = has_mighty_throw(creature_ptr);
     creature_ptr->dec_mana = has_dec_mana(creature_ptr);
-    creature_ptr->reflect = has_reflect(creature_ptr);
     creature_ptr->see_nocto = has_see_nocto(creature_ptr);
     creature_ptr->warning = has_warning(creature_ptr);
     creature_ptr->anti_magic = has_anti_magic(creature_ptr);
     creature_ptr->anti_tele = has_anti_tele(creature_ptr);
-    creature_ptr->sh_fire = has_sh_fire(creature_ptr);
-    creature_ptr->sh_elec = has_sh_elec(creature_ptr);
-    creature_ptr->sh_cold = has_sh_cold(creature_ptr);
     creature_ptr->easy_spell = has_easy_spell(creature_ptr);
     creature_ptr->heavy_spell = has_heavy_spell(creature_ptr);
     creature_ptr->hold_exp = has_hold_exp(creature_ptr);
     creature_ptr->see_inv = has_see_inv(creature_ptr);
     creature_ptr->free_act = has_free_act(creature_ptr);
-    creature_ptr->sustain_str = has_sustain_str(creature_ptr);
-    creature_ptr->sustain_int = has_sustain_int(creature_ptr);
-    creature_ptr->sustain_wis = has_sustain_wis(creature_ptr);
-    creature_ptr->sustain_dex = has_sustain_dex(creature_ptr);
-    creature_ptr->sustain_con = has_sustain_con(creature_ptr);
-    creature_ptr->sustain_chr = has_sustain_chr(creature_ptr);
     creature_ptr->levitation = has_levitation(creature_ptr);
     has_can_swim(creature_ptr);
     creature_ptr->slow_digest = has_slow_digest(creature_ptr);
@@ -394,25 +382,6 @@ void calc_bonuses(player_type *creature_ptr)
     has_curses(creature_ptr);
     creature_ptr->impact = has_impact(creature_ptr);
     has_extra_blow(creature_ptr);
-    creature_ptr->resist_acid = has_resist_acid(creature_ptr);
-    creature_ptr->resist_elec = has_resist_elec(creature_ptr);
-    creature_ptr->resist_fire = has_resist_fire(creature_ptr);
-    creature_ptr->resist_cold = has_resist_cold(creature_ptr);
-    creature_ptr->resist_pois = has_resist_pois(creature_ptr);
-    creature_ptr->resist_conf = has_resist_conf(creature_ptr);
-    creature_ptr->resist_sound = has_resist_sound(creature_ptr);
-    creature_ptr->resist_lite = has_resist_lite(creature_ptr);
-    creature_ptr->resist_dark = has_resist_dark(creature_ptr);
-    creature_ptr->resist_chaos = has_resist_chaos(creature_ptr);
-    creature_ptr->resist_disen = has_resist_disen(creature_ptr);
-    creature_ptr->resist_shard = has_resist_shard(creature_ptr);
-    creature_ptr->resist_nexus = has_resist_nexus(creature_ptr);
-    creature_ptr->resist_blind = has_resist_blind(creature_ptr);
-    creature_ptr->resist_neth = has_resist_neth(creature_ptr);
-    creature_ptr->resist_time = has_resist_time(creature_ptr);
-    creature_ptr->resist_fear = has_resist_fear(creature_ptr);
-    creature_ptr->resist_time = has_resist_time(creature_ptr);
-    creature_ptr->resist_water = has_resist_water(creature_ptr);
 
     creature_ptr->lite = has_lite(creature_ptr);
 

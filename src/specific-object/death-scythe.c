@@ -87,19 +87,19 @@ static void compensate_death_scythe_reflection_magnification(player_type *attack
     if ((attacker_ptr->align < 0) && (*magnification < 20))
         *magnification = 20;
 
-    if (!(attacker_ptr->resist_acid || is_oppose_acid(attacker_ptr) || has_immune_acid(attacker_ptr)) && (*magnification < 25))
+    if (!(has_resist_acid(attacker_ptr) || is_oppose_acid(attacker_ptr) || has_immune_acid(attacker_ptr)) && (*magnification < 25))
         *magnification = 25;
 
-    if (!(attacker_ptr->resist_elec || is_oppose_elec(attacker_ptr) || has_immune_elec(attacker_ptr)) && (*magnification < 25))
+    if (!(has_resist_elec(attacker_ptr) || is_oppose_elec(attacker_ptr) || has_immune_elec(attacker_ptr)) && (*magnification < 25))
         *magnification = 25;
 
-    if (!(attacker_ptr->resist_fire || is_oppose_fire(attacker_ptr) || has_immune_fire(attacker_ptr)) && (*magnification < 25))
+    if (!(has_resist_fire(attacker_ptr) || is_oppose_fire(attacker_ptr) || has_immune_fire(attacker_ptr)) && (*magnification < 25))
         *magnification = 25;
 
-    if (!(attacker_ptr->resist_cold || is_oppose_cold(attacker_ptr) || has_immune_cold(attacker_ptr)) && (*magnification < 25))
+    if (!(has_resist_cold(attacker_ptr) || is_oppose_cold(attacker_ptr) || has_immune_cold(attacker_ptr)) && (*magnification < 25))
         *magnification = 25;
 
-    if (!(attacker_ptr->resist_pois || is_oppose_pois(attacker_ptr)) && (*magnification < 25))
+    if (!(has_resist_pois(attacker_ptr) || is_oppose_pois(attacker_ptr)) && (*magnification < 25))
         *magnification = 25;
 
     if ((attacker_ptr->pclass != CLASS_SAMURAI) && (has_flag(death_scythe_flags, TR_FORCE_WEAPON)) && (attacker_ptr->csp > (attacker_ptr->msp / 30))) {

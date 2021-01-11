@@ -286,15 +286,15 @@ bool trap_can_be_ignored(player_type *creature_ptr, FEAT_IDX feat)
             return TRUE;
         break;
     case TRAP_BLIND:
-        if (creature_ptr->resist_blind)
+        if (has_resist_blind(creature_ptr))
             return TRUE;
         break;
     case TRAP_CONFUSE:
-        if (creature_ptr->resist_conf)
+        if (has_resist_conf(creature_ptr))
             return TRUE;
         break;
     case TRAP_POISON:
-        if (creature_ptr->resist_pois)
+        if (has_resist_pois(creature_ptr))
             return TRUE;
         break;
     case TRAP_SLEEP:

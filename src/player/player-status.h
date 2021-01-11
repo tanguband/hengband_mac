@@ -287,6 +287,8 @@ typedef struct player_type {
 
     /*** Temporary fields ***/
 
+    bool select_ring_slot;
+
     bool playing; /* True if player is playing */
     bool leaving; /* True if player is leaving */
 
@@ -364,40 +366,8 @@ typedef struct player_type {
     bool is_fired;
     bool level_up_message;
 
-    BIT_FLAGS resist_acid; /* Resist acid */
-    BIT_FLAGS resist_elec; /* Resist lightning */
-    BIT_FLAGS resist_fire; /* Resist fire */
-    BIT_FLAGS resist_cold; /* Resist cold */
-    BIT_FLAGS resist_pois; /* Resist poison */
-
-    BIT_FLAGS resist_conf; /* Resist confusion */
-    BIT_FLAGS resist_sound; /* Resist sound */
-    BIT_FLAGS resist_lite; /* Resist light */
-    BIT_FLAGS resist_dark; /* Resist darkness */
-    BIT_FLAGS resist_chaos; /* Resist chaos */
-    BIT_FLAGS resist_disen; /* Resist disenchant */
-    BIT_FLAGS resist_shard; /* Resist shards */
-    BIT_FLAGS resist_nexus; /* Resist nexus */
-    BIT_FLAGS resist_blind; /* Resist blindness */
-    BIT_FLAGS resist_neth; /* Resist nether */
-    BIT_FLAGS resist_fear; /* Resist fear */
-    BIT_FLAGS resist_time; /* Resist time */
-    BIT_FLAGS resist_water; /* Resist water */
-
-    BIT_FLAGS reflect; /* Reflect 'bolt' attacks */
-    BIT_FLAGS sh_fire; /* Fiery 'immolation' effect */
-    BIT_FLAGS sh_elec; /* Electric 'immolation' effect */
-    BIT_FLAGS sh_cold; /* Cold 'immolation' effect */
-
     BIT_FLAGS anti_magic; /* Anti-magic */
     BIT_FLAGS anti_tele; /* Prevent teleportation */
-
-    BIT_FLAGS sustain_str; /* Keep strength */
-    BIT_FLAGS sustain_int; /* Keep intelligence */
-    BIT_FLAGS sustain_wis; /* Keep wisdom */
-    BIT_FLAGS sustain_dex; /* Keep dexterity */
-    BIT_FLAGS sustain_con; /* Keep constitution */
-    BIT_FLAGS sustain_chr; /* Keep charisma */
 
     BIT_FLAGS cursed; /* Player is cursed */
 
@@ -427,8 +397,6 @@ typedef struct player_type {
     BIT_FLAGS bless_blade; /* Blessed blade */
     BIT_FLAGS xtra_might; /* Extra might bow */
     BIT_FLAGS impact; /* Earthquake blows */
-    bool pass_wall; /* Permanent wraithform */
-    bool kill_wall;
     BIT_FLAGS dec_mana;
     BIT_FLAGS easy_spell;
     BIT_FLAGS heavy_spell;

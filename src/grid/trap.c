@@ -26,6 +26,7 @@
 #include "player/player-damage.h"
 #include "player/player-personalities-types.h"
 #include "player/player-status.h"
+#include "player/player-status-flags.h"
 #include "spell-kind/spells-launcher.h"
 #include "spell-kind/spells-random.h"
 #include "spell-kind/spells-sight.h"
@@ -324,7 +325,7 @@ static void hit_trap_pit(player_type *trapped_ptr, int trap_feat_type)
         (void)set_cut(trapped_ptr, trapped_ptr->cut + randint1(dam));
 
         if (trap_feat_type == TRAP_POISON_PIT) {
-            if (trapped_ptr->resist_pois || is_oppose_pois(trapped_ptr)) {
+            if (has_resist_pois(trapped_ptr) || is_oppose_pois(trapped_ptr)) {
                 msg_print(_("しかし毒の影響はなかった！", "The poison does not affect you!"));
             } else {
                 dam = dam * 2;
@@ -511,21 +512,21 @@ void hit_trap(player_type *trapped_ptr, bool break_trap)
     }
 
     case TRAP_BLIND: {
-        hit_trap_set_abnormal_status_p(trapped_ptr, _("黒いガスに包み込まれた！", "A black gas surrounds you!"), (bool)trapped_ptr->resist_blind, set_blind,
+        hit_trap_set_abnormal_status_p(trapped_ptr, _("黒いガスに包み込まれた！", "A black gas surrounds you!"), (bool)has_resist_blind(trapped_ptr), set_blind,
             trapped_ptr->blind + (TIME_EFFECT)randint0(50) + 25);
         break;
     }
 
     case TRAP_CONFUSE: {
         hit_trap_set_abnormal_status_p(trapped_ptr, _("きらめくガスに包み込まれた！", "A gas of scintillating colors surrounds you!"),
-            (trapped_ptr->resist_conf != 0),
+            (has_resist_conf(trapped_ptr) != 0),
             set_confused, trapped_ptr->confused + (TIME_EFFECT)randint0(20) + 10);
         break;
     }
 
     case TRAP_POISON: {
         hit_trap_set_abnormal_status_p(trapped_ptr, _("刺激的な緑色のガスに包み込まれた！", "A pungent green gas surrounds you!"),
-            trapped_ptr->resist_pois || is_oppose_pois(trapped_ptr), set_poisoned, trapped_ptr->poisoned + (TIME_EFFECT)randint0(20) + 10);
+            has_resist_pois(trapped_ptr) || is_oppose_pois(trapped_ptr), set_poisoned, trapped_ptr->poisoned + (TIME_EFFECT)randint0(20) + 10);
         break;
     }
 

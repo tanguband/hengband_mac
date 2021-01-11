@@ -539,7 +539,7 @@ void update_smart_learn(player_type *player_ptr, MONSTER_IDX m_idx, int what)
 
     switch (what) {
     case DRS_ACID:
-        if (player_ptr->resist_acid)
+        if (has_resist_acid(player_ptr))
             m_ptr->smart |= SM_RES_ACID;
 
         if (is_oppose_acid(player_ptr))
@@ -550,7 +550,7 @@ void update_smart_learn(player_type *player_ptr, MONSTER_IDX m_idx, int what)
 
         break;
     case DRS_ELEC:
-        if (player_ptr->resist_elec)
+        if (has_resist_elec(player_ptr))
             m_ptr->smart |= SM_RES_ELEC;
 
         if (is_oppose_elec(player_ptr))
@@ -561,7 +561,7 @@ void update_smart_learn(player_type *player_ptr, MONSTER_IDX m_idx, int what)
 
         break;
     case DRS_FIRE:
-        if (player_ptr->resist_fire)
+        if (has_resist_fire(player_ptr))
             m_ptr->smart |= SM_RES_FIRE;
 
         if (is_oppose_fire(player_ptr))
@@ -572,7 +572,7 @@ void update_smart_learn(player_type *player_ptr, MONSTER_IDX m_idx, int what)
 
         break;
     case DRS_COLD:
-        if (player_ptr->resist_cold)
+        if (has_resist_cold(player_ptr))
             m_ptr->smart |= SM_RES_COLD;
 
         if (is_oppose_cold(player_ptr))
@@ -583,7 +583,7 @@ void update_smart_learn(player_type *player_ptr, MONSTER_IDX m_idx, int what)
 
         break;
     case DRS_POIS:
-        if (player_ptr->resist_pois)
+        if (has_resist_pois(player_ptr))
             m_ptr->smart |= SM_RES_POIS;
 
         if (is_oppose_pois(player_ptr))
@@ -591,57 +591,57 @@ void update_smart_learn(player_type *player_ptr, MONSTER_IDX m_idx, int what)
 
         break;
     case DRS_NETH:
-        if (player_ptr->resist_neth)
+        if (has_resist_neth(player_ptr))
             m_ptr->smart |= SM_RES_NETH;
 
         break;
     case DRS_LITE:
-        if (player_ptr->resist_lite)
+        if (has_resist_lite(player_ptr))
             m_ptr->smart |= SM_RES_LITE;
 
         break;
     case DRS_DARK:
-        if (player_ptr->resist_dark)
+        if (has_resist_dark(player_ptr))
             m_ptr->smart |= SM_RES_DARK;
 
         break;
     case DRS_FEAR:
-        if (player_ptr->resist_fear)
+        if (has_resist_fear(player_ptr))
             m_ptr->smart |= SM_RES_FEAR;
 
         break;
     case DRS_CONF:
-        if (player_ptr->resist_conf)
+        if (has_resist_conf(player_ptr))
             m_ptr->smart |= SM_RES_CONF;
 
         break;
     case DRS_CHAOS:
-        if (player_ptr->resist_chaos)
+        if (has_resist_chaos(player_ptr))
             m_ptr->smart |= SM_RES_CHAOS;
 
         break;
     case DRS_DISEN:
-        if (player_ptr->resist_disen)
+        if (has_resist_disen(player_ptr))
             m_ptr->smart |= SM_RES_DISEN;
 
         break;
     case DRS_BLIND:
-        if (player_ptr->resist_blind)
+        if (has_resist_blind(player_ptr))
             m_ptr->smart |= SM_RES_BLIND;
 
         break;
     case DRS_NEXUS:
-        if (player_ptr->resist_nexus)
+        if (has_resist_nexus(player_ptr))
             m_ptr->smart |= SM_RES_NEXUS;
 
         break;
     case DRS_SOUND:
-        if (player_ptr->resist_sound)
+        if (has_resist_sound(player_ptr))
             m_ptr->smart |= SM_RES_SOUND;
 
         break;
     case DRS_SHARD:
-        if (player_ptr->resist_shard)
+        if (has_resist_shard(player_ptr))
             m_ptr->smart |= SM_RES_SHARD;
 
         break;
@@ -656,7 +656,7 @@ void update_smart_learn(player_type *player_ptr, MONSTER_IDX m_idx, int what)
 
         break;
     case DRS_REFLECT:
-        if (player_ptr->reflect)
+        if (has_reflect(player_ptr))
             m_ptr->smart |= SM_IMM_REFLECT;
 
         break;

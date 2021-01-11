@@ -38,7 +38,7 @@ static void calc_blow_poison(player_type *target_ptr, monap_type *monap_ptr)
     if (monap_ptr->explode)
         return;
 
-    if (!(target_ptr->resist_pois || is_oppose_pois(target_ptr)) && !check_multishadow(target_ptr)
+    if (!(has_resist_pois(target_ptr) || is_oppose_pois(target_ptr)) && !check_multishadow(target_ptr)
         && set_poisoned(target_ptr, target_ptr->poisoned + randint1(monap_ptr->rlev) + 5))
         monap_ptr->obvious = TRUE;
 
@@ -58,7 +58,7 @@ static void calc_blow_disenchant(player_type *target_ptr, monap_type *monap_ptr)
     if (monap_ptr->explode)
         return;
 
-    if (!target_ptr->resist_disen && !check_multishadow(target_ptr) && apply_disenchant(target_ptr, 0)) {
+    if (!has_resist_disen(target_ptr) && !check_multishadow(target_ptr) && apply_disenchant(target_ptr, 0)) {
         update_creature(target_ptr);
         monap_ptr->obvious = TRUE;
     }
@@ -144,7 +144,7 @@ static void calc_blow_confusion(player_type *target_ptr, monap_type *monap_ptr)
     if (target_ptr->is_dead)
         return;
 
-    if (!target_ptr->resist_conf && !check_multishadow(target_ptr) && set_confused(target_ptr, target_ptr->confused + 3 + randint1(monap_ptr->rlev)))
+    if (!has_resist_conf(target_ptr) && !check_multishadow(target_ptr) && set_confused(target_ptr, target_ptr->confused + 3 + randint1(monap_ptr->rlev)))
         monap_ptr->obvious = TRUE;
 
     update_smart_learn(target_ptr, monap_ptr->m_idx, DRS_CONF);
