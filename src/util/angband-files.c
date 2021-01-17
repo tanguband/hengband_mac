@@ -249,6 +249,14 @@ errr angband_fgets(FILE *fff, char *buf, huge n)
         guess_convert_to_system_encoding(tmp, sizeof(tmp));
 #endif
         for (s = tmp; *s; s++) {
+#ifdef MACH_O_COCOA
+            /*
+             * Be nice to the Macintosh, where a file can have Mac or Unix
+             * end of line, especially since the introduction of OS X.
+             * MPW tools were also very tolerant to the Unix EOL.
+             */
+            if (*s == '\r') *s = '\n';
+#endif /* MACH_O_COCOA */
             if (*s == '\n') {
                 buf[i] = '\0';
                 return 0;

@@ -262,6 +262,21 @@
 #define DEFAULT_X11_FONT_7		"5x8"
 #endif
 
+/*
+ * Hack -- Mach-O (native binary format of OS X) is basically a Un*x
+ * but has Mac OS/Windows-like user interface.  Disabling the Un*x-like
+ * behavior (PRIVATE_USER_PATH, SAVEFILE_USE_UID) for the modern Mac OS X
+ * interface (MACH_O_COCOA).
+ */
+#if defined(MACH_O_CARBON) || defined(MACH_O_COCOA)
+# ifdef PRIVATE_USER_PATH
+#  undef PRIVATE_USER_PATH
+# endif
+# ifdef SAVEFILE_USE_UID
+#  undef SAVEFILE_USE_UID
+# endif
+#endif
+
 #ifndef HAVE_CONFIG_H
 #define WORLD_SCORE
 #endif /* HAVE_CONFIG_H */
