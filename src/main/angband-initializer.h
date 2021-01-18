@@ -16,6 +16,7 @@
 
 typedef void (*process_autopick_file_command_pf)(char *);
 void init_angband(player_type *player_ptr, process_autopick_file_command_pf process_autopick_file_command);
-void init_file_paths(char *path, char *varpath);
+void init_file_paths(concptr libpath, concptr varpath);
+void create_needed_dirs(void);
 
 #endif /* INCLUDED_INIT_H */
