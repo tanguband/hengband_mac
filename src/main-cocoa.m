@@ -18,7 +18,7 @@
 
 #include "system/angband.h"
 /* This is not included in angband.h in Hengband. */
-#include "grafmode.h"
+#include "system/grafmode.h"
 
 #include "cmd-visual/cmd-draw.h"
 #include "cmd-io/cmd-save.h"

@@ -932,7 +932,11 @@ EXTRA_DIST = \
 	$(cocoa_ja_strings_files)
 
 if COCOA
-hengband_SOURCES += main-cocoa.m grafmode.h grafmode.c cocoa/AppDelegate.h
+hengband_SOURCES += \
+	main-cocoa.m \
+	system/grafmode.h \
+	system/grafmode.c \
+	cocoa/AppDelegate.h
 AM_CFLAGS = -mmacosx-version-min=10.8 -Wunguarded-availability
 AM_OBJCFLAGS = -fobjc-arc -mmacosx-version-min=10.8 -Wunguarded-availability
 hengband_LDFLAGS = -framework cocoa $(AM_LDFLAGS)
@@ -970,7 +974,7 @@ appendir = $(APPRES)/en.lproj
 appja_DATA = $(cocoa_ja_strings_files)
 appjadir = $(APPRES)/ja.lproj
 else
-EXTRA_hengband_SOURCES += main-cocoa.m grafmode.h grafmode.c \
+EXTRA_hengband_SOURCES += main-cocoa.m system/grafmode.h system/grafmode.c \
 	cocoa/AppDelegate.h
 hengband_LINK = $(LINK)
 endif
