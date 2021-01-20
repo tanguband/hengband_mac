@@ -1160,7 +1160,7 @@ static bool init_graphics(void)
     infGraph.OffsetY = oy;
 
     if (arg_graphics == GRAPHICS_ADAM_BOLT) {
-        path_build(buf, sizeof(buf), ANGBAND_DIR_XTRA_GRAF, "mask.bmp");
+        path_build(buf, sizeof(buf), ANGBAND_DIR_XTRA_GRAF, "16x16-mask.bmp");
         if (!ReadDIB(data[0].w, buf, &infMask)) {
             plog_fmt("Cannot read bitmap file '%s'", buf);
             return FALSE;
