@@ -63,6 +63,18 @@
 #include "locale/japanese.h"
 #endif
 
+/*
+ * Define these here, rather than use preprocessor macros set in cmd-spell.h,
+ * so that the preprocessing done to switch character encoding works on the
+ * platforms that use configure/automake.
+ */
+concptr KWD_DAM = _("損傷:", "dam ");
+concptr KWD_RANGE = _("射程:", "rng ");
+concptr KWD_DURATION = _("期間:", "dur ");
+concptr KWD_SPHERE = _("範囲:", "range ");
+concptr KWD_HEAL = _("回復:", "heal ");
+concptr KWD_RANDOM = _("ランダム", "random");
+
 /*!
  * 魔法領域フラグ管理テーブル /
  * Zangband uses this array instead of the spell flags table, as there
