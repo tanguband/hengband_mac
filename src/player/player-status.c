@@ -1268,11 +1268,13 @@ static ACTION_SKILL_POWER calc_stealth(player_type *creature_ptr)
         pow -= 7;
     }
 
-    if (creature_ptr->pclass == CLASS_NINJA && heavy_armor(creature_ptr)) {
-        pow -= (creature_ptr->lev) / 10;
-    } else if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || has_right_hand_weapon(creature_ptr))
-        && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || has_left_hand_weapon(creature_ptr))) {
-        pow += (creature_ptr->lev) / 10;
+    if (creature_ptr->pclass == CLASS_NINJA) {
+        if (heavy_armor(creature_ptr)) {
+            pow -= (creature_ptr->lev) / 10;
+        } else if ((!creature_ptr->inventory_list[INVEN_RARM].k_idx || has_right_hand_weapon(creature_ptr))
+            && (!creature_ptr->inventory_list[INVEN_LARM].k_idx || has_left_hand_weapon(creature_ptr))) {
+            pow += (creature_ptr->lev) / 10;
+        }
     }
 
     if (is_time_limit_stealth(creature_ptr))
@@ -2547,7 +2549,7 @@ static s16b calc_speed(player_type *creature_ptr)
             }
         }
 
-        if (creature_ptr->pclass == CLASS_FORCETRAINER && !(heavy_armor(creature_ptr))) {
+        if ((creature_ptr->pclass == CLASS_MONK || creature_ptr->pclass == CLASS_FORCETRAINER) && !(heavy_armor(creature_ptr))) {
             if (!(is_specific_player_race(creature_ptr, RACE_KLACKON) || is_specific_player_race(creature_ptr, RACE_SPRITE)
                     || (creature_ptr->pseikaku == PERSONALITY_MUNCHKIN)))
                 pow += (creature_ptr->lev) / 10;
