@@ -5853,9 +5853,6 @@ static void init_windows(void)
 	/* Note the "system" */
 	ANGBAND_SYS = "mac";
 
-	/* Load possible graphics modes */
-	init_graphics_modes();
-
 	/* Load preferences */
 	load_prefs();
 
@@ -5874,6 +5871,9 @@ static void init_windows(void)
 
 	/* Initialise game */
 	init_angband(p_ptr, process_autopick_file_command);
+
+	/* Load possible graphics modes */
+	init_graphics_modes();
 
 	/* We are now initialized */
 	initialized = TRUE;
