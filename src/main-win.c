@@ -817,6 +817,7 @@ static void save_prefs(void)
     strcpy(buf, use_bg ? "1" : "0");
     WritePrivateProfileString("Angband", "BackGround", buf, ini_file);
     WritePrivateProfileString("Angband", "BackGroundBitmap", bg_bitmap_file[0] != '\0' ? bg_bitmap_file : "bg.bmp", ini_file);
+    WritePrivateProfileString("Angband", "SaveFile", savefile, ini_file);
 
     for (int i = 0; i < MAX_TERM_DATA; ++i) {
         save_prefs_aux(i);
@@ -892,6 +893,7 @@ static void load_prefs(void)
     arg_music = (GetPrivateProfileInt("Angband", "Music", 0, ini_file) != 0);
     use_bg = GetPrivateProfileInt("Angband", "BackGround", 0, ini_file);
     GetPrivateProfileString("Angband", "BackGroundBitmap", "bg.bmp", bg_bitmap_file, 1023, ini_file);
+    GetPrivateProfileString("Angband", "SaveFile", "", savefile, 1023, ini_file);
     for (int i = 0; i < MAX_TERM_DATA; ++i) {
         load_prefs_aux(i);
     }
@@ -3054,7 +3056,7 @@ LRESULT PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         p_ptr->panic_save = 1;
         signals_ignore_tstp();
         (void)strcpy(p_ptr->died_from, _("(緊急セーブ)", "(panic save)"));
-        (void)save_player(p_ptr);
+        (void)save_player(p_ptr, SAVE_TYPE_NORMAL);
         quit(NULL);
         return 0;
     }
@@ -3463,6 +3465,7 @@ static void init_stuff(void)
     validate_dir(ANGBAND_DIR_INFO, FALSE);
     validate_dir(ANGBAND_DIR_PREF, TRUE);
     validate_dir(ANGBAND_DIR_SAVE, FALSE);
+    validate_dir(ANGBAND_DIR_DEBUG_SAVE, FALSE);
     validate_dir(ANGBAND_DIR_USER, TRUE);
     validate_dir(ANGBAND_DIR_XTRA, TRUE);
     path_build(path, sizeof(path), ANGBAND_DIR_FILE, _("news_j.txt", "news.txt"));

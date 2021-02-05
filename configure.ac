@@ -56,7 +56,7 @@ AC_ARG_ENABLE(fontset,
 AC_ARG_ENABLE([xft],
 	AS_HELP_STRING([--enable-xft], [Enable xft support]))
 AC_ARG_ENABLE(worldscore,
-[  --disable-worldscore    disable worldscore support], ,AC_DEFINE(WORLD_SCORE, 1, [Allow the game to send scores to the score server]))
+[  --disable-worldscore    disable worldscore support], worldscore=no, AC_DEFINE(WORLD_SCORE, 1, [Allow the game to send scores to the score server]))
 AC_ARG_ENABLE(chuukei,
 [  --enable-chuukei        enable internet chuukei support], AC_DEFINE(CHUUKEI, 1, [Chuukei mode]))
 AC_ARG_ENABLE([cocoa],
@@ -95,6 +95,10 @@ fi
 AC_CHECK_LIB(iconv, iconv_open)
 
 AC_CHECK_FILE(/dev/urandom, AC_DEFINE(RNG_DEVICE, "/dev/urandom", [Random Number Generation device file]))
+
+if test "$worldscore" != no; then
+  PKG_CHECK_MODULES(libcurl, [libcurl])
+fi
 
 dnl Checks for header files.
 dnl AC_PATH_XTRA has side effects on CPP which are beneficial on Mac OS X.
