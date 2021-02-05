@@ -151,7 +151,7 @@ void init_file_paths(concptr libpath, concptr varpath)
                      * Remove if modified more than a week ago,
                      * 7*24*60*60 seconds.
                      */
-                    if (difftime(now, next_stat.st_mtimespec.tv_sec) > 604800) {
+                    if (difftime(now, next_stat.st_mtime) > 604800) {
                         remove(next_entry->d_name);
                     }
                 }
