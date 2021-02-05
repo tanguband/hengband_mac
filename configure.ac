@@ -106,7 +106,7 @@ dnl Removing it or conditionally executing it will likely lead to warnings
 dnl on that platform about the preprocessor disagreeing with the compiler on
 dnl the tests in AC_CHECK_HEADERS.
 AC_PATH_XTRA
-if test "$have_x" = yes && test x"$enable_cocoa" != xyes ; then
+AS_IF([test "$have_x" = yes && test x"$enable_cocoa" != xyes], [
   LIBS="$LIBS -lX11"
   AC_DEFINE(USE_X11, 1, [Allow -mX11 environment])
   CFLAGS="$X_CFLAGS $CFLAGS"
@@ -137,7 +137,7 @@ if test "$have_x" = yes && test x"$enable_cocoa" != xyes ; then
     PKG_CHECK_MODULES(XFT, [xft],
       [AC_DEFINE([USE_XFT], [1], [Use XFT])])
   ])
-fi
+])
 
 if test "$use_japanese" != no; then
   AC_CHECK_PROG(NKF, nkf, yes)
