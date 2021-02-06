@@ -70,10 +70,11 @@ char *file_read__tmp;
  */
 void init_file_paths(concptr libpath, concptr varpath)
 {
-    char base[1024];
 #ifdef PRIVATE_USER_PATH
-    char buf[1024];
+    char base[1024];
 #endif
+    char buf[1024];
+
     string_free(ANGBAND_DIR);
     string_free(ANGBAND_DIR_APEX);
     string_free(ANGBAND_DIR_BONE);
@@ -100,8 +101,8 @@ void init_file_paths(concptr libpath, concptr varpath)
     ANGBAND_DIR_INFO = string_make(format("%sinfo", libpath));
     ANGBAND_DIR_PREF = string_make(format("%spref", libpath));
     ANGBAND_DIR_SAVE = string_make(format("%ssave", varpath));
-    path_build(base, sizeof(base), ANGBAND_DIR_SAVE, "log");
-    ANGBAND_DIR_DEBUG_SAVE = string_make(base);
+    path_build(buf, sizeof(buf), ANGBAND_DIR_SAVE, "log");
+    ANGBAND_DIR_DEBUG_SAVE = string_make(buf);
 
 #ifdef PRIVATE_USER_PATH
     path_parse(base, sizeof(base), PRIVATE_USER_PATH);
