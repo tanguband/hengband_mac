@@ -39,7 +39,7 @@
  * all the others use this file for their "main()" function.
  */
 
-#ifndef WINDOWS
+#if !defined(WINDOWS) && !defined(MACH_O_COCOA)
 /*
  * A hook for "quit()".
  *
@@ -64,37 +64,6 @@ static void quit_hook(concptr s)
 }
 
 /*
- * Set the stack size and overlay buffer (see main-286.c")
- */
-#ifdef PRIVATE_USER_PATH
-
-/*
- * Create an ".angband/" directory in the users home directory.
- *
- * ToDo: Add error handling.
- * ToDo: Only create the directories when actually writing files.
- */
-static void create_user_dir(void)
-{
-    char dirpath[1024];
-    char subdirpath[1024];
-
-    /* Get an absolute path from the filename */
-    path_parse(dirpath, 1024, PRIVATE_USER_PATH);
-
-    /* Create the ~/.angband/ directory */
-    mkdir(dirpath, 0700);
-
-    /* Build the path to the variant-specific sub-directory */
-    path_build(subdirpath, sizeof(subdirpath), dirpath, VERSION_NAME);
-
-    /* Create the directory */
-    mkdir(subdirpath, 0700);
-}
-
-#endif /* PRIVATE_USER_PATH */
-
-/*
  * Initialize and verify the file paths, and the score file.
  *
  * Use the ANGBAND_PATH environment var if possible, else use
@@ -116,27 +85,27 @@ static void create_user_dir(void)
  */
 static void init_stuff(void)
 {
-	char libpath[1024], varpath[1024];
+    char libpath[1024], varpath[1024];
 
     concptr tail;
 
     /* Get the environment variable */
     tail = getenv("ANGBAND_PATH");
 
-	/* Use the angband_path, or a default */
-	strncpy(libpath, tail ? tail : DEFAULT_LIB_PATH, 511);
-	strncpy(varpath, tail ? tail : DEFAULT_VAR_PATH, 511);
+    /* Use the angband_path, or a default */
+    strncpy(libpath, tail ? tail : DEFAULT_LIB_PATH, 511);
+    strncpy(varpath, tail ? tail : DEFAULT_VAR_PATH, 511);
 
-	/* Make sure they're terminated */
-	libpath[511] = '\0';
-	varpath[511] = '\0';
+    /* Make sure they're terminated */
+    libpath[511] = '\0';
+    varpath[511] = '\0';
 
-	/* Hack -- Add a path separator (only if needed) */
-	if (!suffix(libpath, PATH_SEP)) strcat(libpath, PATH_SEP);
-	if (!suffix(varpath, PATH_SEP)) strcat(varpath, PATH_SEP);
+    /* Hack -- Add a path separator (only if needed) */
+    if (!suffix(libpath, PATH_SEP)) strcat(libpath, PATH_SEP);
+    if (!suffix(varpath, PATH_SEP)) strcat(varpath, PATH_SEP);
 
-	/* Initialize */
-	init_file_paths(libpath, varpath);
+    /* Initialize */
+    init_file_paths(libpath, varpath);
 }
 
 /*
@@ -340,8 +309,8 @@ int main(int argc, char *argv[])
 
 #ifdef PRIVATE_USER_PATH
 
-    /* Create a directory for the users files. */
-    create_user_dir();
+    /* Create a directory for the user's files; handled by init.c. */
+    create_needed_dirs();
 
 #endif /* PRIVATE_USER_PATH */
 

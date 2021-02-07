@@ -29,10 +29,10 @@
 #include "term/term-color-types.h"
 #include "time.h"
 #include "util/angband-files.h"
+#include "util/string-processor.h"
 #include "world/world.h"
 #ifndef WINDOWS
 #include <dirent.h>
-#include "util/string-processor.h"
 #endif
 
 char *file_read__buf;
@@ -41,13 +41,38 @@ char *file_read__tmp;
 
 /*!
  * @brief 各データファイルを読み取るためのパスを取得する
- * Find the default paths to all of our important sub-directories.
- * @param path パス保管先の文字列
+ * Set the default paths to all of our important sub-directories.
+ * @param libpath パス保管先の文字列
+ * @param varpath Is the base path for directories that have files which
+ * are not read-only: ANGBAND_DIR_APEX, ANGBAND_DIR_BONE, ANGBAND_DIR_DATA,
+ * and ANGBAND_DIR_SAVE.  If the PRIVATE_USER_PATH preprocessor macro has not
+ * been set, it is also used as the base path for ANGBAND_DIR_USER.
  * @return なし
+ * @details
+ * <pre>
+ * The purpose of each sub-directory is described in "io/files-util.c".
+ * The traditional behavior was to put all of the sub-directories within
+ * one directory, "lib".  To get that behavior, pass the same string for
+ * libpath and varpath.  Further customization may be done later in response
+ * to command line options (most importantly for the "info", "user", and
+ * "save" directories), but that is done after this function:  see
+ * "change_path()" in "main.c".  libpath and varpath should end in the
+ * appropriate "PATH_SEP" string.  All of the "sub-directory" paths
+ * (created below or supplied by the user) will NOT end in the "PATH_SEP"
+ * string, see the special "path_build()" function in "util/angband-files.c"
+ * for more information.
+ * Hack -- first we free all the strings, since this is known
+ * to succeed even if the strings have not been allocated yet,
+ * as long as the variables start out as "NULL".  This allows
+ * this function to be called multiple times, for example, to
+ * try several base "path" values until a good one is found.
+ * </pre>
  */
-void init_file_paths(char *libpath, char *varpath)
+void init_file_paths(concptr libpath, concptr varpath)
 {
-    char *libtail, *vartail;
+#ifdef PRIVATE_USER_PATH
+    char base[1024];
+#endif
     char buf[1024];
 
     string_free(ANGBAND_DIR);
@@ -65,39 +90,28 @@ void init_file_paths(char *libpath, char *varpath)
     string_free(ANGBAND_DIR_XTRA);
 
     ANGBAND_DIR = string_make(libpath);
-    libtail = libpath + strlen(libpath);
-    vartail = varpath + strlen(varpath);
-    strcpy(vartail, "apex");
-    ANGBAND_DIR_APEX = string_make(varpath);
-    strcpy(vartail, "bone");
-    ANGBAND_DIR_BONE = string_make(varpath);
-    strcpy(vartail, "data");
-    ANGBAND_DIR_DATA = string_make(varpath);
-    strcpy(libtail, "edit");
-    ANGBAND_DIR_EDIT = string_make(libpath);
-    strcpy(libtail, "script");
-    ANGBAND_DIR_SCRIPT = string_make(libpath);
-    strcpy(libtail, "file");
-    ANGBAND_DIR_FILE = string_make(libpath);
-    strcpy(libtail, "help");
-    ANGBAND_DIR_HELP = string_make(libpath);
-    strcpy(libtail, "info");
-    ANGBAND_DIR_INFO = string_make(libpath);
-    strcpy(libtail, "pref");
-    ANGBAND_DIR_PREF = string_make(libpath);
-    strcpy(vartail, "save");
-    ANGBAND_DIR_SAVE = string_make(varpath);
+
+    ANGBAND_DIR_APEX = string_make(format("%sapex", varpath));
+    ANGBAND_DIR_BONE = string_make(format("%sbone", varpath));
+    ANGBAND_DIR_DATA = string_make(format("%sdata", varpath));
+    ANGBAND_DIR_EDIT = string_make(format("%sedit", libpath));
+    ANGBAND_DIR_SCRIPT = string_make(format("%sscript", libpath));
+    ANGBAND_DIR_FILE = string_make(format("%sfile", libpath));
+    ANGBAND_DIR_HELP = string_make(format("%shelp", libpath));
+    ANGBAND_DIR_INFO = string_make(format("%sinfo", libpath));
+    ANGBAND_DIR_PREF = string_make(format("%spref", libpath));
+    ANGBAND_DIR_SAVE = string_make(format("%ssave", varpath));
     path_build(buf, sizeof(buf), ANGBAND_DIR_SAVE, "log");
     ANGBAND_DIR_DEBUG_SAVE = string_make(buf);
+
 #ifdef PRIVATE_USER_PATH
-    path_build(buf, sizeof(buf), PRIVATE_USER_PATH, VERSION_NAME);
+    path_parse(base, sizeof(base), PRIVATE_USER_PATH);
+    path_build(buf, sizeof(buf), base, VERSION_NAME);
     ANGBAND_DIR_USER = string_make(buf);
 #else
-    strcpy(vartail, "user");
-    ANGBAND_DIR_USER = string_make(varpath);
+    ANGBAND_DIR_USER = string_make(format("%suser", varpath));
 #endif
-    strcpy(libtail, "xtra");
-    ANGBAND_DIR_XTRA = string_make(libpath);
+    ANGBAND_DIR_XTRA = string_make(format("%sxtra", libpath));
 
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
@@ -148,6 +162,122 @@ void init_file_paths(char *libpath, char *varpath)
         }
     }
 #endif
+}
+
+/*
+ * Helper function for create_needed_dirs().  Copied over from PosChengband.
+ */
+bool dir_exists(concptr path)
+{
+    struct stat buf;
+    if (stat(path, &buf) != 0)
+	return FALSE;
+#ifdef WIN32
+    else if (buf.st_mode & S_IFDIR)
+#else
+    else if (S_ISDIR(buf.st_mode))
+#endif
+	return TRUE;
+    else
+	return FALSE;
+}
+
+
+/*
+ * Helper function for create_needed_dirs().  Copied over from PosChengband
+ * but use the global definition for the path separator rather than a local
+ * one in PosChengband's code and check for paths that end with the path
+ * separator.
+ */
+bool dir_create(concptr path)
+{
+#ifdef WIN32
+    /* If the directory already exists then we're done */
+    if (dir_exists(path)) return TRUE;
+    return FALSE;
+#else
+    const char *ptr;
+    char buf[1024];
+
+    /* If the directory already exists then we're done */
+    if (dir_exists(path)) return TRUE;
+    /* Iterate through the path looking for path segements. At each step,
+     * create the path segment if it doesn't already exist. */
+    for (ptr = path; *ptr; ptr++)
+        {
+	    if (*ptr == PATH_SEP[0])
+                {
+		    /* Find the length of the parent path string */
+		    size_t len = (size_t)(ptr - path);
+
+		    /* Skip the initial slash */
+		    if (len == 0) continue;
+		    /* If this is a duplicate path separator, continue */
+		    if (*(ptr - 1) == PATH_SEP[0]) continue;
+
+		    /* We can't handle really big filenames */
+		    if (len - 1 > 512) return FALSE;
+
+		    /* Create the parent path string, plus null-padding */
+		    angband_strcpy(buf, path, len + 1);
+
+		    /* Skip if the parent exists */
+		    if (dir_exists(buf)) continue;
+
+		    /* The parent doesn't exist, so create it or fail */
+		    if (mkdir(buf, 0755) != 0) return FALSE;
+                }
+        }
+    /*
+     * The path ends on a path separator so have created it already in
+     * the loop above.
+     */
+    if (*(ptr-1) == PATH_SEP[0])
+	{
+	    return TRUE;
+	}
+    return mkdir(path, 0755) == 0 ? TRUE : FALSE;
+#endif
+}
+
+
+/*
+ * Create any missing directories. We create only those dirs which may be
+ * empty (user/, save/, apex/, bone/, data/). Only user/ is created when
+ * the PRIVATE_USER_PATH preprocessor macro has been set. The others are
+ * assumed to contain required files and therefore must exist at startup
+ * (edit/, pref/, file/, xtra/).
+ *
+ * ToDo: Only create the directories when actually writing files.
+ * Copied over from PosChengband to support main-cocoa.m.  Dropped
+ * creation of help/ (and removed it and info/ in the comment)
+ * since init_file_paths() puts those in libpath which may not be writable
+ * by the user running the application.  Added bone/ since
+ * init_file_paths() puts that in varpath.
+ */
+void create_needed_dirs(void)
+{
+    char dirpath[1024];
+
+    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_USER, "");
+    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+
+#ifndef PRIVATE_USER_PATH
+    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_SAVE, "");
+    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+
+    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_DEBUG_SAVE, "");
+    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+
+    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_APEX, "");
+    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+
+    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_BONE, "");
+    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+
+    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_DATA, "");
+    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+#endif /* ndef PRIVATE_USER_PATH */
 }
 
 /*!

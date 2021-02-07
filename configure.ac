@@ -22,7 +22,7 @@ if test "$GAMEGROUP" != ""; then
   MY_EXPAND_DIR(game_libpath, "$datadir/games/$PACKAGE/lib/")
 else
   MY_EXPAND_DIR(game_libpath, "./lib/")
-  bindir=".."
+  bindir="`pwd`"
 fi
 
 dnl overwrite the path with an user-specified value
@@ -59,16 +59,35 @@ AC_ARG_ENABLE(worldscore,
 [  --disable-worldscore    disable worldscore support], worldscore=no, AC_DEFINE(WORLD_SCORE, 1, [Allow the game to send scores to the score server]))
 AC_ARG_ENABLE(chuukei,
 [  --enable-chuukei        enable internet chuukei support], AC_DEFINE(CHUUKEI, 1, [Chuukei mode]))
+AC_ARG_ENABLE([cocoa],
+[  --enable-cocoa          enable a Cocoa user interface (OS X only)],
+AC_DEFINE([MACH_O_COCOA], [1], [Use a Cocoa interface (OS X only)]), [])
+AM_CONDITIONAL([COCOA], [test x$enable_cocoa = xyes])
+dnl Since AC_PROG_OBJC has the side effect of setting this conditional,
+dnl guarantee that is is always set, regardless of what happens in the if
+dnl statement.
+AM_CONDITIONAL([am__fastdepOBJC], false)
+if test x"$enable_cocoa" = xyes ; then
+  dnl Use AC_LANG_PUSH and AC_LANG_POP to try to get back to the state that
+  dnl AC_LANG_C set in case there are side effects.
+  AC_LANG_PUSH([Objective C])
+  AC_PROG_OBJC
+  AC_LANG_POP([Objective C])
+  AC_DEFINE(SAFE_DIRECTORY, 1, [Mark var directory with version string])
+  AC_DEFINE(VERSION_STRING, "3.0.0", [Version string to use for var directory])
+fi
 
 dnl Checks for libraries.
 dnl Replace `main' with a function in -lncurses:
-AC_CHECK_LIB(ncursesw, initscr, [AC_DEFINE(USE_GCU, 1, [Allow -mGCU environment]) AC_DEFINE(USE_NCURSES, 1, [Use ncurses]) LIBS="$LIBS -lncursesw"])
-if test "$ac_cv_lib_ncursesw_initscr" != yes; then
-  AC_CHECK_LIB(ncurses, initscr, [AC_DEFINE(USE_GCU, 1, [Allow -mGCU environment]) AC_DEFINE(USE_NCURSES, 1, [Use ncurses]) LIBS="$LIBS -lncurses"])
-  if test "$ac_cv_lib_ncurses_initscr" != yes; then
-    AC_CHECK_LIB(curses, initscr, [AC_DEFINE(USE_GCU, 1, [Allow -mGCU environment]) LIBS="$LIBS -lcurses"])
-    if test "$ac_cv_lib_curses_initscr" != yes; then
-      AC_CHECK_LIB(termcap, tgetent, [AC_DEFINE(USE_CAP, 1, [Allow -mCAP environment]) LIBS="$LIBS -ltermcap"])
+if test x"$enable_cocoa" != xyes ; then
+  AC_CHECK_LIB(ncursesw, initscr, [AC_DEFINE(USE_GCU, 1, [Allow -mGCU environment]) AC_DEFINE(USE_NCURSES, 1, [Use ncurses]) LIBS="$LIBS -lncursesw"])
+  if test "$ac_cv_lib_ncursesw_initscr" != yes; then
+    AC_CHECK_LIB(ncurses, initscr, [AC_DEFINE(USE_GCU, 1, [Allow -mGCU environment]) AC_DEFINE(USE_NCURSES, 1, [Use ncurses]) LIBS="$LIBS -lncurses"])
+    if test "$ac_cv_lib_ncurses_initscr" != yes; then
+      AC_CHECK_LIB(curses, initscr, [AC_DEFINE(USE_GCU, 1, [Allow -mGCU environment]) LIBS="$LIBS -lcurses"])
+      if test "$ac_cv_lib_curses_initscr" != yes; then
+        AC_CHECK_LIB(termcap, tgetent, [AC_DEFINE(USE_CAP, 1, [Allow -mCAP environment]) LIBS="$LIBS -ltermcap"])
+      fi
     fi
   fi
 fi
@@ -77,13 +96,18 @@ AC_CHECK_LIB(iconv, iconv_open)
 
 AC_CHECK_FILE(/dev/urandom, AC_DEFINE(RNG_DEVICE, "/dev/urandom", [Random Number Generation device file]))
 
-if test "$worldscore" != no; then
-  PKG_CHECK_MODULES(libcurl, [libcurl])
-fi
+AS_IF([test "$worldscore" != no], [
+  PKG_CHECK_MODULES([libcurl], [libcurl], [true], [
+    AC_SEARCH_LIBS([curl_global_init], [curl curl-gnutls curl-nss], [true], [AC_MSG_ERROR([libcurl is necessary for posting scores])])])
+])
 
 dnl Checks for header files.
+dnl AC_PATH_XTRA has side effects on CPP which are beneficial on Mac OS X.
+dnl Removing it or conditionally executing it will likely lead to warnings
+dnl on that platform about the preprocessor disagreeing with the compiler on
+dnl the tests in AC_CHECK_HEADERS.
 AC_PATH_XTRA
-if test "$have_x" = yes; then
+AS_IF([test "$have_x" = yes && test x"$enable_cocoa" != xyes], [
   LIBS="$LIBS -lX11"
   AC_DEFINE(USE_X11, 1, [Allow -mX11 environment])
   CFLAGS="$X_CFLAGS $CFLAGS"
@@ -114,7 +138,7 @@ if test "$have_x" = yes; then
     PKG_CHECK_MODULES(XFT, [xft],
       [AC_DEFINE([USE_XFT], [1], [Use XFT])])
   ])
-fi
+])
 
 if test "$use_japanese" != no; then
   AC_CHECK_PROG(NKF, nkf, yes)
