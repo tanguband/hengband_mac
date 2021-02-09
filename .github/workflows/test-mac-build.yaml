@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v2
 
       # Requires automake and autoconf; install those via homebrew (available
-      # by default with macos-latest.
+      # by default with macos-latest).
       - name: Install Build Dependencies
         run: |
           brew install autoconf
