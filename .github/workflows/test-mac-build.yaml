@@ -1,5 +1,5 @@
-# Verify that the software builds on a Mac; either with English or Japanese
-# enabled
+# Verify that the software builds on a Mac either with English or Japanese
+# enabled.
 
 name: test-mac-build
 
