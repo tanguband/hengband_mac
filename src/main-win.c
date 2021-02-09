@@ -3488,7 +3488,6 @@ static void init_stuff(void)
 
     path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "help");
     ANGBAND_DIR_XTRA_HELP = string_make(path);
->>>>>>> f0c4eb8416cf7416d408fb3f0e83c29f2f4e59d1
 }
 
 /*!
