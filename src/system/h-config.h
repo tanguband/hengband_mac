@@ -276,7 +276,3 @@
 #  undef SAVEFILE_USE_UID
 # endif
 #endif
-
-#ifndef HAVE_CONFIG_H
-#define WORLD_SCORE
-#endif /* HAVE_CONFIG_H */
