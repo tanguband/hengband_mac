@@ -25,7 +25,7 @@ jobs:
 
       # Requires automake and autoconf; install those via apt-get.
       - name: Install Build Dependencies
-        run: apt-get install autoconf automake
+        run: sudo apt-get install autoconf automake
 
       - name: Build
         run: |
@@ -61,7 +61,7 @@ jobs:
       # nkf; install those via apt-get.
       # macos-latest).
       - name: Install Build Dependencies
-        run: apt-get automake autoconf nkf
+        run: sudo apt-get install automake autoconf nkf
 
       - name: Build
         run: |
