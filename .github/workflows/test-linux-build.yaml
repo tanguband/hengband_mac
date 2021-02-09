@@ -1,0 +1,67 @@
+# Verify that the software builds on Linux either with English or Japanese
+# enabled.
+
+name: test-linux-build
+
+on:
+  push:
+    branches: [ macos-devel macos-2-2-1 macos-1-6-2 ]
+  pull_request:
+
+jobs:
+  english:
+    name: English
+    runs-on: ubuntu-latest
+    env:
+      # This will be passed to all invocations of configure for this test.
+      DEFAULT_CONFIGURE_OPTIONS: --disable-japanese
+
+    steps:
+      - name: Clone Project
+        uses: actions/checkout@v2
+
+      # Requires automake and autoconf; install those via apt-get.
+      - name: Install Build Dependencies
+        run: apt-get install autoconf automake|
+
+      - name: Build
+        run: |
+          ./bootstrap
+          ./configure ${{ DEFAULT_CONFIGURE_OPTIONS }}
+          make
+
+      # Use make distcheck to verify that configure.ac and the Makefile.am
+      # files properly list all the dependencies and that a build outside of
+      # of the source tree works.
+      - name: Distcheck
+        run: |
+          ./bootstrap
+          ./configure ${{ DEFAULT_CONFIGURE_OPTIONS }}
+          make DISTCHECK_CONFIGURE_FLAGS="${{ DEFAULT_CONFIGURE_OPTIONS }}" \
+            distcheck
+
+  # Unless building 1.6.2; make distcheck will not work with the Japanese
+  # build (the preprocessing to change the source encoding modifies the source
+  # tree) so don't test that for the Japanese build.
+  japanese:
+    name: Japanese
+    runs-on: ubuntu-latest
+    env:
+      # This will be passed to all invocations of configure for this test.
+      DEFAULT_CONFIGURE_OPTIONS:
+
+    steps:
+      - name: Clone Project
+        uses: actions/checkout@v2
+
+      # Requires automake, autoconf, and, unless building the 1.6.2 version,
+      # nkf; install those via apt-get.
+      # macos-latest).
+      - name: Install Build Dependencies
+        run: apt-get automake autoconf nkf
+
+      - name: Build
+        run: |
+          ./bootstrap
+          ./configure ${{ DEFAULT_CONFIGURE_OPTIONS }}
+          make
