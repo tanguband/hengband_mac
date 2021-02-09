@@ -30,7 +30,7 @@ jobs:
       - name: Build
         run: |
           ./bootstrap
-          ./configure ${{ DEFAULT_CONFIGURE_OPTIONS }}
+          ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make
 
       # Use make distcheck to verify that configure.ac and the Makefile.am
@@ -39,8 +39,8 @@ jobs:
       - name: Distcheck
         run: |
           ./bootstrap
-          ./configure ${{ DEFAULT_CONFIGURE_OPTIONS }}
-          make DISTCHECK_CONFIGURE_FLAGS="${{ DEFAULT_CONFIGURE_OPTIONS }}" \
+          ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
+          make DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }}" \
             distcheck
 
   # Unless building 1.6.2; make distcheck will not work with the Japanese
@@ -66,5 +66,5 @@ jobs:
       - name: Build
         run: |
           ./bootstrap
-          ./configure ${{ DEFAULT_CONFIGURE_OPTIONS }}
+          ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make

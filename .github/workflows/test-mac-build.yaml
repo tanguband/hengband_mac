@@ -44,8 +44,8 @@ jobs:
 
       - name: Build
         run: |
-          if test -n `echo "${{ SDK_OVERRIDE }}" | tr -d ' \t\r\n'` ; then
-            SDKROOT=`echo "${{ SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
+          if test -n `echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'` ; then
+            SDKROOT=`echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
             export SDKROOT
           fi
           ./bootstrap
@@ -53,9 +53,9 @@ jobs:
           OBJCFLAGS=""
           LDFLAGS=""
           DEPENDENCY_TRACKING=""
-          if test -n `echo "${{ UNIVERSAL_ARCHS }}" | tr -d ' \t\r\n'` ; then
+          if test -n `echo "${{ env.UNIVERSAL_ARCHS }}" | tr -d ' \t\r\n'` ; then
             DEPENDENCY_TRACKING=--disable-dependency-tracking
-            for arch in ${{ UNIVERSAL_ARCHS }} ; do
+            for arch in ${{ env.UNIVERSAL_ARCHS }} ; do
               option="-arch $arch"
               CFLAGS="$CFLAGS $option"
               OBJCFLAGS="$OBJCFLAGS $option"
@@ -67,7 +67,7 @@ jobs:
             echo "  LDFLAGS = $LDFLAGS"
           fi
           env CFLAGS="$CFLAGS" OBJCFLAGS="$OBJCFLAGS" LDFLAGS="$LDFLAGS" \
-            ./configure $DEPENDENCY_TRACKING ${{ DEFAULT_CONFIGURE_OPTIONS }}
+            ./configure $DEPENDENCY_TRACKING ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make install
           # Verify that some key files in the application bundle are there.
           test -x hengband.app/Contents/MacOS/hengband || exit 1
@@ -79,8 +79,8 @@ jobs:
       - name: Distcheck
         run: |
           ./bootstrap
-          ./configure ${{ DEFAULT_CONFIGURE_OPTIONS }}
-          make DISTCHECK_CONFIGURE_FLAGS="${{ DEFAULT_CONFIGURE_OPTIONS }}" \
+          ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
+          make DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }}" \
             distcheck
 
   # Unless building 1.6.2; make distcheck will not work with the Japanese
@@ -108,8 +108,8 @@ jobs:
 
       - name: Build
         run: |
-          if test -n `echo "${{ SDK_OVERRIDE }}" | tr -d ' \t\r\n'` ; then
-            SDKROOT=`echo "${{ SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
+          if test -n `echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'` ; then
+            SDKROOT=`echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
             export SDKROOT
           fi
           ./bootstrap
@@ -117,9 +117,9 @@ jobs:
           OBJCFLAGS=""
           LDFLAGS=""
           DEPENDENCY_TRACKING=""
-          if test -n `echo "${{ UNIVERSAL_ARCHS }}" | tr -d ' \t\r\n'` ; then
+          if test -n `echo "${{ env.UNIVERSAL_ARCHS }}" | tr -d ' \t\r\n'` ; then
             DEPENDENCY_TRACKING=--disable-dependency-tracking
-            for arch in ${{ UNIVERSAL_ARCHS }} ; do
+            for arch in ${{ env.UNIVERSAL_ARCHS }} ; do
               option="-arch $arch"
               CFLAGS="$CFLAGS $option"
               OBJCFLAGS="$OBJCFLAGS $option"
@@ -131,7 +131,7 @@ jobs:
             echo "  LDFLAGS = $LDFLAGS"
           fi
           env CFLAGS="$CFLAGS" OBJCFLAGS="$OBJCFLAGS" LDFLAGS="$LDFLAGS" \
-            ./configure $DEPENDENCY_TRACKING ${{ DEFAULT_CONFIGURE_OPTIONS }}
+            ./configure $DEPENDENCY_TRACKING ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make install
           # Verify that some key files in the application bundle are there.
           test -x hengband.app/Contents/MacOS/hengband || exit 1
