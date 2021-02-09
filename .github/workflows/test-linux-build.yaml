@@ -5,7 +5,10 @@ name: test-linux-build
 
 on:
   push:
-    branches: [ macos-devel macos-2-2-1 macos-1-6-2 ]
+    branches:
+      - macos-devel
+      - macos-2-2-1
+      - macos-1-6-2
   pull_request:
 
 jobs:
