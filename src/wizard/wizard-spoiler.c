@@ -79,17 +79,17 @@ static bool is_partial_tree(int *tree, int *partial_tree)
  * @param fname 出力ファイル名
  * @return なし
  */
-static void spoil_mon_evol(player_type *player_ptr, concptr fname)
+static spoiler_output_status spoil_mon_evol(concptr fname)
 {
     char buf[1024];
     monster_race *r_ptr;
+    player_type dummy;
     int **evol_tree, i, j, n, r_idx;
     int *evol_tree_zero; /* For C_KILL() */
     path_build(buf, sizeof buf, ANGBAND_DIR_USER, fname);
     spoiler_file = angband_fopen(buf, "w");
     if (!spoiler_file) {
-        msg_print("Cannot create spoiler file.");
-        return;
+        return SPOILER_OUTPUT_FAIL_FOPEN;
     }
 
     char title[200];
@@ -135,7 +135,7 @@ static void spoil_mon_evol(player_type *player_ptr, concptr fname)
         }
     }
 
-    ang_sort(player_ptr, evol_tree, NULL, max_r_idx, ang_sort_comp_evol_tree, ang_sort_swap_evol_tree);
+    ang_sort(&dummy, evol_tree, NULL, max_r_idx, ang_sort_comp_evol_tree, ang_sort_swap_evol_tree);
     for (i = 0; i < max_r_idx; i++) {
         r_idx = evol_tree[i][0];
         if (!r_idx)
@@ -156,11 +156,9 @@ static void spoil_mon_evol(player_type *player_ptr, concptr fname)
     C_KILL(evol_tree_zero, max_r_idx * (max_evolution_depth + 1), int);
     C_KILL(evol_tree, max_r_idx, int *);
     if (ferror(spoiler_file) || angband_fclose(spoiler_file)) {
-        msg_print("Cannot close spoiler file.");
-        return;
+        return SPOILER_OUTPUT_FAIL_FCLOSE;
     }
-
-    msg_print("Successfully created a spoiler file.");
+    return SPOILER_OUTPUT_SUCCESS;
 }
 
 /*!
@@ -168,10 +166,11 @@ static void spoil_mon_evol(player_type *player_ptr, concptr fname)
  * Create Spoiler files -BEN-
  * @return なし
  */
-void exe_output_spoilers(player_type *player_ptr)
+void exe_output_spoilers(void)
 {
     screen_save();
     while (TRUE) {
+        spoiler_output_status status = SPOILER_OUTPUT_CANCEL;
         term_clear();
         prt("Create a spoiler file.", 2, 0);
         prt("(1) Brief Object Info (obj-desc.txt)", 5, 5);
@@ -185,25 +184,36 @@ void exe_output_spoilers(player_type *player_ptr)
             screen_load();
             return;
         case '1':
-            spoil_obj_desc(player_ptr, "obj-desc.txt");
+            status = spoil_obj_desc("obj-desc.txt");
             break;
         case '2':
-            spoil_fixed_artifact(player_ptr, "artifact.txt");
+            status = spoil_fixed_artifact("artifact.txt");
             break;
         case '3':
-            spoil_mon_desc(player_ptr, "mon-desc.txt");
+            status = spoil_mon_desc("mon-desc.txt");
             break;
         case '4':
-            spoil_mon_info(player_ptr, "mon-info.txt");
+            status = spoil_mon_info("mon-info.txt");
             break;
         case '5':
-            spoil_mon_evol(player_ptr, "mon-evol.txt");
+            status = spoil_mon_evol("mon-evol.txt");
             break;
         default:
             bell();
             break;
         }
 
+        switch (status) {
+        case SPOILER_OUTPUT_FAIL_FOPEN:
+            msg_print("Cannot create spoiler file.");
+            break;
+        case SPOILER_OUTPUT_FAIL_FCLOSE:
+            msg_print("Cannot close spoiler file.");
+            break;
+        case SPOILER_OUTPUT_SUCCESS:
+            msg_print("Successfully created a spoiler file.");
+            break;
+        }
         msg_erase();
     }
 }

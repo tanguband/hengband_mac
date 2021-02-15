@@ -9,7 +9,6 @@
 #include "util/sort.h"
 #include "view/display-lore.h"
 #include "view/display-messages.h"
-#include "wizard/spoiler-util.h"
 
 /*!
  * @brief シンボル職の記述名を返す /
@@ -70,10 +69,10 @@ static concptr attr_to_text(monster_race *r_ptr)
  * @brief モンスター簡易情報のスポイラー出力を行うメインルーチン /
  * Create a spoiler file for monsters   -BEN-
  * @param fname 生成ファイル名
- * @return なし
  */
-void spoil_mon_desc(player_type *player_ptr, concptr fname)
+spoiler_output_status spoil_mon_desc(concptr fname)
 {
+    player_type dummy;
     u16b why = 2;
     MONRACE_IDX *who;
     char buf[1024];
@@ -87,8 +86,7 @@ void spoil_mon_desc(player_type *player_ptr, concptr fname)
     path_build(buf, sizeof(buf), ANGBAND_DIR_USER, fname);
     spoiler_file = angband_fopen(buf, "w");
     if (!spoiler_file) {
-        msg_print("Cannot create spoiler file.");
-        return;
+        return SPOILER_OUTPUT_FAIL_FOPEN;
     }
 
     char title[200];
@@ -111,7 +109,7 @@ void spoil_mon_desc(player_type *player_ptr, concptr fname)
             who[n++] = (s16b)i;
     }
 
-    ang_sort(player_ptr, who, &why, n, ang_sort_comp_hook, ang_sort_swap_hook);
+    ang_sort(&dummy, who, &why, n, ang_sort_comp_hook, ang_sort_swap_hook);
     for (int i = 0; i < n; i++) {
         monster_race *r_ptr = &r_info[who[i]];
         concptr name = (r_name + r_ptr->name);
@@ -143,11 +141,9 @@ void spoil_mon_desc(player_type *player_ptr, concptr fname)
     fprintf(spoiler_file, "\n");
     C_KILL(who, max_r_idx, s16b);
     if (ferror(spoiler_file) || angband_fclose(spoiler_file)) {
-        msg_print("Cannot close spoiler file.");
-        return;
+        return SPOILER_OUTPUT_FAIL_FCLOSE;
     }
-
-    msg_print("Successfully created a spoiler file.");
+    return SPOILER_OUTPUT_SUCCESS;
 }
 
 /*!
@@ -169,14 +165,14 @@ static void roff_func(TERM_COLOR attr, concptr str)
  * @param fname ファイル名
  * @return なし
  */
-void spoil_mon_info(player_type *player_ptr, concptr fname)
+spoiler_output_status spoil_mon_info(concptr fname)
 {
+    player_type dummy;
     char buf[1024];
     path_build(buf, sizeof(buf), ANGBAND_DIR_USER, fname);
     spoiler_file = angband_fopen(buf, "w");
     if (!spoiler_file) {
-        msg_print("Cannot create spoiler file.");
-        return;
+        return SPOILER_OUTPUT_FAIL_FOPEN;
     }
 
     char title[200];
@@ -195,7 +191,7 @@ void spoil_mon_info(player_type *player_ptr, concptr fname)
     }
 
     u16b why = 2;
-    ang_sort(player_ptr, who, &why, n, ang_sort_comp_hook, ang_sort_swap_hook);
+    ang_sort(&dummy, who, &why, n, ang_sort_comp_hook, ang_sort_swap_hook);
     for (int i = 0; i < n; i++) {
         monster_race *r_ptr = &r_info[who[i]];
         BIT_FLAGS flags1 = r_ptr->flags1;
@@ -237,15 +233,13 @@ void spoil_mon_info(player_type *player_ptr, concptr fname)
         spoil_out(buf);
         sprintf(buf, "Exp:%ld\n", (long)(r_ptr->mexp));
         spoil_out(buf);
-        output_monster_spoiler(player_ptr, who[i], roff_func);
+        output_monster_spoiler(who[i], roff_func);
         spoil_out(NULL);
     }
 
     C_KILL(who, max_r_idx, s16b);
     if (ferror(spoiler_file) || angband_fclose(spoiler_file)) {
-        msg_print("Cannot close spoiler file.");
-        return;
+        return SPOILER_OUTPUT_FAIL_FCLOSE;
     }
-
-    msg_print("Successfully created a spoiler file.");
+    return SPOILER_OUTPUT_SUCCESS;
 }

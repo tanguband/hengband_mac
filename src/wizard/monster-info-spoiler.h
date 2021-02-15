@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "system/angband.h"
+#include "wizard/spoiler-util.h"
 
-void spoil_mon_desc(player_type *player_ptr, concptr fname);
-void spoil_mon_info(player_type *player_ptr, concptr fname);
+spoiler_output_status spoil_mon_desc(concptr fname);
+spoiler_output_status spoil_mon_info(concptr fname);
