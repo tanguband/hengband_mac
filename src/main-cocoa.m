@@ -5870,7 +5870,7 @@ static void init_windows(void)
 	p_ptr->player_egid = getegid();
 
 	/* Initialise game */
-	init_angband(p_ptr, process_autopick_file_command);
+	init_angband(p_ptr, process_autopick_file_command, FALSE);
 
 	/* Load possible graphics modes */
 	init_graphics_modes();
