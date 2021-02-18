@@ -23060,20 +23060,20 @@ W:15:2:0:50:0:0
 B:CRUSH:HURT:6d6
 F:RAND_25 | RAND_50 | FRIENDS | WILD_SWAMP | NONLIVING | EMPTY_MIND
 F:NO_CONF | NO_STUN | NO_SLEEP | NO_FEAR | RES_WATE
-D:$It is a small bubble that makes an weird movement.
+D:$It is a small bubble that makes a weird movement.
 D:$  It collapses suddenly.
 D:不気味な動きをする小さな泡だ。ぷちぷちと潰れる。
 
 # 倒すと小さな泡×4に分裂する
 N:1152:やや大きな泡
-E:Middle aqua illusion
+E:Medium aqua illusion
 G:j:B
 I:110:12d12:10:30:10
 W:18:2:0:100:0:0
 B:CRUSH:HURT:7d7
 F:RAND_25 | RAND_50 | WILD_SWAMP | NONLIVING | EMPTY_MIND
 F:NO_CONF | NO_STUN | NO_SLEEP | NO_FEAR | RES_WATE
-D:$It is a middle bubble that makes an weird movement.
+D:$It is a medium-sized bubble that makes a weird movement.
 D:$  When it is crushed, it becomes a small bubble.
 D:不気味な動きをする、やや大きな泡だ。潰すと小さな泡になる。
 
@@ -23086,8 +23086,8 @@ W:21:2:0:250:0:0
 B:CRUSH:HURT:8d8
 F:RAND_25 | RAND_50 | WILD_SWAMP | NONLIVING | EMPTY_MIND
 F:NO_CONF | NO_STUN | NO_SLEEP | NO_FEAR | RES_WATE
-D:$It is a large bubble that makes an weird movement.
-D:$  When it is crushed, it becomes a middle bubble.
+D:$It is a large bubble that makes a weird movement.
+D:$  When it is crushed, it becomes a medium bubble.
 D:不気味な動きをする大きな泡だ。潰しても中々なくならない。
 
 # 倒すと大きな泡×4に分裂する
@@ -23099,8 +23099,8 @@ W:24:3:0:500:0:0
 B:CRUSH:HURT:9d9
 F:RAND_25 | RAND_50 | WILD_SWAMP | NONLIVING | EMPTY_MIND
 F:NO_CONF | NO_STUN | NO_SLEEP | NO_FEAR | RES_WATE
-D:$It is a extra large bubble that makes an weird movement.
-D:$  You must decide whether running away or squashing them all!
+D:$It is an extra large bubble that makes a weird movement.
+D:$  You must decide whether to run away or squash them all!
 D:不気味な動きをする巨大な泡だ。逃げるか潰すか二つに一つだ！
 
 N:1155:二周目の小さな泡
@@ -23113,13 +23113,13 @@ B:CRUSH:HURT:6d6
 F:RAND_25 | RAND_50 | FRIENDS | WILD_SWAMP | NONLIVING | EMPTY_MIND
 F:NO_CONF | NO_STUN | NO_SLEEP | NO_FEAR | RES_TELE | RES_WATE
 S:1_IN_5 | MISSILE
-D:$Holy shit! It will shoot you back at this bubble!
+D:$Holy shit! This bubble will shoot back at you!
 D:なんてこった、こいつ泡のくせに撃ち返してくるぞ！
 
 # 倒すと小さな泡×4に分裂する
 # 実際の2周目では一番小さいのしか撃ち返してこないが変愚向けに調整
 N:1156:二周目のやや大きな泡
-E:Middle aqua illusion in 2nd lap
+E:Medium aqua illusion in 2nd lap
 G:j:b
 I:120:20d20:10:50:10
 W:33:2:0:240:0:0
@@ -23128,7 +23128,7 @@ B:CRUSH:HURT:7d7
 F:RAND_25 | RAND_50 | WILD_SWAMP | NONLIVING | EMPTY_MIND
 F:NO_CONF | NO_STUN | NO_SLEEP | NO_FEAR | RES_TELE | RES_WATE
 S:1_IN_5 | MISSILE
-D:$It is a middle bubble that makes an weird movement and shoots you back.
+D:$It is a medium-sized bubble that makes a weird movement and shoots you back.
 D:$  When it is crushed, it becomes a small bubble.
 D:不気味な動きをして撃ち返してくる、やや大きな泡だ。潰すと小さな泡になる。
 
@@ -23143,8 +23143,8 @@ B:CRUSH:HURT:8d8
 F:RAND_25 | RAND_50 | WILD_SWAMP | NONLIVING | EMPTY_MIND
 F:NO_CONF | NO_STUN | NO_SLEEP | NO_FEAR | RES_TELE | RES_WATE
 S:1_IN_5 | MISSILE
-D:$It is a large bubble that makes an weird movement and shoots you back.
-D:$  When it is crushed, it becomes a middle bubble.
+D:$It is a large bubble that makes a weird movement and shoots you back.
+D:$  When it is crushed, it becomes a medium bubble.
 D:不気味な動きをして撃ち返してくる大きな泡だ。潰しても中々なくならない。
 
 # 倒すと大きな泡×4に分裂する
@@ -23158,8 +23158,8 @@ B:CRUSH:HURT:9d9
 F:RAND_25 | RAND_50 | WILD_SWAMP | NONLIVING | EMPTY_MIND
 F:NO_CONF | NO_STUN | NO_SLEEP | NO_FEAR | RES_TELE | RES_WATE
 S:1_IN_5 | MISSILE
-D:$It is a extra large bubble that makes an weird movement and shoots you back!
-D:$  You must decide whether running away or squashing them all!
+D:$It is an extra large bubble that makes a weird movement and shoots you back!
+D:$  You must decide whether to run away or squash them all!
 D:不気味な動きをして撃ち返してくる巨大な泡だ。逃げるか潰すか二つに一つだ！
 
 # 実質召喚専用にしたいのでRarはかなり高め
@@ -24344,8 +24344,8 @@ W:8:2:0:32:0:0
 B:HIT:POISON:5d5
 F:EVIL | FRIENDS | DROP_CORPSE | DROP_SKELETON | DROP_90
 F:IM_POIS | RES_LITE | RES_DARK | BASH_DOOR
-D:$It is the fallen descendant of the snow elf.
-D:$  It is blind but good ears.
+D:$It is the fallen descendant of a snow elf.
+D:$  It is blind but has good ears.
 D:スノーエルフの堕落した末裔だ。目は見えないがとても耳が利く。
 
 N:1223:ファルメル・スクルカー
@@ -24359,7 +24359,7 @@ F:EVIL | FRIENDS | DROP_CORPSE | DROP_SKELETON | DROP_90
 F:IM_POIS | RES_LITE | RES_DARK | BASH_DOOR
 S:1_IN_8 | SHOOT | BA_POIS
 D:$A falmer whose body is covered with a chaurus shell.
-D:$  It is blind and does not shrug in the light.
+D:$  It is blind and is not bothered by light.
 D:シャウラスの殻で身体を覆ったファルメルだ。
 D:目が見えないので光に身をすくめることもない。
 
@@ -24420,7 +24420,7 @@ B:SLASH:POISON:17d11
 F:EVIL | DROP_CORPSE | DROP_SKELETON | BASH_DOOR | POWERFUL
 F:DROP_2D2 | DROP_3D2 | ONLY_ITEM | IM_POIS | RES_LITE | RES_DARK
 S:1_IN_6 | SHOOT | BA_ELEC | BA_POIS | BR_POIS | CONF | HOLD | BLIND
-D:$It is the strongest falmer among general soldiers.
+D:$It is the strongest of the falmers' general soldiers.
 D:一般兵士の中では最強のファルメルだ。
 
 N:1228:グレーター・ファルメル・スクルカー
@@ -24512,7 +24512,7 @@ B:BITE:HURT:1d13
 B:STING:HURT:1d13
 F:EVIL | ANIMAL | DROP_CORPSE | BASH_DOOR | DROP_60 | FRIENDS
 F:IM_POIS | RES_DARK
-D:$It is about the size of a human and is covered with crustaceans.
+D:$It is about the size of a human and is covered with a shell of chitin.
 D:それは人ほどの大きさを誇り、甲殻に覆われている。
 
 N:1234:シャウラス・リーパー
@@ -24524,8 +24524,8 @@ B:BITE:HURT:3d13
 B:STING:HURT:3d13
 F:EVIL | ANIMAL | DROP_CORPSE | BASH_DOOR | DROP_90 | FRIENDS
 F:IM_POIS | RES_DARK
-D:$It is large enough to easily exceed humans
-D:$ and is covered with an extremely hard crustacean.
+D:$It is much larger than a human
+D:$ and has an extremely hard shell made of chitin.
 D:それは人を軽く超えるほどの大きさを誇り、極めて硬い甲殻に覆われている。
 
 N:1235:シャウラス・ハンターの幼体
@@ -24537,7 +24537,7 @@ B:BITE:HURT:4d11
 B:STING:HURT:4d11
 F:EVIL | ANIMAL | DROP_CORPSE | BASH_DOOR | DROP_1D2 | FRIENDS
 F:IM_POIS | RES_DARK
-D:$It still has a small body, but it can easily prey on adventurers.
+D:$It is not fully grown, but it can easily prey on adventurers.
 D:それはまだ小さい体躯をしているが、冒険者を容易に捕食できる。
 
 N:1236:シャウラス・ハンター
@@ -24550,8 +24550,8 @@ B:STING:HURT:4d10
 B:CRUSH:HURT:4d10
 F:EVIL | ANIMAL | DROP_CORPSE | BASH_DOOR | DROP_90 | DROP_1D2 | FRIENDS
 F:IM_POIS | RES_DARK
-D:$It is Chaurus who has grown into a human-like body.
-D:$  It is often seen that they are kept in falmer.
+D:$It is a Chaurus that keeps it's two front legs off the ground, ready to
+D:$ use as weapons.  It is often seen near the falmer.
 D:人間並みの身体に成長したシャウラスだ。
 D:ファルメルに飼われている姿をよく見かける。
 
