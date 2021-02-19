@@ -2148,6 +2148,7 @@ static void load_prefs(void);
 static void init_windows(void);
 static void handle_open_when_ready(void);
 static void play_sound(int event);
+static void send_key(const char key);
 static BOOL check_events(int wait);
 static BOOL send_event(NSEvent *event);
 static void set_color_for_index(int idx);
@@ -5222,7 +5223,7 @@ static BOOL send_event(NSEvent *event)
             /* Enqueue it */
             if (ch != '\0')
             {
-                term_key_push(ch);
+                send_key(ch);
             }
 	    else
 	    {
@@ -5234,49 +5235,31 @@ static BOOL send_event(NSEvent *event)
 		    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
 		    'c', 'd', 'e', 'f'
 		};
-		/*
-		 * Most convenient to buffer and then reverse, because of the
-		 * behavior of term_key_push().
-		 */
-		char buf[10];
-		size_t bc = 0;
 
 		/* Begin the macro trigger. */
-		assert(bc < sizeof(buf));
-		buf[bc++] = 31;
+		send_key(31);
 
 		/* Add the modifiers. */
 		if (mc) {
-		    assert(bc < sizeof(buf));
-		    buf[bc++] = 'C';
+		    send_key('C');
 		}
 		if (ms) {
-		    assert(bc < sizeof(buf));
-		    buf[bc++] = 'S';
+		    send_key('S');
 		}
 		if (mo) {
-		    assert(bc < sizeof(buf));
-		    buf[bc++] = 'O';
+		    send_key('O');
 		}
 		if (kp) {
-		    assert(bc < sizeof(buf));
-		    buf[bc++] = 'K';
+		    send_key('K');
 		}
 
 		do {
-		    assert(bc < sizeof(buf));
-		    buf[bc++] = encoded[c & 0xF];
+		    send_key(encoded[c & 0xF]);
 		    c >>= 4;
 		} while (c > 0);
 
 		/* End the macro trigger. */
-		assert(bc < sizeof(buf));
-		buf[bc++] = 13;
-
-		/* Sent it. */
-		while (bc > 0) {
-		    term_key_push(buf[--bc]);
-		}
+		send_key(13);
 	    }
             
             break;
@@ -5304,6 +5287,29 @@ static BOOL send_event(NSEvent *event)
 }
 
 /**
+ * This is a replacement for the former Term_keypress():  push a key stroke
+ * to the tail of a terminal's circular buffer of key strokes.  It duplicates
+ * code in main-win.c and main-x11.c.
+ */
+static void send_key(char key)
+{
+    int next_head;
+
+    /* Refuse to enqueue non-keys. */
+    if (! key) return;
+
+    /* Refuse to enqueue if it would cause an overflow. */
+    next_head = Term->key_head + 1;
+    if (next_head == Term->key_size) {
+        next_head = 0;
+    }
+    if (next_head == Term->key_tail) return;
+
+    Term->key_queue[Term->key_head] = key;
+    Term->key_head = next_head;
+}
+
+/**
  * Check for Events, return TRUE if we process any
  */
 static BOOL check_events(int wait)
@@ -5323,7 +5329,7 @@ static BOOL check_events(int wait)
 	    if (quit_when_ready)
 	    {
 		/* send escape events until we quit */
-		term_key_push(0x1B);
+		send_key(0x1B);
 		result = NO;
 		break;
 	    }
