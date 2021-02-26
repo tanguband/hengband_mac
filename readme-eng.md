@@ -62,9 +62,7 @@ image, and then drag the hengband application inside it to where you want
 to store it.  Double clicking on the application will run it.  Since the
 application has not been signed, you'll likely have to make an exception
 for it to use the application.  Apple's instructions for how to do that
-are at
-
-    https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac
+are at https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac .
 
 In short, one way to grant the exception is:
 
