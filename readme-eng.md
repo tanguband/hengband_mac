@@ -84,10 +84,12 @@ installed, X11 will be used for dsiaply.
 For Mac OS X 10.8 or later with Xcode installed, a native version can be
 built by downloading the source archive and running
 
-> tar -zxvt hengband-x.x.x.tar.gz
-> cd hengband-x.x.x
-> ./configure --disable-japanese --enable-cocoa
-> make install
+```
+tar -zxvt hengband-x.x.x.tar.gz
+cd hengband-x.x.x
+./configure --disable-japanese --enable-cocoa
+make install
+```
 
 from a terminal where you subsitute x.x.x with the version number you
 downloaded.  That will build hengband.app in the hengband-x.x.x directory:
