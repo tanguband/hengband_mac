@@ -935,15 +935,15 @@ EXTRA_DIST = \
 
 if COCOA
 hengband_SOURCES += \
-	main-cocoa.m \
+	main-cocoa.mm \
 	system/grafmode.h \
-	system/grafmode.c \
+	system/grafmode.cpp \
 	cocoa/AppDelegate.h
 AM_CFLAGS = -mmacosx-version-min=10.8 -Wunguarded-availability
-AM_OBJCFLAGS = -fobjc-arc -mmacosx-version-min=10.8 -Wunguarded-availability
+AM_OBJCXXFLAGS = -fobjc-arc -mmacosx-version-min=10.8 -Wunguarded-availability -stdlib=libc++
 AM_CXXFLAGS = -mmacosx-version-min=10.8 -Wunguarded-availability -stdlib=libc++
 hengband_LDFLAGS = -framework cocoa $(AM_LDFLAGS)
-hengband_LINK = MACOSX_DEPLOYMENT_TARGET=10.8 $(OBJCLINK) $(hengband_LDFLAGS) $(LDFLAGS) -o $@
+hengband_LINK = MACOSX_DEPLOYMENT_TARGET=10.8 $(OBJCXXLINK) $(hengband_LDFLAGS) $(LDFLAGS) -o $@
 APPNAME = $(PACKAGE_NAME)
 APPEXE = hengband
 APPDIR = $(APPNAME).app
@@ -977,7 +977,7 @@ appendir = $(APPRES)/en.lproj
 appja_DATA = $(cocoa_ja_strings_files)
 appjadir = $(APPRES)/ja.lproj
 else
-EXTRA_hengband_SOURCES += main-cocoa.m system/grafmode.h system/grafmode.c \
+EXTRA_hengband_SOURCES += main-cocoa.mm system/grafmode.h system/grafmode.cpp \
 	cocoa/AppDelegate.h
 hengband_LINK = $(LINK)
 endif
@@ -987,8 +987,8 @@ CFLAGS += $(XFT_CFLAGS) $(libcurl_CFLAGS)
 LIBS += $(XFT_LIBS) $(libcurl_LIBS)
 COMPILE = $(srcdir)/gcc-wrap $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) 
-OBJCCOMPILE = $(srcdir)/gcc-wrap $(OBJC) $(DEFS) $(DEFAULT_INCLUDES) \
-	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCFLAGS) $(OBJCFLAGS)
+OBJCXXCOMPILE = $(srcdir)/gcc-wrap $(OBJCXX) $(DEFS) $(DEFAULT_INCLUDES) \
+	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS)
 CXXCOMPILE = $(srcdir)/gcc-wrap $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(AM_CXXFLAGS) $(CFLAGS)
 
@@ -1002,7 +1002,7 @@ if COCOA
 # Suppress the warnings from the EUC-JP encoded strings used when building
 # the Japanese version.
 AM_CFLAGS += -Wno-invalid-source-encoding
-AM_OBJCFLAGS += -Wno-invalid-source-encoding
+AM_OBJCXXFLAGS += -Wno-invalid-source-encoding
 
 # Create lib/info within the application bundle since not currently
 # installing anything to it.  Other relevant lib directories should

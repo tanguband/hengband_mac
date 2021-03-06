@@ -1,5 +1,5 @@
 /**
- * \file main-cocoa.m
+ * \file main-cocoa.mm
  * \brief OS X front end
  *
  * Copyright (c) 2011 Peter Ammon
@@ -670,7 +670,8 @@ static int isCharNoPartial(const struct TerminalCell *c)
 - (id)initWithColumns:(int)nCol rows:(int)nRow
 {
     if (self = [super init]) {
-	self->cells = malloc(nCol * nRow * sizeof(struct TerminalCell));
+	self->cells = (TerminalCell*)
+	    malloc(nCol * nRow * sizeof(struct TerminalCell));
 	self->_columnCount = nCol;
 	self->_rowCount = nRow;
 	self->_cursorColumn = -1;
@@ -702,7 +703,7 @@ static int isCharNoPartial(const struct TerminalCell *c)
      * to just clear it when drawing.
      */
     struct TerminalCell *newCells =
-	malloc(nCol * nRow * sizeof(struct TerminalCell));
+	(TerminalCell*) malloc(nCol * nRow * sizeof(struct TerminalCell));
     struct TerminalCell *cellsOutCursor = newCells;
     const struct TerminalCell *cellsInCursor = self->cells;
     int nColCommon = (nCol < self.columnCount) ? nCol : self.columnCount;
@@ -1500,8 +1501,8 @@ static int isCharNoPartial(const struct TerminalCell *c)
 - (id)initWithColumns:(int)nCol rows:(int)nRow
 {
     if (self = [super init]) {
-	self->colBounds = malloc(2 * nRow * sizeof(int));
-	self->marks = malloc(nCol * nRow * sizeof(BOOL));
+	self->colBounds = (int*) malloc(2 * nRow * sizeof(int));
+	self->marks = (BOOL*) malloc(nCol * nRow * sizeof(BOOL));
 	self->_columnCount = nCol;
 	self->_rowCount = nRow;
 	[self clear];
@@ -1523,8 +1524,8 @@ static int isCharNoPartial(const struct TerminalCell *c)
 
 - (void)resizeWithColumns:(int)nCol rows:(int)nRow
 {
-    int* newColBounds = malloc(2 * nRow * sizeof(int));
-    BOOL* newMarks = malloc(nCol * nRow * sizeof(BOOL));
+    int* newColBounds = (int*) malloc(2 * nRow * sizeof(int));
+    BOOL* newMarks = (BOOL*) malloc(nCol * nRow * sizeof(BOOL));
     int nRowCommon = (nRow < self.rowCount) ? nRow : self.rowCount;
 
     if (self.firstChangedRow <= self.lastChangedRow &&
@@ -2232,7 +2233,7 @@ static bool initialized = FALSE;
 /* qsort-compatible compare function for CGSizes */
 static int compare_advances(const void *ap, const void *bp)
 {
-    const CGSize *a = ap, *b = bp;
+    const CGSize *a = (CGSize*) ap, *b = (CGSize*) bp;
     return (a->width > b->width) - (a->width < b->width);
 }
 
@@ -2249,7 +2250,7 @@ static int compare_advances(const void *ap, const void *bp)
      * Here and below, dynamically allocate working arrays rather than put them
      * on the stack in case limited stack space is an issue.
      */
-    unsigned char *latinString = malloc(GLYPH_COUNT);
+    unsigned char *latinString = (unsigned char*) malloc(GLYPH_COUNT);
     if (latinString == 0) {
 	NSException *exc = [NSException exceptionWithName:@"OutOfMemory"
 					reason:@"latinString in updateGlyphInfo"
@@ -2262,7 +2263,7 @@ static int compare_advances(const void *ap, const void *bp)
     /* Turn that into unichar. Angband uses ISO Latin 1. */
     NSString *allCharsString = [[NSString alloc] initWithBytes:latinString
         length:GLYPH_COUNT encoding:NSISOLatin1StringEncoding];
-    unichar *unicharString = malloc(GLYPH_COUNT * sizeof(unichar));
+    unichar *unicharString = (unichar*) malloc(GLYPH_COUNT * sizeof(unichar));
     if (unicharString == 0) {
 	free(latinString);
 	NSException *exc = [NSException exceptionWithName:@"OutOfMemory"
@@ -2276,7 +2277,7 @@ static int compare_advances(const void *ap, const void *bp)
     free(latinString);
 
     /* Get glyphs */
-    CGGlyph *glyphArray = calloc(GLYPH_COUNT, sizeof(CGGlyph));
+    CGGlyph *glyphArray = (CGGlyph*) calloc(GLYPH_COUNT, sizeof(CGGlyph));
     if (glyphArray == 0) {
 	free(unicharString);
 	NSException *exc = [NSException exceptionWithName:@"OutOfMemory"
@@ -2289,7 +2290,7 @@ static int compare_advances(const void *ap, const void *bp)
     free(unicharString);
 
     /* Get advances. Record the max advance. */
-    CGSize *advances = malloc(GLYPH_COUNT * sizeof(CGSize));
+    CGSize *advances = (CGSize*) malloc(GLYPH_COUNT * sizeof(CGSize));
     if (advances == 0) {
 	free(glyphArray);
 	NSException *exc = [NSException exceptionWithName:@"OutOfMemory"
@@ -2300,7 +2301,7 @@ static int compare_advances(const void *ap, const void *bp)
     CTFontGetAdvancesForGlyphs(
 	(CTFontRef)screenFont, kCTFontHorizontalOrientation, glyphArray,
 	advances, GLYPH_COUNT);
-    CGFloat *glyphWidths = malloc(GLYPH_COUNT * sizeof(CGFloat));
+    CGFloat *glyphWidths = (CGFloat*) malloc(GLYPH_COUNT * sizeof(CGFloat));
     if (glyphWidths == 0) {
 	free(glyphArray);
 	free(advances);
@@ -2366,7 +2367,7 @@ static int compare_advances(const void *ap, const void *bp)
      * Determine whether neighboring columns need to be redrawn when a
      * character changes.
      */
-    CGRect *boxes = malloc(GLYPH_COUNT * sizeof(CGRect));
+    CGRect *boxes = (CGRect*) malloc(GLYPH_COUNT * sizeof(CGRect));
     if (boxes == 0) {
 	free(glyphWidths);
 	free(glyphArray);
@@ -3061,8 +3062,8 @@ static __strong NSFont* gDefaultFont = nil;
  */
 static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 {
-    const NSRect *arp = ap;
-    const NSRect *brp = bp;
+    const NSRect *arp = (NSRect*) ap;
+    const NSRect *brp = (NSRect*) bp;
     return (arp->origin.y > brp->origin.y) - (arp->origin.y < brp->origin.y);
 }
 
@@ -3353,7 +3354,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 	rect.origin.y < bottomY &&
 	rect.origin.y + rect.size.height > self.borderSize.height) {
 	nsctx = [NSGraphicsContext currentContext];
-	ctx = [nsctx graphicsPort];
+	ctx = (CGContextRef) [nsctx graphicsPort];
 	screenFont = [self.angbandViewFont screenFont];
 	[screenFont set];
 	blank = [TerminalContents getBlankChar];
@@ -3375,7 +3376,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
     NSRect* sortedRects = 0;
     const NSRect* workingRects;
     if (overdraw_row && invalidCount > 1) {
-	sortedRects = malloc(invalidCount * sizeof(NSRect));
+	sortedRects = (NSRect*) malloc(invalidCount * sizeof(NSRect));
 	if (sortedRects == 0) {
 	    NSException *exc = [NSException exceptionWithName:@"OutOfMemory"
 					    reason:@"sorted rects in drawRect"
@@ -4131,7 +4132,7 @@ static void set_color_for_index(int idx)
     gv = angband_color_table[idx][2];
     bv = angband_color_table[idx][3];
     
-    CGContextSetRGBFillColor([[NSGraphicsContext currentContext] graphicsPort], rv/255., gv/255., bv/255., 1.);
+    CGContextSetRGBFillColor((CGContextRef) [[NSGraphicsContext currentContext] graphicsPort], rv/255., gv/255., bv/255., 1.);
 }
 
 /**
@@ -6374,7 +6375,7 @@ static void init_windows(void)
 
 int main(int argc, char* argv[])
 {
-    NSApplicationMain(argc, (void*)argv);
+    NSApplicationMain(argc, (const char **) argv);
     return (0);
 }
 
