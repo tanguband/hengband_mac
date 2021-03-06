@@ -47,7 +47,8 @@ jobs:
           fi
           ./bootstrap
           CFLAGS=""
-          OBJCFLAGS=""
+          CXXFLAGS=""
+          OBJCXXFLAGS=""
           LDFLAGS=""
           DEPENDENCY_TRACKING=""
           if test -n `echo "${{ env.UNIVERSAL_ARCHS }}" | tr -d ' \t\r\n'` ; then
@@ -55,15 +56,18 @@ jobs:
             for arch in ${{ env.UNIVERSAL_ARCHS }} ; do
               option="-arch $arch"
               CFLAGS="$CFLAGS $option"
-              OBJCFLAGS="$OBJCFLAGS $option"
+              CXXFLAGS="$CXXFLAGS $option"
+              OBJCXXFLAGS="$OBJCXXFLAGS $option"
               LDFLAGS="$LDFLAGS $option"
             done
             echo "Performing a univeral build:"
             echo "  CFLAGS = $CFLAGS"
-            echo "  OBJCFLAGS = $OBJCFLAGS"
+            echo "  CXXFLAGS = $CXXFLAGS"
+            echo "  OBJCXXFLAGS = $OBJCXXFLAGS"
             echo "  LDFLAGS = $LDFLAGS"
           fi
-          env CFLAGS="$CFLAGS" OBJCFLAGS="$OBJCFLAGS" LDFLAGS="$LDFLAGS" \
+          env CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
+            OBJCXXFLAGS="$OBJCXXFLAGS" LDFLAGS="$LDFLAGS" \
             ./configure $DEPENDENCY_TRACKING ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make install
           # Verify that some key files in the application bundle are there.
@@ -111,7 +115,8 @@ jobs:
           fi
           ./bootstrap
           CFLAGS=""
-          OBJCFLAGS=""
+          CXXFLAGS=""
+          OBJCXXFLAGS=""
           LDFLAGS=""
           DEPENDENCY_TRACKING=""
           if test -n `echo "${{ env.UNIVERSAL_ARCHS }}" | tr -d ' \t\r\n'` ; then
@@ -119,15 +124,18 @@ jobs:
             for arch in ${{ env.UNIVERSAL_ARCHS }} ; do
               option="-arch $arch"
               CFLAGS="$CFLAGS $option"
-              OBJCFLAGS="$OBJCFLAGS $option"
+              CXXFLAGS="$CXXFLAGS $option"
+              OBJCXXFLAGS="$OBJCXXFLAGS $option"
               LDFLAGS="$LDFLAGS $option"
             done
             echo "Performing a univeral build:"
             echo "  CFLAGS = $CFLAGS"
-            echo "  OBJCFLAGS = $OBJCFLAGS"
+            echo "  CXXFLAGS = $CXXFLAGS"
+            echo "  OBJCXXFLAGS = $OBJCXXFLAGS"
             echo "  LDFLAGS = $LDFLAGS"
           fi
-          env CFLAGS="$CFLAGS" OBJCFLAGS="$OBJCFLAGS" LDFLAGS="$LDFLAGS" \
+          env CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
+            OBJCXXFLAGS="$OBJCXXFLAGS" LDFLAGS="$LDFLAGS" \
             ./configure $DEPENDENCY_TRACKING ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make install
           # Verify that some key files in the application bundle are there.
