@@ -920,7 +920,7 @@ hengband_SOURCES = \
 EXTRA_hengband_SOURCES = \
 	angband.ico angband.rc ang_eng.rc maid-x11.cpp main-win.cpp \
 	main-cap.cpp main-xaw.cpp \
-	makefile.bcc makefile.std term/readdib.cpp term/readdib.h wall.bmp 
+	makefile.bcc makefile.std term/readdib.cpp term/readdib.h wall.bmp
 
 cocoa_xcode_files = \
 	cocoa/AppDelegate.m \
