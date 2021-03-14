@@ -11,7 +11,7 @@ on:
 jobs:
   english:
     name: English
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       # This will be passed to all invocations of configure for this test.
       # Could drop --disable-worldscore if libcurl is installed.
@@ -28,9 +28,7 @@ jobs:
       - name: Build
         run: |
           ./bootstrap
-          # Manually set CFLAGS since the AX_CXX_COMPILE_STDCXX_17 macro
-          # in configure fails on Ubuntu 18.
-          env CFLAGS=-std=c++17 ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
+          ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make
 
       # Use make distcheck to verify that configure.ac and the Makefile.am
@@ -39,9 +37,7 @@ jobs:
       - name: Distcheck
         run: |
           ./bootstrap
-          # Manually set CFLAGS since the AX_CXX_COMPILE_STDCXX_17 macro
-          # in configure fails on Ubuntu 18.
-          env CFLAGS=-std=c++17 ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
+          ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }}" \
             distcheck
 
@@ -68,5 +64,7 @@ jobs:
       - name: Build
         run: |
           ./bootstrap
-          ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
+          # Manually set CFLAGS since the AX_CXX_COMPILE_STDCXX_17 macro
+          # in configure fails on Ubuntu 18.
+          env CFLAGS=-std=c++17 ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make
