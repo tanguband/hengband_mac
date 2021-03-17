@@ -964,8 +964,8 @@ hengband_SOURCES += \
 	system/grafmode.cpp \
 	cocoa/AppDelegate.h
 AM_CFLAGS = -mmacosx-version-min=10.8 -Wunguarded-availability
-AM_OBJCXXFLAGS = -std=c++14 -fobjc-arc -mmacosx-version-min=10.8 -Wunguarded-availability -stdlib=libc++
-AM_CXXFLAGS = -std=c++14 -mmacosx-version-min=10.8 -Wunguarded-availability -stdlib=libc++
+AM_OBJCXXFLAGS = -std=c++17 -fobjc-arc -mmacosx-version-min=10.8 -Wunguarded-availability -stdlib=libc++
+AM_CXXFLAGS = -std=c++17 -mmacosx-version-min=10.8 -Wunguarded-availability -stdlib=libc++
 hengband_LDFLAGS = -framework cocoa $(AM_LDFLAGS)
 hengband_LINK = MACOSX_DEPLOYMENT_TARGET=10.8 $(OBJCXXLINK) $(hengband_LDFLAGS) $(LDFLAGS) -o $@
 APPNAME = $(PACKAGE_NAME)
