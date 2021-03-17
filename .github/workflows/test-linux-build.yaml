@@ -21,16 +21,15 @@ jobs:
       - name: Clone Project
         uses: actions/checkout@v2
 
-      # Requires automake and autoconf; install those via apt-get.
+      # Requires automake, autoconf, and autoconf-archive; install those via
+      # apt-get.
       - name: Install Build Dependencies
-        run: sudo apt-get install autoconf automake
+        run: sudo apt-get install autoconf automake autoconf-archive
 
       - name: Build
         run: |
           ./bootstrap
-          # Manually set CFLAGS since the AX_CXX_COMPILE_STDCXX_17 macro
-          # in configure fails on Ubuntu 18 and 20.
-          env CFLAGS=-std=c++17 ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
+          ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make
 
       # Use make distcheck to verify that configure.ac and the Makefile.am
@@ -39,12 +38,8 @@ jobs:
       - name: Distcheck
         run: |
           ./bootstrap
-          # Manually set CFLAGS since the AX_CXX_COMPILE_STDCXX_17 macro
-          # in configure fails on Ubuntu 18 and 20.
-          env CFLAGS=-std=c++17 ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
-          env CFLAGS=-std=c++17 make \
-            DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }}" \
+          make DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }}" \
             distcheck
 
   # Unless building 1.6.2; make distcheck will not work with the Japanese
@@ -61,16 +56,14 @@ jobs:
       - name: Clone Project
         uses: actions/checkout@v2
 
-      # Requires automake, autoconf, and, unless building the 1.6.2 version,
-      # nkf; install those via apt-get.
+      # Requires automake, autoconf, autoconf-archive and, unless building the
+      # 1.6.2 version, nkf; install those via apt-get.
       # macos-latest).
       - name: Install Build Dependencies
-        run: sudo apt-get install automake autoconf nkf
+        run: sudo apt-get install automake autoconf autoconf-archive nkf
 
       - name: Build
         run: |
           ./bootstrap
-          # Manually set CFLAGS since the AX_CXX_COMPILE_STDCXX_17 macro
-          # in configure fails on Ubuntu 18 and 20.
-          env CFLAGS=-std=c++17 ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
+          ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make
