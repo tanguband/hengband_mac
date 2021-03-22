@@ -932,7 +932,8 @@ EXTRA_hengband_SOURCES = \
 	main-win/main-win-tokenizer.cpp main-win/main-win-tokenizer.h \
 	main-win/main-win-windows.h \
 	main-cap.cpp main-xaw.cpp \
-	makefile.bcc makefile.std term/readdib.cpp term/readdib.h wall.bmp
+	makefile.bcc makefile.std term/readdib.cpp term/readdib.h wall.bmp \
+	stdafx.cpp stdafx.h
 
 cocoa_xcode_files = \
 	cocoa/AppDelegate.m \
@@ -1019,7 +1020,7 @@ hengband_LINK = $(CXXLINK)
 endif
 
 DEFAULT_INCLUDES = -I$(srcdir) -I$(top_builddir)/src
-CPPFLAGS += $(XFT_CFLAGS) $(libcurl_CFLAGS)
+CPPFLAGS += $(XFT_CFLAGS) $(libcurl_CFLAGS) -include stdafx.h
 LIBS += $(XFT_LIBS) $(libcurl_LIBS)
 COMPILE = $(srcdir)/gcc-wrap $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -1027,6 +1028,13 @@ OBJCXXCOMPILE = $(srcdir)/gcc-wrap $(OBJCXX) $(DEFS) $(DEFAULT_INCLUDES) \
 	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS)
 CXXCOMPILE = $(srcdir)/gcc-wrap $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+
+stdafx.h.gch: stdafx.h stdafx.cpp Makefile
+	$(CXX) -x c++-header $(CXXFLAGS) stdafx.cpp -o $@
+	rm -f stdafx.h.gch.sum
+	md5sum $@ > stdafx.h.gch.sum
+
+$(hengband_SOURCES:.cpp=.$(OBJEXT)): stdafx.h.gch
 
 install-exec-hook:
 if SET_GID
