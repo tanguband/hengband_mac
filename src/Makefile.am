@@ -1034,7 +1034,7 @@ CXXCOMPILE = $(srcdir)/gcc-wrap $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 
 if !COCOA
 stdafx.h.gch: stdafx.h stdafx.cpp Makefile
-	$(CXX) -x c++-header $(CXXFLAGS) $(AM_CXXFLAGS) stdafx.cpp -o $@
+	$(CXX) -x c++-header $(CXXFLAGS) $(AM_CXXFLAGS) $(srcdir)/stdafx.cpp -o $@
 	rm -f stdafx.h.gch.sum
 	md5sum $@ > stdafx.h.gch.sum
 
@@ -1092,4 +1092,6 @@ else
 distclean-local:
 	-rm -r -f $(DEPDIR) */$(DEPDIR)
 
+clean-local:
+	-rm stdafx.h.gch stdafx.h.gch.sum
 endif
