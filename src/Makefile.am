@@ -1020,7 +1020,10 @@ hengband_LINK = $(CXXLINK)
 endif
 
 DEFAULT_INCLUDES = -I$(srcdir) -I$(top_builddir)/src
-CPPFLAGS += $(XFT_CFLAGS) $(libcurl_CFLAGS) -include stdafx.h
+CPPFLAGS += $(XFT_CFLAGS) $(libcurl_CFLAGS)
+if !COCOA
+CPPFLAGS += -include stdafx.h
+endif
 LIBS += $(XFT_LIBS) $(libcurl_LIBS)
 COMPILE = $(srcdir)/gcc-wrap $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -1029,12 +1032,14 @@ OBJCXXCOMPILE = $(srcdir)/gcc-wrap $(OBJCXX) $(DEFS) $(DEFAULT_INCLUDES) \
 CXXCOMPILE = $(srcdir)/gcc-wrap $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 
+if !COCOA
 stdafx.h.gch: stdafx.h stdafx.cpp Makefile
-	$(CXX) -x c++-header $(CXXFLAGS) stdafx.cpp -o $@
+	$(CXX) -x c++-header $(CXXFLAGS) $(AM_CXXFLAGS) stdafx.cpp -o $@
 	rm -f stdafx.h.gch.sum
 	md5sum $@ > stdafx.h.gch.sum
 
 $(hengband_SOURCES:.cpp=.$(OBJEXT)): stdafx.h.gch
+endif
 
 install-exec-hook:
 if SET_GID
