@@ -1051,6 +1051,7 @@ if COCOA
 # Suppress the warnings from the EUC-JP encoded strings used when building
 # the Japanese version.
 AM_CFLAGS += -Wno-invalid-source-encoding
+AM_CXXFLAGS += -Wno-invalid-source-encoding
 AM_OBJCXXFLAGS += -Wno-invalid-source-encoding
 
 # Create lib/info within the application bundle since not currently
