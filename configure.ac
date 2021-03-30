@@ -81,6 +81,10 @@ if test x"$enable_cocoa" = xyes ; then
   AC_DEFINE(SAFE_DIRECTORY, 1, [Mark var directory with version string])
   AC_DEFINE(VERSION_STRING, "3.0.0", [Version string to use for var directory])
 fi
+AC_ARG_ENABLE([pch],
+[  --disable-pch           disable use of precompiled headers],
+enable_pch=no, enable_pch=yes)
+AM_CONDITIONAL([PCH], [test x$enable_pch = xyes])
 
 dnl Checks for libraries.
 dnl Replace `main' with a function in -lncurses:
