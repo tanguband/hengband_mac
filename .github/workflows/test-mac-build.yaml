@@ -81,7 +81,7 @@ jobs:
         run: |
           ./bootstrap
           ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
-          make DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }}" \
+          make DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }} --disable-pch" \
             distcheck
 
   # Unless building 1.6.2; make distcheck will not work with the Japanese
@@ -92,7 +92,7 @@ jobs:
     runs-on: macos-latest
     env:
       # This will be passed to all invocations of configure for this test.
-      DEFAULT_CONFIGURE_OPTIONS: --enable-cocoa
+      DEFAULT_CONFIGURE_OPTIONS: --enable-cocoa --disable-pch
 
     steps:
       - name: Clone Project
