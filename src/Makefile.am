@@ -1095,6 +1095,7 @@ else
 distclean-local:
 	-rm -r -f $(DEPDIR) */$(DEPDIR)
 
+endif
+
 clean-local:
 	-rm stdafx.h.gch stdafx.h.gch.sum
-endif
