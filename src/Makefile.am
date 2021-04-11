@@ -377,6 +377,8 @@ hengband_SOURCES = \
 	main/init-error-messages-table.cpp main/init-error-messages-table.h \
 	main/music-definitions-table.cpp main/music-definitions-table.h \
 	main/scene-table.cpp main/scene-table.h \
+	main/scene-table-floor.cpp main/scene-table-floor.h \
+	main/scene-table-monster.cpp main/scene-table-monster.h \
 	main/sound-definitions-table.cpp main/sound-definitions-table.h \
 	main/sound-of-music.cpp main/sound-of-music.h \
 	main/x11-gamma-builder.cpp main/x11-gamma-builder.h \
@@ -801,7 +803,6 @@ hengband_SOURCES = \
 	store/museum.cpp store/museum.h \
 	store/pricing.cpp store/pricing.h \
 	store/purchase-order.cpp store/purchase-order.h \
-	store/owner-insults.cpp store/owner-insults.h \
 	store/rumor.cpp store/rumor.h \
 	store/say-comments.cpp store/say-comments.h \
 	store/sell-order.cpp store/sell-order.h \
