@@ -2306,7 +2306,7 @@ static int compare_advances(const void *ap, const void *bp)
 	@throw exc;
     }
     CTFontGetAdvancesForGlyphs(
-	(CTFontRef)screenFont, kCTFontHorizontalOrientation, glyphArray,
+	(CTFontRef)screenFont, kCTFontOrientationHorizontal, glyphArray,
 	advances, GLYPH_COUNT);
     CGFloat *glyphWidths = (CGFloat*) malloc(GLYPH_COUNT * sizeof(CGFloat));
     if (glyphWidths == 0) {
@@ -2352,7 +2352,7 @@ static int compare_advances(const void *ap, const void *bp)
      * values if the bounding box result extends farther from the baseline.
      */
     CGRect bounds = CTFontGetBoundingRectsForGlyphs(
-	(CTFontRef) screenFont, kCTFontHorizontalOrientation, glyphArray,
+	(CTFontRef) screenFont, kCTFontOrientationHorizontal, glyphArray,
 	NULL, GLYPH_COUNT);
     self->_fontAscender = [screenFont ascender];
     if (self->_fontAscender < bounds.origin.y + bounds.size.height) {
@@ -2392,7 +2392,7 @@ static int compare_advances(const void *ap, const void *bp)
     CGFloat beyond_left = 0.;
     CTFontGetBoundingRectsForGlyphs(
 	(CTFontRef)screenFont,
-	kCTFontHorizontalOrientation,
+	kCTFontOrientationHorizontal,
 	glyphArray,
 	boxes,
 	GLYPH_COUNT);
@@ -2497,7 +2497,7 @@ static int compare_advances(const void *ap, const void *bp)
 	(CTFontRef)font, unicharString, thisGlyphArray, nuni);
     CGGlyph glyph = thisGlyphArray[0];
     CTFontGetAdvancesForGlyphs(
-	(CTFontRef)font, kCTFontHorizontalOrientation, thisGlyphArray,
+	(CTFontRef)font, kCTFontOrientationHorizontal, thisGlyphArray,
 	advances, 1);
     CGSize advance = advances[0];
 
