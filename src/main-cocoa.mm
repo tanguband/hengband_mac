@@ -5810,7 +5810,7 @@ static void init_windows(void)
 
 	/* Run it */
 	panelResult = [panel runModal];
-	if (panelResult == NSOKButton)
+	if (panelResult == NSModalResponseOK)
 	{
 	    NSArray* fileURLs = [panel URLs];
 	    if ([fileURLs count] > 0 && [[fileURLs objectAtIndex:0] isFileURL])
