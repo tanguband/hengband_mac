@@ -2306,7 +2306,7 @@ static int compare_advances(const void *ap, const void *bp)
 	@throw exc;
     }
     CTFontGetAdvancesForGlyphs(
-	(CTFontRef)screenFont, kCTFontHorizontalOrientation, glyphArray,
+	(CTFontRef)screenFont, kCTFontOrientationHorizontal, glyphArray,
 	advances, GLYPH_COUNT);
     CGFloat *glyphWidths = (CGFloat*) malloc(GLYPH_COUNT * sizeof(CGFloat));
     if (glyphWidths == 0) {
@@ -2352,7 +2352,7 @@ static int compare_advances(const void *ap, const void *bp)
      * values if the bounding box result extends farther from the baseline.
      */
     CGRect bounds = CTFontGetBoundingRectsForGlyphs(
-	(CTFontRef) screenFont, kCTFontHorizontalOrientation, glyphArray,
+	(CTFontRef) screenFont, kCTFontOrientationHorizontal, glyphArray,
 	NULL, GLYPH_COUNT);
     self->_fontAscender = [screenFont ascender];
     if (self->_fontAscender < bounds.origin.y + bounds.size.height) {
@@ -2392,7 +2392,7 @@ static int compare_advances(const void *ap, const void *bp)
     CGFloat beyond_left = 0.;
     CTFontGetBoundingRectsForGlyphs(
 	(CTFontRef)screenFont,
-	kCTFontHorizontalOrientation,
+	kCTFontOrientationHorizontal,
 	glyphArray,
 	boxes,
 	GLYPH_COUNT);
@@ -2497,7 +2497,7 @@ static int compare_advances(const void *ap, const void *bp)
 	(CTFontRef)font, unicharString, thisGlyphArray, nuni);
     CGGlyph glyph = thisGlyphArray[0];
     CTFontGetAdvancesForGlyphs(
-	(CTFontRef)font, kCTFontHorizontalOrientation, thisGlyphArray,
+	(CTFontRef)font, kCTFontOrientationHorizontal, thisGlyphArray,
 	advances, 1);
     CGSize advance = advances[0];
 
@@ -2700,7 +2700,8 @@ static __strong NSFont* gDefaultFont = nil;
         NSSize sz = self.baseSize;
         NSRect contentRect = NSMakeRect( 0.0, 0.0, sz.width, sz.height );
 
-        NSUInteger styleMask = NSTitledWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask;
+        NSUInteger styleMask = NSWindowStyleMaskTitled |
+		NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable;
 
         /*
 	 * Make every window other than the main window closable, also create
@@ -2709,11 +2710,11 @@ static __strong NSFont* gDefaultFont = nil;
 	 */
         if ((__bridge AngbandContext*) (angband_term[0]->data) != self)
         {
-	    NSPanel *panel =
-		[[NSPanel alloc] initWithContentRect:contentRect
-				 styleMask:(styleMask | NSClosableWindowMask |
-					    NSUtilityWindowMask)
-				 backing:NSBackingStoreBuffered defer:YES];
+	    NSPanel *panel = [[NSPanel alloc]
+			initWithContentRect:contentRect
+			styleMask:(styleMask | NSWindowStyleMaskClosable |
+			NSWindowStyleMaskUtilityWindow)
+			backing:NSBackingStoreBuffered defer:YES];
 
 	    panel.floatingPanel = NO;
 	    self.primaryWindow = panel;
@@ -3181,8 +3182,8 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 	 * Draw the background.  For a double-height tile, this is only the
 	 * the lower half.
 	 */
-	draw_image_tile(
-	    nsctx, ctx, pict_image, bckRect, destinationRect, NSCompositeCopy);
+	draw_image_tile(nsctx, ctx, pict_image, bckRect, destinationRect,
+		NSCompositingOperationCopy);
 	if (dbl_height_bck && is_first_piece) {
 	    /* Combine upper half with previously drawn row. */
 	    if (simple_upper) {
@@ -3199,7 +3200,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 		    graf_width, graf_height);
 
 		draw_image_tile(nsctx, ctx, pict_image, brect2, drect2,
-				NSCompositeSourceOver);
+				NSCompositingOperationSourceOver);
 	    } else {
 		struct TerminalCellLocation curs = { 0, 0 };
 
@@ -3231,7 +3232,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 			graf_height * pcell2->vscl / (1.0 * pcell2->voff_d));
 
 		    draw_image_tile(nsctx, ctx, pict_image, brect2, drect2,
-				    NSCompositeSourceOver);
+				    NSCompositingOperationSourceOver);
 		    curs.col += pcell2->hscl;
 		    [self.contents
 			 scanForTypeMaskInBlockAtColumn:aligned_col
@@ -3272,7 +3273,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 
 			draw_image_tile(
 			    nsctx, ctx, pict_image, frect2, drect2,
-			    NSCompositeSourceOver);
+			    NSCompositingOperationSourceOver);
 		    }
 		} else {
 		    /* Render the upper half pieces. */
@@ -3310,7 +3311,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 			        (1.0 * pcell2->voff_d));
 
 			draw_image_tile(nsctx, ctx, pict_image, frect2, drect2,
-					NSCompositeSourceOver);
+					NSCompositingOperationSourceOver);
 			curs.col += pcell2->hscl;
 		    }
 		}
@@ -3322,7 +3323,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 	     */
 	    draw_image_tile(
 		nsctx, ctx, pict_image, fgdRect, destinationRect,
-		NSCompositeSourceOver);
+		NSCompositingOperationSourceOver);
 	}
 	icol0 = [self.contents scanForTypeMaskInRow:irow mask:TERM_CELL_TILE
 		     col0:(icol0+pcell->hscl) col1:icol1];
@@ -4074,7 +4075,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 		    cacheRect.size.width = drawRight - drawLeft;
 		}
 		[self->cacheForResize drawInRect:modRect fromRect:cacheRect
-		     operation:NSCompositeCopy fraction:1.0
+		     operation:NSCompositingOperationCopy fraction:1.0
 		     respectFlipped:YES hints:nil];
 	    }
 	}
@@ -4207,8 +4208,6 @@ static void Term_init_cocoa(term_type *t)
 	/* Handle graphics */
 	t->higher_pict = !! use_graphics;
 	t->always_pict = FALSE;
-
-	NSDisableScreenUpdates();
 
 	/*
 	 * Figure out the frame autosave name based on the index of this term
@@ -4398,8 +4397,6 @@ static void Term_init_cocoa(term_type *t)
 	 */
 	if (t == angband_term[0])
 	    [context.primaryWindow makeKeyAndOrderFront: nil];
-
-	NSEnableScreenUpdates();
 
 	/* Set "mapped" flag */
 	t->mapped_flag = true;
@@ -5016,7 +5013,7 @@ static BOOL redraw_for_tiles_or_term0_font(void)
 static void wakeup_event_loop(void)
 {
     /* Big hack - send a nonsense event to make us update */
-    NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:AngbandEventWakeup data1:0 data2:0];
+    NSEvent *event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:AngbandEventWakeup data1:0 data2:0];
     [NSApp postEvent:event atStart:NO];
 }
 
@@ -5142,9 +5139,9 @@ static void AngbandHandleEventMouseDown( NSEvent *event )
 #ifdef KC_MOD_ALT
 			NSUInteger eventModifiers = [event modifierFlags];
 			byte angbandModifiers = 0;
-			angbandModifiers |= (eventModifiers & NSShiftKeyMask) ? KC_MOD_SHIFT : 0;
-			angbandModifiers |= (eventModifiers & NSControlKeyMask) ? KC_MOD_CONTROL : 0;
-			angbandModifiers |= (eventModifiers & NSAlternateKeyMask) ? KC_MOD_ALT : 0;
+			angbandModifiers |= (eventModifiers & NSEventModifierFlagShift) ? KC_MOD_SHIFT : 0;
+			angbandModifiers |= (eventModifiers & NSEventModifierFlagControl) ? KC_MOD_CONTROL : 0;
+			angbandModifiers |= (eventModifiers & NSEventModifierFlagOption) ? KC_MOD_ALT : 0;
 			button |= (angbandModifiers & 0x0F) << 4; /* encode modifiers in the button number (see Term_mousepress()) */
 #endif
 
@@ -5176,15 +5173,15 @@ static BOOL send_event(NSEvent *event)
     /* Analyze the event */
     switch ([event type])
     {
-        case NSKeyDown:
+        case NSEventTypeKeyDown:
         {
             /* Try performing a key equivalent */
             if ([[NSApp mainMenu] performKeyEquivalent:event]) break;
             
             unsigned modifiers = [event modifierFlags];
             
-            /* Send all NSCommandKeyMasks through */
-            if (modifiers & NSCommandKeyMask)
+            /* Send all events with NSEventModifierFlagCommand through */
+            if (modifiers & NSEventModifierFlagCommand)
             {
                 [NSApp sendEvent:event];
                 break;
@@ -5194,10 +5191,10 @@ static BOOL send_event(NSEvent *event)
             
             
             /* Extract some modifiers */
-            int mc = !! (modifiers & NSControlKeyMask);
-            int ms = !! (modifiers & NSShiftKeyMask);
-            int mo = !! (modifiers & NSAlternateKeyMask);
-            int kp = !! (modifiers & NSNumericPadKeyMask);
+            int mc = !! (modifiers & NSEventModifierFlagControl);
+            int ms = !! (modifiers & NSEventModifierFlagShift);
+            int mo = !! (modifiers & NSEventModifierFlagOption);
+            int kp = !! (modifiers & NSEventModifierFlagNumericPad);
             
             
             /* Get the Angband char corresponding to this unichar */
@@ -5278,12 +5275,12 @@ static BOOL send_event(NSEvent *event)
             break;
         }
             
-        case NSLeftMouseDown:
-		case NSRightMouseDown:
+        case NSEventTypeLeftMouseDown:
+		case NSEventTypeRightMouseDown:
 			AngbandHandleEventMouseDown(event);
             break;
 
-        case NSApplicationDefined:
+        case NSEventTypeApplicationDefined:
         {
             if ([event subtype] == AngbandEventWakeup)
             {
@@ -5434,11 +5431,7 @@ static NSString* get_lib_directory(void)
 	    @"Label.Quit", AngbandMessageCatalog, [NSBundle mainBundle],
 	    @"Quit", @"Quit");
 	NSAlert *alert = [[NSAlert alloc] init];
-	/*
-	 * Note that NSCriticalAlertStyle was deprecated in 10.10.  The
-	 * replacement is NSAlertStyleCritical.
-	 */
-	alert.alertStyle = NSCriticalAlertStyle;
+	alert.alertStyle = NSAlertStyleCritical;
 	alert.messageText = msg;
 	alert.informativeText = info;
 	[alert addButtonWithTitle:quit_label];
@@ -5774,14 +5767,10 @@ static void init_windows(void)
     [defs setFloat:[newFont pointSize]
         forKey:[NSString stringWithFormat:@"FontSize-%d", mainTerm]];
 
-    NSDisableScreenUpdates();
-
     /* Update window */
     AngbandContext *angbandContext =
 	(__bridge AngbandContext*) (angband_term[mainTerm]->data);
     [(id)angbandContext setSelectionFont:newFont adjustTerminal: YES];
-
-    NSEnableScreenUpdates();
 
     if (mainTerm != 0 || ! redraw_for_tiles_or_term0_font()) {
 	[(id)angbandContext requestRedraw];
@@ -5810,7 +5799,7 @@ static void init_windows(void)
 
 	/* Run it */
 	panelResult = [panel runModal];
-	if (panelResult == NSOKButton)
+	if (panelResult == NSModalResponseOK)
 	{
 	    NSArray* fileURLs = [panel URLs];
 	    if ([fileURLs count] > 0 && [[fileURLs objectAtIndex:0] isFileURL])
@@ -5924,7 +5913,7 @@ static void init_windows(void)
 
     while (!game_in_progress) {
 	@autoreleasepool {
-	    NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
+	    NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
 	    if (event) [NSApp sendEvent:event];
 	}
     }
@@ -6162,7 +6151,7 @@ static void init_windows(void)
     NSInteger windowNumber = [context.primaryWindow windowNumber];
 
     /* Send a \ to bypass keymaps */
-    NSEvent *escape = [NSEvent keyEventWithType: NSKeyDown
+    NSEvent *escape = [NSEvent keyEventWithType: NSEventTypeKeyDown
                                        location: NSZeroPoint
                                   modifierFlags: 0
                                       timestamp: 0.0
@@ -6175,7 +6164,7 @@ static void init_windows(void)
     [[NSApplication sharedApplication] postEvent: escape atStart: NO];
 
     /* Send the actual command (from the original command set) */
-    NSEvent *keyDown = [NSEvent keyEventWithType: NSKeyDown
+    NSEvent *keyDown = [NSEvent keyEventWithType: NSEventTypeKeyDown
                                         location: NSZeroPoint
                                    modifierFlags: 0
                                        timestamp: 0.0
@@ -6210,9 +6199,9 @@ static void init_windows(void)
 		[[item valueForKey: @"ShiftModifier"] boolValue];
 	    BOOL useOptionModifier =
 		[[item valueForKey: @"OptionModifier"] boolValue];
-	    NSUInteger keyModifiers = NSCommandKeyMask;
-	    keyModifiers |= (useShiftModifier) ? NSShiftKeyMask : 0;
-	    keyModifiers |= (useOptionModifier) ? NSAlternateKeyMask : 0;
+	    NSUInteger keyModifiers = NSEventModifierFlagCommand;
+	    keyModifiers |= (useShiftModifier) ? NSEventModifierFlagShift : 0;
+	    keyModifiers |= (useOptionModifier) ? NSEventModifierFlagOption : 0;
 
 	    NSString *lookup = [item valueForKey: @"Title"];
 	    NSString *title = NSLocalizedStringWithDefaultValue(
