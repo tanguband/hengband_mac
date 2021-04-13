@@ -2700,7 +2700,8 @@ static __strong NSFont* gDefaultFont = nil;
         NSSize sz = self.baseSize;
         NSRect contentRect = NSMakeRect( 0.0, 0.0, sz.width, sz.height );
 
-        NSUInteger styleMask = NSTitledWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask;
+        NSUInteger styleMask = NSWindowStyleMaskTitled |
+		NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable;
 
         /*
 	 * Make every window other than the main window closable, also create
@@ -2709,11 +2710,11 @@ static __strong NSFont* gDefaultFont = nil;
 	 */
         if ((__bridge AngbandContext*) (angband_term[0]->data) != self)
         {
-	    NSPanel *panel =
-		[[NSPanel alloc] initWithContentRect:contentRect
-				 styleMask:(styleMask | NSClosableWindowMask |
-					    NSUtilityWindowMask)
-				 backing:NSBackingStoreBuffered defer:YES];
+	    NSPanel *panel = [[NSPanel alloc]
+			initWithContentRect:contentRect
+			styleMask:(styleMask | NSWindowStyleMaskClosable |
+			NSWindowStyleMaskUtilityWindow)
+			backing:NSBackingStoreBuffered defer:YES];
 
 	    panel.floatingPanel = NO;
 	    self.primaryWindow = panel;
