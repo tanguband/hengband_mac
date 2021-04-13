@@ -5013,7 +5013,7 @@ static BOOL redraw_for_tiles_or_term0_font(void)
 static void wakeup_event_loop(void)
 {
     /* Big hack - send a nonsense event to make us update */
-    NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:AngbandEventWakeup data1:0 data2:0];
+    NSEvent *event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:NULL subtype:AngbandEventWakeup data1:0 data2:0];
     [NSApp postEvent:event atStart:NO];
 }
 
@@ -5173,7 +5173,7 @@ static BOOL send_event(NSEvent *event)
     /* Analyze the event */
     switch ([event type])
     {
-        case NSKeyDown:
+        case NSEventTypeKeyDown:
         {
             /* Try performing a key equivalent */
             if ([[NSApp mainMenu] performKeyEquivalent:event]) break;
@@ -5275,12 +5275,12 @@ static BOOL send_event(NSEvent *event)
             break;
         }
             
-        case NSLeftMouseDown:
-		case NSRightMouseDown:
+        case NSEventTypeLeftMouseDown:
+		case NSEventTypeRightMouseDown:
 			AngbandHandleEventMouseDown(event);
             break;
 
-        case NSApplicationDefined:
+        case NSEventTypeApplicationDefined:
         {
             if ([event subtype] == AngbandEventWakeup)
             {
@@ -6155,7 +6155,7 @@ static void init_windows(void)
     NSInteger windowNumber = [context.primaryWindow windowNumber];
 
     /* Send a \ to bypass keymaps */
-    NSEvent *escape = [NSEvent keyEventWithType: NSKeyDown
+    NSEvent *escape = [NSEvent keyEventWithType: NSEventTypeKeyDown
                                        location: NSZeroPoint
                                   modifierFlags: 0
                                       timestamp: 0.0
@@ -6168,7 +6168,7 @@ static void init_windows(void)
     [[NSApplication sharedApplication] postEvent: escape atStart: NO];
 
     /* Send the actual command (from the original command set) */
-    NSEvent *keyDown = [NSEvent keyEventWithType: NSKeyDown
+    NSEvent *keyDown = [NSEvent keyEventWithType: NSEventTypeKeyDown
                                         location: NSZeroPoint
                                    modifierFlags: 0
                                        timestamp: 0.0
