@@ -4607,7 +4607,7 @@ static errr Term_xtra_cocoa_react(void)
 	    if (arg_bigtile == use_bigtile &&
 		current_world_ptr->character_generated)
 	    {
-		reset_visuals(p_ptr, process_autopick_file_command);
+		reset_visuals(p_ptr);
 	    }
 	}
 
@@ -4615,7 +4615,7 @@ static errr Term_xtra_cocoa_react(void)
 	    if (current_world_ptr->character_generated)
 	    {
 		/* Reset visuals */
-		reset_visuals(p_ptr, process_autopick_file_command);
+		reset_visuals(p_ptr);
 	    }
 
 	    term_activate(angband_term[0]);
@@ -5878,7 +5878,7 @@ static void init_windows(void)
 	p_ptr->player_egid = getegid();
 
 	/* Initialise game */
-	init_angband(p_ptr, process_autopick_file_command, FALSE);
+	init_angband(p_ptr, FALSE);
 
 	/* Load possible graphics modes */
 	init_graphics_modes();
