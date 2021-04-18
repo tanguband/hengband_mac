@@ -3943,7 +3943,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 
     int termIndex = [self terminalIndex];
     NSMenuItem *item = [[[NSApplication sharedApplication] windowsMenu] itemWithTag: AngbandWindowMenuItemTagBase + termIndex];
-    [item setState: NSOnState];
+    [item setState: NSControlStateValueOn];
 
     if( [[NSFontPanel sharedFontPanel] isVisible] )
     {
@@ -3963,7 +3963,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 
     int termIndex = [self terminalIndex];
     NSMenuItem *item = [[[NSApplication sharedApplication] windowsMenu] itemWithTag: AngbandWindowMenuItemTagBase + termIndex];
-    [item setState: NSOffState];
+    [item setState: NSControlStateValueOff];
 }
 
 - (void)windowWillClose: (NSNotification *)notification
@@ -5993,14 +5993,16 @@ static void init_windows(void)
 	BOOL is_on = [[NSUserDefaults standardUserDefaults]
 			 boolForKey:AngbandSoundDefaultsKey];
 
-	[menuItem setState: ((is_on) ? NSOnState : NSOffState)];
+	[menuItem setState: ((is_on) ?
+            NSControlStateValueOn : NSControlStateValueOff)];
 	return YES;
     }
     else if (sel == @selector(toggleWideTiles:)) {
 	BOOL is_on = [[NSUserDefaults standardUserDefaults]
 			 boolForKey:AngbandBigTileDefaultsKey];
 
-	[menuItem setState: ((is_on) ? NSOnState : NSOffState)];
+	[menuItem setState: ((is_on) ?
+            NSControlStateValueOn : NSControlStateValueOff)];
 	return YES;
     }
     else if( sel == @selector(sendAngbandCommand:) ||
@@ -6058,15 +6060,15 @@ static void init_windows(void)
 
 - (IBAction) toggleSound: (NSMenuItem *) sender
 {
-    BOOL is_on = (sender.state == NSOnState);
+    BOOL is_on = (sender.state == NSControlStateValueOn);
 
     /* Toggle the state and update the Angband global and preferences. */
     if (is_on) {
-	sender.state = NSOffState;
+	sender.state = NSControlStateValueOff;
 	use_sound = FALSE;
 	[AngbandSoundCatalog sharedSounds].enabled = NO;
     } else {
-	sender.state = NSOnState;
+	sender.state = NSControlStateValueOn;
 	use_sound = TRUE;
 	[AngbandSoundCatalog sharedSounds].enabled = YES;
     }
@@ -6076,10 +6078,10 @@ static void init_windows(void)
 
 - (IBAction)toggleWideTiles:(NSMenuItem *) sender
 {
-    BOOL is_on = (sender.state == NSOnState);
+    BOOL is_on = (sender.state == NSControlStateValueOn);
 
     /* Toggle the state and update the Angband globals and preferences. */
-    sender.state = (is_on) ? NSOffState : NSOnState;
+    sender.state = (is_on) ? NSControlStateValueOff : NSControlStateValueOn;
     [[NSUserDefaults angbandDefaults] setBool:(! is_on)
 				      forKey:AngbandBigTileDefaultsKey];
     if (graphics_are_enabled()) {
