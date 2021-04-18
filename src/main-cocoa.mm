@@ -3367,7 +3367,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 	rect.origin.y < bottomY &&
 	rect.origin.y + rect.size.height > self.borderSize.height) {
 	nsctx = [NSGraphicsContext currentContext];
-	ctx = (CGContextRef) [nsctx graphicsPort];
+	ctx = (CGContextRef) [nsctx CGContext];
 	screenFont = [self.angbandViewFont screenFont];
 	[screenFont set];
 	blank = [TerminalContents getBlankChar];
@@ -4145,7 +4145,7 @@ static void set_color_for_index(int idx)
     gv = angband_color_table[idx][2];
     bv = angband_color_table[idx][3];
     
-    CGContextSetRGBFillColor((CGContextRef) [[NSGraphicsContext currentContext] graphicsPort], rv/255., gv/255., bv/255., 1.);
+    CGContextSetRGBFillColor((CGContextRef) [[NSGraphicsContext currentContext] CGContext], rv/255., gv/255., bv/255., 1.);
 }
 
 /**
