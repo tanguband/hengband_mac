@@ -934,7 +934,7 @@ EXTRA_hengband_SOURCES = \
 	main-win/main-win-tokenizer.cpp main-win/main-win-tokenizer.h \
 	main-win/main-win-windows.h \
 	main-cap.cpp main-xaw.cpp \
-	makefile.bcc makefile.std term/readdib.cpp term/readdib.h wall.bmp \
+	term/readdib.cpp term/readdib.h wall.bmp \
 	stdafx.cpp stdafx.h
 
 cocoa_xcode_files = \
