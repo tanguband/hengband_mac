@@ -268,7 +268,19 @@ void store_purchase(player_type *player_ptr)
         if (!res)
             return;
 
+        /*
+         * res.value() requires macOS 10.14 or later; avoid it if compiling for
+         * an earlier version of macOS.
+         */
+#ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1140
+        price = res.value_or(0);
+#else
         price = res.value();
+#endif
+#else
+        price = res.value_or(0);
+#endif
     }
 
     if (price == (best * j_ptr->number))
