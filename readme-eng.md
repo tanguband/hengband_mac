@@ -87,7 +87,7 @@ the exception to the security settings.
 
 For Mac OS X with Xcode installed, the Unix instructions can work to build a
 version usable from a terminal.  If XQuartz, https://www.xquartz.org , is
-installed, X11 will be used for dsiaply.
+installed, X11 will be used for display.
 
 For Mac OS X 10.8 or later with Xcode installed, a native version can be
 built by downloading the source archive and running
