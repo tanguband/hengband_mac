@@ -104,6 +104,9 @@
 #include "main-win/main-win-menuitem.h"
 #include "main-win/main-win-music.h"
 #include "main-win/main-win-sound.h"
+#include "main-win/read-graphics.h"
+#include "main-win/string-win.h"
+#include "main-win/tile-info.h"
 #include "main/angband-initializer.h"
 #include "main/sound-of-music.h"
 #include "monster-floor/monster-lite.h"
@@ -129,17 +132,14 @@
 #include <direct.h>
 
 /*
- * Include the support for loading bitmaps
- */
-#include "term/readdib.h"
-
-/*
  * Available graphic modes
  */
-#define GRAPHICS_NONE 0
-#define GRAPHICS_ORIGINAL 1
-#define GRAPHICS_ADAM_BOLT 2
-#define GRAPHICS_HENGBAND 3
+enum graphics_mode {
+    GRAPHICS_NONE = 0,
+    GRAPHICS_ORIGINAL = 1,
+    GRAPHICS_ADAM_BOLT = 2,
+    GRAPHICS_HENGBAND = 3,
+};
 
 /*!
  * @struct term_data
@@ -229,11 +229,6 @@ static HBRUSH hbrYellow;
  */
 static HICON hIcon;
 
-/*
- * A palette
- */
-static HPALETTE hPal;
-
 /* bg */
 enum class bg_mode {
     BG_NONE = 0,
@@ -251,14 +246,14 @@ char wallpaper_file[MAIN_WIN_MAX_PATH] = ""; //!< 壁紙ファイル名。
 static byte current_graphics_mode = 0;
 
 /*
- * The global bitmap
+ * The global tile
  */
-static DIBINIT infGraph;
+static tile_info infGraph;
 
 /*
- * The global bitmap mask
+ * The global tile mask
  */
-static DIBINIT infMask;
+static tile_info infMask;
 
 /*
  * Show sub-windows even when Hengband is not in focus
@@ -615,9 +610,13 @@ static void load_prefs(void)
  */
 static bool init_graphics(void)
 {
-    char buf[1024];
+    char buf[MAIN_WIN_MAX_PATH];
     BYTE wid, hgt, twid, thgt, ox, oy;
     concptr name;
+    concptr name_mask = NULL;
+
+    infGraph.delete_bitmap();
+    infMask.delete_bitmap();
 
     if (arg_graphics == GRAPHICS_ADAM_BOLT) {
         wid = 16;
@@ -627,6 +626,7 @@ static bool init_graphics(void)
         ox = 0;
         oy = 0;
         name = "16X16.BMP";
+        name_mask = "16x16-mask.bmp";
 
         ANGBAND_GRAF = "new";
     } else if (arg_graphics == GRAPHICS_HENGBAND) {
@@ -637,6 +637,7 @@ static bool init_graphics(void)
         ox = 0;
         oy = 0;
         name = "32X32.BMP";
+        name_mask = "mask32.bmp";
 
         ANGBAND_GRAF = "ne2";
     } else {
@@ -651,7 +652,8 @@ static bool init_graphics(void)
     }
 
     path_build(buf, sizeof(buf), ANGBAND_DIR_XTRA_GRAF, name);
-    if (!ReadDIB(data[0].w, buf, &infGraph)) {
+    infGraph.hBitmap = read_graphic(buf);
+    if (!infGraph.hBitmap) {
         plog_fmt(_("ビットマップ '%s' を読み込めません。", "Cannot read bitmap file '%s'"), name);
         return FALSE;
     }
@@ -663,17 +665,10 @@ static bool init_graphics(void)
     infGraph.OffsetX = ox;
     infGraph.OffsetY = oy;
 
-    if (arg_graphics == GRAPHICS_ADAM_BOLT) {
-        path_build(buf, sizeof(buf), ANGBAND_DIR_XTRA_GRAF, "16x16-mask.bmp");
-        if (!ReadDIB(data[0].w, buf, &infMask)) {
-            plog_fmt("Cannot read bitmap file '%s'", buf);
-            return FALSE;
-        }
-    }
-
-    if (arg_graphics == GRAPHICS_HENGBAND) {
-        path_build(buf, sizeof(buf), ANGBAND_DIR_XTRA_GRAF, "mask32.bmp");
-        if (!ReadDIB(data[0].w, buf, &infMask)) {
+    if (name_mask) {
+        path_build(buf, sizeof(buf), ANGBAND_DIR_XTRA_GRAF, name_mask);
+        infMask.hBitmap = read_graphic(buf);
+        if (!infMask.hBitmap) {
             plog_fmt("Cannot read bitmap file '%s'", buf);
             return FALSE;
         }
@@ -866,7 +861,8 @@ static errr term_user_win(int n)
     return 0;
 }
 
-static void refresh_color_table() {
+static void refresh_color_table()
+{
     for (int i = 0; i < 256; i++) {
         byte rv = angband_color_table[i][1];
         byte gv = angband_color_table[i][2];
@@ -2011,21 +2007,22 @@ static void process_menus(player_type *player_ptr, WORD wCmd)
         break;
     }
     case IDM_DUMP_SCREEN_HTML: {
-        static char buf[1024] = "";
-        memset(&ofn, 0, sizeof(ofn));
-        ofn.lStructSize = sizeof(ofn);
-        ofn.hwndOwner = data[0].w;
-        ofn.lpstrFilter = "HTML Files (*.html)\0*.html\0";
-        ofn.nFilterIndex = 1;
-        ofn.lpstrFile = buf;
-        ofn.nMaxFile = 1023;
-        ofn.lpstrDefExt = "html";
-        ofn.lpstrInitialDir = NULL;
-        ofn.lpstrTitle = _("HTMLでスクリーンダンプを保存", "Save screen dump as HTML.");
-        ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+        OPENFILENAMEW ofnw;
+        std::vector<WCHAR> buf(MAIN_WIN_MAX_PATH + 1);
+        memset(&ofnw, 0, sizeof(ofnw));
+        ofnw.lStructSize = sizeof(ofnw);
+        ofnw.hwndOwner = data[0].w;
+        ofnw.lpstrFilter = L"HTML Files (*.html)\0*.html\0";
+        ofnw.nFilterIndex = 1;
+        ofnw.lpstrFile = &buf[0];
+        ofnw.nMaxFile = MAIN_WIN_MAX_PATH;
+        ofnw.lpstrDefExt = L"html";
+        ofnw.lpstrInitialDir = NULL;
+        ofnw.lpstrTitle = _(L"HTMLでスクリーンダンプを保存", L"Save screen dump as HTML.");
+        ofnw.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
 
-        if (GetSaveFileName(&ofn)) {
-            do_cmd_save_screen_html_aux(buf, 0);
+        if (GetSaveFileNameW(&ofnw)) {
+            do_cmd_save_screen_html_aux(to_multibyte(&buf[0]).c_str(), 0);
         }
 
         break;
@@ -2571,11 +2568,7 @@ LRESULT PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 static void hack_plog(concptr str)
 {
     if (str) {
-#ifdef JP
-        MessageBox(NULL, str, "警告！", MB_ICONEXCLAMATION | MB_OK);
-#else
-        MessageBox(NULL, str, "Warning", MB_ICONEXCLAMATION | MB_OK);
-#endif
+        MessageBoxW(NULL, to_wchar(str).wc_str(), _(L"警告！", L"Warning"), MB_ICONEXCLAMATION | MB_OK);
     }
 }
 
@@ -2585,11 +2578,7 @@ static void hack_plog(concptr str)
 static void hack_quit(concptr str)
 {
     if (str) {
-#ifdef JP
-        MessageBox(NULL, str, "エラー！", MB_ICONEXCLAMATION | MB_OK | MB_ICONSTOP);
-#else
-        MessageBox(NULL, str, "Error", MB_ICONEXCLAMATION | MB_OK | MB_ICONSTOP);
-#endif
+        MessageBoxW(NULL, to_wchar(str).wc_str(), _(L"エラー！", L"Error"), MB_ICONEXCLAMATION | MB_OK | MB_ICONSTOP);
     }
 
     UnregisterClass(AppName, hInstance);
@@ -2605,11 +2594,7 @@ static void hack_quit(concptr str)
 static void hook_plog(concptr str)
 {
     if (str) {
-#ifdef JP
-        MessageBox(data[0].w, str, "警告！", MB_ICONEXCLAMATION | MB_OK);
-#else
-        MessageBox(data[0].w, str, "Warning", MB_ICONEXCLAMATION | MB_OK);
-#endif
+        MessageBoxW(data[0].w, to_wchar(str).wc_str(), _(L"警告！", L"Warning"), MB_ICONEXCLAMATION | MB_OK);
     }
 }
 
@@ -2619,11 +2604,7 @@ static void hook_plog(concptr str)
 static void hook_quit(concptr str)
 {
     if (str) {
-#ifdef JP
-        MessageBox(data[0].w, str, "エラー！", MB_ICONEXCLAMATION | MB_OK | MB_ICONSTOP);
-#else
-        MessageBox(data[0].w, str, "Error", MB_ICONEXCLAMATION | MB_OK | MB_ICONSTOP);
-#endif
+        MessageBoxW(data[0].w, to_wchar(str).wc_str(), _(L"エラー！", L"Error"), MB_ICONEXCLAMATION | MB_OK | MB_ICONSTOP);
     }
 
     save_prefs();
@@ -2636,20 +2617,12 @@ static void hook_quit(concptr str)
         data[i].w = 0;
     }
 
-    if (infGraph.hPalette)
-        DeleteObject(infGraph.hPalette);
-    if (infGraph.hBitmap)
-        DeleteObject(infGraph.hBitmap);
-    if (infMask.hPalette)
-        DeleteObject(infMask.hPalette);
-    if (infMask.hBitmap)
-        DeleteObject(infMask.hBitmap);
+    infGraph.delete_bitmap();
+    infMask.delete_bitmap();
 
     DeleteObject(hbrYellow);
     finalize_bg();
-
-    if (hPal)
-        DeleteObject(hPal);
+    finalize_graphics();
 
     UnregisterClass(AppName, hInstance);
     if (hIcon)
@@ -2757,8 +2730,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInst, _In_opt_ HINSTANCE hPrevInst, _In_ LPST
     setlocale(LC_ALL, "ja_JP");
     hInstance = hInst;
     if (is_already_running()) {
-        MessageBox(
-            NULL, _("変愚蛮怒はすでに起動しています。", "Hengband is already running."), _("エラー！", "Error"), MB_ICONEXCLAMATION | MB_OK | MB_ICONSTOP);
+        MessageBoxW(
+            NULL, _(L"変愚蛮怒はすでに起動しています。", L"Hengband is already running."), _(L"エラー！", L"Error"), MB_ICONEXCLAMATION | MB_OK | MB_ICONSTOP);
         return FALSE;
     }
 
