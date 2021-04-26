@@ -1,5 +1,6 @@
 ﻿/*!
- * @brief ランダムアーティファクトの生成 / Artifact code
+ * @file random-art-generator.cpp
+ * @brief ランダムアーティファクトの生成メイン定義 / Artifact code
  * @date 2020/07/14
  * @author Hourier
  */
@@ -29,6 +30,8 @@
 #include "perception/object-perception.h"
 #include "player-info/avatar.h"
 #include "sv-definition/sv-weapon-types.h"
+#include "system/object-type-definition.h"
+#include "system/player-type-definition.h"
 #include "util/bit-flags-calculator.h"
 #include "util/quarks.h"
 #include "view/display-messages.h"

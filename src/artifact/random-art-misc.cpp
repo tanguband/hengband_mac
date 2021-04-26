@@ -1,8 +1,14 @@
-﻿#include "artifact/random-art-misc.h"
+﻿/*!
+ * @file random-art-misc.cpp
+ * @brief ランダムアーティファクト生成のその他特性バイアス付け実装 / Artifact code
+ */
+
+#include "artifact/random-art-misc.h"
 #include "artifact/random-art-bias-types.h"
 #include "object-enchant/tr-types.h"
 #include "object-hook/hook-armor.h"
 #include "system/object-type-definition.h"
+#include "system/player-type-definition.h"
 #include "util/bit-flags-calculator.h"
 
 static bool invest_misc_ranger(object_type *o_ptr)

@@ -1,4 +1,5 @@
 ﻿/*!
+ * @file fixed-art-generator.cpp
  * @brief 固定アーティファクトの生成 / Artifact code
  * @date 2020/07/14
  * @author
@@ -22,10 +23,11 @@
 #include "object/object-generator.h"
 #include "object/object-kind-hook.h"
 #include "object/object-kind.h"
+#include "player/player-sex.h"
 #include "specific-object/bloody-moon.h"
 #include "system/artifact-type-definition.h"
 #include "system/floor-type-definition.h"
-#include "system/system-variables.h"
+#include "system/player-type-definition.h"
 #include "util/bit-flags-calculator.h"
 
 /*!
