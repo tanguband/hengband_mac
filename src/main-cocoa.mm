@@ -29,6 +29,7 @@
 #include "game-option/runtime-arguments.h"
 #include "game-option/special-options.h"
 #include "system/angband-version.h"
+#include "system/player-type-definition.h"
 #include "system/system-variables.h"
 #include "main/angband-initializer.h"
 #include "io/files-util.h"
