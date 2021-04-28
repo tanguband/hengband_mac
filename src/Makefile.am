@@ -636,6 +636,7 @@ hengband_SOURCES = \
 	player-status/player-status-base.h \
 	player-status/player-speed.h \
 	player-status/player-stealth.h \
+	player-status/player-infravision.h \
 	player-status/player-basic-statistics.h \
 	player-status/player-strength.h \
 	player-status/player-intelligence.h \
@@ -646,6 +647,7 @@ hengband_SOURCES = \
 	player-status/player-status-base.cpp \
 	player-status/player-speed.cpp \
 	player-status/player-stealth.cpp \
+	player-status/player-infravision.cpp \
 	player-status/player-basic-statistics.cpp \
 	player-status/player-strength.cpp \
 	player-status/player-intelligence.cpp \
@@ -923,6 +925,7 @@ hengband_SOURCES = \
 
 EXTRA_hengband_SOURCES = \
 	angband.ico angband.rc ang_eng.rc ang_jp.rc maid-x11.cpp main-win.cpp \
+	main-win/graphics-win.cpp main-win/graphics-win.h \
 	main-win/main-win-bg.cpp main-win/main-win-bg.h \
 	main-win/main-win-cfg-reader.cpp main-win/main-win-cfg-reader.h \
 	main-win/main-win-define.h \
@@ -934,9 +937,8 @@ EXTRA_hengband_SOURCES = \
 	main-win/main-win-sound.cpp main-win/main-win-sound.h \
 	main-win/main-win-tokenizer.cpp main-win/main-win-tokenizer.h \
 	main-win/main-win-windows.h \
+	main-win/string-win.h \
 	main-cap.cpp main-xaw.cpp \
-	main-win/read-graphics.cpp main-win/read-graphics.h \
-	main-win/tile-info.h \
 	wall.bmp \
 	stdafx.cpp stdafx.h
 

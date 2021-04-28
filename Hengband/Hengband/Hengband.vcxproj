@@ -267,7 +267,7 @@
     <ClCompile Include="..\..\src\cmd-action\cmd-travel.cpp" />
     <ClCompile Include="..\..\src\cmd-action\cmd-tunnel.cpp" />
     <ClCompile Include="..\..\src\action\movement-execution.cpp" />
-    <ClCompile Include="..\..\src\main-win\read-graphics.cpp" />
+    <ClCompile Include="..\..\src\main-win\graphics-win.cpp" />
     <ClCompile Include="..\..\src\store\cmd-store.cpp" />
     <ClCompile Include="..\..\src\cmd-io\cmd-floor.cpp" />
     <ClCompile Include="..\..\src\cmd-io\cmd-lore.cpp" />
@@ -421,6 +421,7 @@
     <ClCompile Include="..\..\src\player-status\player-speed.cpp" />
     <ClCompile Include="..\..\src\player-status\player-status-base.cpp" />
     <ClCompile Include="..\..\src\player-status\player-stealth.cpp" />
+    <ClCompile Include="..\..\src\player-status\player-infravision.cpp" />
     <ClCompile Include="..\..\src\player-status\player-basic-statistics.cpp" />
     <ClCompile Include="..\..\src\player-status\player-strength.cpp" />
     <ClCompile Include="..\..\src\player-status\player-intelligence.cpp" />
@@ -933,9 +934,8 @@
     <ClInclude Include="..\..\src\cmd-action\cmd-travel.h" />
     <ClInclude Include="..\..\src\cmd-action\cmd-tunnel.h" />
     <ClInclude Include="..\..\src\action\movement-execution.h" />
-    <ClInclude Include="..\..\src\main-win\read-graphics.h" />
+    <ClInclude Include="..\..\src\main-win\graphics-win.h" />
     <ClInclude Include="..\..\src\main-win\string-win.h" />
-    <ClInclude Include="..\..\src\main-win\tile-info.h" />
     <ClInclude Include="..\..\src\store\cmd-store.h" />
     <ClInclude Include="..\..\src\cmd-io\cmd-floor.h" />
     <ClInclude Include="..\..\src\cmd-io\cmd-lore.h" />
@@ -1109,6 +1109,7 @@
     <ClInclude Include="..\..\src\player-status\player-speed.h" />
     <ClInclude Include="..\..\src\player-status\player-status-base.h" />
     <ClInclude Include="..\..\src\player-status\player-stealth.h" />
+    <ClInclude Include="..\..\src\player-status\player-infravision.h" />
     <ClInclude Include="..\..\src\player-status\player-basic-statistics.h" />
     <ClInclude Include="..\..\src\player-status\player-strength.h" />
     <ClInclude Include="..\..\src\player-status\player-intelligence.h" />

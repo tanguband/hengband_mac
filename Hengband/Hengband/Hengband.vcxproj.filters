@@ -2189,6 +2189,9 @@
     <ClCompile Include="..\..\src\player-status\player-strength.cpp">
       <Filter>player-status</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\player-status\player-infravision.cpp">
+      <Filter>player-status</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\player-status\player-intelligence.cpp">
       <Filter>player-status</Filter>
     </ClCompile>
@@ -2253,7 +2256,7 @@
     <ClCompile Include="..\..\src\main\scene-table-monster.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main-win\read-graphics.cpp">
+    <ClCompile Include="..\..\src\main-win\graphics-win.cpp">
       <Filter>main-win</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\system\player-type-definition.cpp">
@@ -4763,6 +4766,9 @@
     <ClInclude Include="..\..\src\player-status\player-stealth.h">
       <Filter>player-status</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\player-status\player-infravision.h">
+      <Filter>player-status</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\player-status\player-basic-statistics.h">
       <Filter>player-status</Filter>
     </ClInclude>
@@ -4854,13 +4860,10 @@
     <ClInclude Include="..\..\src\store\store-key-processor.h">
       <Filter>store</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\main-win\read-graphics.h">
-      <Filter>main-win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main-win\tile-info.h">
-      <Filter>main-win</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\main-win\string-win.h">
+      <Filter>main-win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main-win\graphics-win.h">
       <Filter>main-win</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\system\player-type-definition.h">
