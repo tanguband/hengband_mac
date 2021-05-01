@@ -42,14 +42,12 @@ char *file_read__swp;
 char *file_read__tmp;
 
 /*!
- * @brief 各データファイルを読み取るためのパスを取得する
- * Set the default paths to all of our important sub-directories.
+ * Find the default paths to all of our important sub-directories.
  * @param libpath パス保管先の文字列
  * @param varpath Is the base path for directories that have files which
  * are not read-only: ANGBAND_DIR_APEX, ANGBAND_DIR_BONE, ANGBAND_DIR_DATA,
  * and ANGBAND_DIR_SAVE.  If the PRIVATE_USER_PATH preprocessor macro has not
  * been set, it is also used as the base path for ANGBAND_DIR_USER.
- * @return なし
  * @details
  * <pre>
  * The purpose of each sub-directory is described in "io/files-util.c".
@@ -285,7 +283,6 @@ void create_needed_dirs(void)
 /*!
  * @brief 画面左下にシステムメッセージを表示する / Take notes on line 23
  * @param str 初期化中のコンテンツ文字列
- * @return なし
  */
 static void init_note_term(concptr str)
 {
@@ -297,7 +294,6 @@ static void init_note_term(concptr str)
 /*!
  * @brief ゲーム画面無しの時の初期化メッセージ出力
  * @param str 初期化中のコンテンツ文字列
- * @return なし
  */
 static void init_note_no_term(concptr str)
 {
@@ -308,7 +304,6 @@ static void init_note_no_term(concptr str)
 /*!
  * @brief 全ゲームデータ読み込みのサブルーチン / Explain a broken "lib" folder and quit (see below).
  * @param なし
- * @return なし
  * @note
  * <pre>
  * This function is "messy" because various things
@@ -328,7 +323,6 @@ static void init_angband_aux(concptr why)
 /*!
  * @brief タイトル記述
  * @param なし
- * @return なし
  */
 static void put_title(void)
 {
@@ -346,7 +340,6 @@ static void put_title(void)
  * @param player_ptr プレーヤーへの参照ポインタ
  * @param no_term TRUEならゲーム画面無しの状態で初期化を行う。
  *                コマンドラインからスポイラーの出力のみを行う時の使用を想定する。
- * @return なし
  */
 void init_angband(player_type *player_ptr, bool no_term)
 {
