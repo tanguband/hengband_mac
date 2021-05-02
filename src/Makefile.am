@@ -153,6 +153,7 @@ hengband_SOURCES = \
 	core/player-processor.cpp core/player-processor.h \
 	core/player-redraw-types.h \
 	core/player-update-types.h \
+	core/score-util.cpp core/score-util.h \
 	core/scores.cpp core/scores.h \
 	core/show-file.cpp core/show-file.h \
 	core/special-internal-keys.h \
@@ -566,11 +567,13 @@ hengband_SOURCES = \
 	\
 	object-enchant/activation-info-table.cpp object-enchant/activation-info-table.h \
 	object-enchant/apply-magic.cpp object-enchant/apply-magic.h \
-	object-enchant/apply-magic-accessory.cpp object-enchant/apply-magic-accessory.h \
+	object-enchant/apply-magic-amulet.cpp object-enchant/apply-magic-amulet.h \
 	object-enchant/apply-magic-armor.cpp object-enchant/apply-magic-armor.h \
 	object-enchant/apply-magic-others.cpp object-enchant/apply-magic-others.h \
+	object-enchant/apply-magic-ring.cpp object-enchant/apply-magic-ring.h \
 	object-enchant/apply-magic-weapon.cpp object-enchant/apply-magic-weapon.h \
 	object-enchant/dragon-breaths-table.cpp object-enchant/dragon-breaths-table.h \
+	object-enchant/enchanter-base.h \
 	object-enchant/object-boost.cpp object-enchant/object-boost.h \
 	object-enchant/object-curse.cpp object-enchant/object-curse.h \
 	object-enchant/object-ego.cpp object-enchant/object-ego.h \
@@ -880,6 +883,7 @@ hengband_SOURCES = \
 	view/display-player-misc-info.cpp view/display-player-misc-info.h \
 	view/display-player-middle.cpp view/display-player-middle.h \
 	view/display-player.cpp view/display-player.h \
+	view/display-scores.cpp view/display-scores.h \
 	view/display-self-info.cpp view/display-self-info.h \
 	view/display-store.cpp view/display-store.h \
 	view/display-util.cpp view/display-util.h \
