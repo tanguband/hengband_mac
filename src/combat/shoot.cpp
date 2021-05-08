@@ -649,11 +649,11 @@ void exe_fire(player_type *shooter_ptr, INVENTORY_IDX item, object_type *j_ptr, 
                 }
 
                 if (shooter_ptr->riding) {
-                    if ((shooter_ptr->skill_exp[GINOU_RIDING] < s_info[shooter_ptr->pclass].s_max[GINOU_RIDING])
-                        && ((shooter_ptr->skill_exp[GINOU_RIDING] - (RIDING_EXP_BEGINNER * 2)) / 200
+                    if ((shooter_ptr->skill_exp[SKILL_RIDING] < s_info[shooter_ptr->pclass].s_max[SKILL_RIDING])
+                        && ((shooter_ptr->skill_exp[SKILL_RIDING] - (RIDING_EXP_BEGINNER * 2)) / 200
                             < r_info[shooter_ptr->current_floor_ptr->m_list[shooter_ptr->riding].r_idx].level)
                         && one_in_(2)) {
-                        shooter_ptr->skill_exp[GINOU_RIDING] += 1;
+                        shooter_ptr->skill_exp[SKILL_RIDING] += 1;
                         set_bits(shooter_ptr->update, PU_BONUS);
                     }
                 }
@@ -863,7 +863,7 @@ void exe_fire(player_type *shooter_ptr, INVENTORY_IDX item, object_type *j_ptr, 
             o_ptr->held_m_idx = m_idx;
 
             /* Carry object */
-            m_ptr->hold_o_idx_list.push_front(o_idx);
+            m_ptr->hold_o_idx_list.add(shooter_ptr->current_floor_ptr, o_idx);
         } else if (cave_has_flag_bold(shooter_ptr->current_floor_ptr, y, x, FF_PROJECT)) {
             /* Drop (or break) near that location */
             (void)drop_near(shooter_ptr, q_ptr, j, y, x);
