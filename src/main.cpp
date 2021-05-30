@@ -254,17 +254,17 @@ static void display_usage(const char *program)
 /*
  * @brief 2文字以上のコマンドライン引数 (オプション)を実行する
  * @param opt コマンドライン引数
- * @return Usageを表示する必要がある (TRUE)か否か (FALSE)
+ * @return Usageを表示する必要があるか否か
  * @details v3.0.0 Alpha21時点では、スポイラー出力モードの判定及び実行を行う
  */
 static bool parse_long_opt(const char *opt)
 {
     if (strcmp(opt + 2, "output-spoilers") != 0) {
-        return TRUE;
+        return true;
     }
 
     init_stuff();
-    init_angband(p_ptr, TRUE);
+    init_angband(p_ptr, true);
     switch (output_all_spoilers()) {
     case spoiler_output_status::SPOILER_OUTPUT_SUCCESS:
         puts("Successfully created a spoiler file.");
@@ -280,7 +280,7 @@ static bool parse_long_opt(const char *opt)
         break;
     }
 
-    return FALSE;
+    return false;
 }
 
 /*
@@ -294,11 +294,11 @@ int main(int argc, char *argv[])
 {
     int i;
 
-    bool done = FALSE;
-    bool new_game = FALSE;
+    bool done = false;
+    bool new_game = false;
     int show_score = 0;
     concptr mstr = NULL;
-    bool args = TRUE;
+    bool args = true;
 
     /* Save the "program name" XXX XXX XXX */
     argv0 = argv[0];
@@ -355,7 +355,7 @@ int main(int argc, char *argv[])
 #endif /* SET_UID */
 
     /* Process the command line arguments */
-    bool browsing_movie = FALSE;
+    bool browsing_movie = false;
     for (i = 1; args && (i < argc); i++) {
         /* Require proper options */
         if (argv[i][0] != '-') {
@@ -364,31 +364,31 @@ int main(int argc, char *argv[])
         }
 
         /* Analyze option */
-        bool is_usage_needed = FALSE;
+        bool is_usage_needed = false;
         switch (argv[i][1]) {
         case 'N':
         case 'n': {
-            new_game = TRUE;
+            new_game = true;
             break;
         }
         case 'F':
         case 'f': {
-            arg_fiddle = TRUE;
+            arg_fiddle = true;
             break;
         }
         case 'W':
         case 'w': {
-            arg_wizard = TRUE;
+            arg_wizard = true;
             break;
         }
         case 'B':
         case 'b': {
-            arg_music = TRUE;
+            arg_music = true;
             break;
         }
         case 'V':
         case 'v': {
-            arg_sound = TRUE;
+            arg_sound = true;
             break;
         }
         case 'G':
@@ -399,12 +399,12 @@ int main(int argc, char *argv[])
         }
         case 'R':
         case 'r': {
-            arg_force_roguelike = TRUE;
+            arg_force_roguelike = true;
             break;
         }
         case 'O':
         case 'o': {
-            arg_force_original = TRUE;
+            arg_force_original = true;
             break;
         }
         case 'S':
@@ -417,7 +417,7 @@ int main(int argc, char *argv[])
         case 'u':
         case 'U': {
             if (!argv[i][2]) {
-                is_usage_needed = TRUE;
+                is_usage_needed = true;
                 break;
             }
 
@@ -426,7 +426,7 @@ int main(int argc, char *argv[])
         }
         case 'm': {
             if (!argv[i][2]) {
-                is_usage_needed = TRUE;
+                is_usage_needed = true;
                 break;
             }
 
@@ -434,7 +434,7 @@ int main(int argc, char *argv[])
             break;
         }
         case 'M': {
-            arg_monochrome = TRUE;
+            arg_monochrome = true;
             break;
         }
         case 'd':
@@ -444,12 +444,12 @@ int main(int argc, char *argv[])
         }
         case 'x': {
             if (!argv[i][2]) {
-                is_usage_needed = TRUE;
+                is_usage_needed = true;
                 break;
             }
 
             prepare_browse_movie_with_path_build(&argv[i][2]);
-            browsing_movie = TRUE;
+            browsing_movie = true;
             break;
         }
         case '-': {
@@ -457,14 +457,14 @@ int main(int argc, char *argv[])
                 argv[i] = argv[0];
                 argc = argc - i;
                 argv = argv + i;
-                args = FALSE;
+                args = false;
             } else {
                 is_usage_needed = parse_long_opt(argv[i]);
             }
             break;
         }
         default: {
-            is_usage_needed = TRUE;
+            is_usage_needed = true;
             break;
         }
         }
@@ -482,7 +482,7 @@ int main(int argc, char *argv[])
     }
 
     /* Process the player name */
-    process_player_name(p_ptr, TRUE);
+    process_player_name(p_ptr, true);
 
     /* Install "quit" hook */
     quit_aux = quit_hook;
@@ -493,7 +493,7 @@ int main(int argc, char *argv[])
         extern errr init_xaw(int, char **);
         if (0 == init_xaw(argc, argv)) {
             ANGBAND_SYS = "xaw";
-            done = TRUE;
+            done = true;
         }
     }
 #endif
@@ -504,7 +504,7 @@ int main(int argc, char *argv[])
         extern errr init_x11(int, char **);
         if (0 == init_x11(argc, argv)) {
             ANGBAND_SYS = "x11";
-            done = TRUE;
+            done = true;
         }
     }
 #endif
@@ -515,7 +515,7 @@ int main(int argc, char *argv[])
         extern errr init_gcu(int, char **);
         if (0 == init_gcu(argc, argv)) {
             ANGBAND_SYS = "gcu";
-            done = TRUE;
+            done = true;
         }
     }
 #endif
@@ -526,7 +526,7 @@ int main(int argc, char *argv[])
         extern errr init_cap(int, char **);
         if (0 == init_cap(argc, argv)) {
             ANGBAND_SYS = "cap";
-            done = TRUE;
+            done = true;
         }
     }
 #endif
@@ -543,7 +543,7 @@ int main(int argc, char *argv[])
     signals_init();
 
     /* Initialize */
-    init_angband(p_ptr, FALSE);
+    init_angband(p_ptr, false);
 
     /* Wait for response */
     pause_line(23);
