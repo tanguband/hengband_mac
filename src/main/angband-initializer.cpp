@@ -171,15 +171,15 @@ bool dir_exists(concptr path)
 {
     struct stat buf;
     if (stat(path, &buf) != 0)
-	return FALSE;
+	return false;
 #ifdef WIN32
     else if (buf.st_mode & S_IFDIR)
 #else
     else if (S_ISDIR(buf.st_mode))
 #endif
-	return TRUE;
+	return true;
     else
-	return FALSE;
+	return false;
 }
 
 
@@ -193,14 +193,14 @@ bool dir_create(concptr path)
 {
 #ifdef WIN32
     /* If the directory already exists then we're done */
-    if (dir_exists(path)) return TRUE;
-    return FALSE;
+    if (dir_exists(path)) return true;
+    return false;
 #else
     const char *ptr;
     char buf[1024];
 
     /* If the directory already exists then we're done */
-    if (dir_exists(path)) return TRUE;
+    if (dir_exists(path)) return true;
     /* Iterate through the path looking for path segements. At each step,
      * create the path segment if it doesn't already exist. */
     for (ptr = path; *ptr; ptr++)
@@ -216,7 +216,7 @@ bool dir_create(concptr path)
 		    if (*(ptr - 1) == PATH_SEP[0]) continue;
 
 		    /* We can't handle really big filenames */
-		    if (len - 1 > 512) return FALSE;
+		    if (len - 1 > 512) return false;
 
 		    /* Create the parent path string, plus null-padding */
 		    angband_strcpy(buf, path, len + 1);
@@ -225,7 +225,7 @@ bool dir_create(concptr path)
 		    if (dir_exists(buf)) continue;
 
 		    /* The parent doesn't exist, so create it or fail */
-		    if (mkdir(buf, 0755) != 0) return FALSE;
+		    if (mkdir(buf, 0755) != 0) return false;
                 }
         }
     /*
@@ -234,9 +234,9 @@ bool dir_create(concptr path)
      */
     if (*(ptr-1) == PATH_SEP[0])
 	{
-	    return TRUE;
+	    return true;
 	}
-    return mkdir(path, 0755) == 0 ? TRUE : FALSE;
+    return mkdir(path, 0755) == 0 ? true : false;
 #endif
 }
 
@@ -338,7 +338,7 @@ static void put_title(void)
 /*!
  * @brief 全ゲームデータ読み込みのメインルーチン /
  * @param player_ptr プレーヤーへの参照ポインタ
- * @param no_term TRUEならゲーム画面無しの状態で初期化を行う。
+ * @param no_term trueならゲーム画面無しの状態で初期化を行う。
  *                コマンドラインからスポイラーの出力のみを行う時の使用を想定する。
  */
 void init_angband(player_type *player_ptr, bool no_term)
