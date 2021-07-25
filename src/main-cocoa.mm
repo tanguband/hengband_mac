@@ -2162,7 +2162,6 @@ static NSString* AngbandCorrectedDirectoryPath(NSString *originalPath);
 static void prepare_paths_and_directories(void);
 static void load_prefs(void);
 static void init_windows(void);
-static void handle_open_when_ready(void);
 static void play_sound(int event);
 static void send_key(const char key);
 static BOOL check_events(int wait);
@@ -4128,11 +4127,6 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 
 @end
 
-/**
- * Delay handling of double-clicked savefiles
- */
-static BOOL open_when_ready = NO;
-
 
 
 /**
@@ -5032,26 +5026,6 @@ static void wakeup_event_loop(void)
 
 
 /**
- * Handle the "open_when_ready" flag
- */
-static void handle_open_when_ready(void)
-{
-    /* Check the flag XXX XXX XXX make a function for this */
-    if (open_when_ready && initialized && !game_in_progress)
-    {
-        /* Forget */
-        open_when_ready = NO;
-        
-        /* Game is in progress */
-        game_in_progress = YES;
-        
-        /* Wait for a keypress */
-        pause_line(Term->hgt - 1);
-    }
-}
-
-
-/**
  * Handle quit_when_ready, by Peter Ammon,
  * slightly modified to check inkey_flag.
  */
@@ -5917,9 +5891,6 @@ static void init_windows(void)
 
 	/* We are now initialized */
 	initialized = YES;
-
-	/* Handle "open_when_ready" */
-	handle_open_when_ready();
 
 	/* Handle pending events (most notably update) and flush input */
 	term_flush();
