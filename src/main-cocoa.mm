@@ -5905,6 +5905,20 @@ static void init_windows(void)
 	/* Load possible graphics modes */
 	init_graphics_modes();
 
+	/*
+	 * Reevaluate whether to use bigtiles (the tests in load_prefs() were
+	 * done before init_graphics_modes()).
+	 */
+	if (graphics_will_be_enabled()
+			&& [[NSUserDefaults angbandDefaults]
+				boolForKey:AngbandBigTileDefaultsKey] == YES
+			&& ! use_bigtile) {
+		arg_bigtile = TRUE;
+		term_activate(angband_term[0]);
+		term_resize(angband_term[0]->wid, angband_term[0]->hgt);
+		redraw_for_tiles_or_term0_font();
+	}
+
 	/* We are now initialized */
 	initialized = TRUE;
 
