@@ -1105,18 +1105,15 @@ install-data-local:
 		-e 's/\$$BUNDLE_NAME\$$/$(BUNDLE_NAME_JA)/' \
 		$(srcdir)/$(cocoa_plist_strings_template) > $(appjadir)/InfoPlist.strings
 
-distclean-local:
-	-rm -r -f $(DEPDIR) */$(DEPDIR)
+uninstall-local:
 	-rm $(APPCONT)/Info.plist
 	-rm $(appendir)/InfoPlist.strings
 	-rm $(appjadir)/InfoPlist.strings
 
-else
+endif
 
 distclean-local:
 	-rm -r -f $(DEPDIR) */$(DEPDIR)
-
-endif
 
 clean-local:
 	-rm stdafx.h.gch stdafx.h.gch.sum
