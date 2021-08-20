@@ -1999,11 +1999,11 @@ static void draw_image_tile(
  * for future changes to the set of flags without needed to update it here
  * (unless the underlying types change).
  */
-static u32b AngbandMaskForValidSubwindowFlags(void)
+static uint32_t AngbandMaskForValidSubwindowFlags(void)
 {
     int windowFlagBits = sizeof(*(window_flag)) * CHAR_BIT;
     int maxBits = MIN( 32, windowFlagBits );
-    u32b mask = 0;
+    uint32_t mask = 0;
 
     for( int i = 0; i < maxBits; i++ )
     {
@@ -2027,7 +2027,7 @@ static void AngbandUpdateWindowVisibility(void)
      * Because this function is called frequently, we'll make the mask static.
      * It doesn't change between calls, as the flags themselves are hardcoded
      */
-    static u32b validWindowFlagsMask = 0;
+    static uint32_t validWindowFlagsMask = 0;
     BOOL anyChanged = NO;
 
     if( validWindowFlagsMask == 0 )
@@ -4141,7 +4141,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
  */
 static void set_color_for_index(int idx)
 {
-    u16b rv, gv, bv;
+    byte rv, gv, bv;
     
     /* Extract the R,G,B data */
     rv = angband_color_table[idx][1];
