@@ -9,8 +9,6 @@
 #include "monster-floor/place-monster-types.h"
 #include "monster/monster-info.h"
 #include "object-enchant/tr-types.h"
-#include "object-hook/hook-checker.h"
-#include "object-hook/hook-enchant.h"
 #include "object-hook/hook-expendable.h"
 #include "object/object-broken.h"
 #include "object/object-flags.h"
@@ -67,9 +65,8 @@ bool affect_item(player_type *caster_ptr, MONSTER_IDX who, POSITION r, POSITION 
 #else
         bool plural = (o_ptr->number > 1);
 #endif
-        TrFlags flags;
-        object_flags(o_ptr, flags);
-        bool is_artifact = object_is_artifact(o_ptr);
+        auto flags = object_flags(o_ptr);
+        bool is_artifact = o_ptr->is_artifact();
         switch (typ) {
         case GF_ACID: {
             if (BreakerAcid().hates(o_ptr)) {
@@ -181,7 +178,7 @@ bool affect_item(player_type *caster_ptr, MONSTER_IDX who, POSITION r, POSITION 
         }
         case GF_HOLY_FIRE:
         case GF_HELL_FIRE: {
-            if (object_is_cursed(o_ptr)) {
+            if (o_ptr->is_cursed()) {
                 do_kill = true;
                 note_kill = _("壊れてしまった！", (plural ? " are destroyed!" : " is destroyed!"));
             }
@@ -262,7 +259,7 @@ bool affect_item(player_type *caster_ptr, MONSTER_IDX who, POSITION r, POSITION 
             msg_format(_("%sは%s", "The %s%s"), o_name, note_kill);
 
         KIND_OBJECT_IDX k_idx = o_ptr->k_idx;
-        bool is_potion = object_is_potion(o_ptr);
+        bool is_potion = o_ptr->is_potion();
         delete_object_idx(caster_ptr, this_o_idx);
         if (is_potion) {
             (void)potion_smash_effect(caster_ptr, who, y, x, k_idx);

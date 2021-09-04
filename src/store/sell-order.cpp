@@ -18,7 +18,6 @@
 #include "main/sound-of-music.h"
 #include "object-enchant/item-feeling.h"
 #include "object-enchant/special-object-flags.h"
-#include "object-hook/hook-checker.h"
 #include "object/item-tester-hooker.h"
 #include "object/item-use-flags.h"
 #include "object/object-info.h"
@@ -97,7 +96,7 @@ void store_sell(player_type *owner_ptr)
     if (!o_ptr)
         return;
 
-    if ((item >= INVEN_MAIN_HAND) && object_is_cursed(o_ptr)) {
+    if ((item >= INVEN_MAIN_HAND) && o_ptr->is_cursed()) {
         msg_print(_("ふーむ、どうやらそれは呪われているようだね。", "Hmmm, it seems to be cursed."));
         return;
     }

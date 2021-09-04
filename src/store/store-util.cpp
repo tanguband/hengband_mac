@@ -9,7 +9,6 @@
 #include "object-enchant/item-apply-magic.h"
 #include "object-enchant/item-feeling.h"
 #include "object-enchant/special-object-flags.h"
-#include "object-hook/hook-enchant.h"
 #include "object/object-kind.h"
 #include "object/object-value.h"
 #include "perception/object-perception.h"
@@ -85,7 +84,7 @@ void store_delete(void)
 
     if ((st_ptr->stock[what].tval == TV_ROD) || (st_ptr->stock[what].tval == TV_WAND))
         st_ptr->stock[what].pval -= num * st_ptr->stock[what].pval / st_ptr->stock[what].number;
-    
+
     store_item_increase(what, -num);
     store_item_optimize(what);
 }
@@ -224,12 +223,11 @@ bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
     if (o_ptr->name2 != j_ptr->name2)
         return false;
 
-    if (object_is_artifact(o_ptr) || object_is_artifact(j_ptr))
+    if (o_ptr->is_artifact() || j_ptr->is_artifact())
         return false;
 
-    for (int i = 0; i < TR_FLAG_SIZE; i++)
-        if (o_ptr->art_flags[i] != j_ptr->art_flags[i])
-            return false;
+    if (o_ptr->art_flags != j_ptr->art_flags)
+        return false;
 
     if (o_ptr->xtra1 || j_ptr->xtra1)
         return false;

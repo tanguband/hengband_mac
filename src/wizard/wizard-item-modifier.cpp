@@ -19,8 +19,6 @@
 #include "object-enchant/object-ego.h"
 #include "object-enchant/special-object-flags.h"
 #include "object-enchant/tr-types.h"
-#include "object-hook/hook-enchant.h"
-#include "object-hook/hook-checker.h"
 #include "object/item-use-flags.h"
 #include "object/object-flags.h"
 #include "object/object-info.h"
@@ -335,8 +333,7 @@ static void prt_binary(BIT_FLAGS flags, const int row, int col)
  */
 static void wiz_display_item(player_type *player_ptr, object_type *o_ptr)
 {
-    TrFlags flgs;
-    object_flags(o_ptr, flgs);
+    auto flgs = object_flags(o_ptr);
     int j = 13;
     for (int i = 1; i <= 23; i++)
         prt("", i, j - 2);
@@ -402,7 +399,7 @@ static void wiz_statistics(player_type *caster_ptr, object_type *o_ptr)
     concptr p = "Enter number of items to roll: ";
     char tmp_val[80];
 
-    if (object_is_fixed_artifact(o_ptr))
+    if (o_ptr->is_fixed_artifact())
         a_info[o_ptr->name1].cur_num = 0;
 
     uint32_t i, matches, better, worse, other, correct;
@@ -453,7 +450,7 @@ static void wiz_statistics(player_type *caster_ptr, object_type *o_ptr)
             object_type *q_ptr = &forge;
             q_ptr->wipe();
             make_object(caster_ptr, q_ptr, mode);
-            if (object_is_fixed_artifact(q_ptr))
+            if (q_ptr->is_fixed_artifact())
                 a_info[q_ptr->name1].cur_num = 0;
 
             if ((o_ptr->tval != q_ptr->tval) || (o_ptr->sval != q_ptr->sval))
@@ -476,7 +473,7 @@ static void wiz_statistics(player_type *caster_ptr, object_type *o_ptr)
         msg_print(NULL);
     }
 
-    if (object_is_fixed_artifact(o_ptr))
+    if (o_ptr->is_fixed_artifact())
         a_info[o_ptr->name1].cur_num = 1;
 }
 
@@ -487,7 +484,7 @@ static void wiz_statistics(player_type *caster_ptr, object_type *o_ptr)
  */
 static void wiz_reroll_item(player_type *owner_ptr, object_type *o_ptr)
 {
-    if (object_is_artifact(o_ptr))
+    if (o_ptr->is_artifact())
         return;
 
     object_type forge;
@@ -500,7 +497,7 @@ static void wiz_reroll_item(player_type *owner_ptr, object_type *o_ptr)
     while (true) {
         wiz_display_item(owner_ptr, q_ptr);
         if (!get_com("[a]ccept, [w]orthless, [c]ursed, [n]ormal, [g]ood, [e]xcellent, [s]pecial? ", &ch, false)) {
-            if (object_is_fixed_artifact(q_ptr)) {
+            if (q_ptr->is_fixed_artifact()) {
                 a_info[q_ptr->name1].cur_num = 0;
                 q_ptr->name1 = 0;
             }
@@ -514,7 +511,7 @@ static void wiz_reroll_item(player_type *owner_ptr, object_type *o_ptr)
             break;
         }
 
-        if (object_is_fixed_artifact(q_ptr)) {
+        if (q_ptr->is_fixed_artifact()) {
             a_info[q_ptr->name1].cur_num = 0;
             q_ptr->name1 = 0;
         }
@@ -549,7 +546,7 @@ static void wiz_reroll_item(player_type *owner_ptr, object_type *o_ptr)
         case 's':
             q_ptr->prep(o_ptr->k_idx);
             apply_magic_to_object(owner_ptr, q_ptr, owner_ptr->current_floor_ptr->dun_level, AM_GOOD | AM_GREAT | AM_SPECIAL);
-            if (!object_is_artifact(q_ptr))
+            if (!q_ptr->is_artifact())
                 become_random_artifact(owner_ptr, q_ptr, false);
 
             break;
@@ -577,7 +574,7 @@ static void wiz_reroll_item(player_type *owner_ptr, object_type *o_ptr)
  */
 static void wiz_tweak_item(player_type *player_ptr, object_type *o_ptr)
 {
-    if (object_is_artifact(o_ptr))
+    if (o_ptr->is_artifact())
         return;
 
     concptr p = "Enter new 'pval' setting: ";
@@ -619,7 +616,7 @@ static void wiz_tweak_item(player_type *player_ptr, object_type *o_ptr)
  */
 static void wiz_quantity_item(object_type *o_ptr)
 {
-    if (object_is_artifact(o_ptr))
+    if (o_ptr->is_artifact())
         return;
 
     int tmp_qnt = o_ptr->number;
@@ -1029,7 +1026,7 @@ WishResult do_cmd_wishing(player_type *caster_ptr, int prob, bool allow_art, boo
                 do {
                     o_ptr->prep(k_idx);
                     apply_magic_to_object(caster_ptr, o_ptr, k_ptr->level, (AM_SPECIAL | AM_NO_FIXED_ART));
-                } while (!o_ptr->art_name || o_ptr->name1 || o_ptr->name2 || object_is_cursed(o_ptr));
+                } while (!o_ptr->art_name || o_ptr->name1 || o_ptr->name2 || o_ptr->is_cursed());
 
                 if (o_ptr->art_name)
                     drop_near(caster_ptr, o_ptr, -1, caster_ptr->y, caster_ptr->x);
@@ -1085,7 +1082,7 @@ WishResult do_cmd_wishing(player_type *caster_ptr, int prob, bool allow_art, boo
             for (int i = 0; i < 100; i++) {
                 o_ptr->prep(k_idx);
                 apply_magic_to_object(caster_ptr, o_ptr, 0, (AM_NO_FIXED_ART));
-                if (!object_is_cursed(o_ptr))
+                if (!o_ptr->is_cursed())
                     break;
             }
             res = WishResult::NORMAL;

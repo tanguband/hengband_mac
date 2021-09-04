@@ -28,7 +28,6 @@
 #include "monster/monster-info.h"
 #include "object-enchant/apply-magic.h"
 #include "object-enchant/item-apply-magic.h"
-#include "object-hook/hook-checker.h"
 #include "object/object-kind-hook.h"
 #include "spell/spell-types.h"
 #include "spell/summon-types.h"
@@ -406,7 +405,7 @@ static void on_dead_random_artifact(player_type *player_ptr, monster_death_type 
         }
 
         (void)become_random_artifact(player_ptr, q_ptr, false);
-        auto is_good_random_art = !object_is_cursed(q_ptr);
+        auto is_good_random_art = !q_ptr->is_cursed();
         is_good_random_art &= q_ptr->to_h > 0;
         is_good_random_art &= q_ptr->to_d > 0;
         is_good_random_art &= q_ptr->to_a > 0;

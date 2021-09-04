@@ -105,13 +105,12 @@ static bool acid_minus_ac(player_type *creature_ptr)
         break;
     }
 
-    if ((o_ptr == NULL) || (o_ptr->k_idx == 0) || !object_is_armour(o_ptr))
+    if ((o_ptr == NULL) || (o_ptr->k_idx == 0) || !o_ptr->is_armour())
         return false;
 
     GAME_TEXT o_name[MAX_NLEN];
     describe_flavor(creature_ptr, o_name, o_ptr, OD_OMIT_PREFIX | OD_NAME_ONLY);
-    TrFlags flgs;
-    object_flags(o_ptr, flgs);
+    auto flgs = object_flags(o_ptr);
     if (o_ptr->ac + o_ptr->to_a <= 0) {
         msg_format(_("%sは既にボロボロだ！", "Your %s is already fully corroded!"), o_name);
         return false;

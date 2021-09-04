@@ -118,7 +118,6 @@ static void show_weapon_dmg(int r, int c, int mindice, int maxdice, int blows, i
  */
 static void compare_weapon_aux(player_type *owner_ptr, object_type *o_ptr, int col, int r)
 {
-    TrFlags flgs;
     int blow = owner_ptr->num_blow[0];
     bool force = false;
     bool dokubari = false;
@@ -134,7 +133,7 @@ static void compare_weapon_aux(player_type *owner_ptr, object_type *o_ptr, int c
     int vorpal_div = 1;
     int dmg_bonus = o_ptr->to_d + owner_ptr->to_d[0];
 
-    object_flags(o_ptr, flgs);
+    auto flgs = object_flags(o_ptr);
     if ((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_POISON_NEEDLE))
         dokubari = true;
 
@@ -367,7 +366,7 @@ PRICE compare_weapons(player_type *customer_ptr, PRICE bcost)
     concptr s = _("比べるものがありません。", "You have nothing to compare.");
 
     OBJECT_IDX item;
-    o_ptr[0] = choose_object(customer_ptr, &item, q, s, (USE_EQUIP | USE_INVEN | IGNORE_BOTHHAND_SLOT), FuncItemTester(object_is_orthodox_melee_weapons));
+    o_ptr[0] = choose_object(customer_ptr, &item, q, s, (USE_EQUIP | USE_INVEN | IGNORE_BOTHHAND_SLOT), FuncItemTester(&object_type::is_orthodox_melee_weapons));
     if (!o_ptr[0]) {
         screen_load();
         return 0;
@@ -420,7 +419,7 @@ PRICE compare_weapons(player_type *customer_ptr, PRICE bcost)
         q = _("第二の武器は？", "What is your second weapon? ");
         s = _("比べるものがありません。", "You have nothing to compare.");
         OBJECT_IDX item2;
-        object_type *i2_ptr = choose_object(customer_ptr, &item2, q, s, (USE_EQUIP | USE_INVEN | IGNORE_BOTHHAND_SLOT), FuncItemTester(object_is_orthodox_melee_weapons));
+        object_type *i2_ptr = choose_object(customer_ptr, &item2, q, s, (USE_EQUIP | USE_INVEN | IGNORE_BOTHHAND_SLOT), FuncItemTester(&object_type::is_orthodox_melee_weapons));
         if (!i2_ptr)
             continue;
 

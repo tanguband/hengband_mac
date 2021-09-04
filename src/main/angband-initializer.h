@@ -11,9 +11,7 @@
  * are included in all such copies.
  */
 
-#include "system/h-basic.h"
-
-typedef struct player_type player_type;
+struct player_type;
 void init_angband(player_type *player_ptr, bool no_term);
 void init_file_paths(concptr libpath, concptr varpath);
 void create_needed_dirs(void);

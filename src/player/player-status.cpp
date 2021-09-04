@@ -49,8 +49,6 @@
 #include "object-enchant/tr-types.h"
 #include "object-enchant/trc-types.h"
 #include "object-hook/hook-armor.h"
-#include "object-hook/hook-checker.h"
-#include "object-hook/hook-weapon.h"
 #include "object/object-flags.h"
 #include "object/object-info.h"
 #include "object/object-mark-types.h"
@@ -809,11 +807,10 @@ static void update_max_mana(player_type *creature_ptr)
     }
 
     if (any_bits(mp_ptr->spell_xtra, extra_magic_glove_reduce_mana)) {
-        TrFlags flgs;
         creature_ptr->cumber_glove = false;
         object_type *o_ptr;
         o_ptr = &creature_ptr->inventory_list[INVEN_ARMS];
-        object_flags(o_ptr, flgs);
+        auto flgs = object_flags(o_ptr);
         if (o_ptr->k_idx && !(has_flag(flgs, TR_FREE_ACT)) && !(has_flag(flgs, TR_DEC_MANA)) && !(has_flag(flgs, TR_EASY_SPELL))
             && !((has_flag(flgs, TR_MAGIC_MASTERY)) && (o_ptr->pval > 0)) && !((has_flag(flgs, TR_DEX)) && (o_ptr->pval > 0))) {
             creature_ptr->cumber_glove = true;
@@ -989,7 +986,6 @@ static void update_max_mana(player_type *creature_ptr)
 int16_t calc_num_fire(player_type *creature_ptr, object_type *o_ptr)
 {
     int extra_shots = 0;
-    TrFlags flgs;
 
     for (int i = INVEN_MAIN_HAND; i < INVEN_TOTAL; i++) {
         object_type *q_ptr;
@@ -1000,12 +996,12 @@ int16_t calc_num_fire(player_type *creature_ptr, object_type *o_ptr)
         if (i == INVEN_BOW)
             continue;
 
-        object_flags(q_ptr, flgs);
+        auto flgs = object_flags(q_ptr);
         if (has_flag(flgs, TR_XTRA_SHOTS))
             extra_shots++;
     }
 
-    object_flags(o_ptr, flgs);
+    auto flgs = object_flags(o_ptr);
     if (has_flag(flgs, TR_XTRA_SHOTS))
         extra_shots++;
 
@@ -1103,11 +1099,10 @@ static ACTION_SKILL_POWER calc_device_ability(player_type *creature_ptr)
 
     for (int i = INVEN_MAIN_HAND; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
-        TrFlags flgs;
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
-        object_flags(o_ptr, flgs);
+        auto flgs = object_flags(o_ptr);
         if (has_flag(flgs, TR_MAGIC_MASTERY))
             pow += 8 * o_ptr->pval;
     }
@@ -1209,11 +1204,10 @@ static ACTION_SKILL_POWER calc_search(player_type *creature_ptr)
 
     for (int i = INVEN_MAIN_HAND; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
-        TrFlags flgs;
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
-        object_flags(o_ptr, flgs);
+        auto flgs = object_flags(o_ptr);
         if (has_flag(flgs, TR_SEARCH))
             pow += (o_ptr->pval * 5);
     }
@@ -1257,11 +1251,10 @@ static ACTION_SKILL_POWER calc_search_freq(player_type *creature_ptr)
 
     for (int i = INVEN_MAIN_HAND; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
-        TrFlags flgs;
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
-        object_flags(o_ptr, flgs);
+        auto flgs = object_flags(o_ptr);
         if (has_flag(flgs, TR_SEARCH))
             pow += (o_ptr->pval * 5);
     }
@@ -1371,7 +1364,6 @@ static ACTION_SKILL_POWER calc_to_hit_throw(player_type *creature_ptr)
 static ACTION_SKILL_POWER calc_skill_dig(player_type *creature_ptr)
 {
     object_type *o_ptr;
-    TrFlags flgs;
 
     ACTION_SKILL_POWER pow;
 
@@ -1393,7 +1385,7 @@ static ACTION_SKILL_POWER calc_skill_dig(player_type *creature_ptr)
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
-        object_flags(o_ptr, flgs);
+        auto flgs = object_flags(o_ptr);
         if (has_flag(flgs, TR_TUNNEL))
             pow += (o_ptr->pval * 20);
     }
@@ -1431,11 +1423,10 @@ static bool is_heavy_wield(player_type *creature_ptr, int i)
 static int16_t calc_num_blow(player_type *creature_ptr, int i)
 {
     object_type *o_ptr;
-    TrFlags flgs;
     int16_t num_blow = 1;
 
     o_ptr = &creature_ptr->inventory_list[INVEN_MAIN_HAND + i];
-    object_flags(o_ptr, flgs);
+    auto flgs = object_flags(o_ptr);
     if (has_melee_weapon(creature_ptr, INVEN_MAIN_HAND + i)) {
         if (o_ptr->k_idx && !creature_ptr->heavy_wield[i]) {
             int str_index, dex_index;
@@ -1578,11 +1569,10 @@ static int16_t calc_to_magic_chance(player_type *creature_ptr)
 
     for (int i = INVEN_MAIN_HAND; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
-        TrFlags flgs;
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
-        object_flags(o_ptr, flgs);
+
         if (o_ptr->curse_flags.has(TRC::HARD_SPELL)) {
             if (o_ptr->curse_flags.has(TRC::HEAVY_CURSE)) {
                 chance += 10;
@@ -1608,7 +1598,9 @@ static ARMOUR_CLASS calc_base_ac(player_type *creature_ptr)
         ac += o_ptr->ac;
     }
 
-    if (object_is_armour(&creature_ptr->inventory_list[INVEN_MAIN_HAND]) || object_is_armour(&creature_ptr->inventory_list[INVEN_SUB_HAND])) {
+    const auto o_ptr_mh = &creature_ptr->inventory_list[INVEN_MAIN_HAND];
+    const auto o_ptr_sh = &creature_ptr->inventory_list[INVEN_SUB_HAND];
+    if (o_ptr_mh->is_armour() || o_ptr_sh->is_armour()) {
         ac += creature_ptr->skill_exp[SKILL_SHIELD] * (1 + creature_ptr->lev / 22) / 2000;
     }
 
@@ -1618,7 +1610,6 @@ static ARMOUR_CLASS calc_base_ac(player_type *creature_ptr)
 static ARMOUR_CLASS calc_to_ac(player_type *creature_ptr, bool is_real_value)
 {
     ARMOUR_CLASS ac = 0;
-    TrFlags flags;
     if (creature_ptr->yoiyami)
         return 0;
 
@@ -1647,18 +1638,18 @@ static ARMOUR_CLASS calc_to_ac(player_type *creature_ptr, bool is_real_value)
     for (int i = INVEN_MAIN_HAND; i < INVEN_TOTAL; i++) {
         object_type *o_ptr;
         o_ptr = &creature_ptr->inventory_list[i];
-        object_flags(o_ptr, flags);
+        auto flags = object_flags(o_ptr);
         if (!o_ptr->k_idx)
             continue;
-        if (is_real_value || object_is_known(o_ptr))
+        if (is_real_value || o_ptr->is_known())
             ac += o_ptr->to_a;
 
         if (o_ptr->curse_flags.has(TRC::LOW_AC)) {
             if (o_ptr->curse_flags.has(TRC::HEAVY_CURSE)) {
-                if (is_real_value || object_is_fully_known(o_ptr))
+                if (is_real_value || o_ptr->is_fully_known())
                     ac -= 30;
             } else {
-                if (is_real_value || object_is_fully_known(o_ptr))
+                if (is_real_value || o_ptr->is_fully_known())
                     ac -= 10;
             }
         }
@@ -1727,9 +1718,9 @@ static ARMOUR_CLASS calc_to_ac(player_type *creature_ptr, bool is_real_value)
             object_type *o_ptr = &creature_ptr->inventory_list[i];
             if (!o_ptr->k_idx)
                 continue;
-            if (!object_is_armour(o_ptr))
+            if (!o_ptr->is_armour())
                 continue;
-            if (!object_is_cursed(o_ptr))
+            if (!o_ptr->is_cursed())
                 continue;
             if (o_ptr->curse_flags.has(TRC::CURSED))
                 ac += 5;
@@ -1790,10 +1781,9 @@ static ARMOUR_CLASS calc_to_ac(player_type *creature_ptr, bool is_real_value)
 int16_t calc_double_weapon_penalty(player_type *creature_ptr, INVENTORY_IDX slot)
 {
     int penalty = 0;
-    TrFlags flags;
 
     if (has_melee_weapon(creature_ptr, INVEN_MAIN_HAND) && has_melee_weapon(creature_ptr, INVEN_SUB_HAND)) {
-        object_flags(&creature_ptr->inventory_list[INVEN_SUB_HAND], flags);
+        auto flags = object_flags(&creature_ptr->inventory_list[INVEN_SUB_HAND]);
 
         penalty = ((100 - creature_ptr->skill_exp[SKILL_TWO_WEAPON] / 160) - (130 - creature_ptr->inventory_list[slot].weight) / 8);
         if (((creature_ptr->inventory_list[INVEN_MAIN_HAND].name1 == ART_QUICKTHORN) && (creature_ptr->inventory_list[INVEN_SUB_HAND].name1 == ART_TINYTHORN))
@@ -1963,8 +1953,7 @@ void put_equipment_warning(player_type *creature_ptr)
 static int16_t calc_to_damage(player_type *creature_ptr, INVENTORY_IDX slot, bool is_real_value)
 {
     object_type *o_ptr = &creature_ptr->inventory_list[slot];
-    TrFlags flgs;
-    object_flags(o_ptr, flgs);
+    auto flgs = object_flags(o_ptr);
 
     player_hand calc_hand = PLAYER_HAND_OTHER;
     if (slot == INVEN_MAIN_HAND)
@@ -2005,7 +1994,7 @@ static int16_t calc_to_damage(player_type *creature_ptr, INVENTORY_IDX slot, boo
         }
     }
 
-    if ((creature_ptr->realm1 == REALM_HEX) && object_is_cursed(o_ptr)) {
+    if ((creature_ptr->realm1 == REALM_HEX) && o_ptr->is_cursed()) {
         if (hex_spelling(creature_ptr, HEX_RUNESWORD)) {
             if (o_ptr->curse_flags.has(TRC::CURSED)) {
                 damage += 5;
@@ -2026,7 +2015,7 @@ static int16_t calc_to_damage(player_type *creature_ptr, INVENTORY_IDX slot, boo
             || (i == INVEN_SUB_HAND && has_melee_weapon(creature_ptr, i)) || i == INVEN_BOW)
             continue;
 
-        if (!object_is_known(o_ptr) && !is_real_value)
+        if (!o_ptr->is_known() && !is_real_value)
             continue;
         bonus_to_d = o_ptr->to_d;
 
@@ -2170,8 +2159,7 @@ static int16_t calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot, bool i
     /* Bonuses and penalties by weapon */
     if (has_melee_weapon(creature_ptr, slot)) {
         object_type *o_ptr = &creature_ptr->inventory_list[slot];
-        TrFlags flgs;
-        object_flags(o_ptr, flgs);
+        auto flgs = object_flags(o_ptr);
 
         int tval = o_ptr->tval - TV_WEAPON_BEGIN;
         OBJECT_SUBTYPE_VALUE sval = o_ptr->sval;
@@ -2185,7 +2173,7 @@ static int16_t calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot, bool i
         }
 
         /* Low melee penalty */
-        if ((object_is_fully_known(o_ptr) || is_real_value) && o_ptr->curse_flags.has(TRC::LOW_MELEE)) {
+        if ((o_ptr->is_fully_known() || is_real_value) && o_ptr->curse_flags.has(TRC::LOW_MELEE)) {
             if (o_ptr->curse_flags.has(TRC::HEAVY_CURSE)) {
                 hit -= 15;
             } else {
@@ -2234,7 +2222,7 @@ static int16_t calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot, bool i
         }
 
         /* Hex realm bonuses */
-        if ((creature_ptr->realm1 == REALM_HEX) && object_is_cursed(o_ptr)) {
+        if ((creature_ptr->realm1 == REALM_HEX) && o_ptr->is_cursed()) {
             if (o_ptr->curse_flags.has(TRC::CURSED)) {
                 hit += 5;
             }
@@ -2260,7 +2248,7 @@ static int16_t calc_to_hit(player_type *creature_ptr, INVENTORY_IDX slot, bool i
             continue;
 
         /* Fake value does not include unknown objects' value */
-        if (!object_is_known(o_ptr) && !is_real_value)
+        if (!o_ptr->is_known() && !is_real_value)
             continue;
 
         int bonus_to_h = o_ptr->to_h;
@@ -2342,11 +2330,8 @@ static int16_t calc_to_hit_bow(player_type *creature_ptr, bool is_real_value)
 
     {
         object_type *o_ptr;
-        TrFlags flgs;
         o_ptr = &creature_ptr->inventory_list[INVEN_BOW];
         if (o_ptr->k_idx) {
-            object_flags(o_ptr, flgs);
-
             if (o_ptr->curse_flags.has(TRC::LOW_MELEE)) {
                 if (o_ptr->curse_flags.has(TRC::HEAVY_CURSE)) {
                     pow -= 15;
@@ -2404,7 +2389,7 @@ static int16_t calc_to_hit_bow(player_type *creature_ptr, bool is_real_value)
                 bonus_to_h = (o_ptr->to_h + 1) / 2;
         }
 
-        if (is_real_value || object_is_known(o_ptr))
+        if (is_real_value || o_ptr->is_known())
             pow += (int16_t)bonus_to_h;
     }
 
@@ -2416,7 +2401,6 @@ static int16_t calc_to_hit_bow(player_type *creature_ptr, bool is_real_value)
 static int16_t calc_to_damage_misc(player_type *creature_ptr)
 {
     object_type *o_ptr;
-    TrFlags flgs;
 
     int16_t to_dam = 0;
 
@@ -2424,8 +2408,6 @@ static int16_t calc_to_damage_misc(player_type *creature_ptr)
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
-
-        object_flags(o_ptr, flgs);
 
         int bonus_to_d = o_ptr->to_d;
         if (creature_ptr->pclass == CLASS_NINJA) {
@@ -2452,7 +2434,6 @@ static int16_t calc_to_damage_misc(player_type *creature_ptr)
 static int16_t calc_to_hit_misc(player_type *creature_ptr)
 {
     object_type *o_ptr;
-    TrFlags flgs;
 
     int16_t to_hit = 0;
 
@@ -2460,8 +2441,6 @@ static int16_t calc_to_hit_misc(player_type *creature_ptr)
         o_ptr = &creature_ptr->inventory_list[i];
         if (!o_ptr->k_idx)
             continue;
-
-        object_flags(o_ptr, flgs);
 
         int bonus_to_h = o_ptr->to_h;
         if (creature_ptr->pclass == CLASS_NINJA) {

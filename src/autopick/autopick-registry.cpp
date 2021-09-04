@@ -15,7 +15,6 @@
 #include "io/files-util.h"
 #include "object-enchant/item-feeling.h"
 #include "object-enchant/special-object-flags.h"
-#include "object-hook/hook-enchant.h"
 #include "perception/object-perception.h"
 #include "system/object-type-definition.h"
 #include "system/player-type-definition.h"
@@ -127,8 +126,7 @@ bool autopick_autoregister(player_type *player_ptr, object_type *o_ptr)
         return false;
     }
 
-    if ((object_is_known(o_ptr) && object_is_artifact(o_ptr))
-        || ((o_ptr->ident & IDENT_SENSE) && (o_ptr->feeling == FEEL_TERRIBLE || o_ptr->feeling == FEEL_SPECIAL))) {
+    if ((o_ptr->is_known() && o_ptr->is_artifact()) || ((o_ptr->ident & IDENT_SENSE) && (o_ptr->feeling == FEEL_TERRIBLE || o_ptr->feeling == FEEL_SPECIAL))) {
         GAME_TEXT o_name[MAX_NLEN];
         describe_flavor(player_ptr, o_name, o_ptr, 0);
         msg_format(_("%sは破壊不能だ。", "You cannot auto-destroy %s."), o_name);

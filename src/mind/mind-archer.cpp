@@ -14,7 +14,6 @@
 #include "object-enchant/apply-magic.h"
 #include "object-enchant/item-apply-magic.h"
 #include "object-enchant/object-boost.h"
-#include "object-hook/hook-bow.h"
 #include "object/item-tester-hooker.h"
 #include "object/item-use-flags.h"
 #include "object/object-kind-hook.h"
@@ -142,7 +141,7 @@ bool create_ammo(player_type *creature_ptr)
         concptr q = _("どのアイテムから作りますか？ ", "Convert which item? ");
         concptr s = _("材料を持っていない。", "You have no item to convert.");
         OBJECT_IDX item;
-        object_type *q_ptr = choose_object(creature_ptr, &item, q, s, USE_INVEN | USE_FLOOR, FuncItemTester(object_is_convertible));
+        object_type *q_ptr = choose_object(creature_ptr, &item, q, s, USE_INVEN | USE_FLOOR, FuncItemTester(&object_type::is_convertible));
         if (!q_ptr)
             return false;
 
@@ -168,7 +167,7 @@ bool create_ammo(player_type *creature_ptr)
         concptr q = _("どのアイテムから作りますか？ ", "Convert which item? ");
         concptr s = _("材料を持っていない。", "You have no item to convert.");
         OBJECT_IDX item;
-        object_type *q_ptr = choose_object(creature_ptr, &item, q, s, (USE_INVEN | USE_FLOOR), FuncItemTester(object_is_convertible));
+        object_type *q_ptr = choose_object(creature_ptr, &item, q, s, (USE_INVEN | USE_FLOOR), FuncItemTester(&object_type::is_convertible));
         if (!q_ptr)
             return false;
 

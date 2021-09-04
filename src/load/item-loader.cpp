@@ -7,7 +7,6 @@
 #include "load/savedata-flag-types.h"
 #include "object-enchant/object-ego.h"
 #include "object-enchant/tr-types.h"
-#include "object-hook/hook-enchant.h"
 #include "object/object-flags.h"
 #include "object/object-kind.h"
 #include "sv-definition/sv-lite-types.h"
@@ -235,9 +234,6 @@ void rd_item(object_type *o_ptr)
     if (!h_older_than(2, 1, 2, 4))
         return;
 
-    TrFlags flgs;
-    object_flags(o_ptr, flgs);
-
     if ((o_ptr->name2 == EGO_DARK) || (o_ptr->name2 == EGO_ANCIENT_CURSE) || (o_ptr->name1 == ART_NIGHT)) {
         add_flag(o_ptr->art_flags, TR_LITE_M1);
         remove_flag(o_ptr->art_flags, TR_LITE_1);
@@ -264,7 +260,7 @@ void rd_item(object_type *o_ptr)
     }
 
     if (o_ptr->tval == TV_LITE) {
-        if (object_is_fixed_artifact(o_ptr)) {
+        if (o_ptr->is_fixed_artifact()) {
             add_flag(o_ptr->art_flags, TR_LITE_3);
             return;
         }

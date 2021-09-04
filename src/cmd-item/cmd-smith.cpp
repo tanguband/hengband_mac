@@ -24,7 +24,6 @@
 #include "object-enchant/tr-types.h"
 #include "object-enchant/trc-types.h"
 #include "object-hook/hook-armor.h"
-#include "object-hook/hook-enchant.h"
 #include "object-hook/hook-weapon.h"
 #include "object/item-tester-hooker.h"
 #include "object/item-use-flags.h"
@@ -233,7 +232,6 @@ static void drain_essence(player_type *creature_ptr)
     bool observe = false;
     int old_ds, old_dd, old_to_h, old_to_d, old_ac, old_to_a, old_pval, old_name2;
     TIME_EFFECT old_timeout;
-    TrFlags old_flgs, new_flgs;
     object_type *o_ptr;
     concptr q, s;
     POSITION iy, ix;
@@ -246,11 +244,11 @@ static void drain_essence(player_type *creature_ptr)
     q = _("どのアイテムから抽出しますか？", "Extract from which item? ");
     s = _("抽出できるアイテムがありません。", "You have nothing you can extract from.");
 
-    o_ptr = choose_object(creature_ptr, &item, q, s, (USE_INVEN | USE_FLOOR | IGNORE_BOTHHAND_SLOT), FuncItemTester(object_is_weapon_armour_ammo));
+    o_ptr = choose_object(creature_ptr, &item, q, s, (USE_INVEN | USE_FLOOR | IGNORE_BOTHHAND_SLOT), FuncItemTester(&object_type::is_weapon_armour_ammo));
     if (!o_ptr)
         return;
 
-    if (object_is_known(o_ptr) && !object_is_nameless(o_ptr)) {
+    if (o_ptr->is_known() && !o_ptr->is_nameless()) {
         GAME_TEXT o_name[MAX_NLEN];
         describe_flavor(creature_ptr, o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
         if (!get_check(format(_("本当に%sから抽出してよろしいですか？", "Really extract from %s? "), o_name)))
@@ -259,7 +257,7 @@ static void drain_essence(player_type *creature_ptr)
 
     PlayerEnergy(creature_ptr).set_player_turn_energy(100);
 
-    object_flags(o_ptr, old_flgs);
+    auto old_flgs = object_flags(o_ptr);
     if (has_flag(old_flgs, TR_KILL_DRAGON))
         add_flag(old_flgs, TR_SLAY_DRAGON);
     if (has_flag(old_flgs, TR_KILL_ANIMAL))
@@ -344,7 +342,7 @@ static void drain_essence(player_type *creature_ptr)
     object_aware(creature_ptr, o_ptr);
     object_known(o_ptr);
 
-    object_flags(o_ptr, new_flgs);
+    auto new_flgs = object_flags(o_ptr);
 
     for (i = 0; essence_info[i].add_name; i++) {
         essence_type *es_ptr = &essence_info[i];
@@ -398,7 +396,7 @@ static void drain_essence(player_type *creature_ptr)
     if (old_name2 == EGO_2WEAPON) {
         drain_value[TR_DEX] += 20;
     }
-    if (object_is_weapon_ammo(o_ptr)) {
+    if (o_ptr->is_weapon_ammo()) {
         if (old_ds > o_ptr->ds)
             drain_value[TR_ES_ATTACK] += (old_ds - o_ptr->ds) * 10;
 
@@ -795,13 +793,13 @@ static void add_essence(player_type *creature_ptr, int32_t mode)
         if (es_ptr->add == ESSENCE_SLAY_GLOVE)
             return std::make_unique<TvalItemTester>(TV_GLOVES);
         else if (mode == 1 || mode == 5)
-            return std::make_unique<FuncItemTester>(object_is_melee_ammo);
+            return std::make_unique<FuncItemTester>(&object_type::is_melee_ammo);
         else if (es_ptr->add == ESSENCE_ATTACK)
-            return std::make_unique<FuncItemTester>(object_allow_enchant_weapon);
+            return std::make_unique<FuncItemTester>(&object_type::allow_enchant_weapon);
         else if (es_ptr->add == ESSENCE_AC)
-            return std::make_unique<FuncItemTester>(object_is_armour);
+            return std::make_unique<FuncItemTester>(&object_type::is_armour);
         else
-            return std::make_unique<FuncItemTester>(object_is_weapon_armour_ammo);
+            return std::make_unique<FuncItemTester>(&object_type::is_weapon_armour_ammo);
     };
 
     auto item_tester = decide_item_tester();
@@ -813,7 +811,7 @@ static void add_essence(player_type *creature_ptr, int32_t mode)
     if (!o_ptr)
         return;
 
-    if ((mode != 10) && (object_is_artifact(o_ptr) || object_is_smith(o_ptr))) {
+    if ((mode != 10) && (o_ptr->is_artifact() || o_ptr->is_smith())) {
         msg_print(_("そのアイテムはこれ以上改良できない。", "This item can not be improved any further."));
         return;
     }
@@ -994,12 +992,11 @@ static void erase_essence(player_type *creature_ptr)
     concptr q, s;
     object_type *o_ptr;
     GAME_TEXT o_name[MAX_NLEN];
-    TrFlags flgs;
 
     q = _("どのアイテムのエッセンスを消去しますか？", "Remove from which item? ");
     s = _("エッセンスを付加したアイテムがありません。", "You have nothing with added essence to remove.");
 
-    o_ptr = choose_object(creature_ptr, &item, q, s, (USE_INVEN | USE_FLOOR), FuncItemTester(object_is_smith));
+    o_ptr = choose_object(creature_ptr, &item, q, s, (USE_INVEN | USE_FLOOR), FuncItemTester(&object_type::is_smith));
     if (!o_ptr)
         return;
 
@@ -1019,7 +1016,7 @@ static void erase_essence(player_type *creature_ptr)
             o_ptr->to_d = 0;
     }
     o_ptr->xtra3 = 0;
-    object_flags(o_ptr, flgs);
+    auto flgs = object_flags(o_ptr);
     if (!(has_pval_flags(flgs)))
         o_ptr->pval = 0;
     msg_print(_("エッセンスを取り去った。", "You removed all essence you have added."));

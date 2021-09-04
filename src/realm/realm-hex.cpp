@@ -34,8 +34,6 @@
 #include "object-enchant/tr-types.h"
 #include "object-enchant/trc-types.h"
 #include "object-hook/hook-armor.h"
-#include "object-hook/hook-checker.h"
-#include "object-hook/hook-enchant.h"
 #include "object/item-tester-hooker.h"
 #include "object/item-use-flags.h"
 #include "object/object-flags.h"
@@ -195,7 +193,6 @@ concptr do_hex_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type mode)
             concptr q, s;
             GAME_TEXT o_name[MAX_NLEN];
             object_type *o_ptr;
-            TrFlags f;
 
             q = _("どれを呪いますか？", "Which weapon do you curse?");
             s = _("武器を装備していない。", "You're not wielding a weapon.");
@@ -205,12 +202,12 @@ concptr do_hex_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type mode)
                 return "";
 
             describe_flavor(caster_ptr, o_name, o_ptr, OD_NAME_ONLY);
-            object_flags(o_ptr, f);
+            auto f = object_flags(o_ptr);
 
             if (!get_check(format(_("本当に %s を呪いますか？", "Do you curse %s, really？"), o_name)))
                 return "";
 
-            if (!one_in_(3) && (object_is_artifact(o_ptr) || has_flag(f, TR_BLESSED))) {
+            if (!one_in_(3) && (o_ptr->is_artifact() || has_flag(f, TR_BLESSED))) {
                 msg_format(_("%s は呪いを跳ね返した。", "%s resists the effect."), o_name);
                 if (one_in_(3)) {
                     if (o_ptr->to_d > 0) {
@@ -235,7 +232,7 @@ concptr do_hex_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type mode)
                 msg_format(_("恐怖の暗黒オーラがあなたの%sを包み込んだ！", "A terrible black aura blasts your %s!"), o_name);
                 o_ptr->curse_flags.set(TRC::CURSED);
 
-                if (object_is_artifact(o_ptr) || object_is_ego(o_ptr)) {
+                if (o_ptr->is_artifact() || o_ptr->is_ego()) {
 
                     if (one_in_(3))
                         o_ptr->curse_flags.set(TRC::HEAVY_CURSE);
@@ -501,23 +498,22 @@ concptr do_hex_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type mode)
             concptr q, s;
             GAME_TEXT o_name[MAX_NLEN];
             object_type *o_ptr;
-            TrFlags f;
 
             q = _("どれを呪いますか？", "Which piece of armour do you curse?");
             s = _("防具を装備していない。", "You're not wearing any armor.");
 
-            o_ptr = choose_object(caster_ptr, &item, q, s, (USE_EQUIP), FuncItemTester(object_is_armour));
+            o_ptr = choose_object(caster_ptr, &item, q, s, (USE_EQUIP), FuncItemTester(&object_type::is_armour));
             if (!o_ptr)
                 return "";
 
             o_ptr = &caster_ptr->inventory_list[item];
             describe_flavor(caster_ptr, o_name, o_ptr, OD_NAME_ONLY);
-            object_flags(o_ptr, f);
+            auto f = object_flags(o_ptr);
 
             if (!get_check(format(_("本当に %s を呪いますか？", "Do you curse %s, really？"), o_name)))
                 return "";
 
-            if (!one_in_(3) && (object_is_artifact(o_ptr) || has_flag(f, TR_BLESSED))) {
+            if (!one_in_(3) && (o_ptr->is_artifact() || has_flag(f, TR_BLESSED))) {
                 msg_format(_("%s は呪いを跳ね返した。", "%s resists the effect."), o_name);
                 if (one_in_(3)) {
                     if (o_ptr->to_d > 0) {
@@ -542,7 +538,7 @@ concptr do_hex_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type mode)
                 msg_format(_("恐怖の暗黒オーラがあなたの%sを包み込んだ！", "A terrible black aura blasts your %s!"), o_name);
                 o_ptr->curse_flags.set(TRC::CURSED);
 
-                if (object_is_artifact(o_ptr) || object_is_ego(o_ptr)) {
+                if (o_ptr->is_artifact() || o_ptr->is_ego()) {
 
                     if (one_in_(3))
                         o_ptr->curse_flags.set(TRC::HEAVY_CURSE);
@@ -579,7 +575,7 @@ concptr do_hex_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type mode)
             if (!o_ptr->k_idx) {
                 msg_print(_("クロークを身につけていない！", "You are not wearing a cloak."));
                 return NULL;
-            } else if (!object_is_cursed(o_ptr)) {
+            } else if (!o_ptr->is_cursed()) {
                 msg_print(_("クロークは呪われていない！", "Your cloak is not cursed."));
                 return NULL;
             } else {
@@ -589,7 +585,7 @@ concptr do_hex_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type mode)
         if (cont) {
             object_type *o_ptr = &caster_ptr->inventory_list[INVEN_OUTER];
 
-            if ((!o_ptr->k_idx) || (!object_is_cursed(o_ptr))) {
+            if ((!o_ptr->k_idx) || (!o_ptr->is_cursed())) {
                 exe_spell(caster_ptr, REALM_HEX, spell, SPELL_STOP);
                 casting_hex_flags(caster_ptr) &= ~(1UL << spell);
                 casting_hex_num(caster_ptr)--;
@@ -700,17 +696,16 @@ concptr do_hex_spell(player_type *caster_ptr, SPELL_IDX spell, spell_type mode)
         if (cast) {
             OBJECT_IDX item;
             concptr s, q;
-            TrFlags f;
             object_type *o_ptr;
 
             q = _("どの装備品から吸収しますか？", "Which cursed equipment do you drain mana from?");
             s = _("呪われたアイテムを装備していない。", "You have no cursed equipment.");
 
-            o_ptr = choose_object(caster_ptr, &item, q, s, (USE_EQUIP), FuncItemTester(object_is_cursed));
+            o_ptr = choose_object(caster_ptr, &item, q, s, (USE_EQUIP), FuncItemTester(&object_type::is_cursed));
             if (!o_ptr)
                 return "";
 
-            object_flags(o_ptr, f);
+            auto f = object_flags(o_ptr);
 
             caster_ptr->csp += (caster_ptr->lev / 5) + randint1(caster_ptr->lev / 5);
             if (has_flag(f, TR_TY_CURSE) || o_ptr->curse_flags.has(TRC::TY_CURSE))
