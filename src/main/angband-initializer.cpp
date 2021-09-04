@@ -68,7 +68,7 @@ char *file_read__tmp;
  * try several base "path" values until a good one is found.
  * </pre>
  */
-void init_file_paths(concptr libpath, concptr varpath)
+void init_file_paths(const char *libpath, const char *varpath)
 {
 #ifdef PRIVATE_USER_PATH
     char base[1024];
