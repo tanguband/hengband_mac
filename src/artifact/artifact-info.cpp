@@ -8,6 +8,8 @@
 #include "object-enchant/activation-info-table.h"
 #include "object-enchant/object-ego.h"
 #include "object-enchant/object-smith.h"
+/* This one is only necessary for some macOS compilations. */
+#include "object-enchant/smith-types.h"
 #include "object-enchant/tr-types.h"
 #include "object/object-kind.h"
 #include "system/artifact-type-definition.h"
@@ -25,9 +27,25 @@ int activation_index(const object_type *o_ptr)
 {
     if (o_ptr->is_smith()) {
         if (auto effect = Smith::object_effect(o_ptr); effect.has_value()) {
+            /*
+             * value() requires macOS 10.13 or later; avoid it if compiling
+             * for an earlier version of macOS.
+             */
+#ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1130
+            if (auto act_idx = Smith::get_effect_activation(effect.value_or(SmithEffect::NONE)); act_idx.has_value()) {
+                return act_idx.value_or(random_art_activation_type::ACT_MAX);
+            }
+#else
             if (auto act_idx = Smith::get_effect_activation(effect.value()); act_idx.has_value()) {
                 return act_idx.value();
             }
+#endif
+#else
+            if (auto act_idx = Smith::get_effect_activation(effect.value_or(SmithEffect::NONE)); act_idx.has_value()) {
+                return act_idx.value_or(random_art_activation_type::ACT_MAX);
+            }
+#endif
         }
     }
 
