@@ -337,8 +337,8 @@ static void put_title(void)
 
 /*!
  * @brief 全ゲームデータ読み込みのメインルーチン /
- * @param player_ptr プレーヤーへの参照ポインタ
- * @param no_term trueならゲーム画面無しの状態で初期化を行う。
+ * @param player_ptr プレイヤーへの参照ポインタ
+ * @param no_term TRUEならゲーム画面無しの状態で初期化を行う。
  *                コマンドラインからスポイラーの出力のみを行う時の使用を想定する。
  */
 void init_angband(player_type *player_ptr, bool no_term)

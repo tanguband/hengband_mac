@@ -10,7 +10,7 @@
 
 struct object_type;
 struct player_type;
-struct smith_info_type;
+class ISmithInfo;
 struct essence_drain_type;
 class ItemTester;
 
@@ -47,13 +47,15 @@ public:
     void erase_essence(object_type *o_ptr) const;
     int get_addable_count(SmithEffect smith_effect, int item_number) const;
 
+    static constexpr int ESSENCE_AMOUNT_MAX = 20000;
+
 private:
-    static std::optional<const smith_info_type *> find_smith_info(SmithEffect effect);
+    static std::optional<const ISmithInfo *> find_smith_info(SmithEffect effect);
 
     static const std::vector<SmithEssence> essence_list_order;
     static const std::unordered_map<SmithEssence, concptr> essence_to_name;
     static const std::vector<essence_drain_type> essence_drain_info_table;
-    static const std::vector<smith_info_type> smith_info_table;
+    static const std::vector<std::shared_ptr<ISmithInfo>> smith_info_table;
 
     player_type *player_ptr;
 };
