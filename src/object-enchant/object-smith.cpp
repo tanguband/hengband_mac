@@ -100,7 +100,7 @@ concptr Smith::get_effect_name(SmithEffect effect)
         return _("不明", "Unknown");
     }
 
-    return info.value_or(static_cast<const smith_info_type *>(0))->name;
+    return info.value_or(static_cast<const ISmithInfo*>(0))->name;
 }
 
 /*!
@@ -112,11 +112,11 @@ concptr Smith::get_effect_name(SmithEffect effect)
 std::string Smith::get_need_essences_desc(SmithEffect effect)
 {
     auto info = find_smith_info(effect);
-    if (!info.has_value() || info.value_or(static_cast<const smith_info_type *>(0))->need_essences.empty()) {
+    if (!info.has_value() || info.value_or(static_cast<const ISmithInfo*>(0))->need_essences.empty()) {
         return _("不明", "Unknown");
     }
 
-    const auto &need_essences = info.value_or(static_cast<const smith_info_type *>(0))->need_essences;
+    const auto &need_essences = info.value_or(static_cast<const ISmithInfo*>(0))->need_essences;
     std::stringstream ss;
     for (auto i = 0U; i < need_essences.size(); i++) {
         ss << Smith::get_essence_name(need_essences[i]);
@@ -141,7 +141,7 @@ std::vector<SmithEssence> Smith::get_need_essences(SmithEffect effect)
         return {};
     }
 
-    return info.value_or(static_cast<const smith_info_type*>(0))->need_essences;
+    return info.value_or(static_cast<const ISmithInfo*>(0))->need_essences;
 }
 
 /*!
@@ -160,7 +160,7 @@ int Smith::get_essence_consumption(SmithEffect effect, const object_type *o_ptr)
         return 0;
     }
 
-    auto consumption = info.value_or(static_cast<const smith_info_type*>(0))->consumption;
+    auto consumption = info.value_or(static_cast<const ISmithInfo*>(0))->consumption;
     if (o_ptr == nullptr) {
         return consumption;
     }
@@ -184,7 +184,7 @@ std::unique_ptr<ItemTester> Smith::get_item_tester(SmithEffect effect)
 {
     auto category = SmithCategory::NONE;
     if (auto info = find_smith_info(effect); info.has_value()) {
-        category = info.value_or(static_cast<const smith_info_type*>(0))->category;
+        category = info.value_or(static_cast<const ISmithInfo*>(0))->category;
     }
 
     if (effect == SmithEffect::SLAY_GLOVE) {
@@ -216,7 +216,7 @@ TrFlags Smith::get_effect_tr_flags(SmithEffect effect)
         return {};
     }
 
-    return info.value_or(static_cast<const smith_info_type*>(0))->tr_flags();
+    return info.value_or(static_cast<const ISmithInfo*>(0))->tr_flags();
 }
 
 /*!
@@ -233,7 +233,7 @@ std::optional<random_art_activation_type> Smith::get_effect_activation(SmithEffe
         return std::nullopt;
     }
 
-    return info.value()->activation_index();
+    return info.value_or(static_cast<const ISmithInfo*>(0))->activation_index();
 }
 
 /*!
@@ -286,7 +286,7 @@ int Smith::get_addable_count(SmithEffect effect, int item_number) const
         return 0;
     }
 
-    return addable_count(this->player_ptr, info.value_or(static_cast<const smith_info_type*>(0))->need_essences, info.value_or(static_cast<const smith_info_type*>(0))->consumption * item_number);
+    return addable_count(this->player_ptr, info.value_or(static_cast<const ISmithInfo*>(0))->need_essences, info.value_or(static_cast<const ISmithInfo*>(0))->consumption * item_number);
 }
 
 /*!
@@ -441,11 +441,11 @@ bool Smith::add_essence(SmithEffect effect, object_type *o_ptr, int number)
     }
 
     const auto total_consumption = this->get_essence_consumption(effect, o_ptr) * number;
-    for (auto &&essence : info.value_or(static_cast<const smith_info_type*>(0))->need_essences) {
+    for (auto &&essence : info.value_or(static_cast<const ISmithInfo*>(0))->need_essences) {
         this->player_ptr->magic_num1[enum2i(essence)] -= total_consumption;
     }
 
-    return info.value()->add_essence(this->player_ptr, o_ptr, number);
+    return info.value_or(static_cast<const ISmithInfo*>(0))->add_essence(this->player_ptr, o_ptr, number);
 }
 
 /*!
@@ -459,10 +459,10 @@ void Smith::erase_essence(object_type *o_ptr) const
     if (!effect.has_value()) {
         return;
     }
-    auto info = find_smith_info(effect.value());
+    auto info = find_smith_info(effect.value_or(SmithEffect::NONE));
     if (!info.has_value()) {
         return;
     }
 
-    info.value()->erase_essence(o_ptr);
+    info.value_or(static_cast<const ISmithInfo*>(0))->erase_essence(o_ptr);
 }
