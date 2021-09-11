@@ -216,7 +216,7 @@ TrFlags Smith::get_effect_tr_flags(SmithEffect effect)
         return {};
     }
 
-    return info.value_or(static_cast<const smith_info_type*>(0))->tr_flags;
+    return info.value_or(static_cast<const smith_info_type*>(0))->tr_flags();
 }
 
 /*!
