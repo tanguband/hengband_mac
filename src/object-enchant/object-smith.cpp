@@ -187,7 +187,7 @@ std::unique_ptr<ItemTester> Smith::get_item_tester(SmithEffect effect)
         return std::make_unique<TvalItemTester>(TV_NONE);
     }
 
-    auto tester_func = [i = info.value()](const object_type *o_ptr) {
+    auto tester_func = [i = info.value_or(static_cast<const ISmithInfo*>(0))](const object_type *o_ptr) {
         return i->can_give_smith_effect(o_ptr);
     };
     return std::make_unique<FuncItemTester>(tester_func);
