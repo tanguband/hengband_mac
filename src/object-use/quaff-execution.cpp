@@ -83,7 +83,7 @@ static bool booze(player_type *player_ptr)
         else
             wiz_dark(player_ptr);
 
-        (void)teleport_player_aux(player_ptr, 100, false, static_cast<teleport_flags>(TELEPORT_NONMAGICAL | TELEPORT_PASSIVE));
+        (void)teleport_player_aux(player_ptr, 100, false, i2enum<teleport_flags>(TELEPORT_NONMAGICAL | TELEPORT_PASSIVE));
         wiz_dark(player_ptr);
         msg_print(_("知らない場所で目が醒めた。頭痛がする。", "You wake up somewhere with a sore head..."));
         msg_print(_("何も思い出せない。どうやってここへ来たのかも分からない！", "You can't remember a thing or how you got here!"));
@@ -134,9 +134,9 @@ void exe_quaff_potion(player_type *player_ptr, INVENTORY_IDX item)
     if (music_singing_any(player_ptr))
         stop_singing(player_ptr);
 
-    RealmHex realm_hex(player_ptr);
-    if (realm_hex.is_spelling_any() && !realm_hex.is_spelling_specific(HEX_INHAIL)) {
-        (void)RealmHex(player_ptr).stop_all_spells();
+    SpellHex spell_hex(player_ptr);
+    if (spell_hex.is_spelling_any() && !spell_hex.is_spelling_specific(HEX_INHALE)) {
+        (void)SpellHex(player_ptr).stop_all_spells();
     }
 
     o_ptr = ref_item(player_ptr, item);

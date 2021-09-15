@@ -235,7 +235,7 @@ std::optional<random_art_activation_type> Smith::get_effect_activation(SmithEffe
  */
 std::optional<SmithEffect> Smith::object_effect(const object_type *o_ptr)
 {
-    auto effect = static_cast<SmithEffect>(o_ptr->xtra3);
+    auto effect = i2enum<SmithEffect>(o_ptr->xtra3);
     if (!o_ptr->is_weapon_armour_ammo() || effect == SmithEffect::NONE) {
         return std::nullopt;
     }
@@ -342,6 +342,8 @@ Smith::DrainEssenceResult Smith::drain_essence(object_type *o_ptr)
         }
     }
 
+    const auto is_artifact = o_ptr->is_artifact();
+
     // アイテムをエッセンス抽出後の状態にする
     const object_type old_o = *o_ptr;
     o_ptr->prep(o_ptr->k_idx);
@@ -373,6 +375,10 @@ Smith::DrainEssenceResult Smith::drain_essence(object_type *o_ptr)
                 drain_values[essence] += info.amount * std::max(pval, 1);
             }
         }
+    }
+
+    if (is_artifact) {
+        drain_values[SmithEssence::UNIQUE] += 10;
     }
 
     // ダイス/命中/ダメージ/ACからの抽出

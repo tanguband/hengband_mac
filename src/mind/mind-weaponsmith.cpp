@@ -471,8 +471,8 @@ static void add_essence(player_type *player_ptr, SmithCategory mode)
         if (o_ptr->pval < 0) {
             msg_print(_("このアイテムの能力修正を強化することはできない。", "You cannot increase magic number of this item."));
             return;
-        } else if (effect_flags.has(TR_BLOWS) && o_ptr->pval > 1) {
-            if (!get_check(_("修正値は1になります。よろしいですか？", "The magic number of this weapon will become 1. Are you sure? "))) {
+        } else if (effect_flags.has(TR_BLOWS)) {
+            if ((o_ptr->pval > 1) && !get_check(_("修正値は1になります。よろしいですか？", "The magic number of this weapon will become 1. Are you sure? "))) {
                 return;
             }
             o_ptr->pval = 1;
@@ -701,7 +701,7 @@ void do_cmd_kaji(player_type *player_ptr, bool only_browse)
         mode = choose_essence();
         if (mode == 0)
             break;
-        add_essence(player_ptr, static_cast<SmithCategory>(mode));
+        add_essence(player_ptr, i2enum<SmithCategory>(mode));
         break;
     case 5:
         add_essence(player_ptr, SmithCategory::ENCHANT);

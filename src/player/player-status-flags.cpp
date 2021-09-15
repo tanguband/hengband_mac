@@ -93,7 +93,7 @@ BIT_FLAGS check_equipment_flags(player_type *player_ptr, tr_type tr_flag)
         auto flgs = object_flags(o_ptr);
 
         if (flgs.has(tr_flag))
-            set_bits(result, convert_inventory_slot_type_to_flag_cause(static_cast<inventory_slot_type>(i)));
+            set_bits(result, convert_inventory_slot_type_to_flag_cause(i2enum<inventory_slot_type>(i)));
     }
     return result;
 }
@@ -330,8 +330,8 @@ BIT_FLAGS get_player_flags(player_type *player_ptr, tr_type tr_flag)
         return 0;
     case TR_BLESSED:
         return has_bless_blade(player_ptr);
-    case TR_ES_ATTACK:
-    case TR_ES_AC:
+    case TR_XXX_93:
+    case TR_XXX_94:
     case TR_KILL_GOOD:
     case TR_KILL_ANIMAL:
     case TR_KILL_EVIL:
@@ -493,7 +493,7 @@ BIT_FLAGS has_esp_evil(player_type *player_ptr)
 {
     BIT_FLAGS result = 0L;
     if (player_ptr->realm1 == REALM_HEX) {
-        if (RealmHex(player_ptr).is_spelling_specific(HEX_DETECT_EVIL))
+        if (SpellHex(player_ptr).is_spelling_specific(HEX_DETECT_EVIL))
             result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
     result |= check_equipment_flags(player_ptr, TR_ESP_EVIL);
@@ -769,7 +769,7 @@ BIT_FLAGS has_warning(player_type *player_ptr)
 
         if (flgs.has(TR_WARNING)) {
             if (!o_ptr->inscription || !(angband_strchr(quark_str(o_ptr->inscription), '$')))
-                set_bits(result, convert_inventory_slot_type_to_flag_cause(static_cast<inventory_slot_type>(i)));
+                set_bits(result, convert_inventory_slot_type_to_flag_cause(i2enum<inventory_slot_type>(i)));
         }
     }
     return result;
@@ -800,7 +800,7 @@ BIT_FLAGS has_sh_fire(player_type *player_ptr)
         result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
-    if (RealmHex(player_ptr).is_spelling_specific(HEX_DEMON_AURA) || player_ptr->ult_res || player_ptr->tim_sh_fire) {
+    if (SpellHex(player_ptr).is_spelling_specific(HEX_DEMON_AURA) || player_ptr->ult_res || player_ptr->tim_sh_fire) {
         result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
@@ -818,7 +818,7 @@ BIT_FLAGS has_sh_elec(player_type *player_ptr)
     if (player_ptr->muta.has(MUTA::ELEC_TOUC))
         result |= FLAG_CAUSE_MUTATION;
 
-    if (RealmHex(player_ptr).is_spelling_specific(HEX_SHOCK_CLOAK) || player_ptr->ult_res) {
+    if (SpellHex(player_ptr).is_spelling_specific(HEX_SHOCK_CLOAK) || player_ptr->ult_res) {
         result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
@@ -841,7 +841,7 @@ BIT_FLAGS has_sh_cold(player_type *player_ptr)
         result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
-    if (player_ptr->ult_res || RealmHex(player_ptr).is_spelling_specific(HEX_ICE_ARMOR)) {
+    if (player_ptr->ult_res || SpellHex(player_ptr).is_spelling_specific(HEX_ICE_ARMOR)) {
         result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 
@@ -1166,7 +1166,7 @@ BIT_FLAGS has_regenerate(player_type *player_ptr)
         result |= FLAG_CAUSE_BATTLE_FORM;
     }
 
-    if (RealmHex(player_ptr).is_spelling_specific(HEX_DEMON_AURA) || player_ptr->ult_res || player_ptr->tim_regen) {
+    if (SpellHex(player_ptr).is_spelling_specific(HEX_DEMON_AURA) || player_ptr->ult_res || player_ptr->tim_regen) {
         result |= FLAG_CAUSE_MAGIC_TIME_EFFECT;
     }
 

@@ -53,13 +53,13 @@ static void give_one_ability_of_object(object_type *to_ptr, object_type *from_pt
         case TR_THROW:
         case TR_SHOW_MODS:
         case TR_HIDE_TYPE:
-        case TR_ES_ATTACK:
-        case TR_ES_AC:
+        case TR_XXX_93:
+        case TR_XXX_94:
         case TR_FULL_NAME:
         case TR_FIXED_FLAVOR:
             break;
         default:
-            auto tr_flag = static_cast<tr_type>(i);
+            auto tr_flag = i2enum<tr_type>(i);
             if (from_flgs.has(tr_flag) && to_flgs.has_not(tr_flag)) {
                 if (!(TR_PVAL_FLAG_MASK.has(tr_flag) && (from_ptr->pval < 1)))
                     cand[n++] = tr_flag;

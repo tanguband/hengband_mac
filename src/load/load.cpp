@@ -13,7 +13,6 @@
 #include "core/asking-player.h"
 #include "dungeon/quest.h"
 #include "game-option/birth-options.h"
-#include "game-option/runtime-arguments.h"
 #include "io/files-util.h"
 #include "io/report.h"
 #include "io/uid-checker.h"
@@ -117,8 +116,7 @@ static void load_player_world(player_type *player_ptr)
     if (player_ptr->energy_need < -999)
         player_ptr->timewalk = true;
 
-    if (arg_fiddle)
-        load_note(_("特別情報をロードしました", "Loaded extra information"));
+    load_note(_("特別情報をロードしました", "Loaded extra information"));
 }
 
 static errr load_hp(player_type *player_ptr)
@@ -205,9 +203,7 @@ static errr exe_reading_savefile(player_type *player_ptr)
     if (load_town_quest_result != 0)
         return load_town_quest_result;
 
-    if (arg_fiddle)
-        load_note(_("クエスト情報をロードしました", "Loaded Quests"));
-
+    load_note(_("クエスト情報をロードしました", "Loaded Quests"));
     errr load_artifact_result = load_artifact();
     if (load_artifact_result != 0)
         return load_artifact_result;
@@ -402,11 +398,6 @@ bool load_savedata(player_type *player_ptr, bool *new_game)
 
     if (player_ptr->is_dead) {
         *new_game = true;
-        if (arg_wizard) {
-            current_world_ptr->character_loaded = true;
-            return true;
-        }
-
         player_ptr->is_dead = false;
         current_world_ptr->sf_lives++;
         return true;
