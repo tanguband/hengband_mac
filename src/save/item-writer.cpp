@@ -5,6 +5,9 @@
 #include "system/object-type-definition.h"
 #include "util/enum-converter.h"
 #include "util/quarks.h"
+/* Needed for some MacOS compilations. */
+#include "artifact/random-art-effects.h"
+#include "object-enchant/smith-types.h"
 
 static void write_item_flags(object_type *o_ptr, BIT_FLAGS *flags)
 {
@@ -159,14 +162,34 @@ static void write_item_info(object_type *o_ptr, const BIT_FLAGS flags)
     if (flags & SAVE_ITEM_STACK_IDX)
         wr_s16b(o_ptr->stack_idx);
 
+    /*
+     * value() requires macOS 10.13 or later; avoit it if compiling for an
+     * earlier vesion of macOS.
+     */
     if (flags & SAVE_ITEM_SMITH) {
         if (o_ptr->smith_effect.has_value()){
+#ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
+#if __MAC_OS_X_VERISON_MIN_REQUIRED < 1130
+            wr_s16b(enum2i(o_ptr->smith_effect.value_or(SmithEffect::NONE)));
+#else
             wr_s16b(enum2i(o_ptr->smith_effect.value()));
+#endif
+#else
+            wr_s16b(enum2i(o_ptr->smith_effect.value_or(SmithEffect::NONE)));
+#endif
         } else {
             wr_s16b(0);
         }
         if (o_ptr->smith_act_idx.has_value()) {
+#ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
+#if __MAC_OS_X_VERISON_MIN_REQUIRED < 1130
+            wr_s16b(enum2i(o_ptr->smith_act_idx.value_or(random_art_activation_type::ACT_MAX)));
+#else
             wr_s16b(enum2i(o_ptr->smith_act_idx.value()));
+#endif
+#else
+            wr_s16b(enum2i(o_ptr->smith_act_idx.value_or(random_art_activation_type::ACT_MAX)));
+#endif
         } else {
             wr_s16b(0);
         }
