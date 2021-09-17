@@ -4633,14 +4633,14 @@ static errr Term_xtra_cocoa_react(void)
 
 	    /* Reset visuals */
 	    if (arg_bigtile == use_bigtile &&
-		current_world_ptr->character_generated)
+		w_ptr->character_generated)
 	    {
 		reset_visuals(p_ptr);
 	    }
 	}
 
 	if (arg_bigtile != use_bigtile) {
-	    if (current_world_ptr->character_generated)
+	    if (w_ptr->character_generated)
 	    {
 		/* Reset visuals */
 		reset_visuals(p_ptr);
@@ -5029,7 +5029,7 @@ static BOOL redraw_for_tiles_or_term0_font(void)
      * character has been generated.  Therefore, only call it if a character
      * has been generated.
      */
-    if (current_world_ptr->character_generated) {
+    if (w_ptr->character_generated) {
 	do_cmd_redraw(p_ptr);
 	wakeup_event_loop();
 	return YES;
@@ -5055,7 +5055,7 @@ static void wakeup_event_loop(void)
 static void quit_calmly(void)
 {
     /* Quit immediately if game's not started */
-    if (!game_in_progress || !current_world_ptr->character_generated) quit(NULL);
+    if (!game_in_progress || !w_ptr->character_generated) quit(NULL);
 
     /* Save the game and Quit (if it's safe) */
     if (inkey_flag)
@@ -6042,7 +6042,7 @@ static void init_windows(void)
          * we only want to be able to send commands during an active game
          * after the birth screens
          */
-        return !!game_in_progress && current_world_ptr->character_generated;
+        return !!game_in_progress && w_ptr->character_generated;
     }
     else return YES;
 }
