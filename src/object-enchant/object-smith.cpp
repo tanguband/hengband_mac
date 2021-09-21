@@ -256,17 +256,19 @@ std::vector<SmithEffect> Smith::get_effect_list(SmithCategory category)
  * @brief 指定した鍛冶効果のエッセンスを付与できる回数を取得する
  *
  * @param effect 鍛冶効果
- * @param item_number 同時に付与するスタックしたアイテム数。スタックしている場合アイテム数倍の数だけエッセンスが必要となる。
+ * @param o_ptr 鍛冶効果を付与するアイテムへのポインタ。nullptrの場合はデフォルトの消費量での回数が返される。
  * @return エッセンスを付与できる回数を返す
  */
-int Smith::get_addable_count(SmithEffect effect, int item_number) const
+int Smith::get_addable_count(SmithEffect effect, const object_type *o_ptr) const
 {
     auto info = find_smith_info(effect);
     if (!info.has_value()) {
         return 0;
     }
 
-    return addable_count(this->player_ptr, info.value_or(static_cast<const ISmithInfo*>(0))->need_essences, info.value_or(static_cast<const ISmithInfo*>(0))->consumption * item_number);
+    auto consumption = Smith::get_essence_consumption(effect, o_ptr);
+
+    return addable_count(this->player_ptr, info.value_or(static_cast<const ISmithInfo*>(0))->need_essences, consumption);
 }
 
 /*!
@@ -342,6 +344,7 @@ Smith::DrainEssenceResult Smith::drain_essence(object_type *o_ptr)
     o_ptr->ix = old_o.ix;
     o_ptr->marked = old_o.marked;
     o_ptr->number = old_o.number;
+    o_ptr->discount = old_o.discount;
 
     if (o_ptr->tval == TV_DRAG_ARMOR)
         o_ptr->timeout = old_o.timeout;
