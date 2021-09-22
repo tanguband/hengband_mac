@@ -5529,7 +5529,7 @@ static term_type *term_data_link(int i)
     }
 
     /* Allocate */
-    term_type *newterm = ZNEW(term_type);
+    term_type *newterm = (term_type*) calloc(1, sizeof(*newterm));
 
     /* Initialize the term */
     term_init(newterm, columns, rows, 256 /* keypresses, for some reason? */);
