@@ -69,6 +69,8 @@ jobs:
           env CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
             OBJCXXFLAGS="$OBJCXXFLAGS" LDFLAGS="$LDFLAGS" \
             ./configure $DEPENDENCY_TRACKING ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
+          # Print out the compiler version for debugging problems with a build.
+          g++ -v
           make install
           # Verify that some key files in the application bundle are there.
           test -x hengband.app/Contents/MacOS/hengband || exit 1
