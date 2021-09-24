@@ -5144,9 +5144,9 @@ static void AngbandHandleEventMouseDown( NSEvent *event )
 #ifdef KC_MOD_ALT
 			NSUInteger eventModifiers = [event modifierFlags];
 			byte angbandModifiers = 0;
-			angbandModifiers |= (eventModifiers & NSShiftKeyMask) ? KC_MOD_SHIFT : 0;
-			angbandModifiers |= (eventModifiers & NSControlKeyMask) ? KC_MOD_CONTROL : 0;
-			angbandModifiers |= (eventModifiers & NSAlternateKeyMask) ? KC_MOD_ALT : 0;
+			angbandModifiers |= (eventModifiers & NSEventModifierFlagShift) ? KC_MOD_SHIFT : 0;
+			angbandModifiers |= (eventModifiers & NSEventModifierFlagControl) ? KC_MOD_CONTROL : 0;
+			angbandModifiers |= (eventModifiers & NSEventModifierFlagOption) ? KC_MOD_ALT : 0;
 			button |= (angbandModifiers & 0x0F) << 4; /* encode modifiers in the button number (see Term_mousepress()) */
 #endif
 
@@ -5185,8 +5185,8 @@ static BOOL send_event(NSEvent *event)
             
             unsigned modifiers = [event modifierFlags];
             
-            /* Send all NSCommandKeyMasks through */
-            if (modifiers & NSCommandKeyMask)
+            /* Send all events with NSEventModifierFlagCommand through */
+            if (modifiers & NSEventModifierFlagCommand)
             {
                 [NSApp sendEvent:event];
                 break;
@@ -5196,10 +5196,10 @@ static BOOL send_event(NSEvent *event)
             
             
             /* Extract some modifiers */
-            int mc = !! (modifiers & NSControlKeyMask);
-            int ms = !! (modifiers & NSShiftKeyMask);
-            int mo = !! (modifiers & NSAlternateKeyMask);
-            int kp = !! (modifiers & NSNumericPadKeyMask);
+            int mc = !! (modifiers & NSEventModifierFlagControl);
+            int ms = !! (modifiers & NSEventModifierFlagShift);
+            int mo = !! (modifiers & NSEventModifierFlagOption);
+            int kp = !! (modifiers & NSEventModifierFlagNumericPad);
             
             
             /* Get the Angband char corresponding to this unichar */
@@ -6225,9 +6225,9 @@ static void init_windows(void)
 		[[item valueForKey: @"ShiftModifier"] boolValue];
 	    BOOL useOptionModifier =
 		[[item valueForKey: @"OptionModifier"] boolValue];
-	    NSUInteger keyModifiers = NSCommandKeyMask;
-	    keyModifiers |= (useShiftModifier) ? NSShiftKeyMask : 0;
-	    keyModifiers |= (useOptionModifier) ? NSAlternateKeyMask : 0;
+	    NSUInteger keyModifiers = NSEventModifierFlagCommand;
+	    keyModifiers |= (useShiftModifier) ? NSEventModifierFlagShift : 0;
+	    keyModifiers |= (useOptionModifier) ? NSEventModifierFlagOption : 0;
 
 	    NSString *lookup = [item valueForKey: @"Title"];
 	    NSString *title = NSLocalizedStringWithDefaultValue(
