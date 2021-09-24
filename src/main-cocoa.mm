@@ -4216,8 +4216,6 @@ static void Term_init_cocoa(term_type *t)
 	t->higher_pict = !! use_graphics;
 	t->always_pict = false;
 
-	NSDisableScreenUpdates();
-
 	/*
 	 * Figure out the frame autosave name based on the index of this term
 	 */
@@ -4423,8 +4421,6 @@ static void Term_init_cocoa(term_type *t)
 	 */
 	if (t == angband_term[0])
 	    [context.primaryWindow makeKeyAndOrderFront: nil];
-
-	NSEnableScreenUpdates();
 
 	/* Set "mapped" flag */
 	t->mapped_flag = true;
@@ -5784,14 +5780,10 @@ static void init_windows(void)
     [defs setFloat:[newFont pointSize]
         forKey:[NSString stringWithFormat:@"FontSize-%d", mainTerm]];
 
-    NSDisableScreenUpdates();
-
     /* Update window */
     AngbandContext *angbandContext =
 	(__bridge AngbandContext*) (angband_term[mainTerm]->data);
     [(id)angbandContext setSelectionFont:newFont adjustTerminal: YES];
-
-    NSEnableScreenUpdates();
 
     if (mainTerm != 0 || ! redraw_for_tiles_or_term0_font()) {
 	[(id)angbandContext requestRedraw];
