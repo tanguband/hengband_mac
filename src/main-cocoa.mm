@@ -3194,7 +3194,8 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 	 * the lower half.
 	 */
 	draw_image_tile(
-	    nsctx, ctx, pict_image, bckRect, destinationRect, NSCompositeCopy);
+	    nsctx, ctx, pict_image, bckRect, destinationRect,
+	    NSCompositingOperationCopy);
 	if (dbl_height_bck && is_first_piece) {
 	    /* Combine upper half with previously drawn row. */
 	    if (simple_upper) {
@@ -3211,7 +3212,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 		    graf_width, graf_height);
 
 		draw_image_tile(nsctx, ctx, pict_image, brect2, drect2,
-				NSCompositeSourceOver);
+				NSCompositingOperationSourceOver);
 	    } else {
 		struct TerminalCellLocation curs = { 0, 0 };
 
@@ -3243,7 +3244,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 			graf_height * pcell2->vscl / (1.0 * pcell2->voff_d));
 
 		    draw_image_tile(nsctx, ctx, pict_image, brect2, drect2,
-				    NSCompositeSourceOver);
+				    NSCompositingOperationSourceOver);
 		    curs.col += pcell2->hscl;
 		    [self.contents
 			 scanForTypeMaskInBlockAtColumn:aligned_col
@@ -3284,7 +3285,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 
 			draw_image_tile(
 			    nsctx, ctx, pict_image, frect2, drect2,
-			    NSCompositeSourceOver);
+			    NSCompositingOperationSourceOver);
 		    }
 		} else {
 		    /* Render the upper half pieces. */
@@ -3322,7 +3323,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 			        (1.0 * pcell2->voff_d));
 
 			draw_image_tile(nsctx, ctx, pict_image, frect2, drect2,
-					NSCompositeSourceOver);
+					NSCompositingOperationSourceOver);
 			curs.col += pcell2->hscl;
 		    }
 		}
@@ -3334,7 +3335,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 	     */
 	    draw_image_tile(
 		nsctx, ctx, pict_image, fgdRect, destinationRect,
-		NSCompositeSourceOver);
+		NSCompositingOperationSourceOver);
 	}
 	icol0 = [self.contents scanForTypeMaskInRow:irow mask:TERM_CELL_TILE
 		     col0:(icol0+pcell->hscl) col1:icol1];
@@ -4086,7 +4087,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 		    cacheRect.size.width = drawRight - drawLeft;
 		}
 		[self->cacheForResize drawInRect:modRect fromRect:cacheRect
-		     operation:NSCompositeCopy fraction:1.0
+		     operation:NSCompositingOperationCopy fraction:1.0
 		     respectFlipped:YES hints:nil];
 	    }
 	}
