@@ -2,8 +2,6 @@
 #include "mind/mind-weaponsmith.h"
 #include "object-enchant/object-ego.h"
 #include "object-enchant/object-smith.h"
-/* This one is only necessary for some macOS compilations. */
-#include "object-enchant/smith-types.h"
 #include "object-enchant/tr-types.h"
 #include "object/object-kind.h"
 #include "perception/object-perception.h"
@@ -48,21 +46,7 @@ TrFlags object_flags(const object_type *o_ptr)
     flgs.set(o_ptr->art_flags);
 
     if (auto effect = Smith::object_effect(o_ptr); effect.has_value()) {
-        /*
-         * value() requires macOS 10.13 or later; avoid it if compiling for
-         * an earlier version of macOS.
-         */
-        auto tr_flags = Smith::get_effect_tr_flags(
-#ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
-#if __MAC_OS_X_VERISON_MIN_REQUIRED < 1130
-            effect.value_or(SmithEffect::NONE)
-#else
-            effect.value()
-#endif
-#else
-            effect.value_or(SmithEffect::NONE)
-#endif
-        );
+        auto tr_flags = Smith::get_effect_tr_flags(effect.value());
         flgs.set(tr_flags);
     }
     if (Smith::object_activation(o_ptr).has_value()) {
@@ -117,21 +101,7 @@ TrFlags object_flags_known(const object_type *o_ptr)
     }
 
     if (auto effect = Smith::object_effect(o_ptr); effect.has_value()) {
-        /*
-         * value() requires macOS 10.13 or later; avoid it if compiling for
-         * an earlier version of macOS.
-         */
-        auto tr_flags = Smith::get_effect_tr_flags(
-#ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
-#if __MAC_OS_X_VERISON_MIN_REQUIRED < 1130
-            effect.value_or(SmithEffect::NONE)
-#else
-            effect.value()
-#endif
-#else
-            effect.value_or(SmithEffect::NONE)
-#endif
-        );
+        auto tr_flags = Smith::get_effect_tr_flags(effect.value());
         flgs.set(tr_flags);
     }
 
