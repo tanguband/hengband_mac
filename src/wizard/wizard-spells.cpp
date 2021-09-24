@@ -4,8 +4,6 @@
  * @author Hourier
  */
 
-#include <vector>
-
 #include "wizard/wizard-spells.h"
 #include "blue-magic/blue-magic-checker.h"
 #include "core/asking-player.h"
@@ -22,9 +20,12 @@
 #include "monster-race/monster-race.h"
 #include "mutation/mutation-processor.h"
 #include "object-enchant/object-smith.h"
+#include "player-base/player-class.h"
+#include "player-info/bluemage-data-type.h"
+#include "player-info/smith-data-type.h"
 #include "spell-kind/spells-launcher.h"
-#include "spell-kind/spells-teleport.h"
 #include "spell-kind/spells-random.h"
+#include "spell-kind/spells-teleport.h"
 #include "spell-realm/spells-chaos.h"
 #include "spell/spells-status.h"
 #include "spell/summon-types.h"
@@ -37,6 +38,8 @@
 #include "util/enum-converter.h"
 #include "util/flag-group.h"
 #include "view/display-messages.h"
+
+#include <vector>
 
 debug_spell_command debug_spell_commands_list[SPELL_MAX] = {
     { 2, "vanish dungeon", { .spell2 = { vanish_dungeon } } },
@@ -140,15 +143,15 @@ void wiz_teleport_back(player_type *player_ptr)
  */
 void wiz_learn_blue_magic_all(player_type *player_ptr)
 {
-    EnumClassFlagGroup<RF_ABILITY> ability_flags;
-    for (int j = 1; j < A_MAX; j++) {
-        set_rf_masks(ability_flags, i2enum<blue_magic_type>(j));
+    auto bluemage_data = PlayerClass(player_ptr).get_specific_data<bluemage_data_type>();
+    if (!bluemage_data) {
+        return;
+    }
 
-        std::vector<RF_ABILITY> spells;
-        EnumClassFlagGroup<RF_ABILITY>::get_flags(ability_flags, std::back_inserter(spells));
-        for (auto spell : spells) {
-            player_ptr->magic_num2[enum2i(spell)] = 1;
-        }
+    for (auto type : BLUE_MAGIC_TYPE_LIST) {
+        EnumClassFlagGroup<RF_ABILITY> ability_flags;
+        set_rf_masks(ability_flags, type);
+        bluemage_data->learnt_blue_magics.set(ability_flags);
     }
 }
 
@@ -157,8 +160,13 @@ void wiz_learn_blue_magic_all(player_type *player_ptr)
  */
 void wiz_fillup_all_smith_essences(player_type *player_ptr)
 {
+    auto smith_data = PlayerClass(player_ptr).get_specific_data<smith_data_type>();
+    if (!smith_data) {
+        return;
+    }
+
     for (auto essence : Smith::get_essence_list()) {
-        player_ptr->magic_num1[enum2i(essence)] = Smith::ESSENCE_AMOUNT_MAX;
+        smith_data->essences[essence] = Smith::ESSENCE_AMOUNT_MAX;
     }
 }
 
@@ -239,7 +247,6 @@ void wiz_kill_enemy(player_type *player_ptr, HIT_POINT dam, EFFECT_ID effect_idx
 
         effect_idx = (EFFECT_ID)atoi(tmp_val);
     }
-
 
     if (effect_idx <= GF_NONE || effect_idx >= MAX_GF) {
         msg_format(_("番号は1から%dの間で指定して下さい。", "ID must be between 1 to %d."), MAX_GF - 1);
