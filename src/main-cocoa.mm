@@ -5436,11 +5436,7 @@ static NSString* get_lib_directory(void)
 	    @"Label.Quit", AngbandMessageCatalog, [NSBundle mainBundle],
 	    @"Quit", @"Quit");
 	NSAlert *alert = [[NSAlert alloc] init];
-	/*
-	 * Note that NSCriticalAlertStyle was deprecated in 10.10.  The
-	 * replacement is NSAlertStyleCritical.
-	 */
-	alert.alertStyle = NSCriticalAlertStyle;
+	alert.alertStyle = NSAlertStyleCritical;
 	alert.messageText = msg;
 	alert.informativeText = info;
 	[alert addButtonWithTitle:quit_label];
