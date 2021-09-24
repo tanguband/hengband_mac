@@ -5935,7 +5935,7 @@ static void init_windows(void)
 
     while (!game_in_progress) {
 	@autoreleasepool {
-	    NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
+	    NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
 	    if (event) [NSApp sendEvent:event];
 	}
     }
