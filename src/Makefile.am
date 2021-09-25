@@ -347,7 +347,6 @@ hengband_SOURCES = \
 	load/monster-loader.cpp load/monster-loader.h \
 	load/old-feature-types.h \
 	load/load-util.cpp load/load-util.h \
-	load/load-v1-3-0.cpp load/load-v1-3-0.h \
 	load/load-v1-5-0.cpp load/load-v1-5-0.h \
 	load/load-v1-7-0.cpp load/load-v1-7-0.h \
 	load/load-zangband.cpp load/load-zangband.h \
@@ -669,6 +668,7 @@ hengband_SOURCES = \
 	player-info/class-specific-data.h \
 	player-info/equipment-info.cpp player-info/equipment-info.h \
 	player-info/force-trainer-data-type.h \
+	player-info/magic-eater-data-type.cpp player-info/magic-eater-data-type.h \
 	player-info/mimic-info-table.cpp player-info/mimic-info-table.h \
 	player-info/mutation-info.cpp player-info/mutation-info.h \
 	player-info/race-ability-info.cpp player-info/race-ability-info.h \
