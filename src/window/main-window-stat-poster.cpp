@@ -1,7 +1,11 @@
 ﻿#include "window/main-window-stat-poster.h"
+#include "game-option/game-play-options.h"
 #include "io/input-key-requester.h"
 #include "mind/stances-table.h"
 #include "monster/monster-status.h"
+#include "player-base/player-class.h"
+#include "player-info/bluemage-data-type.h"
+#include "player-info/mane-data-type.h"
 #include "player/attack-defense-types.h"
 #include "player/digestion-processor.h"
 #include "player/player-status-table.h"
@@ -20,7 +24,6 @@
 #include "timed-effect/timed-effects.h"
 #include "window/main-window-row-column.h"
 #include "view/status-bars-table.h"
-#include "world/world.h"
 
 /*!
  * @brief 32ビット変数配列の指定位置のビットフラグを1にする。
@@ -100,7 +103,7 @@ void print_stun(player_type *player_ptr)
  */
 void print_hunger(player_type *player_ptr)
 {
-    if (w_ptr->wizard && player_ptr->current_floor_ptr->inside_arena)
+    if (allow_debug_options && player_ptr->current_floor_ptr->inside_arena)
         return;
 
     if (player_ptr->food < PY_FOOD_FAINT) {
@@ -173,7 +176,8 @@ void print_state(player_type *player_ptr)
 
     case ACTION_LEARN: {
         strcpy(text, _("学習", "lear"));
-        if (player_ptr->new_mane)
+        auto bluemage_data = PlayerClass(player_ptr).get_specific_data<bluemage_data_type>();
+        if (bluemage_data->new_magic_learned)
             attr = TERM_L_RED;
         break;
     }
@@ -323,12 +327,14 @@ void print_imitation(player_type *player_ptr)
     if (player_ptr->pclass != CLASS_IMITATOR)
         return;
 
-    if (player_ptr->mane_num == 0) {
+    auto mane_data = PlayerClass(player_ptr).get_specific_data<mane_data_type>();
+
+    if (mane_data->mane_list.size() == 0) {
         put_str("    ", row_study, col_study);
         return;
     }
 
-    TERM_COLOR attr = player_ptr->new_mane ? TERM_L_RED : TERM_WHITE;
+    TERM_COLOR attr = mane_data->new_mane ? TERM_L_RED : TERM_WHITE;
     c_put_str(attr, _("まね", "Imit"), row_study, col_study);
 }
 

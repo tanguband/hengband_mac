@@ -128,7 +128,6 @@ void player_wipe_without_name(player_type *player_ptr)
     player_ptr->panic_save = 0;
 
     w_ptr->noscore = 0;
-    w_ptr->wizard = false;
     player_ptr->wait_report_score = false;
     player_ptr->pet_follow_distance = PET_FOLLOW_DIST;
     player_ptr->pet_extra_flags = (PF_TELEPORT | PF_ATTACK_SPELL | PF_SUMMON_SPELL);
@@ -143,12 +142,7 @@ void player_wipe_without_name(player_type *player_ptr)
     player_ptr->arena_number = 0;
     player_ptr->current_floor_ptr->inside_arena = false;
     player_ptr->current_floor_ptr->inside_quest = 0;
-    for (int i = 0; i < MAX_MANE; i++) {
-        player_ptr->mane_spell[i] = RF_ABILITY::MAX;
-        player_ptr->mane_dam[i] = 0;
-    }
 
-    player_ptr->mane_num = 0;
     player_ptr->exit_bldg = true;
     player_ptr->today_mon = 0;
     update_gambling_monsters(player_ptr);
