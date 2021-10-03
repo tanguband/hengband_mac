@@ -8,8 +8,6 @@
 #include "object-enchant/activation-info-table.h"
 #include "object-enchant/object-ego.h"
 #include "object-enchant/object-smith.h"
-/* This one is only necessary for some macOS compilations. */
-#include "object-enchant/smith-types.h"
 #include "object-enchant/tr-types.h"
 #include "object/object-kind.h"
 #include "system/artifact-type-definition.h"
@@ -26,19 +24,7 @@
 RandomArtActType activation_index(const object_type *o_ptr)
 {
     if (auto act_idx = Smith::object_activation(o_ptr); act_idx.has_value()) {
-        /*
-         * value() requires macOS 10.13 or later; avoid it if compiling for an
-         * earlier version of macOS.
-         */
-#ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1130
-        return act_idx.value_or(random_art_activation_type::ACT_MAX);
-#else
         return act_idx.value();
-#endif
-#else
-        return act_idx.value_or(random_art_activation_type::ACT_MAX);
-#endif
     }
 
     if (o_ptr->is_fixed_artifact() && a_info[o_ptr->name1].flags.has(TR_ACTIVATE))
