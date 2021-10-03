@@ -52,7 +52,7 @@
 bool earthquake(player_type *player_ptr, POSITION cy, POSITION cx, POSITION r, MONSTER_IDX m_idx)
 {
     floor_type *floor_ptr = player_ptr->current_floor_ptr;
-    if ((floor_ptr->inside_quest && is_fixed_quest_idx(floor_ptr->inside_quest)) || !floor_ptr->dun_level) {
+    if ((floor_ptr->inside_quest && quest_type::is_fixed(floor_ptr->inside_quest)) || !floor_ptr->dun_level) {
         return false;
     }
 
@@ -348,9 +348,8 @@ bool earthquake(player_type *player_ptr, POSITION cy, POSITION cx, POSITION r, M
     player_ptr->update |= (PU_UN_VIEW | PU_UN_LITE | PU_VIEW | PU_LITE | PU_FLOW | PU_MON_LITE | PU_MONSTERS);
     player_ptr->redraw |= (PR_HEALTH | PR_UHEALTH | PR_MAP);
     player_ptr->window_flags |= (PW_OVERHEAD | PW_DUNGEON);
-    if (player_ptr->special_defense & NINJA_S_STEALTH) {
-        if (floor_ptr->grid_array[player_ptr->y][player_ptr->x].info & CAVE_GLOW)
-            set_superstealth(player_ptr, false);
+    if (floor_ptr->grid_array[player_ptr->y][player_ptr->x].info & CAVE_GLOW) {
+        set_superstealth(player_ptr, false);
     }
 
     return true;

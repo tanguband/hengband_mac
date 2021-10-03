@@ -289,7 +289,7 @@ static void drop_items_golds(player_type *player_ptr, monster_death_type *md_ptr
 
             dump_gold++;
         } else {
-            if (!make_object(player_ptr, q_ptr, md_ptr->mo_mode))
+            if (!make_object(player_ptr, q_ptr, md_ptr->mo_mode, -1))
                 continue;
 
             dump_item++;
@@ -364,7 +364,7 @@ void monster_death(player_type *player_ptr, MONSTER_IDX m_idx, bool drop_item)
         md_ptr->r_ptr = &r_info[md_ptr->m_ptr->r_idx];
     }
 
-    check_quest_completion(player_ptr, md_ptr->m_ptr);
+    QuestCompletionChecker(player_ptr, md_ptr->m_ptr).complete();
     on_defeat_arena_monster(player_ptr, md_ptr);
     if (m_idx == player_ptr->riding && process_fall_off_horse(player_ptr, -1, false))
         msg_print(_("地面に落とされた。", "You have fallen from the pet you were riding."));
