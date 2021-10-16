@@ -424,7 +424,12 @@ bool get_value(const char *text, int min, int max, int *value)
     std::stringstream st;
     int val;
     char tmp_val[12] = "";
+    /* std::to_chars() requires Mac OS X 10.15 or later. */
+#if !defined(MACH_O_COCOA) || (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_15)
     std::to_chars(std::begin(tmp_val), std::end(tmp_val) - 1, *value);
+#else
+    snprintf(tmp_val, sizeof(tmp_val), "%d", *value);
+#endif
     st << text << "(" << min << "-" << max << "): ";
     int digit = std::max(std::to_string(min).length(), std::to_string(max).length());
     while (true) {
