@@ -55,13 +55,15 @@
  * @param m_idx ダメージを与えたモンスターのID
  * @param dam 与えたダメージ量
  * @param fear ダメージによってモンスターが恐慌状態に陥ったならばtrue
+ * @param type 与えたダメージの種類
  * @param note モンスターが倒された際の特別なメッセージ述語
  */
-MonsterDamageProcessor::MonsterDamageProcessor(player_type *player_ptr, MONSTER_IDX m_idx, HIT_POINT dam, bool *fear)
+MonsterDamageProcessor::MonsterDamageProcessor(player_type *player_ptr, MONSTER_IDX m_idx, HIT_POINT dam, bool *fear, EFFECT_ID effect_type)
     : player_ptr(player_ptr)
     , m_idx(m_idx)
     , dam(dam)
     , fear(fear)
+    , effect_type(effect_type)
 {
 }
 
@@ -88,7 +90,7 @@ bool MonsterDamageProcessor::mon_take_hit(concptr note)
     }
 
     if (allow_debug_options) {
-        msg_format(_("合計%d/%dのダメージを与えた。", "You do %d (out of %d) damage."), m_ptr->dealt_damage, m_ptr->maxhp);
+        msg_format(_("合計%d/%dのダメージを与えた。(EffectID: %d)", "You do %d (out of %d) damage. (EffectID: %d)"), m_ptr->dealt_damage, m_ptr->maxhp, this->effect_type);
     }
 
     if (this->process_dead_exp_virtue(note, &exp_mon)) {
@@ -142,7 +144,7 @@ bool MonsterDamageProcessor::process_dead_exp_virtue(concptr note, monster_type 
     sound(SOUND_KILL);
     this->show_kill_message(note, m_name);
     this->show_bounty_message(m_name);
-    monster_death(this->player_ptr, this->m_idx, true);
+    monster_death(this->player_ptr, this->m_idx, true, this->effect_type);
     this->summon_special_unique();
     this->get_exp_from_mon(exp_mon, exp_mon->max_maxhp * 2);
     *this->fear = false;
