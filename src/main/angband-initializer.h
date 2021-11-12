@@ -11,7 +11,7 @@
  * are included in all such copies.
  */
 
-struct player_type;
-void init_angband(player_type *player_ptr, bool no_term);
+class PlayerType;
+void init_angband(PlayerType *player_ptr, bool no_term);
 void init_file_paths(const char *libpath, const char *varpath);
 void create_needed_dirs(void);
