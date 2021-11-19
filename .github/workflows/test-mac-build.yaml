@@ -18,7 +18,7 @@ env:
   # Otherwise the default SDK for the runner will be used.  Currently
   # macos-latest defaults to the 10.15 SDK which can not build arm64 objects
   # or binaries.  For valid values for the sdk name, look at the xcrun man page.
-  SDK_OVERRIDE: macosx11.3
+  #SDK_OVERRIDE: macosx11.3
 
 jobs:
   english:
