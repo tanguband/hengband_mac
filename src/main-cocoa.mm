@@ -60,7 +60,8 @@ static NSString * const FallbackFontName = @_("HiraMaruProN-W4", "Menlo");
 static float FallbackFontSizeMain = 13.0f;
 static float FallbackFontSizeSub = 10.0f;
 static NSString * const AngbandDirectoryNameLib = @"lib";
-static NSString * const AngbandDirectoryNameBase = @VERSION_NAME;
+static NSString * const AngbandDirectoryNameBase =
+    [NSString stringWithUTF8String:std::string(VARIANT_NAME).c_str()];
 
 static NSString * const AngbandMessageCatalog = @"Localizable";
 static NSString * const AngbandTerminalsDefaultsKey = @"Terminals";
@@ -5418,7 +5419,7 @@ static NSString* get_lib_directory(void)
 
     if( !libExists || !isDirectory )
     {
-	NSLog( @"%@: can't find %@/ in bundle: isDirectory: %d libExists: %d", @VERSION_NAME, AngbandDirectoryNameLib, isDirectory, libExists );
+	NSLog( @"%@: can't find %@/ in bundle: isDirectory: %d libExists: %d", [NSString stringWithUTF8String:std::string(VARIANT_NAME).c_str()], AngbandDirectoryNameLib, isDirectory, libExists );
 
 	NSString *msg = NSLocalizedStringWithDefaultValue(
 	    @"Error.MissingResources",
