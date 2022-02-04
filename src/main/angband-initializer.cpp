@@ -36,6 +36,9 @@
 #ifndef WINDOWS
 #include <dirent.h>
 #endif
+#ifdef PRIVATE_USER_PATH
+#include <string>
+#endif
 
 /*!
  * Find the default paths to all of our important sub-directories.
@@ -102,7 +105,7 @@ void init_file_paths(const char *libpath, const char *varpath)
 
 #ifdef PRIVATE_USER_PATH
     path_parse(base, sizeof(base), PRIVATE_USER_PATH);
-    path_build(buf, sizeof(buf), base, VERSION_NAME);
+    path_build(buf, sizeof(buf), PRIVATE_USER_PATH, VARIANT_NAME.data());
     ANGBAND_DIR_USER = string_make(buf);
 #else
     ANGBAND_DIR_USER = string_make(format("%suser", varpath));
