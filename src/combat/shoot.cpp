@@ -75,7 +75,7 @@
  * @param arrow_ptr 矢弾のオブジェクト構造体参照ポインタ
  * @return スナイパーの射撃属性、弓矢の属性を考慮する。デフォルトはGF_PLAYER_SHOOT。
  */
-AttributeFlags shot_attribute(PlayerType *player_ptr, object_type *bow_ptr, object_type *arrow_ptr, SPELL_IDX snipe_type)
+AttributeFlags shot_attribute(PlayerType *player_ptr, ObjectType *bow_ptr, ObjectType *arrow_ptr, SPELL_IDX snipe_type)
 {
     AttributeFlags attribute_flags{};
     attribute_flags.set(AttributeType::PLAYER_SHOOT);
@@ -146,7 +146,7 @@ AttributeFlags shot_attribute(PlayerType *player_ptr, object_type *bow_ptr, obje
  * @return スレイ倍率をかけたダメージ量
  */
 static MULTIPLY calc_shot_damage_with_slay(
-    PlayerType *player_ptr, object_type *bow_ptr, object_type *arrow_ptr, HIT_POINT tdam, monster_type *monster_ptr, SPELL_IDX snipe_type)
+    PlayerType *player_ptr, ObjectType *bow_ptr, ObjectType *arrow_ptr, HIT_POINT tdam, monster_type *monster_ptr, SPELL_IDX snipe_type)
 {
     MULTIPLY mult = 10;
 
@@ -447,7 +447,7 @@ static MULTIPLY calc_shot_damage_with_slay(
  * Note that Bows of "Extra Shots" give an extra shot.
  * </pre>
  */
-void exe_fire(PlayerType *player_ptr, INVENTORY_IDX item, object_type *j_ptr, SPELL_IDX snipe_type)
+void exe_fire(PlayerType *player_ptr, INVENTORY_IDX item, ObjectType *j_ptr, SPELL_IDX snipe_type)
 {
     DIRECTION dir;
     int i;
@@ -457,9 +457,9 @@ void exe_fire(PlayerType *player_ptr, INVENTORY_IDX item, object_type *j_ptr, SP
     int cur_dis, visible;
     PERCENTAGE j;
 
-    object_type forge;
-    object_type *q_ptr;
-    object_type *o_ptr;
+    ObjectType forge;
+    ObjectType *q_ptr;
+    ObjectType *o_ptr;
 
     AttributeFlags attribute_flags{};
     attribute_flags.set(AttributeType::PLAYER_SHOOT);
@@ -689,8 +689,8 @@ void exe_fire(PlayerType *player_ptr, INVENTORY_IDX item, object_type *j_ptr, SP
                 sound(SOUND_SHOOT_HIT);
                 grid_type *c_mon_ptr = &player_ptr->current_floor_ptr->grid_array[y][x];
 
-                monster_type *m_ptr = &player_ptr->current_floor_ptr->m_list[c_mon_ptr->m_idx];
-                monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                auto *m_ptr = &player_ptr->current_floor_ptr->m_list[c_mon_ptr->m_idx];
+                auto *r_ptr = &r_info[m_ptr->r_idx];
 
                 /* Check the visibility */
                 visible = m_ptr->ml;
@@ -894,7 +894,7 @@ void exe_fire(PlayerType *player_ptr, INVENTORY_IDX item, object_type *j_ptr, SP
 
         if (stick_to) {
             MONSTER_IDX m_idx = player_ptr->current_floor_ptr->grid_array[y][x].m_idx;
-            monster_type *m_ptr = &player_ptr->current_floor_ptr->m_list[m_idx];
+            auto *m_ptr = &player_ptr->current_floor_ptr->m_list[m_idx];
             OBJECT_IDX o_idx = o_pop(player_ptr->current_floor_ptr);
 
             if (!o_idx) {
@@ -948,7 +948,7 @@ bool test_hit_fire(PlayerType *player_ptr, int chance, monster_type *m_ptr, int 
 {
     int k;
     ARMOUR_CLASS ac;
-    monster_race *r_ptr = &r_info[m_ptr->r_idx];
+    auto *r_ptr = &r_info[m_ptr->r_idx];
 
     /* Percentile dice */
     k = randint1(100);
@@ -1009,7 +1009,7 @@ bool test_hit_fire(PlayerType *player_ptr, int chance, monster_type *m_ptr, int 
 HIT_POINT critical_shot(PlayerType *player_ptr, WEIGHT weight, int plus_ammo, int plus_bow, HIT_POINT dam)
 {
     int i, k;
-    object_type *j_ptr = &player_ptr->inventory_list[INVEN_BOW];
+    auto *j_ptr = &player_ptr->inventory_list[INVEN_BOW];
 
     /* Extract "shot" power */
     i = player_ptr->to_h_b + plus_ammo;
@@ -1161,7 +1161,7 @@ int bow_tmul(OBJECT_SUBTYPE_VALUE sval)
 HIT_POINT calc_crit_ratio_shot(PlayerType *player_ptr, HIT_POINT plus_ammo, HIT_POINT plus_bow)
 {
     HIT_POINT i;
-    object_type *j_ptr = &player_ptr->inventory_list[INVEN_BOW];
+    auto *j_ptr = &player_ptr->inventory_list[INVEN_BOW];
 
     /* Extract "shot" power */
     i = player_ptr->to_h_b + plus_ammo;

@@ -15,11 +15,12 @@
 #include "dungeon/dungeon-flag-types.h"
 #include "dungeon/dungeon.h"
 #include "dungeon/quest.h"
+#include "effect/attribute-types.h"
 #include "effect/effect-characteristics.h"
 #include "effect/effect-processor.h"
 #include "floor/cave.h"
-#include "floor/geometry.h"
 #include "floor/floor-util.h"
+#include "floor/geometry.h"
 #include "game-option/disturbance-options.h"
 #include "grid/feature.h"
 #include "grid/grid.h"
@@ -37,7 +38,6 @@
 #include "realm/realm-song-numbers.h"
 #include "spell-kind/spells-floor.h"
 #include "spell-realm/spells-song.h"
-#include "effect/attribute-types.h"
 #include "status/action-setter.h"
 #include "system/floor-type-definition.h"
 #include "system/grid-type-definition.h"
@@ -64,7 +64,7 @@ POSITION temp2_y[MAX_SHORT];
 static void discover_hidden_things(PlayerType *player_ptr, POSITION y, POSITION x)
 {
     grid_type *g_ptr;
-    floor_type *floor_ptr = player_ptr->current_floor_ptr;
+    auto *floor_ptr = player_ptr->current_floor_ptr;
     g_ptr = &floor_ptr->grid_array[y][x];
     if (g_ptr->mimic && is_trap(player_ptr, g_ptr->feat)) {
         disclose_grid(player_ptr, y, x);
@@ -79,7 +79,7 @@ static void discover_hidden_things(PlayerType *player_ptr, POSITION y, POSITION 
     }
 
     for (const auto this_o_idx : g_ptr->o_idx_list) {
-        object_type *o_ptr;
+        ObjectType *o_ptr;
         o_ptr = &floor_ptr->o_list[this_o_idx];
         if (o_ptr->tval != ItemKindType::CHEST)
             continue;
@@ -123,10 +123,10 @@ bool move_player_effect(PlayerType *player_ptr, POSITION ny, POSITION nx, BIT_FL
 {
     POSITION oy = player_ptr->y;
     POSITION ox = player_ptr->x;
-    floor_type *floor_ptr = player_ptr->current_floor_ptr;
-    grid_type *g_ptr = &floor_ptr->grid_array[ny][nx];
+    auto *floor_ptr = player_ptr->current_floor_ptr;
+    auto *g_ptr = &floor_ptr->grid_array[ny][nx];
     grid_type *oc_ptr = &floor_ptr->grid_array[oy][ox];
-    feature_type *f_ptr = &f_info[g_ptr->feat];
+    auto *f_ptr = &f_info[g_ptr->feat];
     feature_type *of_ptr = &f_info[oc_ptr->feat];
 
     if (!(mpe_mode & MPE_STAYING)) {
@@ -179,8 +179,7 @@ bool move_player_effect(PlayerType *player_ptr, POSITION ny, POSITION nx, BIT_FL
                 set_superstealth(player_ptr, true);
         }
 
-        if ((player_ptr->action == ACTION_HAYAGAKE)
-            && (f_ptr->flags.has_not(FloorFeatureType::PROJECT) || (!player_ptr->levitation && f_ptr->flags.has(FloorFeatureType::DEEP)))) {
+        if ((player_ptr->action == ACTION_HAYAGAKE) && (f_ptr->flags.has_not(FloorFeatureType::PROJECT) || (!player_ptr->levitation && f_ptr->flags.has(FloorFeatureType::DEEP)))) {
             msg_print(_("ここでは素早く動けない。", "You cannot run in here."));
             set_action(player_ptr, ACTION_NONE);
         }
@@ -230,13 +229,13 @@ bool move_player_effect(PlayerType *player_ptr, POSITION ny, POSITION nx, BIT_FL
         energy.reset_player_turn();
         command_new = SPECIAL_KEY_QUEST;
     } else if (f_ptr->flags.has(FloorFeatureType::QUEST_EXIT)) {
-        if (quest[floor_ptr->inside_quest].type == QuestKindType::FIND_EXIT)
-            complete_quest(player_ptr, floor_ptr->inside_quest);
+        if (quest[enum2i(floor_ptr->quest_number)].type == QuestKindType::FIND_EXIT)
+            complete_quest(player_ptr, floor_ptr->quest_number);
 
         leave_quest_check(player_ptr);
-        floor_ptr->inside_quest = g_ptr->special;
+        floor_ptr->quest_number = i2enum<QuestId>(g_ptr->special);
         floor_ptr->dun_level = 0;
-        if (!floor_ptr->inside_quest)
+        if (!inside_quest(floor_ptr->quest_number))
             player_ptr->word_recall = 0;
         player_ptr->oldpx = 0;
         player_ptr->oldpy = 0;
@@ -275,7 +274,7 @@ bool move_player_effect(PlayerType *player_ptr, POSITION ny, POSITION nx, BIT_FL
  */
 bool trap_can_be_ignored(PlayerType *player_ptr, FEAT_IDX feat)
 {
-    feature_type *f_ptr = &f_info[feat];
+    auto *f_ptr = &f_info[feat];
     if (f_ptr->flags.has_not(FloorFeatureType::TRAP))
         return true;
 

@@ -130,7 +130,7 @@ static void decide_tval_show(flavor_type *flavor_ptr)
 
 static void describe_weapon_dice(PlayerType *player_ptr, flavor_type *flavor_ptr)
 {
-    if (!flavor_ptr->known && object_is_quest_target(player_ptr->current_floor_ptr->inside_quest, flavor_ptr->o_ptr))
+    if (!flavor_ptr->known && object_is_quest_target(player_ptr->current_floor_ptr->quest_number, flavor_ptr->o_ptr))
         return;
 
     flavor_ptr->t = object_desc_chr(flavor_ptr->t, ' ');
@@ -501,7 +501,7 @@ static void decide_item_feeling(flavor_type *flavor_ptr)
  * @param mode 表記に関するオプション指定
  * @return 現在クエスト達成目的のアイテムならばTRUEを返す
  */
-void describe_flavor(PlayerType *player_ptr, char *buf, object_type *o_ptr, BIT_FLAGS mode)
+void describe_flavor(PlayerType *player_ptr, char *buf, ObjectType *o_ptr, BIT_FLAGS mode)
 {
     flavor_type tmp_flavor;
     flavor_type *flavor_ptr = initialize_flavor_type(&tmp_flavor, buf, o_ptr, mode);

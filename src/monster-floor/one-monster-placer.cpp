@@ -59,7 +59,7 @@ static bool is_friendly_idx(PlayerType *player_ptr, MONSTER_IDX m_idx)
  */
 static bool monster_hook_tanuki(PlayerType *player_ptr, MONRACE_IDX r_idx)
 {
-    monster_race *r_ptr = &r_info[r_idx];
+    auto *r_ptr = &r_info[r_idx];
     bool unselectable = any_bits(r_ptr->flags1, RF1_UNIQUE);
     unselectable |= any_bits(r_ptr->flags2, RF2_MULTIPLY);
     unselectable |= r_ptr->behavior_flags.has(MonsterBehaviorType::FRIENDLY);
@@ -82,7 +82,7 @@ static bool monster_hook_tanuki(PlayerType *player_ptr, MONRACE_IDX r_idx)
  */
 static MONRACE_IDX initial_r_appearance(PlayerType *player_ptr, MONRACE_IDX r_idx, BIT_FLAGS generate_mode)
 {
-    floor_type *floor_ptr = player_ptr->current_floor_ptr;
+    auto *floor_ptr = player_ptr->current_floor_ptr;
     if (is_chargeman(player_ptr) && any_bits(generate_mode, PM_JURAL) && none_bits(generate_mode, PM_MULTIPLY | PM_KAGE))
         return MON_ALIEN_JURAL;
 
@@ -112,7 +112,7 @@ static bool check_unique_placeable(PlayerType *player_ptr, MONRACE_IDX r_idx)
     if (player_ptr->phase_out)
         return true;
 
-    monster_race *r_ptr = &r_info[r_idx];
+    auto *r_ptr = &r_info[r_idx];
     if ((any_bits(r_ptr->flags1, RF1_UNIQUE) || any_bits(r_ptr->flags7, RF7_NAZGUL)) && (r_ptr->cur_num >= r_ptr->max_num)) {
         return false;
     }
@@ -143,24 +143,24 @@ static bool check_unique_placeable(PlayerType *player_ptr, MONRACE_IDX r_idx)
  */
 static bool check_quest_placeable(PlayerType *player_ptr, MONRACE_IDX r_idx)
 {
-    floor_type *floor_ptr = player_ptr->current_floor_ptr;
-    if (quest_number(player_ptr, floor_ptr->dun_level) == 0)
+    auto *floor_ptr = player_ptr->current_floor_ptr;
+    if (!inside_quest(quest_number(player_ptr, floor_ptr->dun_level)))
         return true;
 
-    int hoge = quest_number(player_ptr, floor_ptr->dun_level);
-    if ((quest[hoge].type != QuestKindType::KILL_LEVEL) && (quest[hoge].type != QuestKindType::RANDOM))
+    QuestId hoge = quest_number(player_ptr, floor_ptr->dun_level);
+    if ((quest[enum2i(hoge)].type != QuestKindType::KILL_LEVEL) && (quest[enum2i(hoge)].type != QuestKindType::RANDOM))
         return true;
 
-    if (r_idx != quest[hoge].r_idx)
+    if (r_idx != quest[enum2i(hoge)].r_idx)
         return true;
 
     int number_mon = 0;
     for (int i2 = 0; i2 < floor_ptr->width; ++i2)
         for (int j2 = 0; j2 < floor_ptr->height; j2++)
-            if ((floor_ptr->grid_array[j2][i2].m_idx > 0) && (floor_ptr->m_list[floor_ptr->grid_array[j2][i2].m_idx].r_idx == quest[hoge].r_idx))
+            if ((floor_ptr->grid_array[j2][i2].m_idx > 0) && (floor_ptr->m_list[floor_ptr->grid_array[j2][i2].m_idx].r_idx == quest[enum2i(hoge)].r_idx))
                 number_mon++;
 
-    if (number_mon + quest[hoge].cur_num >= quest[hoge].max_num)
+    if (number_mon + quest[enum2i(hoge)].cur_num >= quest[enum2i(hoge)].max_num)
         return false;
 
     return true;
@@ -176,11 +176,11 @@ static bool check_quest_placeable(PlayerType *player_ptr, MONRACE_IDX r_idx)
  */
 static bool check_procection_rune(PlayerType *player_ptr, MONRACE_IDX r_idx, POSITION y, POSITION x)
 {
-    grid_type *g_ptr = &player_ptr->current_floor_ptr->grid_array[y][x];
+    auto *g_ptr = &player_ptr->current_floor_ptr->grid_array[y][x];
     if (!g_ptr->is_rune_protection())
         return true;
 
-    monster_race *r_ptr = &r_info[r_idx];
+    auto *r_ptr = &r_info[r_idx];
     if (randint1(BREAK_RUNE_PROTECTION) >= (r_ptr->level + 20))
         return false;
 
@@ -199,12 +199,12 @@ static void warn_unique_generation(PlayerType *player_ptr, MONRACE_IDX r_idx)
     if (!player_ptr->warning || !w_ptr->character_dungeon)
         return;
 
-    monster_race *r_ptr = &r_info[r_idx];
+    auto *r_ptr = &r_info[r_idx];
     if (none_bits(r_ptr->flags1, RF1_UNIQUE))
         return;
 
     concptr color;
-    object_type *o_ptr;
+    ObjectType *o_ptr;
     GAME_TEXT o_name[MAX_NLEN];
     if (r_ptr->level > player_ptr->lev + 30)
         color = _("黒く", "black");
@@ -240,9 +240,9 @@ static void warn_unique_generation(PlayerType *player_ptr, MONRACE_IDX r_idx)
  */
 bool place_monster_one(PlayerType *player_ptr, MONSTER_IDX who, POSITION y, POSITION x, MONRACE_IDX r_idx, BIT_FLAGS mode)
 {
-    floor_type *floor_ptr = player_ptr->current_floor_ptr;
-    grid_type *g_ptr = &floor_ptr->grid_array[y][x];
-    monster_race *r_ptr = &r_info[r_idx];
+    auto *floor_ptr = player_ptr->current_floor_ptr;
+    auto *g_ptr = &floor_ptr->grid_array[y][x];
+    auto *r_ptr = &r_info[r_idx];
     concptr name = r_ptr->name.c_str();
 
     if (player_ptr->wild_mode || !in_bounds(floor_ptr, y, x) || (r_idx == 0) || r_ptr->name.empty())

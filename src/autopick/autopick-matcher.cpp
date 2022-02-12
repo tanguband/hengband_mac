@@ -33,7 +33,7 @@
 /*!
  * @brief A function for Auto-picker/destroyer Examine whether the object matches to the entry
  */
-bool is_autopick_match(PlayerType *player_ptr, object_type *o_ptr, autopick_type *entry, concptr o_name)
+bool is_autopick_match(PlayerType *player_ptr, ObjectType *o_ptr, autopick_type *entry, concptr o_name)
 {
     concptr ptr = entry->name.c_str();
     if (IS_FLG(FLG_UNAWARE) && o_ptr->is_aware())
@@ -49,14 +49,14 @@ bool is_autopick_match(PlayerType *player_ptr, object_type *o_ptr, autopick_type
         return false;
 
     if (IS_FLG(FLG_BOOSTED)) {
-        object_kind *k_ptr = &k_info[o_ptr->k_idx];
+        auto *k_ptr = &k_info[o_ptr->k_idx];
         if (!o_ptr->is_melee_weapon())
             return false;
 
         if ((o_ptr->dd == k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
             return false;
 
-        if (!o_ptr->is_known() && object_is_quest_target(player_ptr->current_floor_ptr->inside_quest, o_ptr)) {
+        if (!o_ptr->is_known() && object_is_quest_target(player_ptr->current_floor_ptr->quest_number, o_ptr)) {
             return false;
         }
     }
