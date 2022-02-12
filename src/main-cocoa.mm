@@ -20,6 +20,18 @@
 /* This is not included in angband.h in Hengband. */
 #include "system/grafmode.h"
 
+#ifdef MACH_O_COCOA
+/* Mac headers */
+#import "cocoa/AppDelegate.h"
+//#include <Carbon/Carbon.h> /* For keycodes */
+/* Hack - keycodes to enable compiling in macOS 10.14 */
+#define kVK_Return 0x24
+#define kVK_Tab    0x30
+#define kVK_Delete 0x33
+#define kVK_Escape 0x35
+#define kVK_ANSI_KeypadEnter 0x4C
+#endif /* MACH_O_COCOA */
+
 #include "cmd-visual/cmd-draw.h"
 #include "cmd-io/cmd-save.h"
 #include "core/asking-player.h"
@@ -44,18 +56,7 @@
 #include "util/angband-files.h"
 #include "window/main-window-util.h"
 
-#if defined(MACH_O_COCOA)
-
-/* Mac headers */
-#import "cocoa/AppDelegate.h"
-//#include <Carbon/Carbon.h> /* For keycodes */
-/* Hack - keycodes to enable compiling in macOS 10.14 */
-#define kVK_Return 0x24
-#define kVK_Tab    0x30
-#define kVK_Delete 0x33
-#define kVK_Escape 0x35
-#define kVK_ANSI_KeypadEnter 0x4C
-
+#ifdef MACH_O_COCOA
 static NSString * const FallbackFontName = @_("HiraMaruProN-W4", "Menlo");
 static float FallbackFontSizeMain = 13.0f;
 static float FallbackFontSizeSub = 10.0f;
@@ -6403,4 +6404,4 @@ int main(int argc, char* argv[])
     return (0);
 }
 
-#endif /* MACINTOSH || MACH_O_COCOA */
+#endif /* MACH_O_COCOA */
