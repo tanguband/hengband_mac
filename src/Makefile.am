@@ -998,7 +998,7 @@ EXTRA_hengband_SOURCES = \
 	main-win/main-win-tokenizer.cpp main-win/main-win-tokenizer.h \
 	main-win/main-win-utils.cpp main-win/main-win-utils.h \
 	main-win/wav-reader.cpp main-win/wav-reader.h \
-	main-cap.cpp main-xaw.cpp \
+	main-cap.cpp \
 	wall.bmp \
 	stdafx.cpp stdafx.h
 
