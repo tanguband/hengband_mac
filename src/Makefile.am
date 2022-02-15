@@ -597,6 +597,7 @@ hengband_SOURCES = \
 	object-enchant/vorpal-weapon.cpp object-enchant/vorpal-weapon.h \
 	\
 	object-enchant/others/apply-magic-amulet.cpp object-enchant/others/apply-magic-amulet.h \
+	object-enchant/others/apply-magic-lite.cpp object-enchant/others/apply-magic-lite.h \
 	object-enchant/others/apply-magic-ring.cpp object-enchant/others/apply-magic-ring.h \
 	object-enchant/others/apply-magic-others.cpp object-enchant/others/apply-magic-others.h \
 	\
@@ -874,6 +875,7 @@ hengband_SOURCES = \
 	\
 	system/alloc-entries.cpp system/alloc-entries.h \
 	system/angband.h \
+	system/angband-exceptions.h \
 	system/angband-version.cpp system/angband-version.h \
 	system/artifact-type-definition.cpp system/artifact-type-definition.h \
 	system/building-type-definition.cpp system/building-type-definition.h \
