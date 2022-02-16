@@ -3,8 +3,6 @@
 #include "system/angband.h"
 #include "effect/attribute-types.h"
 
-constexpr int SPELL_MAX = 6;
-
 struct floor_type;
 class PlayerType;
 typedef union spell_functions {
@@ -30,13 +28,11 @@ typedef union spell_functions {
 
 } spell_functions;
 
-typedef struct debug_spell_command {
+struct debug_spell_command {
     int type;
     concptr command_name;
     spell_functions command_function;
-} debug_spell_command;
-
-extern debug_spell_command debug_spell_commands_list[SPELL_MAX];
+};
 
 bool wiz_debug_spell(PlayerType *player_ptr);
 void wiz_dimension_door(PlayerType *player_ptr);
