@@ -99,14 +99,6 @@ typedef byte FEAT_SUBTYPE; /*!< 地形情報の副値 (トラップ種別/パタ
 typedef char GAME_TEXT; /*!< ゲーム中のテキスト型定義 */
 
 /*!
- * @var typedef int32_t HIT_POINT
- * @brief HPとその増減量の型定義
- * @details
- * HIT_POINTはプレイヤー及びモンスターのHPの各値とその増減量の型である。
- */
-typedef int32_t HIT_POINT;
-
-/*!
  * @var typedef int32_t MANA_POINT
  * @brief MPとその増減量の型定義
  * @details
@@ -123,7 +115,6 @@ typedef int32_t ITEM_NUMBER; /*!< ゲーム中のアイテム数型を定義 */
 typedef int16_t ACTION_ENERGY; /*!< ゲーム中の行動エネルギー型を定義 */
 typedef int16_t ARMOUR_CLASS; /*!< ゲーム中の行動アーマークラス型を定義 */
 typedef int16_t TIME_EFFECT; /*!< ゲーム中の時限期間の型を定義 */
-typedef int16_t SPEED; /*!< ゲーム中の加速値の型定義 */
 
 /*!
  * @var typedef int16_t ENEGRY
