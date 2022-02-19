@@ -33,7 +33,7 @@
 /*!
  * @brief オブジェクトのフラグを更新する
  */
-static void update_object_flags(const TrFlags &flgs, EnumClassFlagGroup<MonsterKindType> flg_monster_kind, BIT_FLAGS *flgr)
+static void update_object_flags(const TrFlags &flgs, EnumClassFlagGroup<MonsterKindType> &flg_monster_kind, BIT_FLAGS *flgr)
 {
     if (flgs.has(TR_SLAY_DRAGON))
         flg_monster_kind.set(MonsterKindType::DRAGON);
