@@ -2449,7 +2449,7 @@ static int compare_advances(const void *ap, const void *bp)
 {
     if (! self->terminal) return;
     
-    term_type *old = Term;
+    term_type *old = game_term;
     
     /* Activate the term */
     term_activate(self->terminal);
@@ -3833,7 +3833,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
         }
     }
 
-    term_type *old = Term;
+    term_type *old = game_term;
     term_activate( self->terminal );
     term_resize( self.cols, self.rows );
     term_redraw();
@@ -4664,7 +4664,7 @@ static errr Term_xtra_cocoa(int n, int v)
     errr result = 0;
     @autoreleasepool {
 	AngbandContext* angbandContext =
-	    (__bridge AngbandContext*) (Term->data);
+	    (__bridge AngbandContext*) (game_term->data);
 
 	/* Analyze */
 	switch (n) {
@@ -4772,7 +4772,8 @@ static errr Term_xtra_cocoa(int n, int v)
 
 static errr Term_curs_cocoa(TERM_LEN x, TERM_LEN y)
 {
-    AngbandContext *angbandContext = (__bridge AngbandContext*) (Term->data);
+    AngbandContext *angbandContext =
+	(__bridge AngbandContext*) (game_term->data);
 
     [angbandContext.contents setCursorAtColumn:x row:y width:1 height:1];
     /*
@@ -4794,7 +4795,8 @@ static errr Term_curs_cocoa(TERM_LEN x, TERM_LEN y)
  */
 static errr Term_bigcurs_cocoa(TERM_LEN x, TERM_LEN y)
 {
-    AngbandContext *angbandContext = (__bridge AngbandContext*) (Term->data);
+    AngbandContext *angbandContext =
+	(__bridge AngbandContext*) (game_term->data);
 
     [angbandContext.contents setCursorAtColumn:x row:y width:2 height:1];
     [angbandContext.changes markChangedBlockAtColumn:x row:y width:2 height:1];
@@ -4810,7 +4812,8 @@ static errr Term_bigcurs_cocoa(TERM_LEN x, TERM_LEN y)
  */
 static errr Term_wipe_cocoa(TERM_LEN x, TERM_LEN y, int n)
 {
-    AngbandContext *angbandContext = (__bridge AngbandContext*) (Term->data);
+    AngbandContext *angbandContext =
+	(__bridge AngbandContext*) (game_term->data);
 
     [angbandContext.contents wipeBlockAtColumn:x row:y width:n height:1];
     [angbandContext.changes markChangedRangeAtColumn:x row:y width:n];
@@ -4826,7 +4829,8 @@ static errr Term_pict_cocoa(TERM_LEN x, TERM_LEN y, int n,
     /* Paranoia: Bail if graphics aren't enabled */
     if (! graphics_are_enabled()) return -1;
 
-    AngbandContext* angbandContext = (__bridge AngbandContext*) (Term->data);
+    AngbandContext* angbandContext =
+	(__bridge AngbandContext*) (game_term->data);
     int step = (use_bigtile) ? 2 : 1;
 
     int alphablend;
@@ -4891,7 +4895,8 @@ static errr Term_pict_cocoa(TERM_LEN x, TERM_LEN y, int n,
 static errr Term_text_cocoa(
     TERM_LEN x, TERM_LEN y, int n, TERM_COLOR a, concptr cp)
 {
-    AngbandContext* angbandContext = (__bridge AngbandContext*) (Term->data);
+    AngbandContext* angbandContext =
+	(__bridge AngbandContext*) (game_term->data);
 
     [angbandContext.contents setUniformAttributeTextRunAtColumn:x
 		   row:y n:n glyphs:cp attribute:a];
@@ -5062,7 +5067,7 @@ static void quit_calmly(void)
     {
         /* Hack -- Forget messages and term */
         msg_flag = false;
-        Term->mapped_flag = false;
+        game_term->mapped_flag = false;
 
         /* Save the game */
         do_cmd_save_game(p_ptr, 0);
@@ -5316,14 +5321,14 @@ static void send_key(char key)
     if (! key) return;
 
     /* Refuse to enqueue if it would cause an overflow. */
-    next_head = Term->key_head + 1;
-    if (next_head == Term->key_size) {
+    next_head = game_term->key_head + 1;
+    if (next_head == game_term->key_size) {
         next_head = 0;
     }
-    if (next_head == Term->key_tail) return;
+    if (next_head == game_term->key_tail) return;
 
-    Term->key_queue[Term->key_head] = key;
-    Term->key_head = next_head;
+    game_term->key_queue[game_term->key_head] = key;
+    game_term->key_head = next_head;
 }
 
 /**
