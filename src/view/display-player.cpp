@@ -28,7 +28,6 @@
 #include "player/player-status-table.h"
 #include "player/player-status.h"
 #include "realm/realm-names-table.h"
-#include "status-first-page.h"
 #include "system/floor-type-definition.h"
 #include "system/object-type-definition.h"
 #include "system/player-type-definition.h"
@@ -40,6 +39,7 @@
 #include "view/display-player-misc-info.h"
 #include "view/display-player-stat-info.h"
 #include "view/display-util.h"
+#include "view/status-first-page.h"
 #include "world/world.h"
 #include <string>
 
@@ -91,7 +91,7 @@ static void display_player_basic_info(PlayerType *player_ptr)
 
     display_player_one_line(ENTRY_NAME, tmp, TERM_L_BLUE);
     display_player_one_line(ENTRY_SEX, sp_ptr->title, TERM_L_BLUE);
-    display_player_one_line(ENTRY_RACE, (player_ptr->mimic_form ? mimic_info[player_ptr->mimic_form].title : rp_ptr->title), TERM_L_BLUE);
+    display_player_one_line(ENTRY_RACE, (player_ptr->mimic_form != MimicKindType::NONE ? mimic_info.at(player_ptr->mimic_form).title : rp_ptr->title), TERM_L_BLUE);
     display_player_one_line(ENTRY_CLASS, cp_ptr->title, TERM_L_BLUE);
 }
 
@@ -352,7 +352,7 @@ void display_player_equippy(PlayerType *player_ptr, TERM_LEN y, TERM_LEN x, BIT_
         o_ptr = &player_ptr->inventory_list[i];
 
         TERM_COLOR a = object_attr(o_ptr);
-        SYMBOL_CODE c = object_char(o_ptr);
+        auto c = object_char(o_ptr);
 
         if (!equippy_chars || !o_ptr->k_idx) {
             c = ' ';

@@ -1095,6 +1095,9 @@ endif
 
 DEFAULT_INCLUDES = -I$(srcdir) -I$(top_builddir)/src
 CPPFLAGS += $(XFT_CFLAGS) $(libcurl_CFLAGS)
+if PCH
+CPPFLAGS += -include ../src/stdafx.h
+endif
 LIBS += $(XFT_LIBS) $(libcurl_LIBS)
 COMPILE = $(srcdir)/gcc-wrap $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -1102,9 +1105,6 @@ OBJCXXCOMPILE = $(srcdir)/gcc-wrap $(OBJCXX) $(DEFS) $(DEFAULT_INCLUDES) \
 	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS)
 CXXCOMPILE = $(srcdir)/gcc-wrap $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-if PCH
-CXXCOMPILE += -include stdafx.h
-endif
 
 if PCH
 stdafx.h.gch: stdafx.h stdafx.cpp Makefile
@@ -1168,3 +1168,4 @@ distclean-local:
 
 clean-local:
 	-rm stdafx.h.gch stdafx.h.gch.sum
+	-rm -rf ../build

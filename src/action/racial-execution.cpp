@@ -10,6 +10,7 @@
 #include "game-option/disturbance-options.h"
 #include "inventory/inventory-slot-types.h"
 #include "player-base/player-class.h"
+#include "player-info/race-info.h"
 #include "player-status/player-energy.h"
 #include "racial/racial-switcher.h"
 #include "racial/racial-util.h"
@@ -31,7 +32,7 @@ bool exe_racial_power(PlayerType *player_ptr, const int32_t command)
     if (command <= -3)
         return switch_class_racial_execution(player_ptr, command);
 
-    if (player_ptr->mimic_form)
+    if (player_ptr->mimic_form != MimicKindType::NONE)
         return switch_mimic_racial_execution(player_ptr);
 
     return switch_race_racial_execution(player_ptr, command);
@@ -63,7 +64,7 @@ PERCENTAGE racial_chance(PlayerType *player_ptr, rpi_type *rpi_ptr)
     }
 
     auto special_easy = PlayerClass(player_ptr).equals(PlayerClassType::IMITATOR);
-    special_easy &= player_ptr->inventory_list[INVEN_NECK].name1 == ART_GOGO_PENDANT;
+    special_easy &= player_ptr->inventory_list[INVEN_NECK].fixed_artifact_idx == ART_GOGO_PENDANT;
     special_easy &= rpi_ptr->racial_name.compare("倍返し") == 0;
     if (special_easy) {
         difficulty -= 12;

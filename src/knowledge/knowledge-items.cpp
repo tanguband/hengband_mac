@@ -70,7 +70,7 @@ void do_cmd_knowledge_artifacts(PlayerType *player_ptr)
                 if (o_ptr->is_known())
                     continue;
 
-                okay[o_ptr->name1] = false;
+                okay[o_ptr->fixed_artifact_idx] = false;
             }
         }
     }
@@ -84,7 +84,7 @@ void do_cmd_knowledge_artifacts(PlayerType *player_ptr)
         if (o_ptr->is_known())
             continue;
 
-        okay[o_ptr->name1] = false;
+        okay[o_ptr->fixed_artifact_idx] = false;
     }
 
     std::vector<ARTIFACT_IDX> whats;
@@ -105,7 +105,7 @@ void do_cmd_knowledge_artifacts(PlayerType *player_ptr)
             ObjectType *q_ptr;
             q_ptr = &forge;
             q_ptr->prep(z);
-            q_ptr->name1 = a_idx;
+            q_ptr->fixed_artifact_idx = a_idx;
             q_ptr->ident |= IDENT_STORE;
             describe_flavor(player_ptr, base_name, q_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
         }
@@ -173,7 +173,6 @@ static void display_object_list(int col, int row, int per_page, IDX object_idx[]
     for (i = 0; i < per_page && (object_idx[object_top + i] >= 0); i++) {
         GAME_TEXT o_name[MAX_NLEN];
         TERM_COLOR a;
-        SYMBOL_CODE c;
         object_kind *flavor_k_ptr;
         KIND_OBJECT_IDX k_idx = object_idx[object_top + i];
         auto *k_ptr = &k_info[k_idx];
@@ -202,7 +201,7 @@ static void display_object_list(int col, int row, int per_page, IDX object_idx[]
         }
 
         a = flavor_k_ptr->x_attr;
-        c = flavor_k_ptr->x_char;
+        auto c = flavor_k_ptr->x_char;
 
         term_queue_bigchar(use_bigtile ? 76 : 77, row + i, a, c, 0, 0);
     }

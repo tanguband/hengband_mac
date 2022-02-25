@@ -469,7 +469,7 @@ BIT_FLAGS get_player_flags(PlayerType *player_ptr, tr_type tr_flag)
  */
 bool has_kill_wall(PlayerType *player_ptr)
 {
-    if (player_ptr->mimic_form == MIMIC_DEMON_LORD || music_singing(player_ptr, MUSIC_WALL)) {
+    if (player_ptr->mimic_form == MimicKindType::DEMON_LORD || music_singing(player_ptr, MUSIC_WALL)) {
         return true;
     }
 
@@ -1081,7 +1081,7 @@ void update_curses(PlayerType *player_ptr)
         auto obj_curse_flags = o_ptr->curse_flags;
         obj_curse_flags.reset({ CurseTraitType::CURSED, CurseTraitType::HEAVY_CURSE, CurseTraitType::PERMA_CURSE });
         player_ptr->cursed.set(obj_curse_flags);
-        if (o_ptr->name1 == ART_CHAINSWORD)
+        if (o_ptr->fixed_artifact_idx == ART_CHAINSWORD)
             player_ptr->cursed_special.set(CurseSpecialTraitType::CHAINSWORD);
 
         if (flgs.has(TR_TELEPORT)) {

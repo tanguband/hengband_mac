@@ -6,7 +6,7 @@
  * ここにこれ以上関数を引っ越してくるのは禁止。何ならここから更に分割していく
  */
 
-#include "display-player-stat-info.h"
+#include "view/display-player-stat-info.h"
 #include "inventory/inventory-slot-types.h"
 #include "mutation/mutation-flag-types.h"
 #include "object-enchant/tr-types.h"
@@ -142,7 +142,7 @@ static void process_stats(PlayerType *player_ptr, int row, int stat_col)
 {
     char buf[80];
     for (int i = 0; i < A_MAX; i++) {
-        int r_adj = player_ptr->mimic_form ? mimic_info[player_ptr->mimic_form].r_adj[i] : rp_ptr->r_adj[i];
+        int r_adj = player_ptr->mimic_form != MimicKindType::NONE ? mimic_info.at(player_ptr->mimic_form).r_adj[i] : rp_ptr->r_adj[i];
         int e_adj = calc_basic_stat(player_ptr, i);
         r_adj += compensate_special_race(player_ptr, i);
         e_adj -= r_adj;

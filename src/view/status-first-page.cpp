@@ -9,7 +9,6 @@
 #include "artifact/fixed-art-types.h"
 #include "combat/attack-power-table.h"
 #include "combat/shoot.h"
-#include "display-util.h"
 #include "game-option/text-display-options.h"
 #include "inventory/inventory-slot-types.h"
 #include "mutation/mutation-flag-types.h"
@@ -29,6 +28,7 @@
 #include "system/player-type-definition.h"
 #include "term/term-color-types.h"
 #include "util/bit-flags-calculator.h"
+#include "view/display-util.h"
 
 static TERM_COLOR likert_color = TERM_WHITE;
 
@@ -48,7 +48,7 @@ static void calc_shot_params(PlayerType *player_ptr, ObjectType *o_ptr, int *sho
     *shots = player_ptr->num_fire * 100;
     *shot_frac = ((*shots) * 100 / energy_fire) % 100;
     *shots = (*shots) / energy_fire;
-    if (o_ptr->name1 != ART_CRIMSON)
+    if (o_ptr->fixed_artifact_idx != ART_CRIMSON)
         return;
 
     *shots = 1;
@@ -135,7 +135,7 @@ static bool calc_weapon_one_hand(ObjectType *o_ptr, int hand, int *damage, int *
  */
 static int strengthen_basedam(PlayerType *player_ptr, ObjectType *o_ptr, int basedam, const TrFlags &flgs)
 {
-    if (o_ptr->is_fully_known() && ((o_ptr->name1 == ART_VORPAL_BLADE) || (o_ptr->name1 == ART_CHAINSWORD))) {
+    if (o_ptr->is_fully_known() && ((o_ptr->fixed_artifact_idx == ART_VORPAL_BLADE) || (o_ptr->fixed_artifact_idx == ART_CHAINSWORD))) {
         /* vorpal blade */
         basedam *= 5;
         basedam /= 3;
