@@ -1095,9 +1095,6 @@ endif
 
 DEFAULT_INCLUDES = -I$(srcdir) -I$(top_builddir)/src
 CPPFLAGS += $(XFT_CFLAGS) $(libcurl_CFLAGS)
-if PCH
-CPPFLAGS += -include ../src/stdafx.h
-endif
 LIBS += $(XFT_LIBS) $(libcurl_LIBS)
 COMPILE = $(srcdir)/gcc-wrap $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -1107,6 +1104,11 @@ CXXCOMPILE = $(srcdir)/gcc-wrap $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 
 if PCH
+# Would use CPPFLAGS, but that affects both the C++ and Objective-C++
+# preprocessing:  don't want to use the precompiled header for the
+# Objective-C++ code.
+CXXCOMPILE += -include ../src/stdafx.h
+
 stdafx.h.gch: stdafx.h stdafx.cpp Makefile
 	$(CXX) -x c++-header $(CXXFLAGS) $(AM_CXXFLAGS) $(srcdir)/stdafx.cpp -o $@
 	rm -f stdafx.h.gch.sum
