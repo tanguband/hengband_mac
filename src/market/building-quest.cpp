@@ -53,9 +53,9 @@ void print_questinfo(PlayerType *player_ptr, QuestId questnum, bool do_init)
     get_questinfo(player_ptr, questnum, do_init);
 
     GAME_TEXT tmp_str[80];
-    sprintf(tmp_str, _("クエスト情報 (危険度: %d 階相当)", "Quest Information (Danger level: %d)"), (int)quest[questnum].level);
+    sprintf(tmp_str, _("クエスト情報 (危険度: %d 階相当)", "Quest Information (Danger level: %d)"), (int)quest_map[questnum].level);
     prt(tmp_str, 5, 0);
-    prt(quest[questnum].name, 7, 0);
+    prt(quest_map[questnum].name, 7, 0);
 
     for (int i = 0; i < 10; i++) {
         c_put_str(TERM_YELLOW, quest_text[i], i + 8, 0);
@@ -77,7 +77,7 @@ void castle_quest(PlayerType *player_ptr)
     }
 
     quest_type *q_ptr;
-    q_ptr = &quest[q_index];
+    q_ptr = &quest_map[q_index];
     if (q_ptr->status == QuestStatusType::COMPLETED) {
         q_ptr->status = QuestStatusType::REWARDED;
         print_questinfo(player_ptr, q_index, false);
@@ -122,36 +122,5 @@ void castle_quest(PlayerType *player_ptr)
 
     q_ptr->status = QuestStatusType::TAKEN;
     reinit_wilderness = true;
-    if (q_ptr->type != QuestKindType::KILL_ANY_LEVEL) {
-        print_questinfo(player_ptr, q_index, true);
-        return;
-    }
-
-    if (q_ptr->r_idx == 0) {
-        q_ptr->r_idx = get_mon_num(player_ptr, 0, q_ptr->level + 4 + randint1(6), 0);
-    }
-
-    monster_race *r_ptr;
-    r_ptr = &r_info[q_ptr->r_idx];
-    while (r_ptr->kind_flags.has(MonsterKindType::UNIQUE) || (r_ptr->rarity != 1)) {
-        q_ptr->r_idx = get_mon_num(player_ptr, 0, q_ptr->level + 4 + randint1(6), 0);
-        r_ptr = &r_info[q_ptr->r_idx];
-    }
-
-    if (q_ptr->max_num == 0) {
-        if (randint1(10) > 7) {
-            q_ptr->max_num = 1;
-        } else {
-            q_ptr->max_num = randint1(3) + 1;
-        }
-    }
-
-    q_ptr->cur_num = 0;
-    concptr name = r_ptr->name.c_str();
-#ifdef JP
-    msg_format("クエスト: %sを %d体倒す", name, q_ptr->max_num);
-#else
-    msg_format("Your quest: kill %d %s", q_ptr->max_num, name);
-#endif
     print_questinfo(player_ptr, q_index, true);
 }

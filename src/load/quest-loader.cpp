@@ -4,10 +4,12 @@
 #include "load/angband-version-comparer.h"
 #include "load/load-util.h"
 #include "load/load-zangband.h"
+#include "load/savedata-old-flag-types.h"
 #include "monster-race/monster-race.h"
 #include "monster-race/race-flags1.h"
 #include "monster-race/race-flags7.h"
 #include "object-enchant/trg-types.h"
+#include "system/angband-exceptions.h"
 #include "system/artifact-type-definition.h"
 #include "system/floor-type-definition.h"
 #include "system/monster-race-definition.h"
@@ -79,7 +81,7 @@ static void load_quest_details(PlayerType *player_ptr, quest_type *q_ptr, int lo
 
     q_ptr->r_idx = rd_s16b();
     if ((q_ptr->type == QuestKindType::RANDOM) && (!q_ptr->r_idx)) {
-        determine_random_questor(player_ptr, &quest[i2enum<QuestId>(loading_quest_index)]);
+        determine_random_questor(player_ptr, &quest_map[i2enum<QuestId>(loading_quest_index)]);
     }
     q_ptr->k_idx = rd_s16b();
     if (q_ptr->k_idx) {
@@ -97,7 +99,16 @@ void analyze_quests(PlayerType *player_ptr, const uint16_t max_quests_load, cons
             continue;
         }
 
-        auto *const q_ptr = &quest[i2enum<QuestId>(i)];
+        auto *const q_ptr = &quest_map[i2enum<QuestId>(i)];
+
+        if (loading_savefile_version_is_older_than(15)) {
+            if (i == enum2i(OldQuestId15::CITY_SEA) && q_ptr->status != QuestStatusType::UNTAKEN) {
+                const std::string msg(_("海底都市クエストを受領または解決しているセーブデータはサポート外です。",
+                    "The save data with the taken quest of The City beneath the Sea is unsupported."));
+                throw(SaveDataNotSupportedException(msg));
+            }
+        }
+
         load_quest_completion(q_ptr);
         bool is_quest_running = (q_ptr->status == QuestStatusType::TAKEN);
         is_quest_running |= (!h_older_than(0, 3, 14) && (q_ptr->status == QuestStatusType::COMPLETED));
