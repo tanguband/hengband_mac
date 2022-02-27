@@ -25,7 +25,7 @@
 #include "monster-attack/monster-attack-describer.h"
 #include "monster-attack/monster-attack-effect.h"
 #include "monster-attack/monster-attack-switcher.h"
-#include "monster-attack/monster-attack-types.h"
+#include "monster-attack/monster-attack-table.h"
 #include "monster-race/monster-race.h"
 #include "monster-race/race-flags1.h"
 #include "monster-race/race-flags3.h"
@@ -184,8 +184,9 @@ bool MonsterAttackPlayer::process_monster_blows()
             this->increase_blow_type_seen(ap_cnt);
 
             // 撃退成功時はそのまま次の打撃へ移行。
-            if (protect)
+            if (protect) {
                 continue;
+            }
 
             // 撃退失敗時は落馬処理、変わり身のテレポート処理を行う。
             check_fall_off_horse(this->player_ptr, this);
