@@ -79,6 +79,8 @@
 #include "status/experience.h"
 #include "system/player-type-definition.h"
 #include "target/target-getter.h"
+#include "timed-effect/player-paralysis.h"
+#include "timed-effect/timed-effects.h"
 #include "util/bit-flags-calculator.h"
 #include "util/int-char-converter.h"
 #include "view/display-messages.h"
@@ -220,7 +222,7 @@ bool switch_class_racial_execution(PlayerType *player_ptr, const int32_t command
             return false;
         }
 
-        if (!player_ptr->paralyzed && !cmd_limit_cast(player_ptr)) {
+        if (!player_ptr->effects()->paralysis()->is_paralyzed() && !cmd_limit_cast(player_ptr)) {
             handle_stuff(player_ptr);
             command_dir = 0;
             (void)do_cmd_cast(player_ptr);
@@ -320,7 +322,7 @@ bool switch_race_racial_execution(PlayerType *player_ptr, const int32_t command)
         return true;
     case PlayerRaceType::HALF_ORC:
         msg_print(_("勇気を出した。", "You play tough."));
-        (void)BadStatusSetter(player_ptr).afraidness(0);
+        (void)BadStatusSetter(player_ptr).fear(0);
         return true;
     case PlayerRaceType::HALF_TROLL:
         msg_print(_("うがぁぁ！", "RAAAGH!"));

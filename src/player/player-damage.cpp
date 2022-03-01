@@ -67,6 +67,7 @@
 #include "term/screen-processor.h"
 #include "term/term-color-types.h"
 #include "timed-effect/player-hallucination.h"
+#include "timed-effect/player-paralysis.h"
 #include "timed-effect/timed-effects.h"
 #include "util/bit-flags-calculator.h"
 #include "util/string-processor.h"
@@ -406,26 +407,24 @@ int take_hit(PlayerType *player_ptr, int damage_type, int damage, concptr hit_fr
             screen_dump = make_screen_dump(player_ptr);
 #endif
             if (seppuku) {
-                strcpy(player_ptr->died_from, hit_from);
-#ifdef JP
+                player_ptr->died_from = hit_from;
                 if (!winning_seppuku) {
-                    strcpy(player_ptr->died_from, "切腹");
+                    player_ptr->died_from = _("切腹", "Seppuku");
                 }
-#endif
             } else {
-                char dummy[1024];
-#ifdef JP
                 auto effects = player_ptr->effects();
                 auto is_hallucinated = effects->hallucination()->is_hallucinated();
-                sprintf(dummy, "%s%s%s",
-                    !player_ptr->paralyzed ? ""
-                    : player_ptr->free_act ? "彫像状態で"
-                                           : "麻痺状態で",
-                    is_hallucinated ? "幻覚に歪んだ" : "", hit_from);
+                auto paralysis_state = "";
+                if (effects->paralysis()->is_paralyzed()) {
+                    paralysis_state = player_ptr->free_act ? _("彫像状態で", " while being the statue") : _("麻痺状態で", " while paralyzing");
+                }
+
+                auto hallucintion_state = is_hallucinated ? _("幻覚に歪んだ", "hallucinatingly distorted ") : "";
+#ifdef JP
+                player_ptr->died_from = format("%s%s%s", paralysis_state, hallucintion_state, hit_from);
 #else
-                sprintf(dummy, "%s%s", hit_from, !player_ptr->paralyzed ? "" : " while helpless");
+                player_ptr->died_from = format("%s%s%s", hallucintion_state, hit_from, paralysis_state);
 #endif
-                angband_strcpy(player_ptr->died_from, dummy, sizeof player_ptr->died_from);
             }
 
             w_ptr->total_winner = false;
@@ -433,20 +432,24 @@ int take_hit(PlayerType *player_ptr, int damage_type, int damage, concptr hit_fr
                 add_retired_class(player_ptr->pclass);
                 exe_write_diary(player_ptr, DIARY_DESCRIPTION, 0, _("勝利の後切腹した。", "committed seppuku after the winning."));
             } else {
-                char buf[20];
+                std::string place;
 
                 if (player_ptr->current_floor_ptr->inside_arena) {
-                    strcpy(buf, _("アリーナ", "in the Arena"));
+                    place = _("アリーナ", "in the Arena");
                 } else if (!is_in_dungeon(player_ptr)) {
-                    strcpy(buf, _("地上", "on the surface"));
+                    place = _("地上", "on the surface");
                 } else if (inside_quest(q_idx) && (quest_type::is_fixed(q_idx) && !((q_idx == QuestId::OBERON) || (q_idx == QuestId::SERPENT)))) {
-                    strcpy(buf, _("クエスト", "in a quest"));
+                    place = _("クエスト", "in a quest");
                 } else {
-                    sprintf(buf, _("%d階", "level %d"), (int)player_ptr->current_floor_ptr->dun_level);
+                    place = format(_("%d階", "on level %d"), static_cast<int>(player_ptr->current_floor_ptr->dun_level));
                 }
 
-                sprintf(tmp, _("%sで%sに殺された。", "killed by %s %s."), buf, player_ptr->died_from);
-                exe_write_diary(player_ptr, DIARY_DESCRIPTION, 0, tmp);
+#ifdef JP
+                std::string note = format("%sで%sに殺された。", place.c_str(), player_ptr->died_from.c_str());
+#else
+                std::string note = format("killed by %s %s.", player_ptr->died_from.c_str(), place.c_str());
+#endif
+                exe_write_diary(player_ptr, DIARY_DESCRIPTION, 0, note.c_str());
             }
 
             exe_write_diary(player_ptr, DIARY_GAMESTART, 1, _("-------- ゲームオーバー --------", "--------   Game  Over   --------"));

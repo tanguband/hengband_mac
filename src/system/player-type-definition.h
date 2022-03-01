@@ -13,6 +13,7 @@
 #include "util/flag-group.h"
 #include <array>
 #include <map>
+#include <string>
 
 enum class ItemKindType : short;
 enum class PlayerSkillKindType;
@@ -95,8 +96,6 @@ public:
     TIME_EFFECT fast{}; /* Timed -- Fast */
     TIME_EFFECT slow{}; /* Timed -- Slow */
     TIME_EFFECT blind{}; /* Timed -- Blindness */
-    TIME_EFFECT paralyzed{}; /* Timed -- Paralysis */
-    TIME_EFFECT afraid{}; /* Timed -- Fear */
     TIME_EFFECT poisoned{}; /* Timed -- Poisoned */
 
     TIME_EFFECT protevil{}; /* Timed -- Protection */
@@ -193,7 +192,7 @@ public:
     ClassSpecificData class_specific_data;
 
     int player_hp[PY_MAX_LEVEL]{};
-    char died_from[MAX_MONSTER_NAME]{}; /* What killed the player */
+    std::string died_from{}; /* What killed the player */
     concptr last_message{}; /* Last message on death or retirement */
     char history[4][60]{}; /* Textual "history" for the Player */
 

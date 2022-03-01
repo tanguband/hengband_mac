@@ -59,6 +59,7 @@
 #include "timed-effect/player-confusion.h"
 #include "timed-effect/player-cut.h"
 #include "timed-effect/player-hallucination.h"
+#include "timed-effect/player-paralysis.h"
 #include "timed-effect/player-stun.h"
 #include "timed-effect/timed-effects.h"
 #include "util/bit-flags-calculator.h"
@@ -214,7 +215,7 @@ void process_player(PlayerType *player_ptr)
                     (randint0(r_ptr->level) < player_ptr->skill_exp[PlayerSkillKindType::RIDING]) ? 0 : (monster_fear_remaining(m_ptr) - 1))) {
                 GAME_TEXT m_name[MAX_NLEN];
                 monster_desc(player_ptr, m_name, m_ptr, 0);
-                msg_format(_("%^sを恐怖から立ち直らせた。", "%^s is no longer afraid."), m_name);
+                msg_format(_("%^sを恐怖から立ち直らせた。", "%^s is no longer fearful."), m_name);
             }
         }
 
@@ -282,11 +283,12 @@ void process_player(PlayerType *player_ptr)
         energy.reset_player_turn();
         auto effects = player_ptr->effects();
         auto is_knocked_out = effects->stun()->is_knocked_out();
+        auto is_paralyzed = effects->paralysis()->is_paralyzed();
         if (player_ptr->phase_out) {
             move_cursor_relative(player_ptr->y, player_ptr->x);
             command_cmd = SPECIAL_KEY_BUILDING;
             process_command(player_ptr);
-        } else if ((player_ptr->paralyzed || is_knocked_out) && !cheat_immortal) {
+        } else if ((is_paralyzed || is_knocked_out) && !cheat_immortal) {
             energy.set_player_turn_energy(100);
         } else if (player_ptr->action == ACTION_REST) {
             if (player_ptr->resting > 0) {

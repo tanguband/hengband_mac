@@ -19,7 +19,9 @@
 #include "system/player-type-definition.h"
 #include "timed-effect/player-confusion.h"
 #include "timed-effect/player-cut.h"
+#include "timed-effect/player-fear.h"
 #include "timed-effect/player-hallucination.h"
+#include "timed-effect/player-paralysis.h"
 #include "timed-effect/player-stun.h"
 #include "timed-effect/timed-effects.h"
 
@@ -129,7 +131,7 @@ void reduce_magic_effects_timeout(PlayerType *player_ptr)
         (void)set_pass_wall(player_ptr, player_ptr->tim_pass_wall - 1, true);
     }
 
-    if (player_ptr->paralyzed) {
+    if (effects->paralysis()->is_paralyzed()) {
         (void)bss.mod_paralysis(-1);
     }
 
@@ -137,8 +139,8 @@ void reduce_magic_effects_timeout(PlayerType *player_ptr)
         (void)bss.mod_confusion(-1);
     }
 
-    if (player_ptr->afraid) {
-        (void)bss.mod_afraidness(-1);
+    if (effects->fear()->is_fearful()) {
+        (void)bss.mod_fear(-1);
     }
 
     if (player_ptr->fast) {

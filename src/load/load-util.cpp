@@ -53,6 +53,14 @@ byte sf_get(void)
 }
 
 /*!
+ * @brief ロードファイルポインタからbool値を読み込む
+ */
+bool rd_bool()
+{
+    return rd_byte() != 0;
+}
+
+/*!
  * @brief ロードファイルポインタから1バイトを読み込む
  */
 byte rd_byte()
@@ -147,6 +155,18 @@ void rd_string(char *str, int max)
         break;
     }
 #endif
+}
+
+/*!
+ * @brief ロードファイルポインタから文字列を読み込んで std::string オブジェクトに格納する
+ * @param str std::string オブジェクトへの参照
+ * @param max 最大読み取りバイト数
+ */
+void rd_string(std::string &str, int max)
+{
+    std::vector<char> buf(max);
+    rd_string(buf.data(), max);
+    str = buf.data();
 }
 
 /*!

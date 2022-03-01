@@ -21,6 +21,15 @@ static void sf_put(byte v)
 }
 
 /*!
+ * @brief bool値をファイルに書き込む(wr_byte()の糖衣)
+ * @param v 書き込むbool値
+ */
+void wr_bool(bool v)
+{
+    wr_byte(v ? 1 : 0);
+}
+
+/*!
  * @brief 1バイトをファイルに書き込む(sf_put()の糖衣)
  * @param v 書き込むバイト
  */
@@ -73,11 +82,10 @@ void wr_s32b(int32_t v)
  * @brief 文字列をファイルに書き込む
  * @param str 書き込む文字列
  */
-void wr_string(concptr str)
+void wr_string(std::string_view sv)
 {
-    while (*str) {
-        wr_byte(*str);
-        str++;
+    for (auto c : sv) {
+        wr_byte(c);
     }
-    wr_byte(*str);
+    wr_byte('\0');
 }

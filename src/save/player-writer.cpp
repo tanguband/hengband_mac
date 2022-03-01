@@ -12,7 +12,9 @@
 #include "system/player-type-definition.h"
 #include "timed-effect/player-confusion.h"
 #include "timed-effect/player-cut.h"
+#include "timed-effect/player-fear.h"
 #include "timed-effect/player-hallucination.h"
+#include "timed-effect/player-paralysis.h"
 #include "timed-effect/player-stun.h"
 #include "timed-effect/timed-effects.h"
 #include "world/world.h"
@@ -109,8 +111,9 @@ void wr_player(PlayerType *player_ptr)
     wr_s32b(player_ptr->old_race2);
     wr_s16b(player_ptr->old_realm);
 
-    for (int i = 0; i < MAX_BOUNTY; i++) {
-        wr_s16b(w_ptr->bounty_r_idx[i]);
+    for (const auto &[r_idx, is_achieved] : w_ptr->bounties) {
+        wr_s16b(r_idx);
+        wr_bool(is_achieved);
     }
 
     for (int i = 0; i < 4; i++) {
@@ -154,7 +157,7 @@ void wr_player(PlayerType *player_ptr)
     auto effects = player_ptr->effects();
     wr_s16b(0); /* old "rest" */
     wr_s16b(player_ptr->blind);
-    wr_s16b(player_ptr->paralyzed);
+    wr_s16b(effects->paralysis()->current());
     wr_s16b(effects->confusion()->current());
     wr_s16b(player_ptr->food);
     wr_s16b(0); /* old "food_digested" */
@@ -163,7 +166,7 @@ void wr_player(PlayerType *player_ptr)
     wr_s16b(player_ptr->enchant_energy_need);
     wr_s16b(player_ptr->fast);
     wr_s16b(player_ptr->slow);
-    wr_s16b(player_ptr->afraid);
+    wr_s16b(effects->fear()->current());
     wr_s16b(effects->cut()->current());
     wr_s16b(effects->stun()->current());
     wr_s16b(player_ptr->poisoned);
@@ -226,12 +229,12 @@ void wr_player(PlayerType *player_ptr)
     wr_s16b(player_ptr->ele_immune);
     wr_u32b(player_ptr->special_defense);
     wr_byte(player_ptr->knowledge);
-    wr_byte(player_ptr->autopick_autoregister);
+    wr_bool(player_ptr->autopick_autoregister);
     wr_byte(0);
     wr_byte((byte)player_ptr->action);
     wr_byte(0);
-    wr_byte(preserve_mode);
-    wr_byte(player_ptr->wait_report_score);
+    wr_bool(preserve_mode);
+    wr_bool(player_ptr->wait_report_score);
 
     for (int i = 0; i < 12; i++) {
         wr_u32b(0L);
@@ -247,7 +250,7 @@ void wr_player(PlayerType *player_ptr)
     wr_u16b(player_ptr->panic_save);
     wr_u16b(w_ptr->total_winner);
     wr_u16b(w_ptr->noscore);
-    wr_byte(player_ptr->is_dead);
+    wr_bool(player_ptr->is_dead);
     wr_byte(player_ptr->feeling);
     wr_s32b(player_ptr->current_floor_ptr->generated_turn);
     wr_s32b(player_ptr->feeling_turn);
