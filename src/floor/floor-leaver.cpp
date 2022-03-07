@@ -123,8 +123,8 @@ static void record_pet_diary(PlayerType *player_ptr)
  */
 static void preserve_pet(PlayerType *player_ptr)
 {
-    for (MONSTER_IDX party_monster_num = 0; party_monster_num < MAX_PARTY_MON; party_monster_num++) {
-        party_mon[party_monster_num].r_idx = 0;
+    for (auto &mon : party_mon) {
+        mon.r_idx = MonsterRace::empty_id();
     }
 
     check_riding_preservation(player_ptr);
@@ -132,7 +132,8 @@ static void preserve_pet(PlayerType *player_ptr)
     record_pet_diary(player_ptr);
     for (MONSTER_IDX i = player_ptr->current_floor_ptr->m_max - 1; i >= 1; i--) {
         auto *m_ptr = &player_ptr->current_floor_ptr->m_list[i];
-        if ((m_ptr->parent_m_idx == 0) || (player_ptr->current_floor_ptr->m_list[m_ptr->parent_m_idx].r_idx != 0)) {
+        const auto parent_r_idx = player_ptr->current_floor_ptr->m_list[m_ptr->parent_m_idx].r_idx;
+        if ((m_ptr->parent_m_idx == 0) || MonsterRace(parent_r_idx).is_valid()) {
             continue;
         }
 
@@ -259,7 +260,7 @@ static void get_out_monster(PlayerType *player_ptr)
  */
 static void preserve_info(PlayerType *player_ptr)
 {
-    MONRACE_IDX quest_r_idx = 0;
+    auto quest_r_idx = MonsterRace::empty_id();
     for (auto &[q_idx, q_ref] : quest_map) {
         auto quest_relating_monster = (q_ref.status == QuestStatusType::TAKEN);
         quest_relating_monster &= ((q_ref.type == QuestKindType::KILL_LEVEL) || (q_ref.type == QuestKindType::RANDOM));

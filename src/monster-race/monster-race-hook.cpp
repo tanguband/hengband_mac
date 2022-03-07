@@ -19,9 +19,10 @@
 #include "system/player-type-definition.h"
 #include "util/bit-flags-calculator.h"
 #include "util/string-processor.h"
+#include <set>
 
 /*! 通常pit生成時のモンスターの構成条件ID / Race index for "monster pit (clone)" */
-int vault_aux_race;
+MonsterRaceId vault_aux_race;
 
 /*! 単一シンボルpit生成時の指定シンボル / Race index for "monster pit (symbol clone)" */
 char vault_aux_char;
@@ -47,7 +48,7 @@ void vault_prep_clone(PlayerType *player_ptr)
 void vault_prep_symbol(PlayerType *player_ptr)
 {
     get_mon_num_prep(player_ptr, vault_aux_simple, nullptr);
-    MONRACE_IDX r_idx = get_mon_num(player_ptr, 0, player_ptr->current_floor_ptr->dun_level + 10, 0);
+    MonsterRaceId r_idx = get_mon_num(player_ptr, 0, player_ptr->current_floor_ptr->dun_level + 10, 0);
     get_mon_num_prep(player_ptr, nullptr, nullptr);
     vault_aux_char = r_info[r_idx].d_char;
 }
@@ -89,7 +90,7 @@ void vault_prep_dragon(PlayerType *player_ptr)
  * @param r_idx モンスターＩＤ
  * @return 討伐対象にできるならTRUEを返す。
  */
-bool mon_hook_quest(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_quest(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -127,7 +128,7 @@ bool mon_hook_quest(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * ダンジョンが火山の場合は、荒野の火山(WILD_VOLCANO)に出ない水棲動物(AQUATIC)は許可しない。
  * </pre>
  */
-bool mon_hook_dungeon(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_dungeon(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     if (!is_in_dungeon(player_ptr) && !inside_quest(player_ptr->current_floor_ptr->quest_number)) {
         return true;
@@ -149,7 +150,7 @@ bool mon_hook_dungeon(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 海洋に出現するならばTRUEを返す
  */
-bool mon_hook_ocean(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_ocean(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -163,7 +164,7 @@ bool mon_hook_ocean(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 海岸に出現するならばTRUEを返す
  */
-bool mon_hook_shore(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_shore(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -177,7 +178,7 @@ bool mon_hook_shore(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 荒地に出現するならばTRUEを返す
  */
-bool mon_hook_waste(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_waste(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -191,7 +192,7 @@ bool mon_hook_waste(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 荒地に出現するならばTRUEを返す
  */
-bool mon_hook_town(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_town(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -205,7 +206,7 @@ bool mon_hook_town(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 森林に出現するならばTRUEを返す
  */
-bool mon_hook_wood(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_wood(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -219,7 +220,7 @@ bool mon_hook_wood(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 火山に出現するならばTRUEを返す
  */
-bool mon_hook_volcano(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_volcano(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -233,7 +234,7 @@ bool mon_hook_volcano(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 山地に出現するならばTRUEを返す
  */
-bool mon_hook_mountain(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_mountain(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -247,7 +248,7 @@ bool mon_hook_mountain(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 森林に出現するならばTRUEを返す
  */
-bool mon_hook_grass(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_grass(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -261,7 +262,7 @@ bool mon_hook_grass(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 深い水地形に出現するならばTRUEを返す
  */
-bool mon_hook_deep_water(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_deep_water(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!mon_hook_dungeon(player_ptr, r_idx)) {
@@ -276,7 +277,7 @@ bool mon_hook_deep_water(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 浅い水地形に出現するならばTRUEを返す
  */
-bool mon_hook_shallow_water(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_shallow_water(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!mon_hook_dungeon(player_ptr, r_idx)) {
@@ -291,7 +292,7 @@ bool mon_hook_shallow_water(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 溶岩地形に出現するならばTRUEを返す
  */
-bool mon_hook_lava(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_lava(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!mon_hook_dungeon(player_ptr, r_idx)) {
@@ -306,7 +307,7 @@ bool mon_hook_lava(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定するモンスターの種族ID
  * @return 通常の床地形に出現するならばTRUEを返す
  */
-bool mon_hook_floor(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool mon_hook_floor(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -322,7 +323,7 @@ bool mon_hook_floor(PlayerType *player_ptr, MONRACE_IDX r_idx)
 /*
  * Helper function for "glass room"
  */
-bool vault_aux_lite(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_lite(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -350,7 +351,7 @@ bool vault_aux_lite(PlayerType *player_ptr, MONRACE_IDX r_idx)
 /*
  * Helper function for "glass room"
  */
-bool vault_aux_shards(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_shards(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -370,7 +371,7 @@ bool vault_aux_shards(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return Vault生成の最低必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_simple(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_simple(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -384,7 +385,7 @@ bool vault_aux_simple(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_jelly(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_jelly(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -412,7 +413,7 @@ bool vault_aux_jelly(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_animal(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_animal(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -432,7 +433,7 @@ bool vault_aux_animal(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_undead(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_undead(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -452,10 +453,23 @@ bool vault_aux_undead(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_chapel_g(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_chapel_g(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
-    static int chapel_list[] = { MON_NOV_PRIEST, MON_NOV_PALADIN, MON_NOV_PRIEST_G, MON_NOV_PALADIN_G, MON_PRIEST, MON_JADE_MONK, MON_IVORY_MONK,
-        MON_ULTRA_PALADIN, MON_EBONY_MONK, MON_W_KNIGHT, MON_KNI_TEMPLAR, MON_PALADIN, MON_TOPAZ_MONK, 0 };
+    static const std::set<MonsterRaceId> chapel_list = {
+        MonsterRaceId::NOV_PRIEST,
+        MonsterRaceId::NOV_PALADIN,
+        MonsterRaceId::NOV_PRIEST_G,
+        MonsterRaceId::NOV_PALADIN_G,
+        MonsterRaceId::PRIEST,
+        MonsterRaceId::JADE_MONK,
+        MonsterRaceId::IVORY_MONK,
+        MonsterRaceId::ULTRA_PALADIN,
+        MonsterRaceId::EBONY_MONK,
+        MonsterRaceId::W_KNIGHT,
+        MonsterRaceId::KNI_TEMPLAR,
+        MonsterRaceId::PALADIN,
+        MonsterRaceId::TOPAZ_MONK,
+    };
 
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -466,7 +480,7 @@ bool vault_aux_chapel_g(PlayerType *player_ptr, MONRACE_IDX r_idx)
         return false;
     }
 
-    if ((r_idx == MON_A_GOLD) || (r_idx == MON_A_SILVER)) {
+    if ((r_idx == MonsterRaceId::A_GOLD) || (r_idx == MonsterRaceId::A_SILVER)) {
         return false;
     }
 
@@ -474,13 +488,7 @@ bool vault_aux_chapel_g(PlayerType *player_ptr, MONRACE_IDX r_idx)
         return true;
     }
 
-    for (int i = 0; chapel_list[i]; i++) {
-        if (r_idx == chapel_list[i]) {
-            return true;
-        }
-    }
-
-    return false;
+    return chapel_list.find(r_idx) != chapel_list.end();
 }
 
 /*!
@@ -489,7 +497,7 @@ bool vault_aux_chapel_g(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_kennel(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_kennel(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -509,7 +517,7 @@ bool vault_aux_kennel(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_mimic(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_mimic(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -529,7 +537,7 @@ bool vault_aux_mimic(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_clone(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_clone(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     if (!vault_monster_okay(player_ptr, r_idx)) {
         return false;
@@ -544,7 +552,7 @@ bool vault_aux_clone(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_symbol_e(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_symbol_e(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -572,7 +580,7 @@ bool vault_aux_symbol_e(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_symbol_g(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_symbol_g(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -600,7 +608,7 @@ bool vault_aux_symbol_g(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_orc(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_orc(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -624,7 +632,7 @@ bool vault_aux_orc(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_troll(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_troll(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -648,7 +656,7 @@ bool vault_aux_troll(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_giant(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_giant(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -676,7 +684,7 @@ bool vault_aux_giant(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_dragon(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_dragon(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -707,7 +715,7 @@ bool vault_aux_dragon(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_demon(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_demon(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -731,7 +739,7 @@ bool vault_aux_demon(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_cthulhu(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_cthulhu(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (!vault_monster_okay(player_ptr, r_idx)) {
@@ -755,33 +763,26 @@ bool vault_aux_cthulhu(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 確認したいモンスター種族ID
  * @return 生成必要条件を満たしているならTRUEを返す。
  */
-bool vault_aux_dark_elf(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_aux_dark_elf(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
-    static int dark_elf_list[] = {
-        MON_D_ELF,
-        MON_D_ELF_MAGE,
-        MON_D_ELF_WARRIOR,
-        MON_D_ELF_PRIEST,
-        MON_D_ELF_LORD,
-        MON_D_ELF_WARLOCK,
-        MON_D_ELF_DRUID,
-        MON_NIGHTBLADE,
-        MON_D_ELF_SORC,
-        MON_D_ELF_SHADE,
-        0,
+    static const std::set<MonsterRaceId> dark_elf_list = {
+        MonsterRaceId::D_ELF,
+        MonsterRaceId::D_ELF_MAGE,
+        MonsterRaceId::D_ELF_WARRIOR,
+        MonsterRaceId::D_ELF_PRIEST,
+        MonsterRaceId::D_ELF_LORD,
+        MonsterRaceId::D_ELF_WARLOCK,
+        MonsterRaceId::D_ELF_DRUID,
+        MonsterRaceId::NIGHTBLADE,
+        MonsterRaceId::D_ELF_SORC,
+        MonsterRaceId::D_ELF_SHADE,
     };
 
     if (!vault_monster_okay(player_ptr, r_idx)) {
         return false;
     }
 
-    for (int i = 0; dark_elf_list[i]; i++) {
-        if (r_idx == dark_elf_list[i]) {
-            return true;
-        }
-    }
-
-    return false;
+    return dark_elf_list.find(r_idx) != dark_elf_list.end();
 }
 
 /*!
@@ -793,7 +794,7 @@ bool vault_aux_dark_elf(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * Used to determine the message to print for a killed monster.
  * ("dies", "destroyed")
  */
-bool monster_living(MONRACE_IDX r_idx)
+bool monster_living(MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     return r_ptr->kind_flags.has_none_of({ MonsterKindType::DEMON, MonsterKindType::UNDEAD, MonsterKindType::NONLIVING });
@@ -807,16 +808,16 @@ bool monster_living(MONRACE_IDX r_idx)
  * @details
  * 実質バーノール＝ルパート用。
  */
-bool no_questor_or_bounty_uniques(MONRACE_IDX r_idx)
+bool no_questor_or_bounty_uniques(MonsterRaceId r_idx)
 {
     switch (r_idx) {
         /*
          * Decline them to be questor or bounty because they use
          * special motion "split and combine"
          */
-    case MON_BANORLUPART:
-    case MON_BANOR:
-    case MON_LUPART:
+    case MonsterRaceId::BANORLUPART:
+    case MonsterRaceId::BANOR:
+    case MonsterRaceId::LUPART:
         return true;
     default:
         return false;
@@ -828,7 +829,7 @@ bool no_questor_or_bounty_uniques(MONRACE_IDX r_idx)
  * @param r_idx モンスターＩＤ
  * @return 死体を食べられるならTRUEを返す。
  */
-bool monster_hook_human(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool monster_hook_human(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -850,7 +851,7 @@ bool monster_hook_human(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定対象となるモンスターのＩＤ
  * @return 悪夢の元凶となり得るか否か。
  */
-bool get_nightmare(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool get_nightmare(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     auto *r_ptr = &r_info[r_idx];
     if (none_bits(r_ptr->flags2, RF2_ELDRITCH_HORROR)) {
@@ -869,7 +870,7 @@ bool get_nightmare(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx 判定したいモンスター種族のID
  * @return 釣れる対象ならばTRUEを返す
  */
-bool monster_is_fishing_target(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool monster_is_fishing_target(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -889,7 +890,7 @@ bool monster_is_fishing_target(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * 自爆以外のなんらかのHP攻撃手段を持っていること。
  * @return 参加できるか否か
  */
-bool monster_can_entry_arena(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool monster_can_entry_arena(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -927,7 +928,7 @@ bool monster_can_entry_arena(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * @param r_idx チェックしたいモンスター種族のID
  * @return 人形にできるならTRUEを返す
  */
-bool item_monster_okay(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool item_monster_okay(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     /* Unused */
     (void)player_ptr;
@@ -969,7 +970,7 @@ bool item_monster_okay(PlayerType *player_ptr, MONRACE_IDX r_idx)
  * Line 2 -- forbid uniques
  * Line 3 -- forbid aquatic monsters
  */
-bool vault_monster_okay(PlayerType *player_ptr, MONRACE_IDX r_idx)
+bool vault_monster_okay(PlayerType *player_ptr, MonsterRaceId r_idx)
 {
     return mon_hook_dungeon(player_ptr, r_idx) && r_info[r_idx].kind_flags.has_not(MonsterKindType::UNIQUE) && none_bits(r_info[r_idx].flags7, RF7_UNIQUE2) && r_info[r_idx].resistance_flags.has_not(MonsterResistanceType::RESIST_ALL) && none_bits(r_info[r_idx].flags7, RF7_AQUATIC);
 }
