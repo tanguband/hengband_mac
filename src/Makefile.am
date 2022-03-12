@@ -512,6 +512,7 @@ hengband_SOURCES = \
 	monster-race/race-ability-flags.h \
 	monster-race/race-ability-mask.cpp monster-race/race-ability-mask.h \
 	monster-race/race-behavior-flags.h \
+	monster-race/race-drop-flags.h \
 	monster-race/race-flags-resistance.h \
 	monster-race/race-flags1.h monster-race/race-flags2.h \
 	monster-race/race-flags3.h \
@@ -625,11 +626,13 @@ hengband_SOURCES = \
 	object-hook/hook-weapon.cpp object-hook/hook-weapon.h \
 	\
 	object-use/item-use-checker.cpp object-use/item-use-checker.h \
-	object-use/quaff-execution.cpp object-use/quaff-execution.h \
 	object-use/throw-execution.cpp object-use/throw-execution.h \
 	object-use/use-execution.cpp object-use/use-execution.h \
 	object-use/zaprod-execution.cpp object-use/zaprod-execution.h \
 	object-use/zapwand-execution.cpp object-use/zapwand-execution.h \
+	\
+	object-use/quaff/quaff-effects.cpp object-use/quaff/quaff-effects.h \
+	object-use/quaff/quaff-execution.cpp object-use/quaff/quaff-execution.h \
 	\
 	object-use/read/read-execution.cpp object-use/read/read-execution.h \
 	object-use/read/gbh-shirt-read-executor.cpp object-use/read/gbh-shirt-read-executor.h \
