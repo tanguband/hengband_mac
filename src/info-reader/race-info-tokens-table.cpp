@@ -5,6 +5,7 @@
 #include "monster-race/race-drop-flags.h"
 #include "monster-race/race-kind-flags.h"
 #include "monster-race/race-visual-flags.h"
+#include "monster-race/race-wilderness-flags.h"
 
 /*!
  * モンスターの打撃手段トークンの定義 /
@@ -275,56 +276,7 @@ const std::unordered_map<std::string_view, race_flags7> r_info_flags7 = {
  * Monster race flags
  */
 const std::unordered_map<std::string_view, race_flags8> r_info_flags8 = {
-    { "WILD_ONLY", RF8_WILD_ONLY },
-    { "WILD_TOWN", RF8_WILD_TOWN },
     { "NO_QUEST", RF8_NO_QUEST },
-    { "WILD_SHORE", RF8_WILD_SHORE },
-    { "WILD_OCEAN", RF8_WILD_OCEAN },
-    { "WILD_WASTE", RF8_WILD_WASTE },
-    { "WILD_WOOD", RF8_WILD_WOOD },
-    { "WILD_VOLCANO", RF8_WILD_VOLCANO },
-    { "WILD_MOUNTAIN", RF8_WILD_MOUNTAIN },
-    { "WILD_GRASS", RF8_WILD_GRASS },
-    { "WILD_SWAMP", RF8_WILD_SWAMP },
-    { "WILD_ALL", RF8_WILD_ALL },
-};
-
-/*!
- * モンスター特性トークンの定義9 /
- * Monster race flags
- */
-const std::unordered_map<std::string_view, race_flags9> r_info_flags9 = {
-    { "EAT_BLIND", RF9_EAT_BLIND },
-    { "EAT_CONF", RF9_EAT_CONF },
-    { "EAT_MANA", RF9_EAT_MANA },
-    { "EAT_NEXUS", RF9_EAT_NEXUS },
-    // { "EAT_BLINK", RF9_EAT_BLINK }, //<! @note フラグ未定義
-    { "EAT_SLEEP", RF9_EAT_SLEEP },
-    { "EAT_BERSERKER", RF9_EAT_BERSERKER },
-    { "EAT_ACIDIC", RF9_EAT_ACIDIC },
-    { "EAT_SPEED", RF9_EAT_SPEED },
-    { "EAT_CURE", RF9_EAT_CURE },
-    { "EAT_FIRE_RES", RF9_EAT_FIRE_RES },
-    { "EAT_COLD_RES", RF9_EAT_COLD_RES },
-    { "EAT_ACID_RES", RF9_EAT_ACID_RES },
-    { "EAT_ELEC_RES", RF9_EAT_ELEC_RES },
-    { "EAT_POIS_RES", RF9_EAT_POIS_RES },
-    { "EAT_INSANITY", RF9_EAT_INSANITY },
-    { "EAT_DRAIN_EXP", RF9_EAT_DRAIN_EXP },
-    { "EAT_POISONOUS", RF9_EAT_POISONOUS },
-    { "EAT_GIVE_STR", RF9_EAT_GIVE_STR },
-    { "EAT_GIVE_INT", RF9_EAT_GIVE_INT },
-    { "EAT_GIVE_WIS", RF9_EAT_GIVE_WIS },
-    { "EAT_GIVE_DEX", RF9_EAT_GIVE_DEX },
-    { "EAT_GIVE_CON", RF9_EAT_GIVE_CON },
-    { "EAT_GIVE_CHR", RF9_EAT_GIVE_CHR },
-    { "EAT_LOSE_STR", RF9_EAT_LOSE_STR },
-    { "EAT_LOSE_INT", RF9_EAT_LOSE_INT },
-    { "EAT_LOSE_WIS", RF9_EAT_LOSE_WIS },
-    { "EAT_LOSE_DEX", RF9_EAT_LOSE_DEX },
-    { "EAT_LOSE_CON", RF9_EAT_LOSE_CON },
-    { "EAT_LOSE_CHR", RF9_EAT_LOSE_CHR },
-    { "EAT_DRAIN_MANA", RF9_EAT_DRAIN_MANA },
 };
 
 /*!
@@ -469,4 +421,18 @@ const std::unordered_map<std::string_view, MonsterDropType> r_info_drop_flags = 
     { "DROP_2D2", MonsterDropType::DROP_2D2 },
     { "DROP_3D2", MonsterDropType::DROP_3D2 },
     { "DROP_4D2", MonsterDropType::DROP_4D2 },
+};
+
+const std::unordered_map<std::string_view, MonsterWildernessType> r_info_wilderness_flags = {
+    { "WILD_ONLY", MonsterWildernessType::WILD_ONLY },
+    { "WILD_TOWN", MonsterWildernessType::WILD_TOWN },
+    { "WILD_SHORE", MonsterWildernessType::WILD_SHORE },
+    { "WILD_OCEAN", MonsterWildernessType::WILD_OCEAN },
+    { "WILD_WASTE", MonsterWildernessType::WILD_WASTE },
+    { "WILD_WOOD", MonsterWildernessType::WILD_WOOD },
+    { "WILD_VOLCANO", MonsterWildernessType::WILD_VOLCANO },
+    { "WILD_MOUNTAIN", MonsterWildernessType::WILD_MOUNTAIN },
+    { "WILD_GRASS", MonsterWildernessType::WILD_GRASS },
+    { "WILD_SWAMP", MonsterWildernessType::WILD_SWAMP },
+    { "WILD_ALL", MonsterWildernessType::WILD_ALL },
 };

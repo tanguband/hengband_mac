@@ -517,11 +517,10 @@ hengband_SOURCES = \
 	monster-race/race-flags1.h monster-race/race-flags2.h \
 	monster-race/race-flags3.h \
 	monster-race/race-flags7.h monster-race/race-flags8.h \
-	monster-race/race-flags9.h \
 	monster-race/race-indice-types.h \
 	monster-race/race-kind-flags.h \
 	monster-race/race-resistance-mask.cpp monster-race/race-resistance-mask.h \
-	monster-race/race-visual-flags.h \
+	monster-race/race-wilderness-flags.h \
 	\
 	mspell/assign-monster-spell.cpp mspell/assign-monster-spell.h \
 	mspell/element-resistance-checker.cpp mspell/element-resistance-checker.h \
