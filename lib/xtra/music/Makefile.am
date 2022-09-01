@@ -31,7 +31,6 @@ music_files = \
 	exit.mp3 \
 	feel1.mp3 \
 	feel2.mp3 \
-	feild_med3.mp3 \
 	field_high1.mp3 \
 	field_high2.mp3 \
 	field_high3.mp3 \
