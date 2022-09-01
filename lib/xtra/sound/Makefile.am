@@ -36,6 +36,7 @@ sound_files = \
 	hitwall3.wav \
 	hungry1.wav \
 	hungry2.wav \
+	kill1.wav \
 	kill2.wav \
 	level.wav \
 	miss1.wav \
@@ -82,7 +83,6 @@ unused_sound_files = \
 	apple1-r.wav \
 	decision25r.wav \
 	enemy-advent1-r.wav \
-	kill.wav \
 	se_maoudamashii_battle07.wav \
 	se_maoudamashii_retro22.wav \
 	se_maoudamashii_se_drink01.wav \
