@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: Clone Project
         uses: actions/checkout@v2
+        with:
+          submodules: true
 
       # Requires automake and autoconf; install those via homebrew (available
       # by default).
@@ -105,6 +107,8 @@ jobs:
     steps:
       - name: Clone Project
         uses: actions/checkout@v2
+        with:
+          submodules: true
 
       # Requires automake, autoconf, and, unless building the 1.6.2 version,
       # nkf; install those via homebrew (available by default).
