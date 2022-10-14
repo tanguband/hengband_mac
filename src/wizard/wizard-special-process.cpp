@@ -22,7 +22,6 @@
 #include "core/player-update-types.h"
 #include "core/stuff-handler.h"
 #include "core/window-redrawer.h"
-#include "dungeon/dungeon.h"
 #include "dungeon/quest.h"
 #include "flavor/flavor-describer.h"
 #include "flavor/object-flavor-types.h"
@@ -77,10 +76,12 @@
 #include "spell/spells-object.h"
 #include "spell/spells-status.h"
 #include "spell/spells-summon.h"
+#include "status/bad-status-setter.h"
 #include "status/experience.h"
 #include "system/angband-version.h"
 #include "system/artifact-type-definition.h"
 #include "system/baseitem-info-definition.h"
+#include "system/dungeon-info.h"
 #include "system/floor-type-definition.h"
 #include "system/grid-type-definition.h"
 #include "system/monster-type-definition.h"
@@ -98,7 +99,6 @@
 #include "wizard/wizard-spells.h"
 #include "wizard/wizard-spoiler.h"
 #include "world/world.h"
-
 #include <algorithm>
 #include <optional>
 #include <sstream>
@@ -109,14 +109,17 @@
 #define NUM_O_BIT 32
 
 /*!
- * @brief プレイヤーを完全回復する /
- * Cure everything instantly
+ * @brief プレイヤーを完全回復する
  */
 void wiz_cure_all(PlayerType *player_ptr)
 {
     (void)life_stream(player_ptr, false, false);
     (void)restore_mana(player_ptr, true);
     (void)set_food(player_ptr, PY_FOOD_MAX - 1);
+    BadStatusSetter bss(player_ptr);
+    (void)bss.fear(0);
+    (void)bss.set_deceleration(0, false);
+    msg_print("You're fully cured by wizard command.");
 }
 
 static std::optional<KIND_OBJECT_IDX> wiz_select_tval()
