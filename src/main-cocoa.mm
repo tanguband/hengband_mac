@@ -40,6 +40,7 @@
 #include "game-option/option-flags.h"
 #include "game-option/runtime-arguments.h"
 #include "game-option/special-options.h"
+#include "io/input-key-acceptor.h"
 #include "system/angband-version.h"
 #include "system/player-type-definition.h"
 #include "system/system-variables.h"
@@ -6037,9 +6038,10 @@ static void init_windows(void)
     {
         /*
          * we only want to be able to send commands during an active game
-         * after the birth screens
+         * after the birth screens when the core is waring for a player
+         * command
          */
-        return !!game_in_progress && w_ptr->character_generated;
+        return !!game_in_progress && w_ptr->character_generated && inkey_flag;
     }
     else return YES;
 }
