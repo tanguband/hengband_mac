@@ -1205,7 +1205,7 @@ uninstall-local:
 endif
 
 distclean-local:
-	-rm -r -f $(DEPDIR) */$(DEPDIR)
+	-rm -r -f $(DEPDIR) */$(DEPDIR) */*/$(DEPDIR)
 
 clean-local:
 	-rm stdafx.h.gch stdafx.h.gch.sum
