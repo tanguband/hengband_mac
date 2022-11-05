@@ -216,7 +216,7 @@ struct term_data {
 };
 
 /* Max number of windows on screen */
-#define MAX_TERM_DATA 4
+#define MAX_TERM_DATA 8
 
 /* Minimum main term size */
 #define MIN_TERM0_LINES 24
@@ -976,7 +976,7 @@ static errr game_term_xtra_gcu(int n, int v)
     /* Clear screen */
     case TERM_XTRA_CLEAR:
         touchwin(td->win);
-        (void)wclear(td->win);
+        (void)werase(td->win);
         return 0;
 
     /* Make a noise */
