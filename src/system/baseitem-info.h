@@ -37,6 +37,8 @@ public:
     ItemKindType tval() const;
     std::optional<int> sval() const;
 
+    ItemKindType get_arrow_kind() const;
+
 private:
     ItemKindType type_value;
     std::optional<int> subtype_value;
@@ -47,7 +49,7 @@ enum class RandomArtActType : short;
 class BaseitemInfo {
 public:
     BaseitemInfo();
-    KIND_OBJECT_IDX idx{};
+    short idx{};
 
     std::string name; /*!< ベースアイテム名 */
     std::string text; /*!< 解説テキスト */
