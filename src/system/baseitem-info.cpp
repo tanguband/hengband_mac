@@ -17,6 +17,7 @@
 #include "sv-definition/sv-rod-types.h"
 #include "sv-definition/sv-weapon-types.h"
 #include <set>
+#include <stdexcept>
 #include <unordered_map>
 
 namespace {
@@ -66,11 +67,7 @@ std::optional<int> BaseitemKey::sval() const
  */
 ItemKindType BaseitemKey::get_arrow_kind() const
 {
-    if (this->type_value != ItemKindType::BOW) {
-        return ItemKindType::NONE;
-    }
-
-    if (!this->subtype_value.has_value()) {
+    if ((this->type_value != ItemKindType::BOW) || !this->subtype_value.has_value()) {
         return ItemKindType::NONE;
     }
 
