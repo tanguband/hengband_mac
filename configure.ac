@@ -45,11 +45,7 @@ AC_SUBST(DEFAULT_VAR_PATH)
 dnl Checks for programs.
 AC_LANG(C++)
 AC_PROG_CXX
-m4_ifdef([AX_CXX_COMPILE_STDCXX], [
-  AX_CXX_COMPILE_STDCXX(17, [ext], [mandatory])
-], [
-  AC_MSG_WARN([AX_CXX_COMPILE_STDCXX macro is not defined. That is part of autoconf-archive . Without it, you may need to manually specify CXXFLAGS with the necessary options for compiling for the 2017 C++ standard.])
-])
+AX_CXX_COMPILE_STDCXX(17, [ext], [mandatory])
 PKG_PROG_PKG_CONFIG
 
 AC_ARG_ENABLE(japanese,
