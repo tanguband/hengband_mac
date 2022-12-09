@@ -119,7 +119,7 @@ static void describe_chest_trap(flavor_type *flavor_ptr)
 
 static void describe_chest(flavor_type *flavor_ptr)
 {
-    if (flavor_ptr->o_ptr->tval != ItemKindType::CHEST) {
+    if (flavor_ptr->o_ptr->bi_key.tval() != ItemKindType::CHEST) {
         return;
     }
 
@@ -168,7 +168,7 @@ static bool should_show_slaying_bonus(const ItemEntity &item)
         return true;
     }
 
-    if (item.tval == ItemKindType::RING) {
+    if (item.bi_key.tval() == ItemKindType::RING) {
         const auto &baseitem = baseitems_info[item.bi_id];
         const auto base_has_no_bonus = (baseitem.to_h == 0) && (baseitem.to_d == 0);
         const auto item_has_bonus = (item.to_h != 0) || (item.to_d != 0);
@@ -234,7 +234,7 @@ static void describe_bow(PlayerType *player_ptr, flavor_type *flavor_ptr)
 
 static void describe_tval(PlayerType *player_ptr, flavor_type *flavor_ptr)
 {
-    switch (flavor_ptr->o_ptr->tval) {
+    switch (flavor_ptr->o_ptr->bi_key.tval()) {
     case ItemKindType::SHOT:
     case ItemKindType::BOLT:
     case ItemKindType::ARROW:
@@ -414,7 +414,7 @@ static void describe_charges_staff_wand(flavor_type *flavor_ptr)
 {
     flavor_ptr->t = object_desc_chr(flavor_ptr->t, ' ');
     flavor_ptr->t = object_desc_chr(flavor_ptr->t, flavor_ptr->p1);
-    if ((flavor_ptr->o_ptr->tval == ItemKindType::STAFF) && (flavor_ptr->o_ptr->number > 1)) {
+    if ((flavor_ptr->o_ptr->bi_key.tval() == ItemKindType::STAFF) && (flavor_ptr->o_ptr->number > 1)) {
         flavor_ptr->t = object_desc_num(flavor_ptr->t, flavor_ptr->o_ptr->number);
         flavor_ptr->t = object_desc_str(flavor_ptr->t, "x ");
     }
@@ -510,7 +510,8 @@ static void describe_pval(flavor_type *flavor_ptr)
 
 static void describe_lamp_life(flavor_type *flavor_ptr)
 {
-    if ((flavor_ptr->o_ptr->tval != ItemKindType::LITE) || (flavor_ptr->o_ptr->is_fixed_artifact() || (flavor_ptr->o_ptr->sval == SV_LITE_FEANOR))) {
+    const auto &bi_key = flavor_ptr->o_ptr->bi_key;
+    if ((bi_key.tval() != ItemKindType::LITE) || (flavor_ptr->o_ptr->is_fixed_artifact() || (bi_key.sval() == SV_LITE_FEANOR))) {
         return;
     }
 
@@ -530,15 +531,16 @@ static void describe_remaining(flavor_type *flavor_ptr)
         return;
     }
 
+    const auto tval = flavor_ptr->o_ptr->bi_key.tval();
     if (flavor_ptr->o_ptr->is_wand_staff()) {
         describe_charges_staff_wand(flavor_ptr);
-    } else if (flavor_ptr->o_ptr->tval == ItemKindType::ROD) {
+    } else if (tval == ItemKindType::ROD) {
         describe_charges_rod(flavor_ptr);
     }
 
     describe_pval(flavor_ptr);
     describe_lamp_life(flavor_ptr);
-    if (flavor_ptr->o_ptr->timeout && (flavor_ptr->o_ptr->tval != ItemKindType::ROD)) {
+    if (flavor_ptr->o_ptr->timeout && (tval != ItemKindType::ROD)) {
         flavor_ptr->t = object_desc_str(flavor_ptr->t, _("(充填中)", " (charging)"));
     }
 }
@@ -556,7 +558,7 @@ static void decide_item_feeling(flavor_type *flavor_ptr)
         return;
     }
 
-    const auto tval = flavor_ptr->o_ptr->tval;
+    const auto tval = flavor_ptr->o_ptr->bi_key.tval();
     auto unidentifiable = tval == ItemKindType::RING;
     unidentifiable |= tval == ItemKindType::AMULET;
     unidentifiable |= tval == ItemKindType::LITE;
@@ -576,6 +578,39 @@ static void decide_item_feeling(flavor_type *flavor_ptr)
     }
 }
 
+static describe_option_type decide_describe_option(const ItemEntity &item, BIT_FLAGS mode)
+{
+    describe_option_type opt{};
+    opt.mode = mode;
+    opt.flavor = true;
+
+    if (item.is_aware()) {
+        opt.aware = true;
+    }
+
+    if (item.is_known()) {
+        opt.known = true;
+    }
+
+    if (opt.aware && (any_bits(mode, OD_NO_FLAVOR) || plain_descriptions)) {
+        opt.flavor = false;
+    }
+
+    if (any_bits(mode, OD_STORE) || any_bits(item.ident, IDENT_STORE)) {
+        opt.flavor = false;
+        opt.aware = true;
+        opt.known = true;
+    }
+
+    if (any_bits(mode, OD_FORCE_FLAVOR)) {
+        opt.aware = false;
+        opt.flavor = true;
+        opt.known = false;
+    }
+
+    return opt;
+}
+
 /*!
  * @brief オブジェクトの各表記を返すメイン関数 / Creates a description of the item "o_ptr", and stores it in "out_val".
  * @param player_ptr プレイヤーへの参照ポインタ
@@ -588,8 +623,15 @@ void describe_flavor(PlayerType *player_ptr, char *buf, ItemEntity *o_ptr, BIT_F
 {
     flavor_type tmp_flavor;
     flavor_type *flavor_ptr = initialize_flavor_type(&tmp_flavor, buf, o_ptr, mode);
+
     check_object_known_aware(flavor_ptr);
-    describe_named_item(player_ptr, flavor_ptr);
+    const auto opt = decide_describe_option(*o_ptr, mode);
+    auto desc = describe_named_item(player_ptr, *o_ptr, opt);
+
+    // describe_named_item までのリファクタリングを確認するための暫定措置
+    strcpy(flavor_ptr->tmp_val, desc.data());
+    flavor_ptr->t = flavor_ptr->tmp_val + strlen(flavor_ptr->tmp_val);
+
     if (flavor_ptr->mode & OD_NAME_ONLY || o_ptr->bi_id == 0) {
         angband_strcpy(flavor_ptr->buf, flavor_ptr->tmp_val, MAX_NLEN);
         return;
@@ -600,7 +642,7 @@ void describe_flavor(PlayerType *player_ptr, char *buf, ItemEntity *o_ptr, BIT_F
     describe_named_item_tval(flavor_ptr);
     if (!(mode & OD_DEBUG)) {
         flavor_ptr->bow_ptr = &player_ptr->inventory_list[INVEN_BOW];
-        const auto tval = flavor_ptr->o_ptr->tval;
+        const auto tval = flavor_ptr->o_ptr->bi_key.tval();
         if ((flavor_ptr->bow_ptr->bi_id != 0) && (tval == flavor_ptr->bow_ptr->get_arrow_kind())) {
             describe_bow_power(player_ptr, flavor_ptr);
         } else if (PlayerClass(player_ptr).equals(PlayerClassType::NINJA) && (tval == ItemKindType::SPIKE)) {

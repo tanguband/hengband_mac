@@ -18,9 +18,6 @@ flavor_type *initialize_flavor_type(flavor_type *flavor_ptr, char *buf, ItemEnti
     flavor_ptr->buf = buf;
     flavor_ptr->o_ptr = o_ptr;
     flavor_ptr->mode = mode;
-    flavor_ptr->kindname = baseitems_info[o_ptr->bi_id].name.data();
-    flavor_ptr->basenm = flavor_ptr->kindname;
-    flavor_ptr->modstr = "";
     flavor_ptr->aware = false;
     flavor_ptr->known = false;
     flavor_ptr->flavor = true;
@@ -406,10 +403,10 @@ void get_inscription(char *buff, ItemEntity *o_ptr)
  * @details
  * cmd1.c で流用するために object_desc_japanese から移動した。
  */
-char *object_desc_count_japanese(char *t, ItemEntity *o_ptr)
+char *object_desc_count_japanese(char *t, const ItemEntity *o_ptr)
 {
     t = object_desc_num(t, o_ptr->number);
-    switch (o_ptr->tval) {
+    switch (o_ptr->bi_key.tval()) {
     case ItemKindType::BOLT:
     case ItemKindType::ARROW:
     case ItemKindType::POLEARM:
@@ -466,7 +463,7 @@ char *object_desc_count_japanese(char *t, ItemEntity *o_ptr)
         break;
     }
     case ItemKindType::FOOD: {
-        if (o_ptr->sval == SV_FOOD_JERKY) {
+        if (o_ptr->bi_key.sval().value() == SV_FOOD_JERKY) {
             t = object_desc_str(t, "切れ");
             break;
         }
