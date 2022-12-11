@@ -2049,7 +2049,7 @@ static void AngbandUpdateWindowVisibility(void)
     for( int i = 1; i < ANGBAND_TERM_MAX; i++ )
     {
         AngbandContext *angbandContext =
-	    (__bridge AngbandContext*) (angband_term[i]->data);
+	    (__bridge AngbandContext*) (angband_terms[i]->data);
 
         if( angbandContext == nil )
         {
@@ -2103,7 +2103,7 @@ static void AngbandUpdateWindowVisibility(void)
     /* Make the main window key so that user events go to the right spot */
     if (anyChanged) {
         AngbandContext *mainWindow =
-            (__bridge AngbandContext*) (angband_term[0]->data);
+            (__bridge AngbandContext*) (angband_terms[0]->data);
         [mainWindow.primaryWindow makeKeyAndOrderFront: nil];
     }
 }
@@ -2725,7 +2725,7 @@ static __strong NSFont* gDefaultFont = nil;
 	 * them as utility panels to get the thinner title bar and other
 	 * attributes that already match up with how those windows are used.
 	 */
-        if ((__bridge AngbandContext*) (angband_term[0]->data) != self)
+        if ((__bridge AngbandContext*) (angband_terms[0]->data) != self)
         {
 	    NSPanel *panel = [[NSPanel alloc]
 		initWithContentRect:contentRect
@@ -3791,7 +3791,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 
 	for( termIndex = 0; termIndex < ANGBAND_TERM_MAX; termIndex++ )
 	{
-		if( angband_term[termIndex] == self->terminal )
+		if( angband_terms[termIndex] == self->terminal )
 		{
 			break;
 		}
@@ -4228,7 +4228,7 @@ static void Term_init_cocoa(term_type *t)
 	int termIdx;
 	for (termIdx = 0; termIdx < ANGBAND_TERM_MAX; termIdx++)
 	{
-	    if (angband_term[termIdx] == t)
+	    if (angband_terms[termIdx] == t)
 	    {
 		autosaveName =
 		    [NSString stringWithFormat:@"AngbandTerm-%d", termIdx];
@@ -4424,7 +4424,7 @@ static void Term_init_cocoa(term_type *t)
 	 * problem where Angband aggressively tells us to initialize terms that
 	 * don't do anything!
 	 */
-	if (t == angband_term[0])
+	if (t == angband_terms[0])
 	    [context.primaryWindow makeKeyAndOrderFront: nil];
 
 	/* Set "mapped" flag */
@@ -4597,7 +4597,7 @@ static errr Term_xtra_cocoa_react(void)
 		 */
 		for (int iterm = 0; iterm < ANGBAND_TERM_MAX; ++iterm) {
 		    AngbandContext* aContext =
-			(__bridge AngbandContext*) (angband_term[iterm]->data);
+			(__bridge AngbandContext*) (angband_terms[iterm]->data);
 
 		    [aContext.contents wipeTiles];
 		}
@@ -4610,8 +4610,8 @@ static errr Term_xtra_cocoa_react(void)
 
 	    /* Enable or disable higher picts.  */
 	    for (int iterm = 0; iterm < ANGBAND_TERM_MAX; ++iterm) {
-		if (angband_term[iterm]) {
-		    angband_term[iterm]->higher_pict = !! use_graphics;
+		if (angband_terms[iterm]) {
+		    angband_terms[iterm]->higher_pict = !! use_graphics;
 		}
 	    }
 
@@ -4647,8 +4647,8 @@ static errr Term_xtra_cocoa_react(void)
 		reset_visuals(p_ptr);
 	    }
 
-	    term_activate(angband_term[0]);
-	    term_resize(angband_term[0]->wid, angband_term[0]->hgt);
+	    term_activate(angband_terms[0]);
+	    term_resize(angband_terms[0]->wid, angband_terms[0]->hgt);
 	}
     }
 
@@ -5105,7 +5105,7 @@ static void AngbandHandleEventMouseDown( NSEvent *event )
 #if 0
 	AngbandContext *angbandContext = [[[event window] contentView] angbandContext];
 	AngbandContext *mainAngbandContext =
-	    (__bridge AngbandContext*) (angband_term[0]->data);
+	    (__bridge AngbandContext*) (angband_terms[0]->data);
 
 	if ([[event window] isKeyWindow] &&
 	    mainAngbandContext.primaryWindow &&
@@ -5403,8 +5403,8 @@ static void hook_plog(const char * str)
 static void hook_quit(const char * str)
 {
     for (int i = ANGBAND_TERM_MAX - 1; i >= 0; --i) {
-        if (angband_term[i]) {
-            term_nuke(angband_term[i]);
+        if (angband_terms[i]) {
+            term_nuke(angband_terms[i]);
         }
     }
     [AngbandSoundCatalog clearSharedSounds];
@@ -5566,7 +5566,7 @@ static term_type *term_data_link(int i)
     /* newterm->mbcs_hook = Term_mbcs_cocoa; */
 
     /* Global pointer */
-    angband_term[i] = newterm;
+    angband_terms[i] = newterm;
 
     return newterm;
 }
@@ -5739,7 +5739,7 @@ static void init_windows(void)
     int i;
     for (i=0; i < ANGBAND_TERM_MAX; i++) {
 	AngbandContext *context =
-	    (__bridge AngbandContext*) (angband_term[i]->data);
+	    (__bridge AngbandContext*) (angband_terms[i]->data);
         if ([context isKeyWindow]) {
             termFont = [context angbandViewFont];
             break;
@@ -5761,7 +5761,7 @@ static void init_windows(void)
     int mainTerm;
     for (mainTerm=0; mainTerm < ANGBAND_TERM_MAX; mainTerm++) {
 	AngbandContext *context =
-	    (__bridge AngbandContext*) (angband_term[mainTerm]->data);
+	    (__bridge AngbandContext*) (angband_terms[mainTerm]->data);
         if ([context isKeyWindow]) {
             break;
         }
@@ -5788,7 +5788,7 @@ static void init_windows(void)
 
     /* Update window */
     AngbandContext *angbandContext =
-	(__bridge AngbandContext*) (angband_term[mainTerm]->data);
+	(__bridge AngbandContext*) (angband_terms[mainTerm]->data);
     [(id)angbandContext setSelectionFont:newFont adjustTerminal: YES];
 
     if (mainTerm != 0 || ! redraw_for_tiles_or_term0_font()) {
@@ -5911,8 +5911,8 @@ static void init_windows(void)
 				boolForKey:AngbandBigTileDefaultsKey]
 			&& ! use_bigtile) {
 		arg_bigtile = true;
-		term_activate(angband_term[0]);
-		term_resize(angband_term[0]->wid, angband_term[0]->hgt);
+		term_activate(angband_terms[0]);
+		term_resize(angband_terms[0]->wid, angband_terms[0]->hgt);
 		redraw_for_tiles_or_term0_font();
 	}
 
@@ -5983,10 +5983,10 @@ static void init_windows(void)
 	     * Another window is only usable after Term_init_cocoa() has
 	     * been called for it.  For Angband, if window_flag[i] is nonzero
 	     * then that has happened for window i.  For Hengband, that is
-	     * not the case so also test angband_term[i]->data.
+	     * not the case so also test angband_terms[i]->data.
 	     */
             NSInteger subwindowNumber = tag - AngbandWindowMenuItemTagBase;
-            return (angband_term[subwindowNumber]->data != 0
+            return (angband_terms[subwindowNumber]->data != 0
 		    && window_flag[subwindowNumber] > 0);
         }
 
@@ -6071,8 +6071,8 @@ static void init_windows(void)
     }
 
     if (arg_bigtile != use_bigtile) {
-	term_activate(angband_term[0]);
-	term_resize(angband_term[0]->wid, angband_term[0]->hgt);
+	term_activate(angband_terms[0]);
+	term_resize(angband_terms[0]->wid, angband_terms[0]->hgt);
     }
     redraw_for_tiles_or_term0_font();
 }
@@ -6082,7 +6082,7 @@ static void init_windows(void)
     NSInteger subwindowNumber =
 	[(NSMenuItem *)sender tag] - AngbandWindowMenuItemTagBase;
     AngbandContext *context =
-	(__bridge AngbandContext*) (angband_term[subwindowNumber]->data);
+	(__bridge AngbandContext*) (angband_terms[subwindowNumber]->data);
     [context.primaryWindow makeKeyAndOrderFront: self];
     [context saveWindowVisibleToDefaults: YES];
 }
@@ -6116,8 +6116,8 @@ static void init_windows(void)
     if (graphics_are_enabled()) {
 	arg_bigtile = (is_on) ? false : true;
 	if (arg_bigtile != use_bigtile) {
-	    term_activate(angband_term[0]);
-	    term_resize(angband_term[0]->wid, angband_term[0]->hgt);
+	    term_activate(angband_terms[0]);
+	    term_resize(angband_terms[0]->wid, angband_terms[0]->hgt);
 	    redraw_for_tiles_or_term0_font();
 	}
     }
@@ -6178,7 +6178,7 @@ static void init_windows(void)
     NSMenuItem *menuItem = (NSMenuItem *)sender;
     NSString *command = [self.commandMenuTagMap objectForKey: [NSNumber numberWithInteger: [menuItem tag]]];
     AngbandContext* context =
-	(__bridge AngbandContext*) (angband_term[0]->data);
+	(__bridge AngbandContext*) (angband_terms[0]->data);
     NSInteger windowNumber = [context.primaryWindow windowNumber];
 
     /* Send a \ to bypass keymaps */
