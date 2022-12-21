@@ -225,9 +225,9 @@ void monster_desc(PlayerType *player_ptr, char *desc, MonsterEntity *m_ptr, BIT_
     }
 
     if (m_ptr->nickname) {
-        char buf[128];
-        sprintf(buf, _("「%s」", " called %s"), quark_str(m_ptr->nickname));
-        strcat(desc, buf);
+        std::string buf = _("「", " called ");
+        buf.append(quark_str(m_ptr->nickname)).append(_("」", ""));
+        strcat(desc, buf.data());
     }
 
     if (player_ptr->riding && (&floor_ptr->m_list[player_ptr->riding] == m_ptr)) {
@@ -243,7 +243,7 @@ void monster_desc(PlayerType *player_ptr, char *desc, MonsterEntity *m_ptr, BIT_
     }
 
     if ((mode & MD_IGNORE_HALLU) && !m_ptr->is_original_ap()) {
-        strcat(desc, format("(%s)", monraces_info[m_ptr->r_idx].name.data()));
+        strcat(desc, format("(%s)", monraces_info[m_ptr->r_idx].name.data()).data());
     }
 
     /* Handle the Possessive as a special afterthought */
