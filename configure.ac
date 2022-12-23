@@ -47,7 +47,7 @@ AC_LANG(C++)
 AC_PROG_CXX
 dnl Note that the -std= option for Objective-C++ is hardwired in
 dnl src/Makefile.am so that should be changed if this is.
-AX_CXX_COMPILE_STDCXX(17, [ext], [mandatory])
+AX_CXX_COMPILE_STDCXX(20, [ext], [mandatory])
 PKG_PROG_PKG_CONFIG
 
 AC_ARG_ENABLE(japanese,
