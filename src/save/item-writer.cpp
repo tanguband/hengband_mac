@@ -110,7 +110,7 @@ static void write_item_flags(ItemEntity *o_ptr, BIT_FLAGS *flags)
         set_bits(*flags, SaveDataItemFlagType::INSCRIPTION);
     }
 
-    if (o_ptr->art_name) {
+    if (o_ptr->is_random_artifact()) {
         set_bits(*flags, SaveDataItemFlagType::ART_NAME);
     }
 
@@ -264,7 +264,7 @@ void wr_item(ItemEntity *o_ptr)
     }
 
     if (any_bits(flags, SaveDataItemFlagType::ART_NAME)) {
-        wr_string(quark_str(o_ptr->art_name));
+        wr_string(o_ptr->randart_name.value());
     }
 }
 
