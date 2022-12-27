@@ -55,6 +55,7 @@
 #include "autopick/autopick-pref-processor.h"
 #include "main/sound-definitions-table.h"
 #include "util/angband-files.h"
+#include "util/enum-converter.h"
 #include "window/main-window-util.h"
 
 #ifdef MACH_O_COCOA
@@ -5295,7 +5296,7 @@ static BOOL send_event(NSEvent *event)
 
         case NSEventTypeApplicationDefined:
         {
-            if ([event subtype] == AngbandEventWakeup)
+            if (enum2i([event subtype]) == enum2i(AngbandEventWakeup))
             {
                 return YES;
             }
