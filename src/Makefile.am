@@ -1125,12 +1125,10 @@ appen_DATA = $(cocoa_en_strings_files)
 appendir = $(APPRES)/en.lproj
 appja_DATA = $(cocoa_ja_strings_files)
 appjadir = $(APPRES)/ja.lproj
-MD5SUM=md5
 else
 EXTRA_hengband_SOURCES += main-cocoa.mm system/grafmode.h system/grafmode.cpp \
 	cocoa/AppDelegate.h
 hengband_LINK = $(CXXLINK)
-MD5SUM=md5sum
 endif
 
 DEFAULT_INCLUDES = -I$(srcdir) -I$(top_builddir)/src
@@ -1150,9 +1148,11 @@ if PCH
 CXXCOMPILE += -include ../src/stdafx.h
 
 stdafx.h.gch: stdafx.h stdafx.cpp Makefile
-	$(CXX) -x c++-header $(CXXFLAGS) $(AM_CXXFLAGS) $(srcdir)/stdafx.cpp -o $@
-	rm -f stdafx.h.gch.sum
-	$(MD5SUM) $@ > stdafx.h.gch.sum
+	$(CXX) -x c++-header $(CXXFLAGS) $(srcdir)/stdafx.cpp -o $@
+	if test none != "$(PCH_CHECKSUMMER)" ; then \
+		rm -f "$@".sum ; \
+		$(PCH_CHECKSUMMER) $@ > "$@".sum ; \
+	fi
 
 $(hengband_SOURCES:.cpp=.$(OBJEXT)): stdafx.h.gch
 endif
