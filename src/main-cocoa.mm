@@ -5897,6 +5897,14 @@ static void init_windows(void)
 	p_ptr->player_euid = geteuid();
 	p_ptr->player_egid = getegid();
 
+	/*
+	 * Cause splash screen to be centered if the main window is bigger
+	 * than 80 x 24.
+	 */
+	constexpr auto splash_width = 80;
+	constexpr auto splash_height = 24;
+	TermCenteredOffsetSetter tcos(splash_width, splash_height);
+
 	/* Initialise game */
 	init_angband(p_ptr, false);
 
@@ -5924,21 +5932,13 @@ static void init_windows(void)
 	term_flush();
 
 	/*
-	 * Prompt the user; assume the splash screen is 80 x 23 and position
-	 * relative to that rather than center based on the full size of the
-	 * window.
+	 * Prompt the user.  Overwrite the last line of the splash screen
+	 * with the prompt.
 	 */
-	int message_row = 23;
-	term_erase(0, message_row, 255);
-	put_str(
-#ifdef JP
-	    "['ファイル' メニューから '新規' または '開く' を選択します]",
-	    message_row, (80 - 59) / 2
-#else
-	    "[Choose 'New' or 'Open' from the 'File' menu]",
-	    message_row, (80 - 45) / 2
-#endif
-	);
+	prt(
+	    _("[ファイル] メニューの [新規] または [開く] を選択してください。",
+	    "[Choose 'New' or 'Open' from the 'File' menu]"), splash_height - 1,
+	    (splash_width - _(63, 45)) / 2);
 	term_fresh();
     }
 
