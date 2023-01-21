@@ -1860,7 +1860,7 @@ static void draw_image_tile(
     AngbandView *angbandView;
 }
 
-/* Column and row counts, by default 80 x 24 */
+/* Column and row counts, by default TERM_DEFAULT_COLS x TERM_DEFAULT_ROWS */
 @property (readonly) int cols;
 @property (readonly) int rows;
 
@@ -2614,8 +2614,8 @@ static int compare_advances(const void *ap, const void *bp)
     if ((self = [super init]))
     {
         /* Default rows and cols */
-        self->_cols = 80;
-        self->_rows = 24;
+        self->_cols = TERM_DEFAULT_COLS;
+        self->_rows = TERM_DEFAULT_ROWS;
 
         /* Default border size */
         self->_borderSize = NSMakeSize(2, 2);
@@ -3847,8 +3847,8 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
     NSSize minsize;
 
     if (termIdx == 0) {
-	minsize.width = 80;
-	minsize.height = 24;
+	minsize.width = MAIN_TERM_MIN_COLS;
+	minsize.height = MAIN_TERM_MIN_ROWS;
     } else {
 	minsize.width = 1;
 	minsize.height = 1;
@@ -4281,8 +4281,8 @@ static void Term_init_cocoa(term_type *t)
 	NSArray *terminalDefaults =
 	    [[NSUserDefaults standardUserDefaults]
 		valueForKey: AngbandTerminalsDefaultsKey];
-	NSInteger rows = 24;
-	NSInteger columns = 80;
+	NSInteger rows = TERM_DEFAULT_ROWS;
+	NSInteger columns = TERM_DEFAULT_COLS;
 
 	if( termIdx < (int)[terminalDefaults count] )
 	{
@@ -5520,8 +5520,8 @@ static term_type *term_data_link(int i)
 {
     NSArray *terminalDefaults = [[NSUserDefaults standardUserDefaults]
 				    valueForKey: AngbandTerminalsDefaultsKey];
-    NSInteger rows = 24;
-    NSInteger columns = 80;
+    NSInteger rows = TERM_DEFAULT_ROWS;
+    NSInteger columns = TERM_DEFAULT_COLS;
 
     if (i < (int)[terminalDefaults count]) {
         NSDictionary *term = [terminalDefaults objectAtIndex:i];
@@ -5619,8 +5619,8 @@ static void load_prefs(void)
 	    rows = _(9, 10);
 	    break;
 	default:
-	    columns = 80;
-	    rows = 24;
+	    columns = TERM_DEFAULT_COLS;
+	    rows = TERM_DEFAULT_ROWS;
 	    visible = NO;
 	    break;
 	}
@@ -5899,10 +5899,10 @@ static void init_windows(void)
 
 	/*
 	 * Cause splash screen to be centered if the main window is bigger
-	 * than 80 x 24.
+	 * than MAIN_TERM_MIN_COLS x MAIN_TERM_MIN_ROWS.
 	 */
-	constexpr auto splash_width = 80;
-	constexpr auto splash_height = 24;
+	constexpr auto splash_width = MAIN_TERM_MIN_COLS;
+	constexpr auto splash_height = MAIN_TERM_MIN_ROWS;
 	TermCenteredOffsetSetter tcos(splash_width, splash_height);
 
 	/* Initialise game */
