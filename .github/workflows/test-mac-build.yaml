@@ -36,7 +36,8 @@ jobs:
 
       # Requires automake and autoconf; install those via homebrew (available
       # by default).  autoconf 2.71 doesn't work with macOS 11 or 12's version
-      # of m4 (GNU M4 1.4.6) so use the one from homebrew.
+      # of m4 (GNU M4 1.4.6) so use the one from homebrew (also requires setting
+      # the M4 environment variable when running ./bootstrap below).
       - name: Install Build Dependencies
         run: |
           brew install m4
@@ -49,7 +50,8 @@ jobs:
             SDKROOT=`echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
             export SDKROOT
           fi
-          ./bootstrap
+          eval "$(brew shellenv)"
+          env M4="$HOMEBREW_PREFIX"/bin/m4 ./bootstrap
           CFLAGS=""
           CXXFLAGS=""
           OBJCXXFLAGS=""
@@ -91,7 +93,8 @@ jobs:
       # of the source tree works.
       - name: Distcheck
         run: |
-          ./bootstrap
+          eval "$(brew shellenv)"
+          env M4="$HOMEBREW_PREFIX"/bin/m4 ./bootstrap
           ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }}" \
             distcheck
