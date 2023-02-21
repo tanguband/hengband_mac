@@ -35,9 +35,11 @@ jobs:
           submodules: true
 
       # Requires automake and autoconf; install those via homebrew (available
-      # by default).
+      # by default).  autoconf 2.71 doesn't work with macOS 11 or 12's version
+      # of m4 (GNU M4 1.4.6) so use the one from homebrew.
       - name: Install Build Dependencies
         run: |
+          brew install m4
           brew install autoconf
           brew install automake
 
@@ -111,9 +113,11 @@ jobs:
           submodules: true
 
       # Requires automake, autoconf, and, unless building the 1.6.2 version,
-      # nkf; install those via homebrew (available by default).
+      # nkf; install those via homebrew (available by default).  For the same
+      # reason as above, use m4 from homebrew as well.
       - name: Install Build Dependencies
         run: |
+          brew install m4
           brew install autoconf
           brew install automake
           brew install nkf
