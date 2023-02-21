@@ -1,4 +1,4 @@
-dnl Process this file with autoconf to produce a configure script.
+,dnl Process this file with autoconf to produce a configure script.
 AC_INIT(hengband, 3.0.0.0)
 
 AC_CONFIG_MACRO_DIRS([m4])
@@ -65,7 +65,7 @@ AC_ARG_ENABLE(chuukei,
 [  --enable-chuukei        enable internet chuukei support], AC_DEFINE(CHUUKEI, 1, [Chuukei mode]))
 AC_ARG_ENABLE([cocoa],
 [  --enable-cocoa          enable a Cocoa user interface (OS X only)],
-AC_DEFINE([MACH_O_COCOA], [1], [Use a Cocoa interface (OS X only)]), [])
+[AC_DEFINE([MACH_O_COCOA], [1], [Use a Cocoa interface (OS X only)])], [])
 AM_CONDITIONAL([COCOA], [test x$enable_cocoa = xyes])
 dnl Since AC_PROG_OBJCXX has the side effect of setting this conditional,
 dnl guarantee that is is always set, regardless of what happens in the if
