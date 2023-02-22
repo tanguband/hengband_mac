@@ -35,13 +35,12 @@ jobs:
           submodules: true
 
       # Requires automake and autoconf; install those via homebrew (available
-      # by default).  autoconf 2.71 doesn't work with macOS 11 or 12's version
-      # of m4 (GNU M4 1.4.6) so use the one from homebrew (also requires setting
-      # the M4 environment variable when running ./bootstrap below).
+      # by default).  Use autoconf 2.69 since autoconf 2.71 does not work well
+      # with the version of m4 (GNU M4 1.4.6) include with macOS 11 and 12.
       - name: Install Build Dependencies
         run: |
           brew install m4
-          brew install autoconf
+          brew install autoconf@2.69
           brew install automake
 
       - name: Build
@@ -50,8 +49,7 @@ jobs:
             SDKROOT=`echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
             export SDKROOT
           fi
-          eval "$(brew shellenv)"
-          env M4="$HOMEBREW_PREFIX"/opt/m4/bin/m4 ./bootstrap
+          ./bootstrap
           CFLAGS=""
           CXXFLAGS=""
           OBJCXXFLAGS=""
@@ -93,8 +91,7 @@ jobs:
       # of the source tree works.
       - name: Distcheck
         run: |
-          eval "$(brew shellenv)"
-          env M4="$HOMEBREW_PREFIX"/opt/m4/bin/m4 ./bootstrap
+          ./bootstrap
           ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }}" \
             distcheck
@@ -117,11 +114,11 @@ jobs:
 
       # Requires automake, autoconf, and, unless building the 1.6.2 version,
       # nkf; install those via homebrew (available by default).  For the same
-      # reason as above, use m4 from homebrew as well.
+      # reason as above, use autoconf 2.69.
       - name: Install Build Dependencies
         run: |
           brew install m4
-          brew install autoconf
+          brew install autoconf@2.69
           brew install automake
           brew install nkf
 
@@ -131,8 +128,7 @@ jobs:
             SDKROOT=`echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
             export SDKROOT
           fi
-          eval "$(brew shellenv)"
-          env M4="$HOMEBREW_PREFIX"/opt/m4/bin/m4 ./bootstrap
+          ./bootstrap
           CFLAGS=""
           CXXFLAGS=""
           OBJCXXFLAGS=""
