@@ -51,7 +51,7 @@ jobs:
             export SDKROOT
           fi
           eval "$(brew shellenv)"
-          env M4="$HOMEBREW_PREFIX"/bin/m4 ./bootstrap
+          env M4="$HOMEBREW_PREFIX"/opt/bin/m4 ./bootstrap
           CFLAGS=""
           CXXFLAGS=""
           OBJCXXFLAGS=""
@@ -94,7 +94,7 @@ jobs:
       - name: Distcheck
         run: |
           eval "$(brew shellenv)"
-          env M4="$HOMEBREW_PREFIX"/bin/m4 ./bootstrap
+          env M4="$HOMEBREW_PREFIX"/opt/bin/m4 ./bootstrap
           ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }}" \
             distcheck
@@ -131,7 +131,8 @@ jobs:
             SDKROOT=`echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
             export SDKROOT
           fi
-          ./bootstrap
+          eval "$(brew shellenv)"
+          env M4="$HOMEBREW_PREFIX"/opt/bin/m4 ./bootstrap
           CFLAGS=""
           CXXFLAGS=""
           OBJCXXFLAGS=""
