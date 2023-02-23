@@ -49,6 +49,7 @@ jobs:
             SDKROOT=`echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
             export SDKROOT
           fi
+          PATH=/usr/local/opt/autoconf@2.69/bin:"$PATH"
           ./bootstrap
           CFLAGS=""
           CXXFLAGS=""
@@ -91,6 +92,7 @@ jobs:
       # of the source tree works.
       - name: Distcheck
         run: |
+          PATH=/usr/local/opt/autoconf@2.69/bin:"$PATH"
           ./bootstrap
           ./configure ${{ env.DEFAULT_CONFIGURE_OPTIONS }}
           make DISTCHECK_CONFIGURE_FLAGS="${{ env.DEFAULT_CONFIGURE_OPTIONS }}" \
@@ -128,6 +130,7 @@ jobs:
             SDKROOT=`echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
             export SDKROOT
           fi
+          PATH=/usr/local/opt/autoconf@2.69/bin:"$PATH"
           ./bootstrap
           CFLAGS=""
           CXXFLAGS=""
