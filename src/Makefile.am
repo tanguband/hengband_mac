@@ -1094,11 +1094,11 @@ hengband_SOURCES += \
 	cocoa/AngbandAudio.mm \
 	cocoa/SoundAndMusic.h \
 	cocoa/SoundAndMusic.mm
-AM_CFLAGS = -mmacosx-version-min=10.13 -Wunguarded-availability
-AM_OBJCXXFLAGS = -std=c++20 -fobjc-arc -mmacosx-version-min=10.13 -Wunguarded-availability -stdlib=libc++
-AM_CXXFLAGS = -mmacosx-version-min=10.13 -Wunguarded-availability -stdlib=libc++
+AM_CFLAGS = -mmacosx-version-min=10.15 -Wunguarded-availability
+AM_OBJCXXFLAGS = -std=c++20 -fobjc-arc -mmacosx-version-min=10.15 -Wunguarded-availability -stdlib=libc++
+AM_CXXFLAGS = -mmacosx-version-min=10.15 -Wunguarded-availability -stdlib=libc++
 hengband_LDFLAGS = -framework cocoa -framework AVFoundation $(AM_LDFLAGS)
-hengband_LINK = MACOSX_DEPLOYMENT_TARGET=10.13 $(OBJCXXLINK) $(hengband_LDFLAGS) $(LDFLAGS) -o $@
+hengband_LINK = MACOSX_DEPLOYMENT_TARGET=10.15 $(OBJCXXLINK) $(hengband_LDFLAGS) $(LDFLAGS) -o $@
 APPNAME = $(PACKAGE_NAME)
 APPEXE = hengband
 APPDIR = $(APPNAME).app
