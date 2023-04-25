@@ -560,7 +560,7 @@ static AngbandAudioManager *_sharedManager = nil;
 
 	/* Find and open the config file. */
 	path_build(path, sizeof(path), sound_dir, "sound.cfg");
-	fff = angband_fopen(path, "r");
+	fff = angband_fopen(path, FileOpenMode::READ);
 
 	if (!fff) {
 		NSLog(@"The sound configuration file could not be opened");
@@ -738,7 +738,7 @@ static AngbandAudioManager *_sharedManager = nil;
 
 	/* Find and open the config file. */
 	path_build(path, sizeof(path), music_dir, "music.cfg");
-	fff = angband_fopen(path, "r");
+	fff = angband_fopen(path, FileOpenMode::READ);
 
 	if (!fff) {
 		NSLog(@"The music configuration file could not be opened");
