@@ -15,7 +15,7 @@
  *    you can turn it off to avoid extra clutter.
  * 3) In hengband's project settings on the "Info" tab, set the deployment
  *    target to what's used in Hengband's src/Makefile.am.  When this was
- *    written, that was 10.13.  As least 10.8 is necessary for Base
+ *    written, that was 10.15.  As least 10.8 is necessary for Base
  *    localization.  In the localizations part of that tab, click the '+' and
  *    add a Japanese localization.  That will prompt you for the files
  *    involved.  Leave that as is:  one file, "MainMenu.xib", with Base as the
