@@ -3131,7 +3131,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 	rect.origin.y < bottomY &&
 	rect.origin.y + rect.size.height > self.borderSize.height) {
 	nsctx = [NSGraphicsContext currentContext];
-	ctx = (CGContextRef) [nsctx graphicsPort];
+	ctx = (CGContextRef) [nsctx CGContext];
 	screenFont = [self.angbandViewFont screenFont];
 	[screenFont set];
 	blank = [TerminalContents getBlankChar];
@@ -3731,7 +3731,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 
     int termIndex = [self terminalIndex];
     NSMenuItem *item = [[[NSApplication sharedApplication] windowsMenu] itemWithTag: AngbandWindowMenuItemTagBase + termIndex];
-    [item setState: NSOnState];
+    [item setState: NSControlStateValueOn];
 
     if( [[NSFontPanel sharedFontPanel] isVisible] )
     {
@@ -3751,7 +3751,7 @@ static int compare_nsrect_yorigin_greater(const void *ap, const void *bp)
 
     int termIndex = [self terminalIndex];
     NSMenuItem *item = [[[NSApplication sharedApplication] windowsMenu] itemWithTag: AngbandWindowMenuItemTagBase + termIndex];
-    [item setState: NSOffState];
+    [item setState: NSControlStateValueOff];
 }
 
 - (void)windowWillClose: (NSNotification *)notification
@@ -3928,7 +3928,7 @@ static void set_color_for_index(int idx)
     gv = angband_color_table[idx][2];
     bv = angband_color_table[idx][3];
     
-    CGContextSetRGBFillColor((CGContextRef) [[NSGraphicsContext currentContext] graphicsPort], rv/255., gv/255., bv/255., 1.);
+    CGContextSetRGBFillColor((CGContextRef) [[NSGraphicsContext currentContext] CGContext], rv/255., gv/255., bv/255., 1.);
 }
 
 /**
@@ -5841,7 +5841,8 @@ static void init_windows(void)
 	BOOL is_on = [[NSUserDefaults standardUserDefaults]
 			 boolForKey:AngbandBigTileDefaultsKey];
 
-	[menuItem setState: ((is_on) ? NSOnState : NSOffState)];
+	[menuItem setState: ((is_on) ?
+	    NSControlStateValueOn : NSControlStateValueOff)];
         /*
          * Only allow changes to the tile size if tiles are not being used
          * (then there's no effect on appearance) or, like changes to the
@@ -5906,10 +5907,10 @@ static void init_windows(void)
 
 - (IBAction)toggleWideTiles:(NSMenuItem *) sender
 {
-    BOOL is_on = (sender.state == NSOnState);
+    BOOL is_on = (sender.state == NSControlStateValueOn);
 
     /* Toggle the state and update the Angband globals and preferences. */
-    sender.state = (is_on) ? NSOffState : NSOnState;
+    sender.state = (is_on) ? NSControlStateValueOff : NSControlStateValueOn;
     [[NSUserDefaults angbandDefaults] setBool:(! is_on)
 				      forKey:AngbandBigTileDefaultsKey];
     if (graphics_are_enabled()) {
