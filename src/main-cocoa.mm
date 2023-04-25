@@ -4598,9 +4598,11 @@ static errr Term_bigcurs_cocoa(TERM_LEN x, TERM_LEN y)
 {
     AngbandContext *angbandContext =
 	(__bridge AngbandContext*) (game_term->data);
+    /* Out of paranoia, coerce to remain in bounds. */
+    int w = (x + 2 <= angbandContext.cols) ? 2 : angbandContext.cols - x;
 
-    [angbandContext.contents setCursorAtColumn:x row:y width:2 height:1];
-    [angbandContext.changes markChangedBlockAtColumn:x row:y width:2 height:1];
+    [angbandContext.contents setCursorAtColumn:x row:y width:w height:1];
+    [angbandContext.changes markChangedBlockAtColumn:x row:y width:w height:1];
 
     /* Success */
     return 0;
