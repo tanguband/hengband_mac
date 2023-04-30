@@ -28,7 +28,6 @@
 #include "view/display-scores.h"
 #include "wizard/spoiler-util.h"
 #include "wizard/wizard-spoiler.h"
-#include <filesystem>
 #include <string>
 
 /*
