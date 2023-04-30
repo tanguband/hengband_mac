@@ -134,7 +134,7 @@ bool teleport_away(PlayerType *player_ptr, MONSTER_IDX m_idx, POSITION dis, tele
     }
 
     if ((mode & TELEPORT_DEC_VALOUR) && (((player_ptr->chp * 10) / player_ptr->mhp) > 5) && (4 + randint1(5) < ((player_ptr->chp * 10) / player_ptr->mhp))) {
-        chg_virtue(player_ptr, V_VALOUR, -1);
+        chg_virtue(player_ptr, Virtue::VALOUR, -1);
     }
 
     POSITION oy = m_ptr->fy;
@@ -560,7 +560,7 @@ void teleport_away_followable(PlayerType *player_ptr, MONSTER_IDX m_idx)
 
         for (i = INVEN_MAIN_HAND; i < INVEN_TOTAL; i++) {
             o_ptr = &player_ptr->inventory_list[i];
-            if (o_ptr->bi_id && !o_ptr->is_cursed()) {
+            if (o_ptr->is_valid() && !o_ptr->is_cursed()) {
                 auto flags = object_flags(o_ptr);
                 if (flags.has(TR_TELEPORT)) {
                     follow = true;

@@ -42,8 +42,8 @@ int find_autopick_list(PlayerType *player_ptr, ItemEntity *o_ptr)
     auto item_name = describe_flavor(player_ptr, o_ptr, (OD_NO_FLAVOR | OD_OMIT_PREFIX | OD_NO_PLURAL));
     str_tolower(item_name.data());
     for (auto i = 0U; i < autopick_list.size(); i++) {
-        autopick_type *entry = &autopick_list[i];
-        if (is_autopick_match(player_ptr, o_ptr, entry, item_name.data())) {
+        const auto &entry = autopick_list[i];
+        if (is_autopick_match(player_ptr, o_ptr, entry, item_name)) {
             return i;
         }
     }
@@ -76,7 +76,7 @@ bool get_object_for_search(PlayerType *player_ptr, ItemEntity **o_handle, concpt
  */
 bool get_destroyed_object_for_search(PlayerType *player_ptr, ItemEntity **o_handle, concptr *search_strp)
 {
-    if (!autopick_last_destroyed_object.bi_id) {
+    if (!autopick_last_destroyed_object.is_valid()) {
         return false;
     }
 
@@ -332,7 +332,7 @@ void search_for_object(PlayerType *player_ptr, text_body_type *tb, ItemEntity *o
             continue;
         }
 
-        match = is_autopick_match(player_ptr, o_ptr, entry, item_name.data());
+        match = is_autopick_match(player_ptr, o_ptr, *entry, item_name);
         if (!match) {
             continue;
         }

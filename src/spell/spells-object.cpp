@@ -96,20 +96,20 @@ static const std::array<AmuseDefinition, 13> amuse_info = { {
 
 static std::optional<FixedArtifactId> sweep_amusement_artifact(const bool insta_art, const short bi_id)
 {
-    for (const auto &[a_idx, a_ref] : artifacts_info) {
+    for (const auto &[a_idx, artifact] : artifacts_info) {
         if (a_idx == FixedArtifactId::NONE) {
             continue;
         }
 
-        if (insta_art && !a_ref.gen_flags.has(ItemGenerationTraitType::INSTA_ART)) {
+        if (insta_art && !artifact.gen_flags.has(ItemGenerationTraitType::INSTA_ART)) {
             continue;
         }
 
-        if (a_ref.bi_key != baseitems_info[bi_id].bi_key) {
+        if (artifact.bi_key != baseitems_info[bi_id].bi_key) {
             continue;
         }
 
-        if (a_ref.is_generated) {
+        if (artifact.is_generated) {
             continue;
         }
 
@@ -219,7 +219,7 @@ bool curse_armor(PlayerType *player_ptr)
 {
     /* Curse the body armor */
     auto *o_ptr = &player_ptr->inventory_list[INVEN_BODY];
-    if (o_ptr->bi_id == 0) {
+    if (!o_ptr->is_valid()) {
         return false;
     }
 
@@ -235,7 +235,7 @@ bool curse_armor(PlayerType *player_ptr)
     }
 
     msg_format(_("恐怖の暗黒オーラがあなたの%sを包み込んだ！", "A terrible black aura blasts your %s!"), item_name.data());
-    chg_virtue(player_ptr, V_ENCHANT, -5);
+    chg_virtue(player_ptr, Virtue::ENCHANT, -5);
     o_ptr->fixed_artifact_idx = FixedArtifactId::NONE;
     o_ptr->ego_idx = EgoType::BLASTED;
     o_ptr->to_a = 0 - randint1(5) - randint1(5);
@@ -263,7 +263,7 @@ bool curse_armor(PlayerType *player_ptr)
  */
 bool curse_weapon_object(PlayerType *player_ptr, bool force, ItemEntity *o_ptr)
 {
-    if (o_ptr->bi_id == 0) {
+    if (!o_ptr->is_valid()) {
         return false;
     }
 
@@ -281,7 +281,7 @@ bool curse_weapon_object(PlayerType *player_ptr, bool force, ItemEntity *o_ptr)
         msg_format(_("恐怖の暗黒オーラがあなたの%sを包み込んだ！", "A terrible black aura blasts your %s!"), item_name.data());
     }
 
-    chg_virtue(player_ptr, V_ENCHANT, -5);
+    chg_virtue(player_ptr, Virtue::ENCHANT, -5);
     o_ptr->fixed_artifact_idx = FixedArtifactId::NONE;
     o_ptr->ego_idx = EgoType::SHATTERED;
     o_ptr->to_h = 0 - randint1(5) - randint1(5);
@@ -495,10 +495,10 @@ bool enchant_spell(PlayerType *player_ptr, HIT_PROB num_hit, int num_dam, ARMOUR
         }
         msg_print(_("強化に失敗した。", "The enchantment failed."));
         if (one_in_(3)) {
-            chg_virtue(player_ptr, V_ENCHANT, -1);
+            chg_virtue(player_ptr, Virtue::ENCHANT, -1);
         }
     } else {
-        chg_virtue(player_ptr, V_ENCHANT, 1);
+        chg_virtue(player_ptr, Virtue::ENCHANT, 1);
     }
 
     calc_android_exp(player_ptr);
@@ -525,14 +525,14 @@ void brand_weapon(PlayerType *player_ptr, int brand_type)
     auto special_weapon = bi_key == BaseitemKey(ItemKindType::SWORD, SV_POISON_NEEDLE);
     special_weapon |= bi_key == BaseitemKey(ItemKindType::POLEARM, SV_DEATH_SCYTHE);
     special_weapon |= bi_key == BaseitemKey(ItemKindType::SWORD, SV_DIAMOND_EDGE);
-    const auto is_normal_item = (o_ptr->bi_id > 0) && !o_ptr->is_fixed_or_random_artifact() && !o_ptr->is_ego() && !o_ptr->is_cursed() && !special_weapon;
+    const auto is_normal_item = o_ptr->is_valid() && !o_ptr->is_fixed_or_random_artifact() && !o_ptr->is_ego() && !o_ptr->is_cursed() && !special_weapon;
     if (!is_normal_item) {
         if (flush_failure) {
             flush();
         }
 
         msg_print(_("属性付加に失敗した。", "The branding failed."));
-        chg_virtue(player_ptr, V_ENCHANT, -2);
+        chg_virtue(player_ptr, Virtue::ENCHANT, -2);
         calc_android_exp(player_ptr);
         return;
     }
@@ -629,6 +629,6 @@ void brand_weapon(PlayerType *player_ptr, int brand_type)
     msg_format(_("あなたの%s%s", "Your %s %s"), item_name.data(), act);
     enchant_equipment(player_ptr, o_ptr, randint0(3) + 4, ENCH_TOHIT | ENCH_TODAM);
     o_ptr->discount = 99;
-    chg_virtue(player_ptr, V_ENCHANT, 2);
+    chg_virtue(player_ptr, Virtue::ENCHANT, 2);
     calc_android_exp(player_ptr);
 }

@@ -52,7 +52,7 @@ bool apply_disenchant(PlayerType *player_ptr, BIT_FLAGS mode)
 
     ItemEntity *o_ptr;
     o_ptr = &player_ptr->inventory_list[t];
-    if (!o_ptr->bi_id) {
+    if (!o_ptr->is_valid()) {
         return false;
     }
 
@@ -117,8 +117,8 @@ bool apply_disenchant(PlayerType *player_ptr, BIT_FLAGS mode)
 #else
     msg_format("Your %s (%c) %s disenchanted!", item_name.data(), index_to_label(t), ((o_ptr->number != 1) ? "were" : "was"));
 #endif
-    chg_virtue(player_ptr, V_HARMONY, 1);
-    chg_virtue(player_ptr, V_ENCHANT, -2);
+    chg_virtue(player_ptr, Virtue::HARMONY, 1);
+    chg_virtue(player_ptr, Virtue::ENCHANT, -2);
     player_ptr->update |= (PU_BONUS);
     player_ptr->window_flags |= (PW_EQUIP | PW_PLAYER);
 

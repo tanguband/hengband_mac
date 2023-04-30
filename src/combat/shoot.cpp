@@ -749,10 +749,10 @@ void exe_fire(PlayerType *player_ptr, INVENTORY_IDX item, ItemEntity *j_ptr, SPE
 
                 if (m_ptr->is_asleep()) {
                     if (r_ptr->kind_flags.has_not(MonsterKindType::EVIL) || one_in_(5)) {
-                        chg_virtue(player_ptr, V_COMPASSION, -1);
+                        chg_virtue(player_ptr, Virtue::COMPASSION, -1);
                     }
                     if (r_ptr->kind_flags.has_not(MonsterKindType::EVIL) || one_in_(5)) {
-                        chg_virtue(player_ptr, V_HONOUR, -1);
+                        chg_virtue(player_ptr, Virtue::HONOUR, -1);
                     }
                 }
 
@@ -956,7 +956,7 @@ void exe_fire(PlayerType *player_ptr, INVENTORY_IDX item, ItemEntity *j_ptr, SPE
             if (!o_idx) {
                 msg_format(_("%sはどこかへ行った。", "The %s went somewhere."), item_name.data());
                 if (q_ptr->is_fixed_artifact()) {
-                    artifacts_info.at(j_ptr->fixed_artifact_idx).is_generated = false;
+                    ArtifactsInfo::get_instance().get_artifact(j_ptr->fixed_artifact_idx).is_generated = false;
                 }
                 return;
             }

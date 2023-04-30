@@ -171,10 +171,9 @@ static bool wr_savefile_new(PlayerType *player_ptr, SaveType type)
     auto max_a_num = enum2i(artifacts_info.rbegin()->first);
     tmp16u = max_a_num + 1;
     wr_u16b(tmp16u);
-    ArtifactType dummy;
     for (auto i = 0U; i < tmp16u; i++) {
         const auto a_idx = i2enum<FixedArtifactId>(i);
-        const auto &artifact = (i > 0) ? artifacts_info.at(a_idx) : dummy;
+        const auto &artifact = ArtifactsInfo::get_instance().get_artifact(a_idx);
         wr_bool(artifact.is_generated);
         wr_s16b(artifact.floor_id);
     }
@@ -204,7 +203,7 @@ static bool wr_savefile_new(PlayerType *player_ptr, SaveType type)
 
     for (int i = 0; i < INVEN_TOTAL; i++) {
         auto *o_ptr = &player_ptr->inventory_list[i];
-        if (!o_ptr->bi_id) {
+        if (!o_ptr->is_valid()) {
             continue;
         }
 
@@ -257,8 +256,7 @@ static bool wr_savefile_new(PlayerType *player_ptr, SaveType type)
 static bool save_player_aux(PlayerType *player_ptr, char *name, SaveType type)
 {
     safe_setuid_grab(player_ptr);
-    int file_permission = 0644;
-    int fd = fd_make(name, file_permission);
+    auto fd = fd_make(name);
     safe_setuid_drop();
 
     bool is_save_successful = false;
