@@ -72,7 +72,7 @@
 void init_file_paths(const char *libpath, const char *varpath)
 {
 #ifdef PRIVATE_USER_PATH
-    char base[1024];
+    const auto &base = path_parse(PRIVATE_USER_PATH).string();
 #endif
     char buf[1024];
 
@@ -106,8 +106,7 @@ void init_file_paths(const char *libpath, const char *varpath)
     ANGBAND_DIR_DEBUG_SAVE = string_make(buf);
 
 #ifdef PRIVATE_USER_PATH
-    path_parse(base, sizeof(base), PRIVATE_USER_PATH);
-    path_build(buf, sizeof(buf), PRIVATE_USER_PATH, VARIANT_NAME.data());
+    path_build(buf, sizeof(buf), base.data(), VARIANT_NAME.data());
     ANGBAND_DIR_USER = string_make(buf);
 #else
     ANGBAND_DIR_USER = string_make(format("%suser", varpath).data());
