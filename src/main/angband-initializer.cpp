@@ -38,80 +38,36 @@
 #ifndef WINDOWS
 #include <dirent.h>
 #endif
-#ifdef PRIVATE_USER_PATH
-#include <string>
-#endif
+#include <vector>
 
 /*!
- * Find the default paths to all of our important sub-directories.
- * @param libpath パス保管先の文字列
+ * @brief 各データファイルを読み取るためのパスを取得する.
+ * @param libpath 各PCのインストール環境における"lib/" を表す絶対パス
  * @param varpath Is the base path for directories that have files which
  * are not read-only: ANGBAND_DIR_APEX, ANGBAND_DIR_BONE, ANGBAND_DIR_DATA,
- * and ANGBAND_DIR_SAVE.  If the PRIVATE_USER_PATH preprocessor macro has not
- * been set, it is also used as the base path for ANGBAND_DIR_USER.
- * @details
- * <pre>
- * The purpose of each sub-directory is described in "io/files-util.c".
- * The traditional behavior was to put all of the sub-directories within
- * one directory, "lib".  To get that behavior, pass the same string for
- * libpath and varpath.  Further customization may be done later in response
- * to command line options (most importantly for the "info", "user", and
- * "save" directories), but that is done after this function:  see
- * "change_path()" in "main.c".  libpath and varpath should end in the
- * appropriate "PATH_SEP" string.  All of the "sub-directory" paths
- * (created below or supplied by the user) will NOT end in the "PATH_SEP"
- * string, see the special "path_build()" function in "util/angband-files.c"
- * for more information.
- * Hack -- first we free all the strings, since this is known
- * to succeed even if the strings have not been allocated yet,
- * as long as the variables start out as "NULL".  This allows
- * this function to be called multiple times, for example, to
- * try several base "path" values until a good one is found.
- * </pre>
+ * and ANGBAND_DIR_SAVE.  If the PRIVATE_USER_PATH preprocessor macro has
+ * not been set, it is also used as the base path for ANGBAND_DIR_USER.
  */
-void init_file_paths(const char *libpath, const char *varpath)
+void init_file_paths(const std::filesystem::path &libpath, const std::filesystem::path &varpath)
 {
+    ANGBAND_DIR = std::filesystem::path(libpath);
+    ANGBAND_DIR_APEX = std::filesystem::path(varpath).append("apex");
+    ANGBAND_DIR_BONE = std::filesystem::path(varpath).append("bone");
+    ANGBAND_DIR_DATA = std::filesystem::path(varpath).append("data");
+    ANGBAND_DIR_EDIT = std::filesystem::path(libpath).append("edit");
+    ANGBAND_DIR_SCRIPT = std::filesystem::path(libpath).append("script");
+    ANGBAND_DIR_FILE = std::filesystem::path(libpath).append("file");
+    ANGBAND_DIR_HELP = std::filesystem::path(libpath).append("help");
+    ANGBAND_DIR_INFO = std::filesystem::path(libpath).append("info");
+    ANGBAND_DIR_PREF = std::filesystem::path(libpath).append("pref");
+    ANGBAND_DIR_SAVE = std::filesystem::path(varpath).append("save");
+    ANGBAND_DIR_DEBUG_SAVE = std::filesystem::path(ANGBAND_DIR_SAVE).append("log");
 #ifdef PRIVATE_USER_PATH
-    const auto &base = path_parse(PRIVATE_USER_PATH);
-#endif
-    char buf[1024];
-
-    string_free(ANGBAND_DIR);
-    string_free(ANGBAND_DIR_APEX);
-    string_free(ANGBAND_DIR_BONE);
-    string_free(ANGBAND_DIR_DATA);
-    string_free(ANGBAND_DIR_EDIT);
-    string_free(ANGBAND_DIR_SCRIPT);
-    string_free(ANGBAND_DIR_FILE);
-    string_free(ANGBAND_DIR_HELP);
-    string_free(ANGBAND_DIR_INFO);
-    string_free(ANGBAND_DIR_SAVE);
-    string_free(ANGBAND_DIR_DEBUG_SAVE);
-    string_free(ANGBAND_DIR_USER);
-    string_free(ANGBAND_DIR_XTRA);
-
-    ANGBAND_DIR = string_make(libpath);
-
-    ANGBAND_DIR_APEX = string_make(format("%sapex", varpath).data());
-    ANGBAND_DIR_BONE = string_make(format("%sbone", varpath).data());
-    ANGBAND_DIR_DATA = string_make(format("%sdata", varpath).data());
-    ANGBAND_DIR_EDIT = string_make(format("%sedit", libpath).data());
-    ANGBAND_DIR_SCRIPT = string_make(format("%sscript", libpath).data());
-    ANGBAND_DIR_FILE = string_make(format("%sfile", libpath).data());
-    ANGBAND_DIR_HELP = string_make(format("%shelp", libpath).data());
-    ANGBAND_DIR_INFO = string_make(format("%sinfo", libpath).data());
-    ANGBAND_DIR_PREF = string_make(format("%spref", libpath).data());
-    ANGBAND_DIR_SAVE = string_make(format("%ssave", varpath).data());
-    path_build(buf, sizeof(buf), ANGBAND_DIR_SAVE, "log");
-    ANGBAND_DIR_DEBUG_SAVE = string_make(buf);
-
-#ifdef PRIVATE_USER_PATH
-    path_build(buf, sizeof(buf), base, VARIANT_NAME);
-    ANGBAND_DIR_USER = string_make(buf);
+    ANGBAND_DIR_USER = path_parse(PRIVATE_USER_PATH).append(VARIANT_NAME);
 #else
-    ANGBAND_DIR_USER = string_make(format("%suser", varpath).data());
+    ANGBAND_DIR_USER = std::filesystem::path(varpath).append("user");
 #endif
-    ANGBAND_DIR_XTRA = string_make(format("%sxtra", libpath).data());
+    ANGBAND_DIR_XTRA = std::filesystem::path(libpath).append("xtra");
 
     time_t now = time(nullptr);
     struct tm *t = localtime(&now);
@@ -136,41 +92,38 @@ void init_file_paths(const char *libpath, const char *varpath)
         _findclose(hFile);
     }
 #else
-    {
-        DIR *saves_dir = opendir(ANGBAND_DIR_DEBUG_SAVE);
+    const auto &debug_save_str = ANGBAND_DIR_DEBUG_SAVE.string();
+    DIR *saves_dir = opendir(debug_save_str.data());
+    if (saves_dir == nullptr) {
+        return;
+    }
 
-        if (saves_dir) {
-            struct dirent *next_entry;
+    struct dirent *next_entry;
+    while ((next_entry = readdir(saves_dir))) {
+        if (!angband_strchr(next_entry->d_name, '-')) {
+            continue;
+        }
 
-            while ((next_entry = readdir(saves_dir))) {
-                if (angband_strchr(next_entry->d_name, '-')) {
-                    char path[1024];
-                    struct stat next_stat;
-
-                    path_build(path, sizeof(path), ANGBAND_DIR_DEBUG_SAVE, next_entry->d_name);
-                    /*
-                     * Remove if modified more than a week ago,
-                     * 7*24*60*60 seconds.
-                     */
-                    if (stat(path, &next_stat) == 0 &&
-                        difftime(now, next_stat.st_mtime) > 604800) {
-                        remove(path);
-                    }
-                }
-            }
-            closedir(saves_dir);
+        char path[1024];
+        struct stat next_stat;
+        path_build(path, sizeof(path), ANGBAND_DIR_DEBUG_SAVE, next_entry->d_name);
+        constexpr auto one_week = 7 * 24 * 60 * 60;
+        if ((stat(path, &next_stat) == 0) && (difftime(now, next_stat.st_mtime) > one_week)) {
+            remove(path);
         }
     }
+
+    closedir(saves_dir);
 #endif
 }
 
 /*
  * Helper function for create_needed_dirs().  Copied over from PosChengband.
  */
-bool dir_exists(concptr path)
+static bool dir_exists(const std::filesystem::path path)
 {
     struct stat buf;
-    if (stat(path, &buf) != 0)
+    if (stat(path.native().data(), &buf) != 0)
 	return false;
 #ifdef WIN32
     else if (buf.st_mode & S_IFDIR)
@@ -189,54 +142,32 @@ bool dir_exists(concptr path)
  * one in PosChengband's code and check for paths that end with the path
  * separator.
  */
-bool dir_create(concptr path)
+static bool dir_create(const std::filesystem::path path)
 {
 #ifdef WIN32
     /* If the directory already exists then we're done */
     if (dir_exists(path)) return true;
     return false;
 #else
-    const char *ptr;
-    char buf[1024];
+    std::vector<std::filesystem::path> missing;
+    std::filesystem::path next_path = path;
 
-    /* If the directory already exists then we're done */
-    if (dir_exists(path)) return true;
-    /* Iterate through the path looking for path segements. At each step,
-     * create the path segment if it doesn't already exist. */
-    for (ptr = path; *ptr; ptr++)
-        {
-	    if (*ptr == PATH_SEP[0])
-                {
-		    /* Find the length of the parent path string */
-		    size_t len = (size_t)(ptr - path);
-
-		    /* Skip the initial slash */
-		    if (len == 0) continue;
-		    /* If this is a duplicate path separator, continue */
-		    if (*(ptr - 1) == PATH_SEP[0]) continue;
-
-		    /* We can't handle really big filenames */
-		    if (len - 1 > 512) return false;
-
-		    /* Create the parent path string, plus null-padding */
-		    angband_strcpy(buf, path, len + 1);
-
-		    /* Skip if the parent exists */
-		    if (dir_exists(buf)) continue;
-
-		    /* The parent doesn't exist, so create it or fail */
-		    if (mkdir(buf, 0755) != 0) return false;
-                }
+    while (1) {
+        if (dir_exists(next_path)) {
+            break;
         }
-    /*
-     * The path ends on a path separator so have created it already in
-     * the loop above.
-     */
-    if (*(ptr-1) == PATH_SEP[0])
-	{
-	    return true;
+        missing.push_back(next_path);
+        if (!next_path.has_relative_path()) {
+		break;
 	}
-    return mkdir(path, 0755) == 0 ? true : false;
+	next_path = next_path.parent_path();
+    }
+    for (; !missing.empty(); missing.pop_back()) {
+        if (mkdir(missing.back().native().data(), 0755) != 0) {
+            return false;
+        }
+    }
+    return true;
 #endif
 }
 
@@ -244,7 +175,7 @@ bool dir_create(concptr path)
 /*
  * Create any missing directories. We create only those dirs which may be
  * empty (user/, save/, apex/, bone/, data/). Only user/ is created when
- * the PRIVATE_USER_PATH preprocessor macro has been set. The others are
+ * the PRIVATE_USER_PATH preprocessor maccro has been set. The others are
  * assumed to contain required files and therefore must exist at startup
  * (edit/, pref/, file/, xtra/).
  *
@@ -257,26 +188,13 @@ bool dir_create(concptr path)
  */
 void create_needed_dirs(void)
 {
-    char dirpath[1024];
-
-    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_USER, "");
-    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
-
+    if (!dir_create(ANGBAND_DIR_USER)) quit_fmt("Cannot create '%s'", ANGBAND_DIR_USER.native().data());
 #ifndef PRIVATE_USER_PATH
-    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_SAVE, "");
-    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
-
-    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_DEBUG_SAVE, "");
-    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
-
-    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_APEX, "");
-    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
-
-    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_BONE, "");
-    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
-
-    path_build(dirpath, sizeof(dirpath), ANGBAND_DIR_DATA, "");
-    if (!dir_create(dirpath)) quit_fmt("Cannot create '%s'", dirpath);
+    if (!dir_create(ANGBAND_DIR_SAVE)) quit_fmt("Cannot create '%s'", ANGBAND_DIR_SAVE.native().data());
+    if (!dir_create(ANGBAND_DIR_DEBUG_SAVE)) quit_fmt("Cannot create '%s'", ANGBAND_DIR_DEBUG_SAVE.native().data());
+    if (!dir_create(ANGBAND_DIR_APEX)) quit_fmt("Cannot create '%s'", ANGBAND_DIR_APEX.native().data());
+    if (!dir_create(ANGBAND_DIR_BONE)) quit_fmt("Cannot create '%s'", ANGBAND_DIR_BONE.native().data());
+    if (!dir_create(ANGBAND_DIR_DATA)) quit_fmt("Cannot create '%s'", ANGBAND_DIR_DATA.native().data());
 #endif /* ndef PRIVATE_USER_PATH */
 }
 

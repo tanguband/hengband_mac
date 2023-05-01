@@ -72,7 +72,7 @@ void recharge_magic_items(PlayerType *player_ptr)
     }
 
     if (changed) {
-        player_ptr->window_flags |= (PW_EQUIP);
+        player_ptr->window_flags |= (PW_EQUIPMENT);
         wild_regen = 20;
     }
 
@@ -83,7 +83,7 @@ void recharge_magic_items(PlayerType *player_ptr)
      */
     for (changed = false, i = 0; i < INVEN_PACK; i++) {
         auto *o_ptr = &player_ptr->inventory_list[i];
-        const auto &baseitem = baseitems_info[o_ptr->bi_id];
+        const auto &baseitem = o_ptr->get_baseitem();
         if (!o_ptr->is_valid()) {
             continue;
         }
@@ -109,7 +109,7 @@ void recharge_magic_items(PlayerType *player_ptr)
     }
 
     if (changed) {
-        player_ptr->window_flags |= (PW_INVEN);
+        player_ptr->window_flags |= (PW_INVENTORY);
         wild_regen = 20;
     }
 

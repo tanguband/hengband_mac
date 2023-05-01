@@ -226,17 +226,17 @@ void wiz_identify_full_inventory(PlayerType *player_ptr)
             continue;
         }
 
-        auto &baseitem = baseitems_info[o_ptr->bi_id];
+        auto &baseitem = o_ptr->get_baseitem();
         baseitem.aware = true; //!< @note 記録には残さないためTRUEを立てるのみ
         set_bits(o_ptr->ident, IDENT_KNOWN | IDENT_FULL_KNOWN);
         o_ptr->marked.set(OmType::TOUCHED);
     }
 
     /* Refrect item informaiton onto subwindows without updating inventory */
-    reset_bits(player_ptr->update, PU_COMBINE | PU_REORDER);
+    reset_bits(player_ptr->update, PU_COMBINATION | PU_REORDER);
     handle_stuff(player_ptr);
-    set_bits(player_ptr->update, PU_COMBINE | PU_REORDER);
-    set_bits(player_ptr->window_flags, PW_INVEN | PW_EQUIP);
+    set_bits(player_ptr->update, PU_COMBINATION | PU_REORDER);
+    set_bits(player_ptr->window_flags, PW_INVENTORY | PW_EQUIPMENT);
 }
 
 /*!
@@ -264,7 +264,7 @@ static void prt_alloc(const BaseitemKey &bi_key, TERM_LEN row, TERM_LEN col)
                 prob = entry.prob1 * i * BASEITEM_MAX_DEPTH / (entry.level - 1);
             }
 
-            const auto &baseitem = baseitems_info[entry.index];
+            const auto &baseitem = entry.get_baseitem();
             total[i] += prob / magnificant;
             total_frac += prob % magnificant;
 
@@ -344,7 +344,7 @@ static void wiz_display_item(PlayerType *player_ptr, ItemEntity *o_ptr)
 
     auto line = 4;
     const auto &bi_key = o_ptr->bi_key;
-    const auto item_level = baseitems_info[o_ptr->bi_id].level;
+    const auto item_level = o_ptr->get_baseitem().level;
     prt(format("kind = %-5d  level = %-4d  tval = %-5d  sval = %-5d", o_ptr->bi_id, item_level, enum2i(bi_key.tval()), bi_key.sval().value()), line, j);
     prt(format("number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d", o_ptr->number, o_ptr->weight, o_ptr->ac, o_ptr->dd, o_ptr->ds), ++line, j);
     prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d", o_ptr->pval, o_ptr->to_a, o_ptr->to_h, o_ptr->to_d), ++line, j);
@@ -581,8 +581,8 @@ static void wiz_reroll_item(PlayerType *player_ptr, ItemEntity *o_ptr)
     }
 
     o_ptr->copy_from(q_ptr);
-    set_bits(player_ptr->update, PU_BONUS | PU_COMBINE | PU_REORDER);
-    set_bits(player_ptr->window_flags, PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | PW_FLOOR_ITEM_LIST | PW_FOUND_ITEM_LIST);
+    set_bits(player_ptr->update, PU_BONUS | PU_COMBINATION | PU_REORDER);
+    set_bits(player_ptr->window_flags, PW_INVENTORY | PW_EQUIPMENT | PW_SPELL | PW_PLAYER | PW_FLOOR_ITEMS | PW_FOUND_ITEMS);
 }
 
 /*!
@@ -725,8 +725,8 @@ void wiz_modify_item(PlayerType *player_ptr)
         msg_print("Changes accepted.");
 
         o_ptr->copy_from(q_ptr);
-        set_bits(player_ptr->update, PU_BONUS | PU_COMBINE | PU_REORDER);
-        set_bits(player_ptr->window_flags, PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER | PW_FLOOR_ITEM_LIST | PW_FOUND_ITEM_LIST);
+        set_bits(player_ptr->update, PU_BONUS | PU_COMBINATION | PU_REORDER);
+        set_bits(player_ptr->window_flags, PW_INVENTORY | PW_EQUIPMENT | PW_SPELL | PW_PLAYER | PW_FLOOR_ITEMS | PW_FOUND_ITEMS);
     } else {
         msg_print("Changes ignored.");
     }
@@ -907,26 +907,26 @@ WishResultType do_cmd_wishing(PlayerType *player_ptr, int prob, bool allow_art, 
             short bi_id = k_ids.back();
             o_ptr->prep(bi_id);
 
-            for (const auto &[e_idx, e_ref] : egos_info) {
-                if (e_ref.idx == EgoType::NONE || e_ref.name.empty()) {
+            for (const auto &[e_idx, ego] : egos_info) {
+                if (ego.idx == EgoType::NONE || ego.name.empty()) {
                     continue;
                 }
 
-                std::string item_name(e_ref.name);
+                std::string item_name(ego.name);
 #ifdef JP
 #else
                 str_tolower(item_name.data());
 #endif
                 if (cheat_xtra) {
-                    msg_format("matching ego no.%d %s...", enum2i(e_ref.idx), item_name.data());
+                    msg_format("matching ego no.%d %s...", enum2i(ego.idx), item_name.data());
                 }
 
                 if (std::string(str).find(item_name) != std::string::npos) {
-                    if (is_slot_able_to_be_ego(player_ptr, o_ptr) != e_ref.slot) {
+                    if (is_slot_able_to_be_ego(player_ptr, o_ptr) != ego.slot) {
                         continue;
                     }
 
-                    e_ids.push_back(e_ref.idx);
+                    e_ids.push_back(ego.idx);
                 }
             }
         }
