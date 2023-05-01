@@ -5621,7 +5621,7 @@ static void init_windows(void)
 
 	/* Get where we think the save files are */
 	NSURL *startingDirectoryURL =
-	    [NSURL fileURLWithPath:[NSString stringWithCString:ANGBAND_DIR_SAVE encoding:NSASCIIStringEncoding]
+	    [NSURL fileURLWithPath:[NSString stringWithCString:ANGBAND_DIR_SAVE.native().data() encoding:NSASCIIStringEncoding]
 		   isDirectory:YES];
 
 	/* Set up an open panel */
