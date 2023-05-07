@@ -22,7 +22,7 @@ ULONG_PTR gdiplusToken;
 // interface object
 Graphics graphic{};
 
-concptr ANGBAND_DIR_XTRA_GRAF;
+std::filesystem::path ANGBAND_DIR_XTRA_GRAF;
 
 /*!
  * 現在使用中のタイルID(0ならば未使用)
@@ -57,7 +57,7 @@ static void finalize_gdi_plus()
     }
 }
 
-HBITMAP read_graphic(char *filename)
+HBITMAP read_graphic(const char *filename)
 {
     HBITMAP result = NULL;
     init_gdi_plus();
