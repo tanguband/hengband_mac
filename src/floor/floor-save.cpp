@@ -63,7 +63,7 @@ static void check_saved_tmp_files(const int fd, bool *force)
 void init_saved_floors(PlayerType *player_ptr, bool force)
 {
     auto fd = -1;
-    if (savefile[0]) {
+    if (!savefile.empty()) {
         for (int i = 0; i < MAX_SAVED_FLOORS; i++) {
             saved_floor_type *sf_ptr = &saved_floors[i];
             std::string floor_savefile = get_saved_floor_name(i);

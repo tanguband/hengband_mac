@@ -3937,7 +3937,7 @@ static void set_color_for_index(int idx)
  */
 static void record_current_savefile(void)
 {
-    NSString *savefileString = [[NSString stringWithCString:savefile encoding:NSMacOSRomanStringEncoding] lastPathComponent];
+    NSString *savefileString = [[NSString stringWithCString:savefile.native().data() encoding:NSMacOSRomanStringEncoding] lastPathComponent];
     if (savefileString)
     {
         NSUserDefaults *angbandDefs = [NSUserDefaults angbandDefaults];
@@ -5641,6 +5641,8 @@ static void init_windows(void)
 	    if ([fileURLs count] > 0 && [[fileURLs objectAtIndex:0] isFileURL])
 	    {
 		NSURL* savefileURL = (NSURL *)[fileURLs objectAtIndex:0];
+		char t[1024];
+
 		/*
 		 * The path property doesn't do the right thing except for
 		 * URLs with the file scheme. We had
@@ -5648,9 +5650,11 @@ static void init_windows(void)
 		 * introduced until OS X 10.9.
 		 */
 		selectedSomething = [[savefileURL path]
-					getCString:savefile
-					maxLength:sizeof savefile
+					getCString:t
+					maxLength:sizeof(t)
 					encoding:NSMacOSRomanStringEncoding];
+		savefile = std::filesystem::path(t,
+			std::filesystem::path::native_format);
 	    }
 	}
 
@@ -6279,11 +6283,13 @@ static void init_windows(void)
     }
 
     /* Put it in savefile */
-    if (! [file getFileSystemRepresentation:savefile maxLength:sizeof savefile]) {
+    char t[1024];
+    if (! [file getFileSystemRepresentation:t maxLength:sizeof(t)]) {
 	[[NSApplication sharedApplication]
 	    replyToOpenOrPrint:NSApplicationDelegateReplyFailure];
 	return;
     }
+    savefile = std::filesystem::path(t, std::filesystem::path::native_format);
 
     game_in_progress = YES;
 
