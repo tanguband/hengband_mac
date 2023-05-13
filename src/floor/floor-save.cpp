@@ -66,13 +66,13 @@ void init_saved_floors(PlayerType *player_ptr, bool force)
     if (!savefile.empty()) {
         for (int i = 0; i < MAX_SAVED_FLOORS; i++) {
             saved_floor_type *sf_ptr = &saved_floors[i];
-            std::string floor_savefile = get_saved_floor_name(i);
+            auto floor_savefile = get_saved_floor_name(i);
             safe_setuid_grab(player_ptr);
-            fd = fd_make(floor_savefile.data());
+            fd = fd_make(floor_savefile);
             safe_setuid_drop();
             check_saved_tmp_files(fd, &force);
             safe_setuid_grab(player_ptr);
-            (void)fd_kill(floor_savefile.data());
+            (void)fd_kill(floor_savefile);
             safe_setuid_drop();
             sf_ptr->floor_id = 0;
         }
@@ -99,7 +99,7 @@ void clear_saved_floor_files(PlayerType *player_ptr)
         }
 
         safe_setuid_grab(player_ptr);
-        (void)fd_kill(get_saved_floor_name(i).data());
+        (void)fd_kill(get_saved_floor_name(i));
         safe_setuid_drop();
     }
 }
@@ -143,7 +143,7 @@ void kill_saved_floor(PlayerType *player_ptr, saved_floor_type *sf_ptr)
     }
 
     safe_setuid_grab(player_ptr);
-    (void)fd_kill(get_saved_floor_name((int)sf_ptr->savefile_id).data());
+    (void)fd_kill(get_saved_floor_name((int)sf_ptr->savefile_id));
     safe_setuid_drop();
     sf_ptr->floor_id = 0;
 }
