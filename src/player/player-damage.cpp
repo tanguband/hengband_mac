@@ -6,7 +6,6 @@
 #include "core/asking-player.h"
 #include "core/disturbance.h"
 #include "core/player-redraw-types.h"
-#include "core/player-update-types.h"
 #include "core/stuff-handler.h"
 #include "core/window-redrawer.h"
 #include "dungeon/quest.h"
@@ -64,6 +63,7 @@
 #include "system/monster-entity.h"
 #include "system/monster-race-info.h"
 #include "system/player-type-definition.h"
+#include "system/redrawing-flags-updater.h"
 #include "term/screen-processor.h"
 #include "term/term-color-types.h"
 #include "timed-effect/player-hallucination.h"
@@ -90,30 +90,18 @@ using dam_func = int (*)(PlayerType *player_ptr, int dam, concptr kb_str, bool a
  */
 static bool acid_minus_ac(PlayerType *player_ptr)
 {
-    ItemEntity *o_ptr = nullptr;
-    switch (randint1(7)) {
-    case 1:
-        o_ptr = &player_ptr->inventory_list[INVEN_MAIN_HAND];
-        break;
-    case 2:
-        o_ptr = &player_ptr->inventory_list[INVEN_SUB_HAND];
-        break;
-    case 3:
-        o_ptr = &player_ptr->inventory_list[INVEN_BODY];
-        break;
-    case 4:
-        o_ptr = &player_ptr->inventory_list[INVEN_OUTER];
-        break;
-    case 5:
-        o_ptr = &player_ptr->inventory_list[INVEN_ARMS];
-        break;
-    case 6:
-        o_ptr = &player_ptr->inventory_list[INVEN_HEAD];
-        break;
-    case 7:
-        o_ptr = &player_ptr->inventory_list[INVEN_FEET];
-        break;
-    }
+    constexpr static auto candidates = {
+        INVEN_MAIN_HAND,
+        INVEN_SUB_HAND,
+        INVEN_BODY,
+        INVEN_OUTER,
+        INVEN_ARMS,
+        INVEN_HEAD,
+        INVEN_FEET,
+    };
+
+    const auto slot = rand_choice(candidates);
+    auto *o_ptr = &player_ptr->inventory_list[slot];
 
     if ((o_ptr == nullptr) || !o_ptr->is_valid() || !o_ptr->is_protector()) {
         return false;
@@ -133,7 +121,8 @@ static bool acid_minus_ac(PlayerType *player_ptr)
 
     msg_format(_("%sが酸で腐食した！", "Your %s is corroded!"), item_name.data());
     o_ptr->to_a--;
-    player_ptr->update |= PU_BONUS;
+    auto &rfu = RedrawingFlagsUpdater::get_instance();
+    rfu.set_flag(StatusRedrawingFlag::BONUS);
     player_ptr->window_flags |= PW_EQUIPMENT | PW_PLAYER;
     calc_android_exp(player_ptr);
     return true;
