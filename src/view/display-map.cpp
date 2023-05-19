@@ -48,8 +48,7 @@ const std::string image_monsters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQR
 static void image_object(TERM_COLOR *ap, char *cp)
 {
     if (use_graphics) {
-        std::span<BaseitemInfo> candidates(baseitems_info.begin() + 1, baseitems_info.end());
-        const auto &baseitem = rand_choice(candidates);
+        const auto &baseitem = baseitems_info[randint1(baseitems_info.size() - 1)];
         *cp = baseitem.x_char;
         *ap = baseitem.x_attr;
         return;
