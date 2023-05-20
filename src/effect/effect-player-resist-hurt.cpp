@@ -37,7 +37,7 @@
 
 // 毒を除く4元素.
 void effect_player_elements(
-    PlayerType *player_ptr, EffectPlayerType *ep_ptr, concptr attack_message, int (*damage_func)(PlayerType *, int, concptr, bool))
+    PlayerType *player_ptr, EffectPlayerType *ep_ptr, std::string_view attack_message, int (*damage_func)(PlayerType *, int, std::string_view, bool))
 {
     if (player_ptr->effects()->blindness()->is_blind()) {
         msg_print(attack_message);
@@ -459,59 +459,6 @@ void effect_player_dark(PlayerType *player_ptr, EffectPlayerType *ep_ptr)
     ep_ptr->get_damage = take_hit(player_ptr, DAMAGE_ATTACK, ep_ptr->dam, ep_ptr->killer);
 }
 
-static void effect_player_time_one_disability(PlayerType *player_ptr)
-{
-    int k = 0;
-    concptr act = nullptr;
-    switch (randint1(6)) {
-    case 1:
-        k = A_STR;
-        act = _("強く", "strong");
-        break;
-    case 2:
-        k = A_INT;
-        act = _("聡明で", "bright");
-        break;
-    case 3:
-        k = A_WIS;
-        act = _("賢明で", "wise");
-        break;
-    case 4:
-        k = A_DEX;
-        act = _("器用で", "agile");
-        break;
-    case 5:
-        k = A_CON;
-        act = _("健康で", "hale");
-        break;
-    case 6:
-        k = A_CHR;
-        act = _("美しく", "beautiful");
-        break;
-    }
-
-    msg_format(_("あなたは以前ほど%sなくなってしまった...。", "You're not as %s as you used to be..."), act);
-    player_ptr->stat_cur[k] = (player_ptr->stat_cur[k] * 3) / 4;
-    if (player_ptr->stat_cur[k] < 3) {
-        player_ptr->stat_cur[k] = 3;
-    }
-
-    RedrawingFlagsUpdater::get_instance().set_flag(StatusRedrawingFlag::BONUS);
-}
-
-static void effect_player_time_all_disabilities(PlayerType *player_ptr)
-{
-    msg_print(_("あなたは以前ほど力強くなくなってしまった...。", "You're not as powerful as you used to be..."));
-    for (int k = 0; k < A_MAX; k++) {
-        player_ptr->stat_cur[k] = (player_ptr->stat_cur[k] * 7) / 8;
-        if (player_ptr->stat_cur[k] < 3) {
-            player_ptr->stat_cur[k] = 3;
-        }
-    }
-
-    RedrawingFlagsUpdater::get_instance().set_flag(StatusRedrawingFlag::BONUS);
-}
-
 static void effect_player_time_addition(PlayerType *player_ptr)
 {
     switch (randint1(10)) {
@@ -532,10 +479,10 @@ static void effect_player_time_addition(PlayerType *player_ptr)
     case 7:
     case 8:
     case 9:
-        effect_player_time_one_disability(player_ptr);
+        msg_print(player_ptr->decrease_ability_random());
         break;
     case 10:
-        effect_player_time_all_disabilities(player_ptr);
+        msg_print(player_ptr->decrease_ability_all());
         break;
     }
 }
