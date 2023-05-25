@@ -2,7 +2,6 @@
 #include "artifact/fixed-art-generator.h"
 #include "artifact/fixed-art-types.h"
 #include "cmd-building/cmd-building.h"
-#include "core/player-redraw-types.h"
 #include "dungeon/quest-completion-checker.h"
 #include "effect/effect-characteristics.h"
 #include "effect/effect-processor.h"
@@ -190,7 +189,7 @@ bool drop_single_artifact(PlayerType *player_ptr, monster_death_type *md_ptr, Fi
 
 static short drop_dungeon_final_artifact(PlayerType *player_ptr, monster_death_type *md_ptr)
 {
-    const auto &dungeon = dungeons_info[player_ptr->dungeon_idx];
+    const auto &dungeon = dungeons_info[player_ptr->current_floor_ptr->dungeon_idx];
     const auto has_reward = dungeon.final_object > 0;
     const auto bi_id = has_reward ? dungeon.final_object : lookup_baseitem_id({ ItemKindType::SCROLL, SV_SCROLL_ACQUIREMENT });
     if (dungeon.final_artifact == FixedArtifactId::NONE) {
@@ -215,7 +214,9 @@ static void drop_artifacts(PlayerType *player_ptr, monster_death_type *md_ptr)
     }
 
     drop_artifact_from_unique(player_ptr, md_ptr);
-    if (((md_ptr->r_ptr->flags7 & RF7_GUARDIAN) == 0) || (dungeons_info[player_ptr->dungeon_idx].final_guardian != md_ptr->m_ptr->r_idx)) {
+    const auto *floor_ptr = player_ptr->current_floor_ptr;
+    const auto &dungeon = dungeons_info[floor_ptr->dungeon_idx];
+    if (((md_ptr->r_ptr->flags7 & RF7_GUARDIAN) == 0) || (dungeon.final_guardian != md_ptr->m_ptr->r_idx)) {
         return;
     }
 
@@ -224,11 +225,11 @@ static void drop_artifacts(PlayerType *player_ptr, monster_death_type *md_ptr)
         ItemEntity forge;
         auto *q_ptr = &forge;
         q_ptr->prep(bi_id);
-        ItemMagicApplier(player_ptr, q_ptr, player_ptr->current_floor_ptr->object_level, AM_NO_FIXED_ART | AM_GOOD).execute();
+        ItemMagicApplier(player_ptr, q_ptr, floor_ptr->object_level, AM_NO_FIXED_ART | AM_GOOD).execute();
         (void)drop_near(player_ptr, q_ptr, -1, md_ptr->md_y, md_ptr->md_x);
     }
 
-    msg_format(_("あなたは%sを制覇した！", "You have conquered %s!"), dungeons_info[player_ptr->dungeon_idx].name.data());
+    msg_format(_("あなたは%sを制覇した！", "You have conquered %s!"), dungeon.name.data());
 }
 
 static void decide_drop_quality(monster_death_type *md_ptr)
@@ -331,7 +332,7 @@ static void on_defeat_last_boss(PlayerType *player_ptr)
 {
     w_ptr->total_winner = true;
     add_winner_class(player_ptr->pclass);
-    player_ptr->redraw |= PR_TITLE;
+    RedrawingFlagsUpdater::get_instance().set_flag(MainWindowRedrawingFlag::TITLE);
     play_music(TERM_XTRA_MUSIC_BASIC, MUSIC_BASIC_FINAL_QUEST_CLEAR);
     exe_write_diary(player_ptr, DIARY_DESCRIPTION, 0, _("見事に変愚蛮怒の勝利者となった！", "finally became *WINNER* of Hengband!"));
     patron_list[player_ptr->chaos_patron].admire(player_ptr);

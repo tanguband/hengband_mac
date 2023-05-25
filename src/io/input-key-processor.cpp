@@ -46,7 +46,6 @@
 #include "cmd-visual/cmd-map.h"
 #include "cmd-visual/cmd-visuals.h"
 #include "core/asking-player.h"
-#include "core/player-redraw-types.h"
 #include "core/special-internal-keys.h"
 #include "dungeon/dungeon-flag-types.h"
 #include "dungeon/quest.h" //!< @do_cmd_quest() がある。後で移設する.
@@ -191,7 +190,7 @@ void process_command(PlayerType *player_ptr)
 
         auto &rfu = RedrawingFlagsUpdater::get_instance();
         rfu.set_flag(StatusRedrawingFlag::MONSTER_STATUSES);
-        player_ptr->redraw |= (PR_TITLE);
+        rfu.set_flag(MainWindowRedrawingFlag::TITLE);
         break;
     }
     case KTRL('A'): {
@@ -404,7 +403,7 @@ void process_command(PlayerType *player_ptr)
             break;
         }
 
-        const auto &dungeon = dungeons_info[player_ptr->dungeon_idx];
+        const auto &dungeon = dungeons_info[floor_ptr->dungeon_idx];
         auto non_magic_class = pc.equals(PlayerClassType::BERSERKER);
         non_magic_class |= pc.equals(PlayerClassType::SMITH);
         if (floor_ptr->dun_level && dungeon.flags.has(DungeonFeatureType::NO_MAGIC) && !non_magic_class) {

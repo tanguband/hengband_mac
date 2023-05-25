@@ -1,5 +1,4 @@
 ﻿#include "spell-kind/earthquake.h"
-#include "core/player-redraw-types.h"
 #include "core/window-redrawer.h"
 #include "dungeon/dungeon-flag-types.h"
 #include "dungeon/quest.h"
@@ -169,7 +168,7 @@ bool earthquake(PlayerType *player_ptr, POSITION cy, POSITION cx, POSITION r, MO
                 killer = _("地震", "an earthquake");
             }
 
-            take_hit(player_ptr, DAMAGE_ATTACK, damage, killer.data());
+            take_hit(player_ptr, DAMAGE_ATTACK, damage, killer);
         }
     }
 
@@ -339,7 +338,7 @@ bool earthquake(PlayerType *player_ptr, POSITION cy, POSITION cx, POSITION r, MO
                 continue;
             }
 
-            if (dungeons_info[player_ptr->dungeon_idx].flags.has(DungeonFeatureType::DARKNESS)) {
+            if (dungeons_info[floor_ptr->dungeon_idx].flags.has(DungeonFeatureType::DARKNESS)) {
                 continue;
             }
 
@@ -370,7 +369,12 @@ bool earthquake(PlayerType *player_ptr, POSITION cy, POSITION cx, POSITION r, MO
         StatusRedrawingFlag::MONSTER_STATUSES,
     };
     rfu.set_flags(flags_srf);
-    player_ptr->redraw |= (PR_HEALTH | PR_UHEALTH | PR_MAP);
+    const auto flags_mwrf = {
+        MainWindowRedrawingFlag::HEALTH,
+        MainWindowRedrawingFlag::UHEALTH,
+        MainWindowRedrawingFlag::MAP,
+    };
+    rfu.set_flags(flags_mwrf);
     player_ptr->window_flags |= (PW_OVERHEAD | PW_DUNGEON);
     if (floor_ptr->grid_array[player_ptr->y][player_ptr->x].info & CAVE_GLOW) {
         set_superstealth(player_ptr, false);

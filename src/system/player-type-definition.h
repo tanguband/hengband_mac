@@ -70,7 +70,6 @@ public:
     int16_t arena_number{}; /* monster number in on_defeat_arena_monster -KMW- */
     bool phase_out{}; /*!< フェイズアウト状態(闘技場観戦状態などに利用、NPCの処理の対象にならず自身もほとんどの行動ができない) */
 
-    DUNGEON_IDX dungeon_idx{}; /* current dungeon index */
     POSITION wilderness_x{}; /* Coordinates in the wilderness */
     POSITION wilderness_y{};
     bool wild_mode{};
@@ -282,7 +281,6 @@ public:
 
     POSITION cur_lite{}; /* Radius of lite (if any) */
 
-    BIT_FLAGS redraw{}; /* Normal Redraws */
     BIT_FLAGS window_flags{}; /* Window Redraws */
     int16_t stat_use[A_MAX]{}; /* Current modified stats */
     int16_t stat_top[A_MAX]{}; /* Maximal modified stats */

@@ -18,7 +18,6 @@
 #include "cmd-io/cmd-save.h"
 #include "cmd-visual/cmd-draw.h"
 #include "core/asking-player.h"
-#include "core/player-redraw-types.h"
 #include "core/stuff-handler.h"
 #include "core/window-redrawer.h"
 #include "dungeon/quest.h"
@@ -299,7 +298,7 @@ static std::optional<FixedArtifactId> wiz_select_named_artifact(PlayerType *play
         for (auto i = 0U; i < page_item_count; ++i) {
             std::stringstream ss;
             ss << I2A(i) << ") " << wiz_make_named_artifact_desc(player_ptr, a_idx_list[page_base_idx + i]);
-            put_str(ss.str().data(), i + 1, 15);
+            put_str(ss.str(), i + 1, 15);
         }
         if (page_max > 1) {
             put_str(format("-- more (%lu/%lu) --", current_page + 1, page_max), page_item_count + 1, 15);
@@ -363,7 +362,7 @@ void wiz_create_named_art(PlayerType *player_ptr)
         std::stringstream ss;
         ss << I2A(i) << ") " << name;
         term_erase(14, i + 1, 255);
-        put_str(ss.str().data(), i + 1, 15);
+        put_str(ss.str(), i + 1, 15);
     }
 
     std::optional<FixedArtifactId> create_a_idx;
@@ -535,7 +534,7 @@ static bool select_debugging_dungeon(PlayerType *player_ptr, DUNGEON_IDX *dungeo
 
     while (true) {
         char tmp_val[160];
-        strnfmt(tmp_val, sizeof(tmp_val), "%d", player_ptr->dungeon_idx);
+        strnfmt(tmp_val, sizeof(tmp_val), "%d", player_ptr->current_floor_ptr->dungeon_idx);
         if (!get_string("Jump which dungeon : ", tmp_val, 2)) {
             return false;
         }
@@ -602,22 +601,22 @@ static bool select_debugging_floor(PlayerType *player_ptr, int dungeon_type)
  */
 static void wiz_jump_floor(PlayerType *player_ptr, DUNGEON_IDX dun_idx, DEPTH depth)
 {
-    player_ptr->dungeon_idx = dun_idx;
-    auto &floor_ref = *player_ptr->current_floor_ptr;
-    floor_ref.dun_level = depth;
+    auto &floor = *player_ptr->current_floor_ptr;
+    floor.dungeon_idx = dun_idx;
+    floor.dun_level = depth;
     prepare_change_floor_mode(player_ptr, CFM_RAND_PLACE);
-    if (!floor_ref.is_in_dungeon()) {
-        player_ptr->dungeon_idx = 0;
+    if (!floor.is_in_dungeon()) {
+        floor.dungeon_idx = 0;
     }
 
-    floor_ref.inside_arena = false;
+    floor.inside_arena = false;
     player_ptr->wild_mode = false;
     leave_quest_check(player_ptr);
     if (record_stair) {
         exe_write_diary(player_ptr, DIARY_WIZ_TELE, 0, nullptr);
     }
 
-    floor_ref.quest_number = QuestId::NONE;
+    floor.quest_number = QuestId::NONE;
     PlayerEnergy(player_ptr).reset_player_turn();
     player_ptr->energy_need = 0;
     prepare_change_floor_mode(player_ptr, CFM_FIRST_FLOOR);
@@ -673,6 +672,26 @@ void wiz_learn_items_all(PlayerType *player_ptr)
     }
 }
 
+static void change_birth_flags(PlayerType *player_ptr)
+{
+    auto &rfu = RedrawingFlagsUpdater::get_instance();
+    const auto flags_srf = {
+        StatusRedrawingFlag::BONUS,
+        StatusRedrawingFlag::HP,
+        StatusRedrawingFlag::MP,
+        StatusRedrawingFlag::SPELLS,
+    };
+    player_ptr->window_flags |= PW_PLAYER;
+    rfu.set_flags(flags_srf);
+    const auto flags_mwrf = {
+        MainWindowRedrawingFlag::BASIC,
+        MainWindowRedrawingFlag::HP,
+        MainWindowRedrawingFlag::MP,
+        MainWindowRedrawingFlag::ABILITY_SCORE,
+    };
+    rfu.set_flags(flags_mwrf);
+}
+
 /*!
  * @brief プレイヤーの種族を変更する
  */
@@ -685,17 +704,7 @@ void wiz_reset_race(PlayerType *player_ptr)
 
     player_ptr->prace = i2enum<PlayerRaceType>(val);
     rp_ptr = &race_info[enum2i(player_ptr->prace)];
-
-    auto &rfu = RedrawingFlagsUpdater::get_instance();
-    const auto flags_srf = {
-        StatusRedrawingFlag::BONUS,
-        StatusRedrawingFlag::HP,
-        StatusRedrawingFlag::MP,
-        StatusRedrawingFlag::SPELLS,
-    };
-    player_ptr->window_flags |= PW_PLAYER;
-    rfu.set_flags(flags_srf);
-    player_ptr->redraw |= PR_BASIC | PR_HP | PR_MP | PR_ABILITY_SCORE;
+    change_birth_flags(player_ptr);
     handle_stuff(player_ptr);
 }
 
@@ -714,16 +723,7 @@ void wiz_reset_class(PlayerType *player_ptr)
     cp_ptr = &class_info[val];
     mp_ptr = &class_magics_info[val];
     PlayerClass(player_ptr).init_specific_data();
-    auto &rfu = RedrawingFlagsUpdater::get_instance();
-    const auto flags_srf = {
-        StatusRedrawingFlag::BONUS,
-        StatusRedrawingFlag::HP,
-        StatusRedrawingFlag::MP,
-        StatusRedrawingFlag::SPELLS,
-    };
-    player_ptr->window_flags |= PW_PLAYER;
-    rfu.set_flags(flags_srf);
-    player_ptr->redraw |= PR_BASIC | PR_HP | PR_MP | PR_ABILITY_SCORE;
+    change_birth_flags(player_ptr);
     handle_stuff(player_ptr);
 }
 
@@ -745,16 +745,7 @@ void wiz_reset_realms(PlayerType *player_ptr)
 
     player_ptr->realm1 = static_cast<int16_t>(val1);
     player_ptr->realm2 = static_cast<int16_t>(val2);
-    auto &rfu = RedrawingFlagsUpdater::get_instance();
-    const auto flags = {
-        StatusRedrawingFlag::BONUS,
-        StatusRedrawingFlag::HP,
-        StatusRedrawingFlag::MP,
-        StatusRedrawingFlag::SPELLS,
-    };
-    player_ptr->window_flags |= PW_PLAYER;
-    rfu.set_flags(flags);
-    player_ptr->redraw |= PR_BASIC;
+    change_birth_flags(player_ptr);
     handle_stuff(player_ptr);
 }
 
@@ -884,10 +875,10 @@ void cheat_death(PlayerType *player_ptr)
     player_ptr->phase_out = false;
     leaving_quest = QuestId::NONE;
     floor_ptr->quest_number = QuestId::NONE;
-    if (player_ptr->dungeon_idx) {
-        player_ptr->recall_dungeon = player_ptr->dungeon_idx;
+    if (floor_ptr->dungeon_idx) {
+        player_ptr->recall_dungeon = floor_ptr->dungeon_idx;
     }
-    player_ptr->dungeon_idx = 0;
+    floor_ptr->dungeon_idx = 0;
     if (lite_town || vanilla_town) {
         player_ptr->wilderness_y = 1;
         player_ptr->wilderness_x = 1;
