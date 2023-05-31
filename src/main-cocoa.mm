@@ -47,6 +47,7 @@
 #include "system/player-type-definition.h"
 #include "system/system-variables.h"
 #include "main/angband-initializer.h"
+#include "main-unix/unix-user-ids.h"
 #include "io/files-util.h"
 #include "io/input-key-acceptor.h"
 #include "world/world.h"
@@ -5711,8 +5712,10 @@ static void init_windows(void)
 	/* init_display(); */
 
 	/* Initialize some save file stuff */
-	p_ptr->player_euid = geteuid();
-	p_ptr->player_egid = getegid();
+	auto &ids = UnixUserIds::get_instance();
+	ids.set_user_id(getuid());
+	ids.set_effective_user_id(geteuid());
+	ids.set_effective_group_id(getegid());
 
 	/*
 	 * Cause splash screen to be centered if the main window is bigger
