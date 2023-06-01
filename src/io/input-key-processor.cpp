@@ -119,7 +119,7 @@ bool enter_wizard_mode(PlayerType *player_ptr)
         }
 
         constexpr auto mes = _("ウィザードモードに突入してスコアを残せなくなった。", "gave up recording score to enter wizard mode.");
-        exe_write_diary(player_ptr, DIARY_DESCRIPTION, 0, mes);
+        exe_write_diary(player_ptr, DiaryKind::DESCRIPTION, 0, mes);
         w_ptr->noscore |= 0x0002;
     }
 
@@ -148,7 +148,7 @@ static bool enter_debug_mode(PlayerType *player_ptr)
         }
 
         constexpr auto mes = _("デバッグモードに突入してスコアを残せなくなった。", "gave up sending score to use debug commands.");
-        exe_write_diary(player_ptr, DIARY_DESCRIPTION, 0, mes);
+        exe_write_diary(player_ptr, DiaryKind::DESCRIPTION, 0, mes);
         w_ptr->noscore |= 0x0008;
     }
 
@@ -165,7 +165,7 @@ void process_command(PlayerType *player_ptr)
     COMMAND_CODE old_now_message = now_message;
     repeat_check();
     now_message = 0;
-    auto sniper_data = PlayerClass(player_ptr).get_specific_data<sniper_data_type>();
+    auto sniper_data = PlayerClass(player_ptr).get_specific_data<SniperData>();
     if (sniper_data && sniper_data->concent > 0) {
         sniper_data->reset_concent = true;
     }
@@ -239,7 +239,7 @@ void process_command(PlayerType *player_ptr)
     }
 
     case KTRL('I'): {
-        toggle_inventory_equipment(player_ptr);
+        toggle_inventory_equipment();
         break;
     }
     case '+': {

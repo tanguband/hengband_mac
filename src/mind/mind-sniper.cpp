@@ -127,9 +127,9 @@ static snipe_power const snipe_powers[MAX_SNIPE_POWERS] = {
 #endif
 };
 
-static void reset_concentration_flag(sniper_data_type *sniper_data)
+void SniperData::reset_concentration_flag()
 {
-    sniper_data->reset_concent = false;
+    this->reset_concent = false;
     auto &rfu = RedrawingFlagsUpdater::get_instance();
     const auto flags = {
         StatusRedrawingFlag::BONUS,
@@ -145,7 +145,7 @@ static void reset_concentration_flag(sniper_data_type *sniper_data)
  */
 static bool snipe_concentrate(PlayerType *player_ptr)
 {
-    auto sniper_data = PlayerClass(player_ptr).get_specific_data<sniper_data_type>();
+    auto sniper_data = PlayerClass(player_ptr).get_specific_data<SniperData>();
     if (!sniper_data) {
         return false;
     }
@@ -155,7 +155,7 @@ static bool snipe_concentrate(PlayerType *player_ptr)
     }
 
     msg_format(_("集中した。(集中度 %d)", "You concentrate deeply. (lvl %d)"), sniper_data->concent);
-    reset_concentration_flag(sniper_data.get());
+    sniper_data->reset_concentration_flag();
     return true;
 }
 
@@ -166,7 +166,7 @@ static bool snipe_concentrate(PlayerType *player_ptr)
  */
 void reset_concentration(PlayerType *player_ptr, bool msg)
 {
-    auto sniper_data = PlayerClass(player_ptr).get_specific_data<sniper_data_type>();
+    auto sniper_data = PlayerClass(player_ptr).get_specific_data<SniperData>();
     if (!sniper_data) {
         return;
     }
@@ -176,7 +176,7 @@ void reset_concentration(PlayerType *player_ptr, bool msg)
     }
 
     sniper_data->concent = 0;
-    reset_concentration_flag(sniper_data.get());
+    sniper_data->reset_concentration_flag();
 }
 
 /*!
@@ -186,7 +186,7 @@ void reset_concentration(PlayerType *player_ptr, bool msg)
  */
 int boost_concentration_damage(PlayerType *player_ptr, int tdam)
 {
-    auto sniper_data = PlayerClass(player_ptr).get_specific_data<sniper_data_type>();
+    auto sniper_data = PlayerClass(player_ptr).get_specific_data<SniperData>();
     const auto sniper_concent = sniper_data ? sniper_data->concent : 0;
 
     tdam = tdam * (10 + sniper_concent) / 10;
@@ -211,7 +211,7 @@ void display_snipe_list(PlayerType *player_ptr)
     put_str(_("名前", "Name"), y, x + 5);
     put_str(_("Lv   MP", "Lv Mana"), y, x + 35);
 
-    auto sniper_data = PlayerClass(player_ptr).get_specific_data<sniper_data_type>();
+    auto sniper_data = PlayerClass(player_ptr).get_specific_data<SniperData>();
 
     for (i = 0; i < MAX_SNIPE_POWERS; i++) {
         /* Access the available spell */
@@ -263,7 +263,7 @@ static int get_snipe_power(PlayerType *player_ptr, COMMAND_CODE *sn, bool only_b
     /* Assume cancelled */
     *sn = (-1);
 
-    auto sniper_data = PlayerClass(player_ptr).get_specific_data<sniper_data_type>();
+    auto sniper_data = PlayerClass(player_ptr).get_specific_data<SniperData>();
 
     /* Repeat previous command */
     /* Get the spell, if available */
@@ -368,7 +368,7 @@ static int get_snipe_power(PlayerType *player_ptr, COMMAND_CODE *sn, bool only_b
         screen_load();
     }
 
-    player_ptr->window_flags |= (PW_SPELL);
+    RedrawingFlagsUpdater::get_instance().set_flag(SubWindowRedrawingFlag::SPELL);
     handle_stuff(player_ptr);
 
     /* Abort if needed */
@@ -397,7 +397,7 @@ MULTIPLY calc_snipe_damage_with_slay(PlayerType *player_ptr, MULTIPLY mult, Mons
     auto *r_ptr = &monraces_info[m_ptr->r_idx];
     bool seen = is_seen(player_ptr, m_ptr);
 
-    auto sniper_data = PlayerClass(player_ptr).get_specific_data<sniper_data_type>();
+    auto sniper_data = PlayerClass(player_ptr).get_specific_data<SniperData>();
     const auto sniper_concent = sniper_data ? sniper_data->concent : 0;
 
     switch (snipe_type) {
@@ -629,8 +629,11 @@ void do_cmd_snipe(PlayerType *player_ptr)
         MainWindowRedrawingFlag::MP,
     };
     rfu.set_flags(flags_mwrf);
-    player_ptr->window_flags |= (PW_PLAYER);
-    player_ptr->window_flags |= (PW_SPELL);
+    const auto flags_swrf = {
+        SubWindowRedrawingFlag::PLAYER,
+        SubWindowRedrawingFlag::SPELL,
+    };
+    rfu.set_flags(flags_swrf);
 }
 
 /*!

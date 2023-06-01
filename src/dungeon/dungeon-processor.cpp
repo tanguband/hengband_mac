@@ -47,7 +47,16 @@ static void redraw_character_xtra(PlayerType *player_ptr)
 {
     w_ptr->character_xtra = true;
     auto &rfu = RedrawingFlagsUpdater::get_instance();
-    set_bits(player_ptr->window_flags, PW_INVENTORY | PW_EQUIPMENT | PW_SPELL | PW_PLAYER | PW_MONSTER_LORE | PW_OVERHEAD | PW_DUNGEON);
+    const auto flags_swrf = {
+        SubWindowRedrawingFlag::INVENTORY,
+        SubWindowRedrawingFlag::EQUIPMENT,
+        SubWindowRedrawingFlag::SPELL,
+        SubWindowRedrawingFlag::PLAYER,
+        SubWindowRedrawingFlag::MONSTER_LORE,
+        SubWindowRedrawingFlag::OVERHEAD,
+        SubWindowRedrawingFlag::DUNGEON,
+    };
+    rfu.set_flags(flags_swrf);
     const auto flags_mwrf = {
         MainWindowRedrawingFlag::WIPE,
         MainWindowRedrawingFlag::BASIC,
@@ -121,7 +130,7 @@ void process_dungeon(PlayerType *player_ptr, bool load_game)
     if ((max_dlv[floor.dungeon_idx] < floor.dun_level) && !inside_quest(floor.quest_number)) {
         max_dlv[floor.dungeon_idx] = floor.dun_level;
         if (record_maxdepth) {
-            exe_write_diary(player_ptr, DIARY_MAXDEAPTH, floor.dun_level);
+            exe_write_diary(player_ptr, DiaryKind::MAXDEAPTH, floor.dun_level);
         }
     }
 

@@ -115,6 +115,7 @@
 #include "save/save.h"
 #include "system/angband.h"
 #include "system/player-type-definition.h"
+#include "system/redrawing-flags-updater.h"
 #include "system/system-variables.h"
 #include "term/gameterm.h"
 #include "term/screen-processor.h"
@@ -2147,7 +2148,7 @@ static void fit_term_size_to_window(term_data *td, bool recalc_window_size = fal
         rebuild_term(td, recalc_window_size);
 
         if (!is_main_term(td)) {
-            p_ptr->window_flags = PW_ALL;
+            RedrawingFlagsUpdater::get_instance().fill_up_sub_flags();
             handle_stuff(p_ptr);
         }
     }
@@ -2442,7 +2443,7 @@ LRESULT PASCAL angband_window_procedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
         if (p_ptr->chp < 0) {
             p_ptr->is_dead = false;
         }
-        exe_write_diary(p_ptr, DIARY_GAMESTART, 0, _("----ゲーム中断----", "---- Save and Exit Game ----"));
+        exe_write_diary(p_ptr, DiaryKind::GAMESTART, 0, _("----ゲーム中断----", "---- Save and Exit Game ----"));
 
         p_ptr->panic_save = 1;
         signals_ignore_tstp();

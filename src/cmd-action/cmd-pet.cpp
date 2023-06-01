@@ -153,7 +153,7 @@ void do_cmd_pet_dismiss(PlayerType *player_ptr)
         if ((all_pets && !should_ask) || (!all_pets && delete_this)) {
             if (record_named_pet && m_ptr->is_named()) {
                 const auto m_name = monster_desc(player_ptr, m_ptr, MD_INDEF_VISIBLE);
-                exe_write_diary(player_ptr, DIARY_NAMED_PET, RECORD_NAMED_PET_DISMISS, m_name);
+                exe_write_diary(player_ptr, DiaryKind::NAMED_PET, RECORD_NAMED_PET_DISMISS, m_name);
             }
 
             if (pet_ctr == player_ptr->riding) {
@@ -170,7 +170,7 @@ void do_cmd_pet_dismiss(PlayerType *player_ptr)
 
             msg_format(_("%s を放した。", "Dismissed %s."), friend_name.data());
             rfu.set_flag(StatusRedrawingFlag::BONUS);
-            player_ptr->window_flags |= (PW_MESSAGE);
+            rfu.set_flag(SubWindowRedrawingFlag::MESSAGE);
 
             delete_monster_idx(player_ptr, pet_ctr);
             Dismissed++;
@@ -366,11 +366,11 @@ static void do_name_pet(PlayerType *player_ptr)
                 /* Save the inscription */
                 m_ptr->nickname = out_val;
                 if (record_named_pet) {
-                    exe_write_diary(player_ptr, DIARY_NAMED_PET, RECORD_NAMED_PET_NAME, monster_desc(player_ptr, m_ptr, MD_INDEF_VISIBLE));
+                    exe_write_diary(player_ptr, DiaryKind::NAMED_PET, RECORD_NAMED_PET_NAME, monster_desc(player_ptr, m_ptr, MD_INDEF_VISIBLE));
                 }
             } else {
                 if (record_named_pet && old_name) {
-                    exe_write_diary(player_ptr, DIARY_NAMED_PET, RECORD_NAMED_PET_UNNAME, monster_desc(player_ptr, m_ptr, MD_INDEF_VISIBLE));
+                    exe_write_diary(player_ptr, DiaryKind::NAMED_PET, RECORD_NAMED_PET_UNNAME, monster_desc(player_ptr, m_ptr, MD_INDEF_VISIBLE));
                 }
                 m_ptr->nickname.clear();
             }
