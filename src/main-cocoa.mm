@@ -1751,21 +1751,19 @@ static void draw_image_tile(
 
 /**
  * Generate a mask for the subwindow flags. The mask is just a safety check to
- * make sure that our windows show and hide as expected.  This function allows
- * for future changes to the set of flags without needed to update it here
- * (unless the underlying types change).
+ * make sure that our windows show and hide as expected.
  */
-static uint32_t AngbandMaskForValidSubwindowFlags(void)
+static EnumClassFlagGroup<SubWindowRedrawingFlag> AngbandMaskForValidSubwindowFlags(void)
 {
-    int windowFlagBits = sizeof(*(window_flag)) * CHAR_BIT;
-    int maxBits = MIN( 32, windowFlagBits );
-    uint32_t mask = 0;
+    EnumClassFlagGroup<SubWindowRedrawingFlag> mask;
+    int maxBits = (int)(sizeof(window_flag_desc)
+        / sizeof(window_flag_desc[0]));
 
     for( int i = 0; i < maxBits; i++ )
     {
         if( window_flag_desc[i] != NULL )
         {
-            mask |= (1U << i);
+            mask.set(i2enum<SubWindowRedrawingFlag>(i));
         }
     }
 
@@ -1783,10 +1781,10 @@ static void AngbandUpdateWindowVisibility(void)
      * Because this function is called frequently, we'll make the mask static.
      * It doesn't change between calls, as the flags themselves are hardcoded
      */
-    static uint32_t validWindowFlagsMask = 0;
+    static EnumClassFlagGroup<SubWindowRedrawingFlag> validWindowFlagsMask;
     BOOL anyChanged = NO;
 
-    if( validWindowFlagsMask == 0 )
+    if( validWindowFlagsMask.none() )
     {
         validWindowFlagsMask = AngbandMaskForValidSubwindowFlags();
     }
@@ -1831,7 +1829,8 @@ static void AngbandUpdateWindowVisibility(void)
         }
         else
         {
-            BOOL termHasSubwindowFlags = ((window_flag[i] & validWindowFlagsMask) > 0);
+            BOOL termHasSubwindowFlags =
+                g_window_flags[i].has_any_of(validWindowFlagsMask);
 
             if( angbandContext.hasSubwindowFlags && !termHasSubwindowFlags )
             {
@@ -5802,13 +5801,14 @@ static void init_windows(void)
         {
 	    /*
 	     * Another window is only usable after Term_init_cocoa() has
-	     * been called for it.  For Angband, if window_flag[i] is nonzero
-	     * then that has happened for window i.  For Hengband, that is
-	     * not the case so also test angband_terms[i]->data.
+	     * been called for it.  For Angband, if g_window_flags[i] has
+	     * any bits set then that has happened for window i.  For
+	     * Hengband, that is not the case so also test
+	     * angband_terms[i]->data.
 	     */
             NSInteger subwindowNumber = tag - AngbandWindowMenuItemTagBase;
             return (angband_terms[subwindowNumber]->data != 0
-		    && window_flag[subwindowNumber] > 0);
+		    && !g_window_flags[subwindowNumber].none());
         }
 
         return NO;
