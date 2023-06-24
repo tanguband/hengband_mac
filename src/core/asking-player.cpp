@@ -443,8 +443,8 @@ std::optional<int> input_value_int(std::string_view prompt, int min, int max, in
 {
     std::stringstream ss;
     char tmp_val[12] = "";
-    std::to_chars(std::begin(tmp_val), std::end(tmp_val) - 1, *value);
-    st << prompt << "(" << min << "-" << max << "): ";
+    std::to_chars(std::begin(tmp_val), std::end(tmp_val) - 1, initial_value);
+    ss << prompt << "(" << min << "-" << max << "): ";
     auto digit = std::max(std::to_string(min).length(), std::to_string(max).length());
     while (true) {
         if (!get_string(ss.str().data(), tmp_val, digit)) {

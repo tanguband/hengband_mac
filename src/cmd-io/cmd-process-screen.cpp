@@ -205,9 +205,8 @@ void exe_cmd_save_screen_html(const std::filesystem::path &path, bool need_messa
 {
     TERM_LEN wid, hgt;
     term_get_size(&wid, &hgt);
-    auto *fff = angband_fopen(filename, FileOpenMode::WRITE, false,
-        FileOpenType::HTML);
-    if (!check_screen_html_can_open(fff, filename, need_message)) {
+    auto *fff = angband_fopen(path, FileOpenMode::WRITE, false, FileOpenType::HTML);
+    if (!check_screen_html_can_open(fff, path, need_message)) {
         return;
     }
 
