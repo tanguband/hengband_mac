@@ -2,6 +2,8 @@
 
 #include "system/angband.h"
 #include <concepts>
+#include <memory>
+#include <string>
 #include <string_view>
 
 /*
@@ -14,7 +16,7 @@ extern bool msg_flag;
 extern COMMAND_CODE now_message;
 
 int32_t message_num(void);
-concptr message_str(int age);
+std::shared_ptr<const std::string> message_str(int age);
 void message_add(std::string_view msg);
 void msg_erase(void);
 void msg_print(std::string_view msg);

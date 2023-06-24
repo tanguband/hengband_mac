@@ -1,4 +1,4 @@
-,dnl Process this file with autoconf to produce a configure script.
+dnl Process this file with autoconf to produce a configure script.
 AC_INIT(hengband, 3.0.0.0)
 
 AC_CONFIG_MACRO_DIRS([m4])
@@ -61,8 +61,10 @@ AC_ARG_ENABLE([xft],
 	AS_HELP_STRING([--enable-xft], [Enable xft support]))
 AC_ARG_ENABLE(worldscore,
 [  --disable-worldscore    disable worldscore support], worldscore=no)
-AC_ARG_ENABLE(chuukei,
-[  --enable-chuukei        enable internet chuukei support], AC_DEFINE(CHUUKEI, 1, [Chuukei mode]))
+AC_ARG_ENABLE([pch],
+[  --disable-pch           disable use of precompiled headers],
+enable_pch=no, enable_pch=yes)
+AM_CONDITIONAL([PCH], [test x$enable_pch = xyes])
 AC_ARG_ENABLE([cocoa],
 [  --enable-cocoa          enable a Cocoa user interface (OS X only)],
 [AC_DEFINE([MACH_O_COCOA], [1], [Use a Cocoa interface (OS X only)])], [])
@@ -80,10 +82,6 @@ if test x"$enable_cocoa" = xyes ; then
   AC_DEFINE(SAFE_DIRECTORY, 1, [Mark var directory with version string])
   AC_DEFINE(VERSION_STRING, "3.0.0", [Version string to use for var directory])
 fi
-AC_ARG_ENABLE([pch],
-[  --disable-pch           disable use of precompiled headers],
-enable_pch=no, enable_pch=yes)
-AM_CONDITIONAL([PCH], [test x$enable_pch = xyes])
 
 dnl Checks for libraries.
 dnl Replace `main' with a function in -lncurses:
@@ -107,8 +105,7 @@ if test "$use_japanese" = no; then
   worldscore=no
 fi
 if test "$worldscore" != no; then
-  PKG_CHECK_MODULES(libssl, [libssl])
-  PKG_CHECK_MODULES(libcrypto, [libcrypto])
+  PKG_CHECK_MODULES(libcurl, [libcurl])
   AC_DEFINE(WORLD_SCORE, 1, [Allow the game to send scores to the score server])
 fi
 

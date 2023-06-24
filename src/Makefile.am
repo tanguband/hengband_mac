@@ -193,9 +193,6 @@ hengband_SOURCES = \
 	effect/effect-processor.cpp effect/effect-processor.h \
 	effect/effect-characteristics.h \
 	\
-	external-lib/httplib.cpp external-lib/httplib.h \
-	external-lib/include-httplib.h \
-	\
 	flavor/flag-inscriptions-table.cpp flavor/flag-inscriptions-table.h \
 	flavor/flavor-describer.cpp flavor/flavor-describer.h \
 	flavor/flavor-util.cpp flavor/flavor-util.h \
@@ -572,6 +569,10 @@ hengband_SOURCES = \
 	mutation/mutation-flag-types.h \
 	mutation/mutation-processor.cpp mutation/mutation-processor.h \
 	mutation/mutation-techniques.cpp mutation/mutation-techniques.h \
+	\
+	net/curl-easy-session.cpp net/curl-easy-session.h \
+	net/curl-slist.cpp net/curl-slist.h \
+	net/http-client.cpp net/http-client.h \
 	\
 	object/item-tester-hooker.cpp object/item-tester-hooker.h \
 	object/object-broken.cpp object/object-broken.h \
@@ -1143,7 +1144,7 @@ endif
 # nib files in Xcode according to the procedure in cocoa/AppDelegate.m.
 DEFAULT_INCLUDES = -I$(srcdir) -I$(top_builddir)/src -I$(top_builddir)/src/cocoa
 CPPFLAGS += $(XFT_CFLAGS) $(libssl_CFLAGS) $(libcrypto_CFLAGS)
-LIBS += $(XFT_LIBS) $(libssl_LIBS) $(libcrypto_LIBS)
+LIBS += $(XFT_LIBS) $(libcurl_LIBS)
 COMPILE = $(srcdir)/gcc-wrap $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 OBJCXXCOMPILE = $(srcdir)/gcc-wrap $(OBJCXX) $(DEFS) $(DEFAULT_INCLUDES) \

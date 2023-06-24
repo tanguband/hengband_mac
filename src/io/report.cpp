@@ -10,11 +10,11 @@
 #include "core/stuff-handler.h"
 #include "core/turn-compensator.h"
 #include "core/visuals-reseter.h"
-#include "external-lib/include-httplib.h"
 #include "game-option/special-options.h"
 #include "io-dump/character-dump.h"
 #include "io/input-key-acceptor.h"
 #include "mind/mind-elementalist.h"
+#include "net/http-client.h"
 #include "player-base/player-class.h"
 #include "player-info/class-info.h"
 #include "player-info/race-info.h"
@@ -45,58 +45,52 @@
 
 concptr screen_dump = nullptr;
 
-/*
- * internet resource value
- */
-constexpr auto HTTP_CONNECTION_TIMEOUT = 30; /*!< HTTP接続タイムアウト時間(秒) */
-
 #ifdef JP
-constexpr auto SCORE_SERVER_SCHEME_HOST = "http://mars.kmc.gr.jp"; /*!< スコアサーバホスト */
-constexpr auto SCORE_SERVER_PATH = "/~dis/heng_score/register_score.php"; /*< スコアサーバパス */
+constexpr auto SCORE_POST_URL = "http://mars.kmc.gr.jp/~dis/heng_score/register_score.php"; /*!< スコア開示URL */
 #endif
 
-size_t read_callback(char *buffer, size_t size, size_t nitems, void *userdata)
+static constexpr auto get_score_content_type()
 {
-    auto &data = *static_cast<std::span<const char> *>(userdata);
-    const auto copy_size = std::min<size_t>(size * nitems, data.size());
-
-    std::copy_n(data.begin(), copy_size, buffer);
-    data = data.subspan(copy_size);
-
-    return copy_size;
+#ifdef JP
+#ifdef SJIS
+    return "text/plain; charset=SHIFT_JIS";
+#endif
+#ifdef EUC
+    return "text/plain; charset=EUC-JP";
+#endif
+#else
+    return "text/plain; charset=ASCII";
+#endif
 }
 
 /*!
- * @brief HTTPによるダンプ内容伝送
- * @param score ダンプ内容
- * @return 送信に成功した場合TRUE、失敗した場合FALSE
+ * @brief スコアサーバにスコアを送信する
+ * @param score_data 送信するスコアデータ
+ * @return 送信に成功した場合true、失敗した場合false
  */
-static bool report_score(const std::string &score)
+static bool post_score_to_score_server(PlayerType *player_ptr, const std::string &score_data)
 {
-    httplib::Client cli(SCORE_SERVER_SCHEME_HOST);
-    cli.set_connection_timeout(HTTP_CONNECTION_TIMEOUT);
-    cli.set_follow_location(true);
+    http::Client client;
+    client.user_agent = format("Hengband %d.%d.%d", H_VER_MAJOR, H_VER_MINOR, H_VER_PATCH);
 
-    httplib::Headers headers = {
-        { "User-Agent", format("Hengband %d.%d.%d", H_VER_MAJOR, H_VER_MINOR, H_VER_PATCH) }
-    };
+    term_clear();
 
-    auto content_type =
-#ifdef JP
-#ifdef SJIS
-        "text/plain; charset=SHIFT_JIS"
-#endif
-#ifdef EUC
-        "text/plain; charset=EUC-JP"
-#endif
-#else
-        "text/plain; charset=ASCII"
-#endif
-        ;
+    while (true) {
+        term_fresh();
+        prt(_("スコア送信中...", "Sending the score..."), 0, 0);
+        term_fresh();
 
-    const auto res = cli.Post(SCORE_SERVER_PATH, score, content_type);
+        const auto res = client.post(SCORE_POST_URL, score_data, get_score_content_type());
+        if (res.has_value() && (res->status == 200)) {
+            return true;
+        }
 
-    return res->status == 200;
+        prt(_("スコア・サーバへの送信に失敗しました。", "Failed to send to the score server."), 0, 0);
+        (void)inkey();
+        if (!get_check_strict(player_ptr, _("もう一度接続を試みますか? ", "Try again? "), CHECK_NO_HISTORY)) {
+            return false;
+        }
+    }
 }
 
 /*!
@@ -303,25 +297,7 @@ bool report_score(PlayerType *player_ptr)
                  << screen_dump;
     }
 
-    const std::string score_data = score_ss.str();
-
-    term_clear();
-    while (true) {
-        term_fresh();
-        prt(_("スコア送信中...", "Sending the score..."), 0, 0);
-        term_fresh();
-        if (report_score(score_data)) {
-            return true;
-        }
-
-        prt(_("スコア・サーバへの送信に失敗しました。", "Failed to send to the score server."), 0, 0);
-        (void)inkey();
-        if (get_check_strict(player_ptr, _("もう一度接続を試みますか? ", "Try again? "), CHECK_NO_HISTORY)) {
-            continue;
-        }
-
-        return false;
-    }
+    return post_score_to_score_server(player_ptr, score_ss.str());
 }
 #else
 concptr screen_dump = nullptr;
