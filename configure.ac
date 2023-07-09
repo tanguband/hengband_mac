@@ -106,7 +106,7 @@ if test "$use_net" = no; then
   AC_DEFINE(DISABLE_NET, 1, [Disable networking support])
   worldscore=no;
 else
-  PKG_CHECK_MODULES(libcurl, [libcurl])
+  PKG_CHECK_MODULES(libcurl, [libcurl], , [AC_CHECK_LIB([curl], [curl_global_init], [libcurl_LIBS=-lcurl], [AC_MSG_ERROR([Could not find libcurl for networking support])])])
 fi
 
 dnl The world score server is currently only available in Japanese.
