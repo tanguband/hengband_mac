@@ -1,4 +1,4 @@
-﻿/*!
+/*!
  * @brief 既知のアイテムとアーティファクトを表示する
  * @date 2020/04/23
  * @author Hourier
@@ -211,7 +211,7 @@ static void display_object_list(int col, int row, int per_page, const std::vecto
     }
 
     for (; i < per_page; i++) {
-        term_erase(col, row + i, 255);
+        term_erase(col, row + i);
     }
 }
 

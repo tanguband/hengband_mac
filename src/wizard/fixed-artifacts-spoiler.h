@@ -1,8 +1,9 @@
-﻿#pragma once
+#pragma once
 
-#include "system/angband.h"
-#include "wizard/spoiler-util.h"
+#include <string>
+#include <string_view>
+#include <vector>
 
+enum class SpoilerOutputResultType;
 void spoiler_outlist(std::string_view header, const std::vector<std::string> &descriptions, char seperator);
-void spoiler_outlist(concptr header, concptr *list, char separator);
-SpoilerOutputResultType spoil_fixed_artifact(concptr fname);
+SpoilerOutputResultType spoil_fixed_artifact();

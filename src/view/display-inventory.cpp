@@ -1,4 +1,4 @@
-﻿#include "view/display-inventory.h"
+#include "view/display-inventory.h"
 #include "flavor/flavor-describer.h"
 #include "game-option/special-options.h"
 #include "game-option/text-display-options.h"
@@ -172,7 +172,7 @@ void display_inventory(PlayerType *player_ptr, const ItemTester &item_tester)
         }
 
         int cur_col = 3;
-        term_erase(cur_col, i, 255);
+        term_erase(cur_col, i);
         term_putstr(0, i, cur_col, TERM_WHITE, tmp_val);
         const auto item_name = describe_flavor(player_ptr, o_ptr, 0);
         attr = tval_to_attr[enum2i(o_ptr->bi_key.tval()) % 128];
@@ -203,6 +203,6 @@ void display_inventory(PlayerType *player_ptr, const ItemTester &item_tester)
     }
 
     for (i = z; i < hgt; i++) {
-        term_erase(0, i, 255);
+        term_erase(0, i);
     }
 }
