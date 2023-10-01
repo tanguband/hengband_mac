@@ -1,4 +1,5 @@
 #include "window/main-window-left-frame.h"
+#include "dungeon/quest.h"
 #include "game-option/special-options.h"
 #include "game-option/text-display-options.h"
 #include "market/arena-info-table.h"
@@ -174,7 +175,7 @@ void print_gold(PlayerType *player_ptr)
 void print_depth(PlayerType *player_ptr)
 {
     TERM_COLOR attr = TERM_WHITE;
-    const auto [wid, hgt] = term_get_size();
+    const auto &[wid, hgt] = term_get_size();
     TERM_LEN col_depth = wid + COL_DEPTH;
     TERM_LEN row_depth = hgt + ROW_DEPTH;
 
@@ -184,7 +185,7 @@ void print_depth(PlayerType *player_ptr)
         return;
     }
 
-    if (inside_quest(floor_ptr->quest_number) && !floor_ptr->dungeon_idx) {
+    if (floor_ptr->is_in_quest() && !floor_ptr->dungeon_idx) {
         c_prt(attr, format("%7s", _("地上", "Quest")), row_depth, col_depth);
         return;
     }
@@ -370,7 +371,7 @@ void print_health(PlayerType *player_ptr, bool riding)
     }
 
     const auto max_width = 12; // 表示幅
-    const auto [wid, hgt] = term_get_size();
+    const auto &[wid, hgt] = term_get_size();
     const auto extra_line_count = riding ? 0 : hgt - MAIN_TERM_MIN_ROWS;
     for (auto y = row; y < row + extra_line_count + 1; ++y) {
         term_erase(col, y, max_width);
@@ -387,8 +388,7 @@ void print_health(PlayerType *player_ptr, bool riding)
         return;
     }
 
-    const auto [hit_point_bar_color, len] = monster.get_hp_bar_data();
-
+    const auto &[hit_point_bar_color, len] = monster.get_hp_bar_data();
     term_putstr(col, row, max_width, TERM_WHITE, "[----------]");
     term_putstr(col + 1, row, len, hit_point_bar_color, "**********");
 
