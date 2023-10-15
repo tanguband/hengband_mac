@@ -287,7 +287,7 @@ void print_rel(PlayerType *player_ptr, char c, TERM_COLOR a, POSITION y, POSITIO
 
 void print_bolt_pict(PlayerType *player_ptr, POSITION y, POSITION x, POSITION ny, POSITION nx, AttributeType typ)
 {
-    const auto [a, c] = bolt_pict(y, x, ny, nx, typ);
+    const auto &[a, c] = bolt_pict(y, x, ny, nx, typ);
     print_rel(player_ptr, c, a, ny, nx);
 }
 
@@ -880,7 +880,7 @@ bool cave_monster_teleportable_bold(PlayerType *player_ptr, MONSTER_IDX m_idx, P
     }
 
     if (!(mode & TELEPORT_PASSIVE)) {
-        if (!monster_can_cross_terrain(player_ptr, g_ptr->feat, &monraces_info[m_ptr->r_idx], 0)) {
+        if (!monster_can_cross_terrain(player_ptr, g_ptr->feat, &m_ptr->get_monrace(), 0)) {
             return false;
         }
     }
