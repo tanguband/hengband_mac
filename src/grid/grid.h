@@ -48,7 +48,7 @@ class PlayerType;
 class MonsterRaceInfo;
 enum class TerrainCharacteristics;
 bool new_player_spot(PlayerType *player_ptr);
-bool is_hidden_door(PlayerType *player_ptr, Grid *g_ptr);
+bool is_hidden_door(PlayerType *player_ptr, const Grid &grid);
 bool player_can_enter(PlayerType *player_ptr, FEAT_IDX feature, BIT_FLAGS16 mode);
 bool feat_uses_special(FEAT_IDX f_idx);
 void update_local_illumination(PlayerType *player_ptr, POSITION y, POSITION x);
@@ -58,7 +58,7 @@ void print_bolt_pict(PlayerType *player_ptr, POSITION y, POSITION x, POSITION ny
 void note_spot(PlayerType *player_ptr, POSITION y, POSITION x);
 void lite_spot(PlayerType *player_ptr, POSITION y, POSITION x);
 void update_flow(PlayerType *player_ptr);
-FEAT_IDX feat_state(FloorType *floor_ptr, FEAT_IDX feat, TerrainCharacteristics action);
+FEAT_IDX feat_state(const FloorType *floor_ptr, FEAT_IDX feat, TerrainCharacteristics action);
 void cave_alter_feat(PlayerType *player_ptr, POSITION y, POSITION x, TerrainCharacteristics action);
 bool is_open(PlayerType *player_ptr, FEAT_IDX feat);
 bool check_local_illumination(PlayerType *player_ptr, POSITION y, POSITION x);
