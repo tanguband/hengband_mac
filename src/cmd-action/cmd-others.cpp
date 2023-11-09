@@ -69,8 +69,7 @@ static bool exe_alter(PlayerType *player_ptr)
 
     const Pos2D pos(player_ptr->y + ddy[dir], player_ptr->x + ddx[dir]);
     const auto &grid = player_ptr->current_floor_ptr->get_grid(pos);
-    auto feat = grid.get_feat_mimic();
-    const auto &terrain = terrains_info[feat];
+    const auto &terrain = grid.get_terrain_mimic();
     PlayerEnergy(player_ptr).set_player_turn_energy(100);
     if (grid.m_idx) {
         do_cmd_attack(player_ptr, pos.y, pos.x, HISSATSU_NONE);
@@ -148,7 +147,7 @@ static void accept_winner_message(PlayerType *player_ptr)
     std::optional<std::string> buf;
     while (true) {
         buf = input_string(_("*勝利*メッセージ: ", "*Winning* message: "), 1024);
-        if (!buf.has_value()) {
+        if (!buf) {
             continue;
         }
 

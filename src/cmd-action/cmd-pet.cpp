@@ -258,7 +258,7 @@ bool do_cmd_riding(PlayerType *player_ptr, bool force)
 
         if (!can_player_ride_pet(player_ptr, &grid, true)) {
             /* Feature code (applying "mimic" field) */
-            const auto &terrain = terrains_info[grid.get_feat_mimic()];
+            const auto &terrain = grid.get_terrain_mimic();
             using Tc = TerrainCharacteristics;
 #ifdef JP
             msg_format("そのモンスターは%sの%sにいる。", terrain.name.data(),
@@ -354,7 +354,7 @@ static void do_name_pet(PlayerType *player_ptr)
     }
 
     const auto new_name = input_string(_("名前: ", "Name: "), 15, initial_name);
-    if (!new_name.has_value()) {
+    if (!new_name) {
         return;
     }
 
@@ -563,7 +563,7 @@ void do_cmd_pet(PlayerType *player_ptr)
                 choice = ' ';
             } else {
                 const auto new_choice = input_command(prompt, true);
-                if (!new_choice.has_value()) {
+                if (!new_choice) {
                     break;
                 }
 

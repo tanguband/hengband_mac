@@ -63,7 +63,7 @@ static bool select_ammo_creation_type(ammo_creation_type &type, PLAYER_LEVEL ple
 
     while (type == AMMO_NONE) {
         const auto command = input_command(prompt, true);
-        if (!command.has_value()) {
+        if (!command) {
             return false;
         }
 
@@ -114,7 +114,7 @@ bool create_ammo(PlayerType *player_ptr)
 
         const Pos2D pos(player_ptr->y + ddy[dir], player_ptr->x + ddx[dir]);
         const auto &grid = player_ptr->current_floor_ptr->get_grid(pos);
-        if (terrains_info[grid.get_feat_mimic()].flags.has_not(TerrainCharacteristics::CAN_DIG)) {
+        if (grid.get_terrain_mimic().flags.has_not(TerrainCharacteristics::CAN_DIG)) {
             msg_print(_("そこには岩石がない。", "You need a pile of rubble."));
             return false;
         }

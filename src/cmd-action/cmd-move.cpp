@@ -79,7 +79,7 @@ void do_cmd_go_up(PlayerType *player_ptr)
     auto &quest_list = QuestList::get_instance();
     auto &floor = *player_ptr->current_floor_ptr;
     const auto &grid = floor.get_grid({ player_ptr->y, player_ptr->x });
-    const auto &terrain = terrains_info[grid.feat];
+    const auto &terrain = grid.get_terrain();
     PlayerClass(player_ptr).break_samurai_stance({ SamuraiStanceType::MUSOU });
 
     if (terrain.flags.has_not(TerrainCharacteristics::LESS)) {
@@ -206,7 +206,7 @@ void do_cmd_go_down(PlayerType *player_ptr)
 
     auto &floor = *player_ptr->current_floor_ptr;
     auto &grid = floor.grid_array[player_ptr->y][player_ptr->x];
-    auto &terrain = terrains_info[grid.feat];
+    auto &terrain = grid.get_terrain();
     if (terrain.flags.has_not(TerrainCharacteristics::MORE)) {
         msg_print(_("ここには下り階段が見当たらない。", "I see no down staircase here."));
         return;
@@ -447,7 +447,7 @@ static bool input_rest_turns()
     constexpr auto p = _("休憩 (0-9999, '*' で HP/MP全快, '&' で必要なだけ): ", "Rest (0-9999, '*' for HP/SP, '&' as needed): ");
     while (true) {
         const auto rest_turns_opt = input_string(p, 4, "&");
-        if (!rest_turns_opt.has_value()) {
+        if (!rest_turns_opt) {
             return false;
         }
 
