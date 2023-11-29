@@ -1076,12 +1076,16 @@ cocoa_en_strings_files = \
 	cocoa/en.lproj/Localizable.strings \
 	cocoa/en.lproj/CommandMenu.strings \
 	cocoa/en.lproj/GraphicsMenu.strings
+cocoa_en_misc_files = \
+	cocoa/en.lproj/Credits.html
 cocoa_ja_strings_files = \
 	cocoa/ja.lproj/MainMenu.strings \
 	cocoa/ja.lproj/SoundAndMusic.strings \
 	cocoa/ja.lproj/Localizable.strings \
 	cocoa/ja.lproj/CommandMenu.strings \
 	cocoa/ja.lproj/GraphicsMenu.strings
+cocoa_ja_misc_files = \
+	cocoa/ja.lproj/Credits.html
 
 EXTRA_DIST = \
 	gcc-wrap \
@@ -1092,7 +1096,9 @@ EXTRA_DIST = \
 	$(cocoa_plist_files) \
 	$(cocoa_en_nib_files) \
 	$(cocoa_en_strings_files) \
-	$(cocoa_ja_strings_files)
+	$(cocoa_en_misc_files) \
+	$(cocoa_ja_strings_files) \
+	$(cocoa_ja_misc_files)
 
 if COCOA
 hengband_SOURCES += \
@@ -1137,9 +1143,11 @@ appplist_DATA = $(cocoa_plist_files)
 appplistdir = $(APPRES)
 appennib_DATA = $(cocoa_en_nib_files)
 appennibdir = $(APPRES)/Base.lproj
-appen_DATA = $(cocoa_en_strings_files)
+appen_DATA = $(cocoa_en_strings_files) $(cocoa_en_misc_files) \
+	../THIRD-PARTY-NOTICES.txt
 appendir = $(APPRES)/en.lproj
-appja_DATA = $(cocoa_ja_strings_files)
+appja_DATA = $(cocoa_ja_strings_files) $(cocoa_ja_misc_files) \
+	../THIRD-PARTY-NOTICES.txt
 appjadir = $(APPRES)/ja.lproj
 else
 EXTRA_hengband_SOURCES += main-cocoa.mm system/grafmode.h system/grafmode.cpp \
