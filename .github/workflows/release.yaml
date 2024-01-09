@@ -203,12 +203,11 @@ jobs:
           submodules: true
 
       # Requires automake and autoconf; install those via homebrew (available
-      # by default).  Use autoconf 2.69 since autoconf 2.71 does not work well
-      # with the version of m4 (GNU M4 1.4.6) included with macOS 11 and 12.
+      # by default).
       - name: Install Build Dependencies
         run: |
           brew install m4
-          brew install autoconf@2.69
+          brew install autoconf
           brew install automake
 
       - name: Create Mac English Archive
@@ -218,7 +217,6 @@ jobs:
             SDKROOT=`echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
             export SDKROOT
           fi
-          PATH=/usr/local/opt/autoconf@2.69/bin:"$PATH"
           ./bootstrap
           CFLAGS=""
           CXXFLAGS=""
@@ -301,13 +299,11 @@ jobs:
           submodules: true
 
       # Requires automake, autoconf, and nkf; install those via homebrew
-      # (available by default).  Use autoconf 2.69 since autoconf 2.71 does
-      # not work well with the version of m4 (GNU M4 1.4.6) included with
-      # macOS 11 and 12.
+      # (available by default).
       - name: Install Build Dependencies
         run: |
           brew install m4
-          brew install autoconf@2.69
+          brew install autoconf
           brew install automake
           brew install nkf
 
@@ -318,7 +314,6 @@ jobs:
             SDKROOT=`echo "${{ env.SDK_OVERRIDE }}" | tr -d ' \t\r\n'`
             export SDKROOT
           fi
-          PATH=/usr/local/opt/autoconf@2.69/bin:"$PATH"
           ./bootstrap
           CFLAGS=""
           CXXFLAGS=""
